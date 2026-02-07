@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "834179717761",
+    "project_id": "luckymam-app-dv",
+    "storage_bucket": "luckymam-app-dv.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:834179717761:android:2089813cce2c71b2270b80",
+        "android_client_info": {
+          "package_name": "com.luckmam.luckmam_mvp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "834179717761-v8dcefc8ks6iigeq7okaq2ripbkv1jum.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCn6icXEbBE0KnuMr5Z_cPQNd2BKvhktag"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "834179717761-v8dcefc8ks6iigeq7okaq2ripbkv1jum.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

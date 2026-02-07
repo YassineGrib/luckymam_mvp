@@ -1,0 +1,54 @@
+﻿Äge de la vaccination,Vaccin,Column1
+Naissance,BCG-HBV,"→ (Bacille Calmette et Guérin) est le seul moyen de se protéger contre les complications sévères de la tuberculose
+→ Hépatite B vaccin prévient la contamination par le virus de l'hépatite B"
+2 mois,DTCaVPI-Hib-HBV + VPOb + anti pneumococcique (VPC),"→antidiphtérique,
+→antitéténique, 
+→anticoquelucheux acellulaire, 
+→ anti-poliomyélite inactivé, 
+→ anti-Haemophilus influenzae type b
+→anti-hépatite B,
+→ Vaccin Polio par voie Orale de type b,
+→ VACCIN PNEUMOCOQUE CONJUGUÉ"
+4 mois,DTCaVPI-Hib-HBV + VPOb + anti pneumococcique (VPC),"→antidiphtérique,
+→antitéténique, 
+→anticoquelucheux acellulaire, 
+→ anti-poliomyélite inactivé, 
+→ anti-Haemophilus influenzae type b
+→anti-hépatite B,
+→ Vaccin Polio par voie Orale de type b,
+→ VACCIN PNEUMOCOQUE CONJUGUÉ"
+11 mois,ROR,→ Rougeole-oreillons-rubéole
+12 mois,DTCaVPI-Hib-HBV + VPOb + anti pneumococcique (VPC),"→antidiphtérique,
+→antitéténique, 
+→anticoquelucheux acellulaire, 
+→ anti-poliomyélite inactivé, 
+→ anti-Haemophilus influenzae type b
+→anti-hépatite B,
+→ Vaccin Polio par voie Orale de type b,
+→ VACCIN PNEUMOCOQUE CONJUGUÉ"
+18 mois,ROR,→ Rougeole-oreillons-rubéole
+6 ans,DTCa-VPI,"→antidiphtérique,  
+→ antitéténique, 
+→ anticoquelucheux acellulaire,
+→ anti-poliomyélite inactivé, 
+→  anti-Haemophilus influenzae type b,
+→ anti-hépatite B"
+11-13 ans,dT,"→ Vaccin bivalent à teneur réduite en anatoxine diphtérique (tétanos, diphtérie)"
+16-18 ans,dT,"→ Vaccin bivalent à teneur réduite en anatoxine diphtérique (tétanos, diphtérie)"
+Tous les 1es 10 ans à partir de 18 ans,dT,"→ Vaccin bivalent à teneur réduite en anatoxine diphtérique (tétanos, diphtérie)"
+,,
+,,
+,,
+,,
+BCG, (Bacille Calmette et Guérin) est le seul moyen de se protéger contre les complications sévères de la tuberculose,La Tuberculose ?
+HBV,Hépatite B vaccin prévient la contamination par le virus de l'hépatite B,L'Hépatite (A et B) ?
+DTCaVPI-Hib-HBV ,"antidiphtérique, antitéténique, anticoquelucheux acellulaire, anti-poliomyélite inactivé, anti-Haemophilus influenzae type b et anti-hépatite B",La Diphtérique?
+ VPOb ,Vaccin Polio par voie Orale de type b,Le Tétanos ?
+anti pneumococcique (VPC),VACCIN PNEUMOCOQUE CONJUGUÉ,La Coqueluche ?
+ROR,Rougeole-oreillons-rubéole,La Poliomyélite?
+dt,"Vaccin bivalent à teneur réduite en anatoxine diphtérique (tétanos, diphtérie)",L'Haemophilus influenzae  ?
+,,Le Pneucomocque ?
+,,La méningites ?
+,,La Rougeole ?
+,,Les Oreillons ?
+,,La Rubéole?

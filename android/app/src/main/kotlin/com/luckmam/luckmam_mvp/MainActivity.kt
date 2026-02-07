@@ -1,4 +1,4 @@
-package com.lukymam_mvp.lukymam_mvp
+package com.luckmam.luckmam_mvp
 
 import io.flutter.embedding.android.FlutterActivity
 

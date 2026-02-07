@@ -1,0 +1,71 @@
+﻿N°,Événement,Description,Catégorie,Phase,Mois/Âge,Action/Média
+1,On a décidé d'avoir un enfant,Déclarer la décision d'avoir un enfant,émotion,pré gestation,M-12 à M0,Capturer l’instant (Capsule émotionnelle)
+2,Test de grossesse positif,Confirmation de maternité; émotion pure à capturer.,émotion,Gestation,M1,Capturer l’instant (Capsule émotionnelle)
+3,Annonce au conjoint,"Partage initial, souvenir intime et authentique.",émotion,Gestation,M1,Capturer l’instant (Capsule émotionnelle)
+4,Première échographie (datation),Premier cœur battant; jalon médical rassurant. Bilan sanguin.,santé,Gestation,M1,Suivi médical; consigner résultats & capsule émotionnelle
+5,Annonce à la famille,Joie partagée avec les proches.,émotion,Gestation,M1,Capturer l’instant (Capsule émotionnelle)
+6,Photo du ventre — Mois 1,Début discret; point de départ visuel.,émotion,Gestation,M1,Capturer l’instant (Capsule émotionnelle)
+7,Les envies (WHAM),Les envies de la maman.,culture,Gestation,M1,Valoriser les traditions familiales & Capturer l’instant (Capsule émotionnelle)
+8,Photo du ventre — Mois 2,Premiers changements visibles.,émotion,Gestation,M2,Capturer l’instant (Capsule émotionnelle)
+9,Photo du ventre — Mois 3,Clôture du premier trimestre.,émotion,Gestation,M3,Capturer l’instant (Capsule émotionnelle)
+10,2ᵉ visite chez le docteur,2ᵉ échographie morphologique; bilan dentaire.,santé,Gestation,M4,Suivi médical; consigner résultats & capsule émotionnelle
+11,Découverte du sexe du bébé,Surprise et joie familiale; prépare le prénom.,émotion,Gestation,M4,Capturer l’instant (Capsule émotionnelle)
+12,Premiers mouvements ressentis,Connexion corporelle unique avec bébé.,émotion,Gestation,M4,Capturer l’instant (Capsule émotionnelle)
+13,Premiers coups de pied,Interaction vivante; moment ludique.,émotion,Gestation,M4,Capturer l’instant (Capsule émotionnelle)
+14,Photo du ventre — Mois 4,Progression nette et fière.,émotion,Gestation,M4,Capturer l’instant (Capsule émotionnelle)
+15,3ᵉ visite chez le docteur,"NFS, échographie supplémentaire si besoin.",santé,Gestation,M5,Suivi médical; consigner résultats & capsule émotionnelle
+16,Photo du ventre — Mois 5,Milieu de grossesse; repère visuel.,émotion,Gestation,M5,Capturer l’instant (Capsule émotionnelle)
+17,4ᵉ visite chez le docteur,"Suivi croissance, dépistage du diabète gestationnel.",santé,Gestation,M6,Suivi médical; consigner résultats & capsule émotionnelle
+18,Photo du ventre — Mois 6,Silhouette arrondie; souvenir tendre.,émotion,Gestation,M6,Capturer l’instant (Capsule émotionnelle)
+19,5ᵉ visite chez le docteur,"Consultation mensuelle, préparation à l’accouchement.",santé,Gestation,M7,Suivi médical; consigner résultats & capsule émotionnelle
+20,Dernières échographies,Position et poids estimé; bébé commence à se placer tête en bas.,santé,Gestation,M7,Suivi médical; consigner résultats & capsule émotionnelle
+21,Photo du ventre — Mois 7,Dernière ligne droite; fierté.,émotion,Gestation,M7,Capturer l’instant (Capsule émotionnelle)
+22,6ᵉ visite chez le docteur,"Consultation mensuelle, bilan sanguin.",santé,Gestation,M8,Suivi médical; consigner résultats & capsule émotionnelle
+23,Photo du ventre — Mois 8,Attente palpable; souvenirs familiaux.,émotion,Gestation,M8,Capturer l’instant (Capsule émotionnelle)
+24,Préparation de la chambre bébé,Cocon familial; marqueurs culturels.,culture,Gestation,M8,Valoriser les traditions familiales & Capturer l’instant (Capsule émotionnelle)
+25,7ᵉ visite chez le docteur,Consultation mensuelle; dernières vérifications.,santé,Gestation,M9,Suivi médical; consigner résultats & capsule émotionnelle
+26,Photo du ventre — Mois 9,Prête pour la rencontre; apogée.,émotion,Gestation,M9,Capturer l’instant (Capsule émotionnelle)
+27,Dernière sortie en couple,Souvenir avant la parentalité.,émotion,Gestation,M9,Capturer l’instant (Capsule émotionnelle)
+28,Dernière photo ventre en famille,Clôture du chapitre grossesse.,émotion,Gestation,M9,Capturer l’instant (Capsule émotionnelle)
+29,Portrait couple avec ventre,Complicité parentale à immortaliser.,émotion,Gestation,M9,Capturer l’instant (Capsule émotionnelle)
+30,Dernier contrôle médical,Validation finale et sécurité.,santé,Gestation,M9,Suivi médical; consigner résultats & capsule émotionnelle
+31,Premières contractions,Début du travail; moment déterminant.,santé,Gestation,M9,Suivi médical; consigner résultats & capsule émotionnelle
+32,Premier cri du bébé,Naissance; émotion intense.,émotion,Post partum,J0,Capturer l’instant (Capsule émotionnelle)
+33,Première mise au sein,Lien et nutrition; démarrage allaitement.,santé,Post partum,J0,Suivi médical; consigner résultats & capsule émotionnelle
+34,Première biberon,Lien et nutrition; démarrage allaitement.,santé,Post partum,J0-1 mois,Suivi médical; consigner résultats & capsule émotionnelle
+35,Annonce officielle de la naissance,Joie partagée avec tous.,culture,Post partum,J0,Valoriser les traditions familiales & Capturer l’instant (Capsule émotionnelle)
+36,Vaccin Naissance,Vaccins de naissance (selon calendrier national).,santé,Post partum,J0,Suivi médical; consigner résultats & capsule émotionnelle
+37,Premier sourire,Éveil et attachement.,émotion,Post partum,J30,Capturer l’instant (Capsule émotionnelle)
+38,Circoncision (garçon),Tradition familiale et coutume locale.,religion,Post partum,S2,Capturer l’instant (Capsule émotionnelle)
+39,Akika,Fête et partage culturel en famille.,religion,Post partum,S4,Capturer l’instant (Capsule émotionnelle)
+40,Premier Aïd el-Fitr,Première fête religieuse.,religion,Post partum,0–12 mois,Capturer l’instant (Capsule émotionnelle)
+41,Vaccin 2 mois,Calendrier vaccinal (2 mois).,santé,Post partum,2 mois,Suivi médical; consigner résultats & capsule émotionnelle
+42,Premier Aïd al-Adha,Fête religieuse.,religion,Post partum,0–12 mois,Capturer l’instant (Capsule émotionnelle)
+43,Pas de dents visibles,Les dents se forment sous les gencives.,santé,Post partum,0–6 mois,Suivi médical; consigner résultats & capsule émotionnelle
+44,Les muscles commencent à bouger,Contrôle de la tête; mouvements volontaires.,santé,Post partum,0–3 mois,Suivi médical; consigner résultats & capsule émotionnelle
+45,Vaccin 4 mois,Calendrier vaccinal (4 mois).,santé,Post partum,4 mois,Suivi médical; consigner résultats & capsule émotionnelle
+46,Premiers sons simples,"Voyelles (« aah », « oooh »).",santé,Post partum,2–3 mois,Suivi médical; consigner résultats & capsule émotionnelle
+47,Babillage plus varié,"« ba-ba », « da-da », répétition de syllabes.",santé,Post partum,4–6 mois,Suivi médical; consigner résultats & capsule émotionnelle
+48,Il commence à bouger,Se retourne; s’assoit avec soutien.,santé,Post partum,4–6 mois,Suivi médical; consigner résultats & capsule émotionnelle
+49,Première position assise,S’assoit seul sans appui.,santé,Post partum,6–8 mois,Suivi médical; consigner résultats & capsule émotionnelle
+50,Premières dents,Incisives centrales inférieures puis supérieures.,santé,Post partum,6–10 mois,Suivi médical; consigner résultats & capsule émotionnelle
+51,Il bouge davantage,Rampe / quatre pattes; debout avec appui.,santé,Post partum,8–10 mois,Suivi médical; consigner résultats & capsule émotionnelle
+52,Vaccin 11 mois,Calendrier vaccinal (11 mois).,santé,Post partum,11 mois,Suivi médical; consigner résultats & capsule émotionnelle
+53,Nouvelles dents,Incisives latérales supérieures puis inférieures.,santé,Post partum,8–12 mois,Suivi médical; consigner résultats & capsule émotionnelle
+54,Premiers pas,Debout sans aide; premiers pas avec appui.,santé,Post partum,10–12 mois,Suivi médical; consigner résultats & capsule émotionnelle
+55,Premiers mots,"Mots significatifs (souvent « maman », « papa »).",santé,Post partum,10–12 mois,Suivi médical; consigner résultats & capsule émotionnelle
+56,Premier anniversaire,Souvenir culturel.,culture,Post partum,12 mois,Valoriser les traditions familiales & Capturer l’instant (Capsule émotionnelle)
+57,Vaccin 12 mois,Calendrier vaccinal (12 mois).,santé,Post partum,12 mois,Suivi médical; consigner résultats & capsule émotionnelle
+58,Marche seule,Marche seule; grimpe objets bas.,santé,enfance,12–15 mois,Suivi médical; consigner résultats & capsule émotionnelle
+59,Dents: Premières molaires,Premières molaires.,santé,enfance,12–16 mois,Suivi médical; consigner résultats & capsule émotionnelle
+60,Vaccin 18 mois,Calendrier vaccinal (18 mois).,santé,enfance,18 mois,Suivi médical; consigner résultats & capsule émotionnelle
+61,Dents: Canines,Canines.,santé,enfance,16–20 mois,Suivi médical; consigner résultats & capsule émotionnelle
+62,Dents: Deuxièmes molaires,Deuxièmes molaires.,santé,enfance,20–30 mois,Suivi médical; consigner résultats & capsule émotionnelle
+63,Premiers SOURATE FATIHA PAR COEUR,Récite soutate Fatiha par coeur,religion,enfance,2-5 ans,Capturer l’instant (Capsule émotionnelle)
+64,Premier jour Jardin d'enfant,Socialisation Jardin d'enfant.,culture,enfance,2-4 ans,Capturer l’instant (Capsule émotionnelle)
+65,Premier jour pré-scolaire,Socialisation.,culture,enfance,5 ans,Capturer l’instant (Capsule émotionnelle)
+66,Rentrée scolaire,Autonomie et socialisation.,culture,enfance,6 ans,Valoriser les traditions familiales & Capturer l’instant (Capsule émotionnelle)
+67,Vaccin 6 ans,Calendrier vaccinal.,santé,enfance,6 ans,Suivi médical; consigner résultats & capsule émotionnelle
+68,Vaccin 11–13 ans,Calendrier vaccinal.,santé,enfance,11–13 ans,Suivi médical; consigner résultats & capsule émotionnelle
+69,Vaccin 16–18 ans,Calendrier vaccinal.,santé,enfance,16–18 ans,Suivi médical; consigner résultats & capsule émotionnelle
+70,Vaccin tous les 10 ans dès 18 ans,Rappels décennaux à partir de 18 ans.,santé,adulte,tous les 10 ans,Suivi médical; consigner résultats & capsule émotionnelle
