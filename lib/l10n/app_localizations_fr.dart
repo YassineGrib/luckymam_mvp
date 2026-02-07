@@ -98,4 +98,114 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get errorNameTooShort => 'Le nom doit contenir au moins 2 caractères';
+
+  @override
+  String get featureNotAvailableMVP =>
+      'Cette fonctionnalité n\'est pas disponible dans la version MVP';
+
+  @override
+  String get myChildren => 'Mes Enfants';
+
+  @override
+  String get noChildrenTitle => 'Aucun enfant enregistré';
+
+  @override
+  String get noChildrenSubtitle =>
+      'Ajoutez vos enfants pour suivre leur croissance, leurs vaccinations et bien plus encore.';
+
+  @override
+  String get addFirstChild => 'Ajouter mon premier enfant';
+
+  @override
+  String get addChild => 'Ajouter un enfant';
+
+  @override
+  String get privacy => 'Confidentialité';
+
+  @override
+  String get helpAndSupport => 'Aide & Support';
+
+  @override
+  String get dataProtection => 'Protection des données';
+
+  @override
+  String get dataProtectionDesc =>
+      'Vos données personnelles sont stockées de manière sécurisée et ne sont jamais partagées avec des tiers sans votre consentement.';
+
+  @override
+  String get medicalDataPrivacy => 'Données médicales';
+
+  @override
+  String get medicalDataPrivacyDesc =>
+      'Vos informations médicales (cycle menstruel, grossesse, enfants) sont strictement confidentielles et accessibles uniquement par vous.';
+
+  @override
+  String get dataDeleteTitle => 'Suppression des données';
+
+  @override
+  String get dataDeleteDesc =>
+      'Vous pouvez demander la suppression complète de votre compte et de toutes vos données à tout moment depuis les paramètres.';
+
+  @override
+  String get offlineData => 'Données hors ligne';
+
+  @override
+  String get offlineDataDesc =>
+      'Certaines données peuvent être stockées localement sur votre appareil pour une utilisation hors ligne.';
+
+  @override
+  String get faqTitle => 'Questions fréquentes';
+
+  @override
+  String get faqAddChild => 'Comment ajouter un enfant ?';
+
+  @override
+  String get faqAddChildAnswer =>
+      'Allez dans votre profil, section \"Mes Enfants\", puis appuyez sur \"Ajouter un enfant\".';
+
+  @override
+  String get faqCycle => 'Comment suivre mon cycle menstruel ?';
+
+  @override
+  String get faqCycleAnswer =>
+      'Dans la section \"Cycle Menstruel\" de votre profil, appuyez sur \"Enregistrer mes règles\" pour indiquer la date de début.';
+
+  @override
+  String get faqEditInfo => 'Comment modifier mes informations ?';
+
+  @override
+  String get faqEditInfoAnswer =>
+      'Appuyez sur l\'icône de crayon à côté de chaque information pour la modifier.';
+
+  @override
+  String get faqDataSecurity => 'Mes données sont-elles sécurisées ?';
+
+  @override
+  String get faqDataSecurityAnswer =>
+      'Oui, toutes vos données sont cryptées et stockées de manière sécurisée. Consultez notre politique de confidentialité pour plus de détails.';
+
+  @override
+  String get contactUs => 'Nous contacter';
+
+  @override
+  String get emailSupport => 'Email';
+
+  @override
+  String get emailSupportHint => 'support@luckymam.com';
+
+  @override
+  String get sendEmailPrompt => 'Envoyez-nous un email à support@luckymam.com';
+
+  @override
+  String get liveChat => 'Chat en direct';
+
+  @override
+  String get liveChatUnavailable => 'Disponible bientôt';
+
+  @override
+  String get featureComingSoon =>
+      'Cette fonctionnalité sera disponible prochainement';
+
+  @override
+  String get appVersion => 'Version 1.0.0';
 }

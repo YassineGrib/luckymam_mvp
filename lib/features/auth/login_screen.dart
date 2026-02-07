@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:lukymam_mvp/l10n/app_localizations.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../../core/services/auth_service.dart';
 import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_spacing.dart';
@@ -18,11 +19,40 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
+  static const String _rememberEmailKey = 'remember_email';
+
   final _formKey = GlobalKey<FormState>();
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
   bool _rememberMe = false;
   bool _isLoading = false;
+  bool _isGoogleLoading = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadSavedEmail();
+  }
+
+  Future<void> _loadSavedEmail() async {
+    final prefs = await SharedPreferences.getInstance();
+    final savedEmail = prefs.getString(_rememberEmailKey);
+    if (savedEmail != null && savedEmail.isNotEmpty) {
+      setState(() {
+        _emailController.text = savedEmail;
+        _rememberMe = true;
+      });
+    }
+  }
+
+  Future<void> _saveOrClearEmail() async {
+    final prefs = await SharedPreferences.getInstance();
+    if (_rememberMe) {
+      await prefs.setString(_rememberEmailKey, _emailController.text.trim());
+    } else {
+      await prefs.remove(_rememberEmailKey);
+    }
+  }
 
   @override
   void dispose() {
@@ -44,6 +74,9 @@ class _LoginScreenState extends State<LoginScreen> {
 
     if (!mounted) return;
 
+    // Save or clear email based on Remember Me
+    await _saveOrClearEmail();
+
     setState(() => _isLoading = false);
 
     if (result.isSuccess) {
@@ -53,8 +86,35 @@ class _LoginScreenState extends State<LoginScreen> {
           backgroundColor: Colors.green,
         ),
       );
-      // TODO: Navigate to dashboard
-      // context.go('/home');
+      context.go('/home');
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(result.errorMessage ?? 'Erreur inconnue'),
+          backgroundColor: Colors.red,
+        ),
+      );
+    }
+  }
+
+  Future<void> _handleGoogleSignIn() async {
+    setState(() => _isGoogleLoading = true);
+
+    final authService = AuthService();
+    final result = await authService.signInWithGoogle();
+
+    if (!mounted) return;
+
+    setState(() => _isGoogleLoading = false);
+
+    if (result.isSuccess) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Bienvenue ${result.user?.displayName ?? ""}!'),
+          backgroundColor: Colors.green,
+        ),
+      );
+      context.go('/home');
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
@@ -121,6 +181,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   controller: _emailController,
                   label: l10n.email,
                   hint: l10n.emailHint,
+                  prefixIcon: Icons.email_outlined,
                   keyboardType: TextInputType.emailAddress,
                   validator: (value) {
                     if (value == null || value.isEmpty) {
@@ -139,6 +200,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 AppTextField(
                   controller: _passwordController,
                   label: l10n.password,
+                  prefixIcon: Icons.lock_outline,
                   isPassword: true,
                   textInputAction: TextInputAction.done,
                   onSubmitted: _handleLogin,
@@ -218,9 +280,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 // Social Buttons
                 SocialButton.google(
                   text: l10n.signInWithGoogle,
-                  onPressed: () {
-                    // TODO: Google Sign In
-                  },
+                  onPressed: _isGoogleLoading ? null : _handleGoogleSignIn,
                 ),
 
                 const SizedBox(height: AppSpacing.sm),
@@ -228,7 +288,14 @@ class _LoginScreenState extends State<LoginScreen> {
                 SocialButton.apple(
                   text: l10n.signInWithApple,
                   onPressed: () {
-                    // TODO: Apple Sign In
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        content: Text(
+                          'Cette fonctionnalité n\'est pas disponible dans la version MVP',
+                        ),
+                        backgroundColor: Colors.orange,
+                      ),
+                    );
                   },
                 ),
 

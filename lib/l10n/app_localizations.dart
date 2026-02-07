@@ -267,6 +267,204 @@ abstract class AppLocalizations {
   /// In fr, this message translates to:
   /// **'Le nom doit contenir au moins 2 caractères'**
   String get errorNameTooShort;
+
+  /// No description provided for @featureNotAvailableMVP.
+  ///
+  /// In fr, this message translates to:
+  /// **'Cette fonctionnalité n\'est pas disponible dans la version MVP'**
+  String get featureNotAvailableMVP;
+
+  /// No description provided for @myChildren.
+  ///
+  /// In fr, this message translates to:
+  /// **'Mes Enfants'**
+  String get myChildren;
+
+  /// No description provided for @noChildrenTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Aucun enfant enregistré'**
+  String get noChildrenTitle;
+
+  /// No description provided for @noChildrenSubtitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Ajoutez vos enfants pour suivre leur croissance, leurs vaccinations et bien plus encore.'**
+  String get noChildrenSubtitle;
+
+  /// No description provided for @addFirstChild.
+  ///
+  /// In fr, this message translates to:
+  /// **'Ajouter mon premier enfant'**
+  String get addFirstChild;
+
+  /// No description provided for @addChild.
+  ///
+  /// In fr, this message translates to:
+  /// **'Ajouter un enfant'**
+  String get addChild;
+
+  /// No description provided for @privacy.
+  ///
+  /// In fr, this message translates to:
+  /// **'Confidentialité'**
+  String get privacy;
+
+  /// No description provided for @helpAndSupport.
+  ///
+  /// In fr, this message translates to:
+  /// **'Aide & Support'**
+  String get helpAndSupport;
+
+  /// No description provided for @dataProtection.
+  ///
+  /// In fr, this message translates to:
+  /// **'Protection des données'**
+  String get dataProtection;
+
+  /// No description provided for @dataProtectionDesc.
+  ///
+  /// In fr, this message translates to:
+  /// **'Vos données personnelles sont stockées de manière sécurisée et ne sont jamais partagées avec des tiers sans votre consentement.'**
+  String get dataProtectionDesc;
+
+  /// No description provided for @medicalDataPrivacy.
+  ///
+  /// In fr, this message translates to:
+  /// **'Données médicales'**
+  String get medicalDataPrivacy;
+
+  /// No description provided for @medicalDataPrivacyDesc.
+  ///
+  /// In fr, this message translates to:
+  /// **'Vos informations médicales (cycle menstruel, grossesse, enfants) sont strictement confidentielles et accessibles uniquement par vous.'**
+  String get medicalDataPrivacyDesc;
+
+  /// No description provided for @dataDeleteTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Suppression des données'**
+  String get dataDeleteTitle;
+
+  /// No description provided for @dataDeleteDesc.
+  ///
+  /// In fr, this message translates to:
+  /// **'Vous pouvez demander la suppression complète de votre compte et de toutes vos données à tout moment depuis les paramètres.'**
+  String get dataDeleteDesc;
+
+  /// No description provided for @offlineData.
+  ///
+  /// In fr, this message translates to:
+  /// **'Données hors ligne'**
+  String get offlineData;
+
+  /// No description provided for @offlineDataDesc.
+  ///
+  /// In fr, this message translates to:
+  /// **'Certaines données peuvent être stockées localement sur votre appareil pour une utilisation hors ligne.'**
+  String get offlineDataDesc;
+
+  /// No description provided for @faqTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Questions fréquentes'**
+  String get faqTitle;
+
+  /// No description provided for @faqAddChild.
+  ///
+  /// In fr, this message translates to:
+  /// **'Comment ajouter un enfant ?'**
+  String get faqAddChild;
+
+  /// No description provided for @faqAddChildAnswer.
+  ///
+  /// In fr, this message translates to:
+  /// **'Allez dans votre profil, section \"Mes Enfants\", puis appuyez sur \"Ajouter un enfant\".'**
+  String get faqAddChildAnswer;
+
+  /// No description provided for @faqCycle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Comment suivre mon cycle menstruel ?'**
+  String get faqCycle;
+
+  /// No description provided for @faqCycleAnswer.
+  ///
+  /// In fr, this message translates to:
+  /// **'Dans la section \"Cycle Menstruel\" de votre profil, appuyez sur \"Enregistrer mes règles\" pour indiquer la date de début.'**
+  String get faqCycleAnswer;
+
+  /// No description provided for @faqEditInfo.
+  ///
+  /// In fr, this message translates to:
+  /// **'Comment modifier mes informations ?'**
+  String get faqEditInfo;
+
+  /// No description provided for @faqEditInfoAnswer.
+  ///
+  /// In fr, this message translates to:
+  /// **'Appuyez sur l\'icône de crayon à côté de chaque information pour la modifier.'**
+  String get faqEditInfoAnswer;
+
+  /// No description provided for @faqDataSecurity.
+  ///
+  /// In fr, this message translates to:
+  /// **'Mes données sont-elles sécurisées ?'**
+  String get faqDataSecurity;
+
+  /// No description provided for @faqDataSecurityAnswer.
+  ///
+  /// In fr, this message translates to:
+  /// **'Oui, toutes vos données sont cryptées et stockées de manière sécurisée. Consultez notre politique de confidentialité pour plus de détails.'**
+  String get faqDataSecurityAnswer;
+
+  /// No description provided for @contactUs.
+  ///
+  /// In fr, this message translates to:
+  /// **'Nous contacter'**
+  String get contactUs;
+
+  /// No description provided for @emailSupport.
+  ///
+  /// In fr, this message translates to:
+  /// **'Email'**
+  String get emailSupport;
+
+  /// No description provided for @emailSupportHint.
+  ///
+  /// In fr, this message translates to:
+  /// **'support@luckymam.com'**
+  String get emailSupportHint;
+
+  /// No description provided for @sendEmailPrompt.
+  ///
+  /// In fr, this message translates to:
+  /// **'Envoyez-nous un email à support@luckymam.com'**
+  String get sendEmailPrompt;
+
+  /// No description provided for @liveChat.
+  ///
+  /// In fr, this message translates to:
+  /// **'Chat en direct'**
+  String get liveChat;
+
+  /// No description provided for @liveChatUnavailable.
+  ///
+  /// In fr, this message translates to:
+  /// **'Disponible bientôt'**
+  String get liveChatUnavailable;
+
+  /// No description provided for @featureComingSoon.
+  ///
+  /// In fr, this message translates to:
+  /// **'Cette fonctionnalité sera disponible prochainement'**
+  String get featureComingSoon;
+
+  /// No description provided for @appVersion.
+  ///
+  /// In fr, this message translates to:
+  /// **'Version 1.0.0'**
+  String get appVersion;
 }
 
 class _AppLocalizationsDelegate

@@ -8,6 +8,7 @@ import '../../core/theme/app_spacing.dart';
 import '../../shared/widgets/buttons/primary_button.dart';
 import '../../shared/widgets/buttons/social_button.dart';
 import '../../shared/widgets/inputs/app_text_field.dart';
+import '../profile/services/profile_service.dart';
 
 /// Sign Up screen matching the reference dark UI design.
 class SignUpScreen extends StatefulWidget {
@@ -25,6 +26,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
   final _confirmPasswordController = TextEditingController();
   bool _rememberMe = false;
   bool _isLoading = false;
+  bool _isGoogleLoading = false;
 
   @override
   void dispose() {
@@ -52,17 +54,56 @@ class _SignUpScreenState extends State<SignUpScreen> {
     setState(() => _isLoading = false);
 
     if (result.isSuccess) {
+      // Create initial profile in Firestore
+      try {
+        final profileService = ProfileService();
+        await profileService.createInitialProfile(
+          displayName: _nameController.text,
+          email: _emailController.text,
+        );
+      } catch (e) {
+        debugPrint('Error creating initial profile: $e');
+      }
+
       // Navigate to home/dashboard on success
+      if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text('Bienvenue ${result.user?.displayName ?? ""}!'),
           backgroundColor: Colors.green,
         ),
       );
-      // TODO: Navigate to dashboard
-      // context.go('/home');
+      context.go('/home');
     } else {
       // Show error message
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(result.errorMessage ?? 'Erreur inconnue'),
+          backgroundColor: Colors.red,
+        ),
+      );
+    }
+  }
+
+  Future<void> _handleGoogleSignIn() async {
+    setState(() => _isGoogleLoading = true);
+
+    final authService = AuthService();
+    final result = await authService.signInWithGoogle();
+
+    if (!mounted) return;
+
+    setState(() => _isGoogleLoading = false);
+
+    if (result.isSuccess) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Bienvenue ${result.user?.displayName ?? ""}!'),
+          backgroundColor: Colors.green,
+        ),
+      );
+      context.go('/home');
+    } else {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(result.errorMessage ?? 'Erreur inconnue'),
@@ -155,6 +196,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                 AppTextField(
                   controller: _passwordController,
                   label: l10n.password,
+                  prefixIcon: Icons.lock_outline,
                   isPassword: true,
                   validator: (value) {
                     if (value == null || value.isEmpty) {
@@ -173,6 +215,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                 AppTextField(
                   controller: _confirmPasswordController,
                   label: l10n.confirmPassword,
+                  prefixIcon: Icons.lock_outline,
                   isPassword: true,
                   textInputAction: TextInputAction.done,
                   onSubmitted: _handleSignUp,
@@ -233,9 +276,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                 // Social Buttons
                 SocialButton.google(
                   text: l10n.signInWithGoogle,
-                  onPressed: () {
-                    // TODO: Google Sign In
-                  },
+                  onPressed: _isGoogleLoading ? null : _handleGoogleSignIn,
                 ),
 
                 const SizedBox(height: AppSpacing.sm),
@@ -243,7 +284,14 @@ class _SignUpScreenState extends State<SignUpScreen> {
                 SocialButton.apple(
                   text: l10n.signInWithApple,
                   onPressed: () {
-                    // TODO: Apple Sign In
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        content: Text(
+                          'Cette fonctionnalité n\'est pas disponible dans la version MVP',
+                        ),
+                        backgroundColor: Colors.orange,
+                      ),
+                    );
                   },
                 ),
 

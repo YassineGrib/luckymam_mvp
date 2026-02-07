@@ -1,11 +1,13 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 
 /// Authentication service handling Firebase Auth operations.
 class AuthService {
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+  final GoogleSignIn _googleSignIn = GoogleSignIn();
 
   /// Current user stream
   Stream<User?> get authStateChanges => _auth.authStateChanges();
@@ -75,8 +77,55 @@ class AuthService {
     }
   }
 
+  /// Sign in with Google
+  Future<AuthResult> signInWithGoogle() async {
+    try {
+      // Trigger the Google Sign In flow
+      final GoogleSignInAccount? googleUser = await _googleSignIn.signIn();
+
+      if (googleUser == null) {
+        // User cancelled the sign-in
+        return AuthResult.failure('Connexion annulée');
+      }
+
+      // Obtain the auth details
+      final GoogleSignInAuthentication googleAuth =
+          await googleUser.authentication;
+
+      // Create credential
+      final credential = GoogleAuthProvider.credential(
+        accessToken: googleAuth.accessToken,
+        idToken: googleAuth.idToken,
+      );
+
+      // Sign in to Firebase
+      final userCredential = await _auth.signInWithCredential(credential);
+      final user = userCredential.user;
+
+      if (user == null) {
+        return AuthResult.failure('Échec de la connexion Google');
+      }
+
+      // Check if this is a new user, create profile if so
+      final userDoc = await _firestore.collection('users').doc(user.uid).get();
+      if (!userDoc.exists) {
+        await _createUserProfile(
+          uid: user.uid,
+          name: user.displayName ?? 'Utilisateur',
+          email: user.email ?? '',
+        );
+      }
+
+      return AuthResult.success(user);
+    } catch (e) {
+      debugPrint('Google SignIn Error: $e');
+      return AuthResult.failure('Erreur de connexion Google');
+    }
+  }
+
   /// Sign out
   Future<void> signOut() async {
+    await _googleSignIn.signOut();
     await _auth.signOut();
   }
 

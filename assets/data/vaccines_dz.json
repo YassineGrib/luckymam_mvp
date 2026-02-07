@@ -1,0 +1,218 @@
+{
+    "version": "1.0",
+    "country": "DZ",
+    "language": "fr",
+    "vaccines": [
+        {
+            "id": "vax_birth",
+            "ageKey": "birth",
+            "ageFr": "Naissance",
+            "ageAr": "عند الولادة",
+            "ageMonths": 0,
+            "vaccines": [
+                {
+                    "code": "BCG",
+                    "nameFr": "Bacille Calmette et Guérin",
+                    "nameAr": "لقاح السل",
+                    "protectsFr": "Tuberculose",
+                    "protectsAr": "السل"
+                },
+                {
+                    "code": "HBV",
+                    "nameFr": "Vaccin Hépatite B",
+                    "nameAr": "لقاح التهاب الكبد ب",
+                    "protectsFr": "Hépatite B",
+                    "protectsAr": "التهاب الكبد ب"
+                }
+            ]
+        },
+        {
+            "id": "vax_2months",
+            "ageKey": "2_months",
+            "ageFr": "2 mois",
+            "ageAr": "شهرين",
+            "ageMonths": 2,
+            "vaccines": [
+                {
+                    "code": "DTCaVPI-Hib-HBV",
+                    "nameFr": "Vaccin hexavalent",
+                    "nameAr": "اللقاح السداسي",
+                    "protectsFr": "Diphtérie, Tétanos, Coqueluche, Polio, Haemophilus, Hépatite B",
+                    "protectsAr": "الدفتيريا، التيتانوس، السعال الديكي، شلل الأطفال، المستدمية النزلية، التهاب الكبد ب"
+                },
+                {
+                    "code": "VPOb",
+                    "nameFr": "Vaccin Polio Oral type b",
+                    "nameAr": "لقاح شلل الأطفال الفموي",
+                    "protectsFr": "Poliomyélite",
+                    "protectsAr": "شلل الأطفال"
+                },
+                {
+                    "code": "VPC",
+                    "nameFr": "Vaccin Pneumocoque Conjugué",
+                    "nameAr": "لقاح المكورات الرئوية",
+                    "protectsFr": "Infections pneumococciques",
+                    "protectsAr": "التهابات المكورات الرئوية"
+                }
+            ]
+        },
+        {
+            "id": "vax_4months",
+            "ageKey": "4_months",
+            "ageFr": "4 mois",
+            "ageAr": "4 أشهر",
+            "ageMonths": 4,
+            "vaccines": [
+                {
+                    "code": "DTCaVPI-Hib-HBV",
+                    "nameFr": "Vaccin hexavalent (rappel)",
+                    "nameAr": "اللقاح السداسي (جرعة معززة)",
+                    "protectsFr": "Diphtérie, Tétanos, Coqueluche, Polio, Haemophilus, Hépatite B",
+                    "protectsAr": "الدفتيريا، التيتانوس، السعال الديكي، شلل الأطفال، المستدمية النزلية، التهاب الكبد ب"
+                },
+                {
+                    "code": "VPOb",
+                    "nameFr": "Vaccin Polio Oral type b",
+                    "nameAr": "لقاح شلل الأطفال الفموي",
+                    "protectsFr": "Poliomyélite",
+                    "protectsAr": "شلل الأطفال"
+                },
+                {
+                    "code": "VPC",
+                    "nameFr": "Vaccin Pneumocoque Conjugué",
+                    "nameAr": "لقاح المكورات الرئوية",
+                    "protectsFr": "Infections pneumococciques",
+                    "protectsAr": "التهابات المكورات الرئوية"
+                }
+            ]
+        },
+        {
+            "id": "vax_11months",
+            "ageKey": "11_months",
+            "ageFr": "11 mois",
+            "ageAr": "11 شهراً",
+            "ageMonths": 11,
+            "vaccines": [
+                {
+                    "code": "ROR",
+                    "nameFr": "Rougeole-Oreillons-Rubéole",
+                    "nameAr": "الحصبة-النكاف-الحميراء",
+                    "protectsFr": "Rougeole, Oreillons, Rubéole",
+                    "protectsAr": "الحصبة، النكاف، الحميراء"
+                }
+            ]
+        },
+        {
+            "id": "vax_12months",
+            "ageKey": "12_months",
+            "ageFr": "12 mois",
+            "ageAr": "12 شهراً",
+            "ageMonths": 12,
+            "vaccines": [
+                {
+                    "code": "DTCaVPI-Hib-HBV",
+                    "nameFr": "Vaccin hexavalent (dose finale nourrisson)",
+                    "nameAr": "اللقاح السداسي (الجرعة النهائية للرضيع)",
+                    "protectsFr": "Diphtérie, Tétanos, Coqueluche, Polio, Haemophilus, Hépatite B",
+                    "protectsAr": "الدفتيريا، التيتانوس، السعال الديكي، شلل الأطفال، المستدمية النزلية، التهاب الكبد ب"
+                },
+                {
+                    "code": "VPOb",
+                    "nameFr": "Vaccin Polio Oral type b",
+                    "nameAr": "لقاح شلل الأطفال الفموي",
+                    "protectsFr": "Poliomyélite",
+                    "protectsAr": "شلل الأطفال"
+                },
+                {
+                    "code": "VPC",
+                    "nameFr": "Vaccin Pneumocoque Conjugué",
+                    "nameAr": "لقاح المكورات الرئوية",
+                    "protectsFr": "Infections pneumococciques",
+                    "protectsAr": "التهابات المكورات الرئوية"
+                }
+            ]
+        },
+        {
+            "id": "vax_18months",
+            "ageKey": "18_months",
+            "ageFr": "18 mois",
+            "ageAr": "18 شهراً",
+            "ageMonths": 18,
+            "vaccines": [
+                {
+                    "code": "ROR",
+                    "nameFr": "Rougeole-Oreillons-Rubéole (rappel)",
+                    "nameAr": "الحصبة-النكاف-الحميراء (جرعة معززة)",
+                    "protectsFr": "Rougeole, Oreillons, Rubéole",
+                    "protectsAr": "الحصبة، النكاف، الحميراء"
+                }
+            ]
+        },
+        {
+            "id": "vax_6years",
+            "ageKey": "6_years",
+            "ageFr": "6 ans",
+            "ageAr": "6 سنوات",
+            "ageMonths": 72,
+            "vaccines": [
+                {
+                    "code": "DTCa-VPI",
+                    "nameFr": "Vaccin tétravalent (rappel scolaire)",
+                    "nameAr": "اللقاح الرباعي (جرعة معززة مدرسية)",
+                    "protectsFr": "Diphtérie, Tétanos, Coqueluche, Polio",
+                    "protectsAr": "الدفتيريا، التيتانوس، السعال الديكي، شلل الأطفال"
+                }
+            ]
+        },
+        {
+            "id": "vax_11_13years",
+            "ageKey": "11_13_years",
+            "ageFr": "11-13 ans",
+            "ageAr": "11-13 سنة",
+            "ageMonths": 132,
+            "vaccines": [
+                {
+                    "code": "dT",
+                    "nameFr": "Vaccin bivalent (rappel adolescent)",
+                    "nameAr": "اللقاح الثنائي (جرعة معززة للمراهقين)",
+                    "protectsFr": "Tétanos, Diphtérie",
+                    "protectsAr": "التيتانوس، الدفتيريا"
+                }
+            ]
+        },
+        {
+            "id": "vax_16_18years",
+            "ageKey": "16_18_years",
+            "ageFr": "16-18 ans",
+            "ageAr": "16-18 سنة",
+            "ageMonths": 192,
+            "vaccines": [
+                {
+                    "code": "dT",
+                    "nameFr": "Vaccin bivalent (rappel adolescent)",
+                    "nameAr": "اللقاح الثنائي (جرعة معززة للمراهقين)",
+                    "protectsFr": "Tétanos, Diphtérie",
+                    "protectsAr": "التيتانوس، الدفتيريا"
+                }
+            ]
+        },
+        {
+            "id": "vax_adult",
+            "ageKey": "adult_decennial",
+            "ageFr": "Tous les 10 ans (18+)",
+            "ageAr": "كل 10 سنوات (18+)",
+            "ageMonths": 216,
+            "isRecurring": true,
+            "recurringIntervalMonths": 120,
+            "vaccines": [
+                {
+                    "code": "dT",
+                    "nameFr": "Vaccin bivalent décennal",
+                    "nameAr": "اللقاح الثنائي العشري",
+                    "protectsFr": "Tétanos, Diphtérie",
+                    "protectsAr": "التيتانوس، الدفتيريا"
+                }
+            ]
+        }
+    ]
+}

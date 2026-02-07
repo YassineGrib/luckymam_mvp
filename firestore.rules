@@ -5,6 +5,16 @@ service cloud.firestore {
     // Users collection - users can read/write their own document
     match /users/{userId} {
       allow read, write: if request.auth != null && request.auth.uid == userId;
+      
+      // Children subcollection - users can manage their own children
+      match /children/{childId} {
+        allow read, write: if request.auth != null && request.auth.uid == userId;
+        
+        // Vaccinations subcollection - users can track vaccinations for their children
+        match /vaccinations/{vaccinationId} {
+          allow read, write: if request.auth != null && request.auth.uid == userId;
+        }
+      }
     }
     
     // Default deny for other collections
