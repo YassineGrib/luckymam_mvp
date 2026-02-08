@@ -32,6 +32,8 @@ class Vaccine {
 
   /// Get localized protection info based on locale
   String getProtects(String locale) => locale == 'ar' ? protectsAr : protectsFr;
+
+  String get nameShort => code;
 }
 
 /// Represents a group of vaccines to be administered at a specific age.

@@ -19,6 +19,31 @@ final childrenProvider = StreamProvider<List<Child>>((ref) {
   return service.watchChildren();
 });
 
+/// State provider for selected child ID
+final selectedChildIdProvider = StateProvider<String?>((ref) => null);
+
+/// Provider for the currently selected child (or first child if none selected)
+final selectedChildProvider = Provider<AsyncValue<Child?>>((ref) {
+  final childrenAsync = ref.watch(childrenProvider);
+  final selectedId = ref.watch(selectedChildIdProvider);
+
+  return childrenAsync.when(
+    loading: () => const AsyncLoading(),
+    error: (e, s) => AsyncError(e, s),
+    data: (children) {
+      if (children.isEmpty) return const AsyncData(null);
+
+      if (selectedId != null) {
+        final selected = children.where((c) => c.id == selectedId).firstOrNull;
+        if (selected != null) return AsyncData(selected);
+      }
+
+      // Default to first child
+      return AsyncData(children.first);
+    },
+  );
+});
+
 /// Provider for profile loading state notifier.
 final profileActionsProvider =
     StateNotifierProvider<ProfileActionsNotifier, ProfileActionsState>((ref) {

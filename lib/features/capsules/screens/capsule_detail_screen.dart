@@ -1,0 +1,338 @@
+import 'package:cached_network_image/cached_network_image.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:intl/intl.dart';
+import 'package:shimmer/shimmer.dart';
+
+import '../../../core/theme/app_colors.dart';
+import '../../../core/theme/app_spacing.dart';
+import '../../profile/providers/profile_providers.dart';
+import '../models/capsule.dart';
+import '../providers/capsule_providers.dart';
+import '../widgets/audio_player.dart';
+
+/// Detail screen for viewing a single capsule.
+class CapsuleDetailScreen extends ConsumerWidget {
+  const CapsuleDetailScreen({super.key, required this.capsule});
+
+  final Capsule capsule;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
+    final childrenAsync = ref.watch(childrenProvider);
+    final childName = childrenAsync.whenOrNull(
+      data: (children) {
+        final child = children
+            .where((c) => c.id == capsule.childId)
+            .firstOrNull;
+        return child?.name;
+      },
+    );
+
+    return Scaffold(
+      backgroundColor: Colors.black,
+      body: Stack(
+        children: [
+          // Full-screen photo with Hero
+          Positioned.fill(
+            child: Hero(
+              tag: 'capsule_${capsule.id}',
+              child: InteractiveViewer(
+                minScale: 1.0,
+                maxScale: 4.0,
+                child: CachedNetworkImage(
+                  imageUrl: capsule.photoUrl,
+                  fit: BoxFit.contain,
+                  placeholder: (context, url) => Shimmer.fromColors(
+                    baseColor: Colors.grey[800]!,
+                    highlightColor: Colors.grey[700]!,
+                    child: Container(color: Colors.black),
+                  ),
+                  errorWidget: (context, url, error) => const Center(
+                    child: Icon(
+                      Icons.broken_image_rounded,
+                      color: Colors.white54,
+                      size: 60,
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ),
+
+          // Gradient overlays
+          Positioned(
+            top: 0,
+            left: 0,
+            right: 0,
+            height: 120,
+            child: DecoratedBox(
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
+                  colors: [
+                    Colors.black.withValues(alpha: 0.7),
+                    Colors.transparent,
+                  ],
+                ),
+              ),
+            ),
+          ),
+          Positioned(
+            bottom: 0,
+            left: 0,
+            right: 0,
+            height: 280,
+            child: DecoratedBox(
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.bottomCenter,
+                  end: Alignment.topCenter,
+                  colors: [
+                    Colors.black.withValues(alpha: 0.9),
+                    Colors.transparent,
+                  ],
+                ),
+              ),
+            ),
+          ),
+
+          // Top bar
+          Positioned(
+            top: MediaQuery.of(context).padding.top + 8,
+            left: 8,
+            right: 8,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                IconButton(
+                  onPressed: () => Navigator.pop(context),
+                  style: IconButton.styleFrom(backgroundColor: Colors.black38),
+                  icon: const Icon(Icons.close_rounded, color: Colors.white),
+                ),
+                Row(
+                  children: [
+                    // Favorite button
+                    IconButton(
+                      onPressed: () => _toggleFavorite(context, ref),
+                      style: IconButton.styleFrom(
+                        backgroundColor: capsule.isFavorite
+                            ? AppColors.goldenrod
+                            : Colors.black38,
+                      ),
+                      icon: Icon(
+                        capsule.isFavorite
+                            ? Icons.star_rounded
+                            : Icons.star_border_rounded,
+                        color: Colors.white,
+                      ),
+                    ),
+                    // Menu
+                    PopupMenuButton<String>(
+                      onSelected: (value) =>
+                          _handleMenuAction(context, ref, value),
+                      icon: const Icon(Icons.more_vert, color: Colors.white),
+                      color: isDark
+                          ? AppColors.surfaceDark
+                          : AppColors.surfaceLight,
+                      itemBuilder: (context) => [
+                        PopupMenuItem(
+                          value: 'delete',
+                          child: Row(
+                            children: [
+                              const Icon(
+                                Icons.delete_outline_rounded,
+                                color: AppColors.error,
+                              ),
+                              const SizedBox(width: 8),
+                              Text(
+                                'Supprimer',
+                                style: GoogleFonts.outfit(
+                                  color: AppColors.error,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+
+          // Bottom info panel
+          Positioned(
+            bottom: 0,
+            left: 0,
+            right: 0,
+            child: SafeArea(
+              child: Padding(
+                padding: const EdgeInsets.all(AppSpacing.screenPaddingH),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    // Emotion and title
+                    Row(
+                      children: [
+                        Icon(
+                          capsule.emotion.icon,
+                          size: 32,
+                          color: AppColors.primaryLight,
+                        ),
+                        const SizedBox(width: AppSpacing.sm),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                capsule.emotion.labelFr,
+                                style: GoogleFonts.outfit(
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.white,
+                                ),
+                              ),
+                              Text(
+                                _formatDetails(childName),
+                                style: GoogleFonts.outfit(
+                                  fontSize: 13,
+                                  color: Colors.white70,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+
+                    // Audio player
+                    if (capsule.hasAudio) ...[
+                      const SizedBox(height: AppSpacing.md),
+                      CapsuleAudioPlayer(
+                        audioUrl: capsule.audioUrl!,
+                        duration: capsule.audioDuration ?? 0,
+                      ),
+                    ],
+
+                    // Tags
+                    if (capsule.tags.isNotEmpty) ...[
+                      const SizedBox(height: AppSpacing.md),
+                      Wrap(
+                        spacing: 8,
+                        runSpacing: 8,
+                        children: capsule.tags
+                            .map(
+                              (tag) => Container(
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 12,
+                                  vertical: 6,
+                                ),
+                                decoration: BoxDecoration(
+                                  color: Colors.white.withValues(alpha: 0.15),
+                                  borderRadius: BorderRadius.circular(16),
+                                ),
+                                child: Text(
+                                  '#$tag',
+                                  style: GoogleFonts.outfit(
+                                    fontSize: 12,
+                                    color: Colors.white70,
+                                  ),
+                                ),
+                              ),
+                            )
+                            .toList(),
+                      ),
+                    ],
+                  ],
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  String _formatDetails(String? childName) {
+    final dateStr = DateFormat('d MMM yyyy', 'fr_FR').format(capsule.createdAt);
+    if (childName != null) {
+      return '$dateStr • $childName';
+    }
+    return dateStr;
+  }
+
+  void _toggleFavorite(BuildContext context, WidgetRef ref) {
+    ref.read(capsuleActionsProvider.notifier).toggleFavorite(capsule.id);
+  }
+
+  void _handleMenuAction(BuildContext context, WidgetRef ref, String action) {
+    if (action == 'delete') {
+      _showDeleteConfirmation(context, ref);
+    }
+  }
+
+  void _showDeleteConfirmation(BuildContext context, WidgetRef ref) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        backgroundColor: isDark
+            ? AppColors.surfaceDark
+            : AppColors.surfaceLight,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+        title: Text(
+          'Supprimer la capsule ?',
+          style: GoogleFonts.outfit(
+            fontWeight: FontWeight.bold,
+            color: isDark ? Colors.white : AppColors.onSurfaceLight,
+          ),
+        ),
+        content: Text(
+          'Cette action est irréversible. Le souvenir sera supprimé définitivement.',
+          style: GoogleFonts.outfit(
+            color: isDark
+                ? AppColors.textSecondaryDark
+                : AppColors.textSecondaryLight,
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: Text(
+              'Annuler',
+              style: GoogleFonts.outfit(
+                color: isDark ? Colors.white70 : AppColors.textSecondaryLight,
+              ),
+            ),
+          ),
+          TextButton(
+            onPressed: () async {
+              Navigator.pop(context); // Close dialog
+              await ref
+                  .read(capsuleActionsProvider.notifier)
+                  .deleteCapsule(capsule);
+              if (context.mounted) {
+                Navigator.pop(context); // Close detail screen
+              }
+            },
+            child: Text(
+              'Supprimer',
+              style: GoogleFonts.outfit(
+                color: AppColors.error,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}

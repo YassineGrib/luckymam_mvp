@@ -1,0 +1,36 @@
+rules_version = '2';
+
+service firebase.storage {
+  match /b/{bucket}/o {
+    // Helper function to check if user is authenticated
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+    
+    // Helper function to check if user owns the resource
+    function isOwner(userId) {
+      return request.auth.uid == userId;
+    }
+    
+    // User capsules media - photos and audio files
+    match /users/{userId}/capsules/{capsuleId}/{allPaths=**} {
+      // Users can read/write their own capsule media
+      allow read, write: if isAuthenticated() && isOwner(userId);
+    }
+    
+    // User profile pictures (future)
+    match /users/{userId}/profile/{fileName} {
+      allow read, write: if isAuthenticated() && isOwner(userId);
+    }
+    
+    // Children profile pictures (future)
+    match /users/{userId}/children/{childId}/{fileName} {
+      allow read, write: if isAuthenticated() && isOwner(userId);
+    }
+    
+    // Default deny
+    match /{allPaths=**} {
+      allow read, write: if false;
+    }
+  }
+}

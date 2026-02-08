@@ -1,0 +1,41 @@
+Bonne question! Voyons ce qui reste à implémenter selon le MVP et ce que nous avons déjà fait:
+
+Analyzed
+Implementation Plan
+Analyzed
+PROGRESS.md#L1-135
+Basé sur le PROGRESS.md et l'état actuel, voici un résumé de ce qui reste à faire:
+
+📋 Résumé - Prochaines Fonctionnalités
+✅ Déjà Fait:
+🔐 Authentication (email + Google SSO)
+👩 Profile Management
+👶 Family Management (enfants CRUD)
+💉 Vaccination Calendar (complet)
+📅 Timeline Feature (juste terminé!)
+🔄 En Cours (priorité haute):
+📸 Capsule Creation Flow
+Capture photo + audio
+Upload vers Firebase Storage
+Écran 
+CreateCapsuleScreen
+ existe mais doit être finalisé
+🌐 Arabic RTL Support
+Partial implementation
+📋 Planned (Phase 2 MVP):
+Priorité	Feature	Effort
+🔴 Haute	Capsules - Finir le flow de création	~2h
+🔴 Haute	Capsules - Liste/Gallery des capsules	~2h
+🟡 Moyenne	Timeline - Polish & animations	~1h
+🟡 Moyenne	Push Notifications (vaccins)	~2h
+🟢 Basse	Offline Mode	~3h
+🟢 Basse	Payment Integration	~4h
+🎯 Ma Recommandation - Prochaine Étape:
+→ Finir le flow Capsules car c'est la feature la plus importante pour l'engagement utilisateur:
+
+CreateCapsuleScreen
+ - Compléter avec camera/gallery picker
+CapsulesTab - Afficher la galerie des capsules sauvegardées
+CapsuleDetailScreen - Voir une capsule individuelle
+Integration avec Firebase Storage pour les médias
+Voulez-vous que je commence par les Capsules ou préférez-vous une autre feature?

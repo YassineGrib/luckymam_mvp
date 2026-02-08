@@ -1,5 +1,7 @@
 {
-  "projects": {},
+  "projects": {
+    "default": "luckymam-app-dv"
+  },
   "targets": {},
   "etags": {}
 }
