@@ -3,11 +3,10 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/theme/app_colors.dart';
 import '../widgets/daily_tip_card.dart';
-import '../widgets/health_quick_access.dart';
+import '../widgets/mother_health_card.dart';
+import '../widgets/children_overview.dart';
 import '../widgets/personal_header.dart';
 import '../widgets/recent_capsules.dart';
-import '../widgets/today_milestone_card.dart';
-import '../widgets/week_milestones.dart';
 
 /// Dashboard tab - main home content with personalized sections.
 class DashboardTab extends ConsumerWidget {
@@ -28,16 +27,14 @@ class DashboardTab extends ConsumerWidget {
             parent: AlwaysScrollableScrollPhysics(),
           ),
           slivers: [
-            // Personal greeting header
+            // Personal greeting header (Mother focus)
             const SliverToBoxAdapter(child: PersonalHeader()),
-            // Today's milestone hero card
-            const SliverToBoxAdapter(child: TodayMilestoneCard()),
-            // Health quick access (vaccines, appointments)
-            const SliverToBoxAdapter(child: HealthQuickAccess()),
+            // Mother's Health Card
+            const SliverToBoxAdapter(child: MotherHealthCard()),
+            // Children's Overview
+            const SliverToBoxAdapter(child: ChildrenOverview()),
             // Recent capsules preview
             const SliverToBoxAdapter(child: RecentCapsules()),
-            // This week's milestones
-            const SliverToBoxAdapter(child: WeekMilestones()),
             // Daily tip card
             const SliverToBoxAdapter(child: DailyTipCard()),
             // Bottom padding for navigation bar

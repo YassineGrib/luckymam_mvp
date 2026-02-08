@@ -5,6 +5,8 @@ import 'package:google_fonts/google_fonts.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../capsules/screens/capsule_detail_screen.dart';
 import '../../capsules/screens/create_capsule_screen.dart';
+import '../../profile/models/profile_models.dart';
+import '../../profile/providers/profile_providers.dart';
 import '../providers/home_providers.dart';
 
 /// Horizontal scroll section for recent capsules preview.
@@ -20,6 +22,8 @@ class RecentCapsules extends ConsumerWidget {
     final primary = isDark ? AppColors.primaryDark : AppColors.primaryLight;
 
     final capsules = ref.watch(recentCapsulesProvider);
+    final childrenAsync = ref.watch(childrenProvider);
+    final children = childrenAsync.value ?? [];
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -81,9 +85,15 @@ class RecentCapsules extends ConsumerWidget {
                     if (index == 0) {
                       return _buildAddButton(context, isDark, primary);
                     }
+                    final capsule = capsules[index - 1];
+                    final child = children.firstWhere(
+                      (c) => c.id == capsule.childId,
+                      orElse: () => children.first, // Fallback
+                    );
                     return _buildCapsuleThumbnail(
                       context,
-                      capsules[index - 1],
+                      capsule,
+                      child,
                       isDark,
                     );
                   },
@@ -135,7 +145,12 @@ class RecentCapsules extends ConsumerWidget {
     );
   }
 
-  Widget _buildCapsuleThumbnail(BuildContext context, capsule, bool isDark) {
+  Widget _buildCapsuleThumbnail(
+    BuildContext context,
+    capsule,
+    Child child,
+    bool isDark,
+  ) {
     return GestureDetector(
       onTap: () {
         Navigator.of(context).push(
@@ -170,6 +185,29 @@ class RecentCapsules extends ConsumerWidget {
                       errorBuilder: (_, __, ___) => _buildPlaceholder(isDark),
                     )
                   : _buildPlaceholder(isDark),
+              // Child name overlay (Top-Left)
+              Positioned(
+                top: 6,
+                left: 6,
+                child: Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 6,
+                    vertical: 2,
+                  ),
+                  decoration: BoxDecoration(
+                    color: Colors.black.withValues(alpha: 0.5),
+                    borderRadius: BorderRadius.circular(6),
+                  ),
+                  child: Text(
+                    child.name,
+                    style: GoogleFonts.outfit(
+                      fontSize: 10,
+                      color: Colors.white,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                ),
+              ),
               // Emotion overlay
               Positioned(
                 bottom: 6,
