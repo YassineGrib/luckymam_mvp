@@ -1,18 +1,25 @@
+import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import '../models/profile_models.dart';
 
 /// Service for managing user profile data in Firestore.
 class ProfileService {
   final FirebaseFirestore _firestore;
   final FirebaseAuth _auth;
+  final FirebaseStorage _storage;
 
   static const String _usersCollection = 'users';
   static const String _childrenSubcollection = 'children';
 
-  ProfileService({FirebaseFirestore? firestore, FirebaseAuth? auth})
-    : _firestore = firestore ?? FirebaseFirestore.instance,
-      _auth = auth ?? FirebaseAuth.instance;
+  ProfileService({
+    FirebaseFirestore? firestore,
+    FirebaseAuth? auth,
+    FirebaseStorage? storage,
+  }) : _firestore = firestore ?? FirebaseFirestore.instance,
+       _auth = auth ?? FirebaseAuth.instance,
+       _storage = storage ?? FirebaseStorage.instance;
 
   /// Get current user's UID.
   String? get currentUserId => _auth.currentUser?.uid;
@@ -140,6 +147,38 @@ class ProfileService {
     if (collection == null) throw Exception('User not authenticated');
 
     await collection.doc(childId).delete();
+  }
+
+  /// Upload child photo to Firebase Storage.
+  Future<String> uploadChildPhoto(String childId, File file) async {
+    final uid = currentUserId;
+    if (uid == null) throw Exception('User not authenticated');
+
+    final path = 'users/$uid/children/$childId/photo.jpg';
+    final ref = _storage.ref().child(path);
+
+    final uploadTask = ref.putFile(
+      file,
+      SettableMetadata(contentType: 'image/jpeg'),
+    );
+    final snapshot = await uploadTask;
+    return await snapshot.ref.getDownloadURL();
+  }
+
+  /// Upload user profile photo to Firebase Storage.
+  Future<String> uploadUserProfilePhoto(File file) async {
+    final uid = currentUserId;
+    if (uid == null) throw Exception('User not authenticated');
+
+    final path = 'users/$uid/profile/photo.jpg';
+    final ref = _storage.ref().child(path);
+
+    final uploadTask = ref.putFile(
+      file,
+      SettableMetadata(contentType: 'image/jpeg'),
+    );
+    final snapshot = await uploadTask;
+    return await snapshot.ref.getDownloadURL();
   }
 
   // ============ MEDICAL INFO OPERATIONS ============

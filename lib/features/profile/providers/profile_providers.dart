@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../models/profile_models.dart';
 import '../services/profile_service.dart';
@@ -113,6 +114,24 @@ class ProfileActionsNotifier extends StateNotifier<ProfileActionsState> {
     }
   }
 
+  /// Update profile photo.
+  Future<void> updateProfilePhoto(File file) async {
+    state = state.copyWith(isLoading: true);
+    try {
+      final photoUrl = await _service.uploadUserProfilePhoto(file);
+      await _service.updatePersonalInfo(photoUrl: photoUrl);
+      state = state.copyWith(
+        isLoading: false,
+        successMessage: 'Photo de profil mise à jour',
+      );
+    } catch (e) {
+      state = state.copyWith(
+        isLoading: false,
+        error: 'Erreur: ${e.toString()}',
+      );
+    }
+  }
+
   /// Update user status.
   Future<void> updateStatus(
     UserStatus status, {
@@ -185,10 +204,26 @@ class ProfileActionsNotifier extends StateNotifier<ProfileActionsState> {
   }
 
   /// Add child.
-  Future<void> addChild(Child child) async {
+  Future<void> addChild(Child child, {File? imageFile}) async {
     state = state.copyWith(isLoading: true);
     try {
-      await _service.addChild(child);
+      String? photoUrl;
+
+      // If image file provided, upload it first
+      if (imageFile != null) {
+        // We need a child ID for the path, so we create the doc first or use a temp ID.
+        // The service's addChild returns the ID.
+        final childId = await _service.addChild(child);
+        photoUrl = await _service.uploadChildPhoto(childId, imageFile);
+
+        // Update the child with the new photo URL
+        await _service.updateChild(
+          child.copyWith(id: childId, photoUrl: photoUrl),
+        );
+      } else {
+        await _service.addChild(child);
+      }
+
       state = state.copyWith(isLoading: false, successMessage: 'Enfant ajouté');
     } catch (e) {
       state = state.copyWith(
@@ -199,10 +234,16 @@ class ProfileActionsNotifier extends StateNotifier<ProfileActionsState> {
   }
 
   /// Update child.
-  Future<void> updateChild(Child child) async {
+  Future<void> updateChild(Child child, {File? imageFile}) async {
     state = state.copyWith(isLoading: true);
     try {
-      await _service.updateChild(child);
+      String? photoUrl = child.photoUrl;
+
+      if (imageFile != null) {
+        photoUrl = await _service.uploadChildPhoto(child.id, imageFile);
+      }
+
+      await _service.updateChild(child.copyWith(photoUrl: photoUrl));
       state = state.copyWith(
         isLoading: false,
         successMessage: 'Enfant mis à jour',

@@ -71,109 +71,171 @@ class PersonalHeader extends ConsumerWidget {
     final status = profile?.statusLabel ?? 'Bienvenue';
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final primary = isDark ? AppColors.primaryDark : AppColors.primaryLight;
+    final cardColor = isDark ? AppColors.surfaceDark : Colors.white;
 
-    return Row(
-      children: [
-        // Left content
-        Expanded(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              // Greeting
-              Text(
-                '$greeting, $name! 👋',
-                style: GoogleFonts.outfit(
-                  fontSize: 26,
-                  fontWeight: FontWeight.bold,
-                  color: textColor,
-                ),
-              ),
-              const SizedBox(height: 4),
-              // Profile Status
-              GestureDetector(
-                onTap: () {
-                  // Navigate to profile
-                  Navigator.of(context).push(
-                    MaterialPageRoute(builder: (_) => const ProfileScreen()),
-                  );
-                },
-                child: Row(
-                  children: [
-                    if (profile?.status == UserStatus.pregnant)
-                      Icon(
-                        Icons.pregnant_woman_rounded,
-                        size: 16,
-                        color: Colors.pink,
-                      )
-                    else
-                      Icon(
-                        Icons.child_friendly_rounded,
-                        size: 16,
-                        color: Colors.green,
-                      ),
-                    const SizedBox(width: 6),
-                    Text(
-                      status,
-                      style: GoogleFonts.outfit(
-                        fontSize: 14,
-                        color: secondaryColor,
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ),
-                    const SizedBox(width: 4),
-                    Icon(
-                      Icons.chevron_right_rounded,
-                      size: 16,
-                      color: secondaryColor,
-                    ),
-                  ],
-                ),
-              ),
-            ],
+    return Container(
+      width: double.infinity,
+      decoration: BoxDecoration(
+        color: cardColor,
+        borderRadius: BorderRadius.circular(24),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.05),
+            blurRadius: 15,
+            offset: const Offset(0, 5),
           ),
-        ),
-        // Avatar circle
-        GestureDetector(
-          onTap: () {
-            Navigator.of(
-              context,
-            ).push(MaterialPageRoute(builder: (_) => const ProfileScreen()));
-          },
-          child: Container(
-            width: 48,
-            height: 48,
-            decoration: BoxDecoration(
-              shape: BoxShape.circle,
-              gradient: LinearGradient(
-                colors: [primary, primary.withValues(alpha: 0.7)],
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-              ),
-              boxShadow: [
-                BoxShadow(
-                  color: primary.withValues(alpha: 0.3),
-                  blurRadius: 8,
-                  offset: const Offset(0, 4),
+        ],
+      ),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(24),
+        child: Stack(
+          children: [
+            // Background Pattern Overlay
+            Positioned.fill(
+              child: Opacity(
+                opacity: isDark ? 0.03 : 0.05,
+                child: Image.asset(
+                  'assets/images/heroPatern.png',
+                  fit: BoxFit.cover,
+                  repeat: ImageRepeat.repeat,
                 ),
-              ],
+              ),
             ),
-            child: profile?.photoUrl != null
-                ? ClipOval(
-                    child: Image.network(profile!.photoUrl!, fit: BoxFit.cover),
-                  )
-                : Center(
-                    child: Text(
-                      name.isNotEmpty ? name[0].toUpperCase() : 'M',
-                      style: GoogleFonts.outfit(
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.white,
+            // Content
+            Padding(
+              padding: const EdgeInsets.all(20),
+              child: Row(
+                children: [
+                  // Left content
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        // Greeting
+                        Text(
+                          '$greeting,',
+                          style: GoogleFonts.outfit(
+                            fontSize: 16,
+                            color: secondaryColor,
+                          ),
+                        ),
+                        Text(
+                          '$name! 👋',
+                          style: GoogleFonts.outfit(
+                            fontSize: 26,
+                            fontWeight: FontWeight.bold,
+                            color: textColor,
+                          ),
+                        ),
+                        const SizedBox(height: 8),
+                        // Profile Status
+                        GestureDetector(
+                          onTap: () {
+                            Navigator.of(context).push(
+                              MaterialPageRoute(
+                                builder: (_) => const ProfileScreen(),
+                              ),
+                            );
+                          },
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 10,
+                              vertical: 4,
+                            ),
+                            decoration: BoxDecoration(
+                              color: primary.withValues(alpha: 0.1),
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                            child: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                if (profile?.status == UserStatus.pregnant)
+                                  const Icon(
+                                    Icons.pregnant_woman_rounded,
+                                    size: 14,
+                                    color: Colors.pink,
+                                  )
+                                else
+                                  const Icon(
+                                    Icons.child_friendly_rounded,
+                                    size: 14,
+                                    color: Colors.green,
+                                  ),
+                                const SizedBox(width: 6),
+                                Text(
+                                  status,
+                                  style: GoogleFonts.outfit(
+                                    fontSize: 12,
+                                    color: textColor.withValues(alpha: 0.8),
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                ),
+                                const SizedBox(width: 4),
+                                Icon(
+                                  Icons.chevron_right_rounded,
+                                  size: 14,
+                                  color: secondaryColor,
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  // Avatar circle
+                  GestureDetector(
+                    onTap: () {
+                      Navigator.of(context).push(
+                        MaterialPageRoute(
+                          builder: (_) => const ProfileScreen(),
+                        ),
+                      );
+                    },
+                    child: Container(
+                      width: 60,
+                      height: 60,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        border: Border.all(
+                          color: primary.withValues(alpha: 0.2),
+                          width: 2,
+                        ),
+                        boxShadow: [
+                          BoxShadow(
+                            color: primary.withValues(alpha: 0.2),
+                            blurRadius: 10,
+                            offset: const Offset(0, 4),
+                          ),
+                        ],
+                      ),
+                      child: ClipOval(
+                        child: profile?.photoUrl != null
+                            ? Image.network(
+                                profile!.photoUrl!,
+                                fit: BoxFit.cover,
+                              )
+                            : Container(
+                                color: primary,
+                                alignment: Alignment.center,
+                                child: Text(
+                                  name.isNotEmpty ? name[0].toUpperCase() : 'M',
+                                  style: GoogleFonts.outfit(
+                                    fontSize: 24,
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.white,
+                                  ),
+                                ),
+                              ),
                       ),
                     ),
                   ),
-          ),
+                ],
+              ),
+            ),
+          ],
         ),
-      ],
+      ),
     );
   }
 }

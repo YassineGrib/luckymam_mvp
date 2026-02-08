@@ -1,7 +1,9 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import '../../l10n/app_localizations.dart';
 import '../../core/services/auth_service.dart';
@@ -70,6 +72,7 @@ class ProfileScreen extends ConsumerWidget {
                 primaryColor: primaryColor,
                 textColor: textColor,
                 secondaryColor: secondaryColor,
+                onCameraTap: () => _pickProfileImage(context, ref),
               ),
               loading: () => _ProfileHeader(
                 name: user?.displayName ?? 'Chargement...',
@@ -258,11 +261,15 @@ class ProfileScreen extends ConsumerWidget {
       context: context,
       builder: (context) => AddEditChildDialog(
         child: existingChild,
-        onSave: (child) async {
+        onSave: (child, {imageFile}) async {
           if (existingChild != null) {
-            await ref.read(profileActionsProvider.notifier).updateChild(child);
+            await ref
+                .read(profileActionsProvider.notifier)
+                .updateChild(child, imageFile: imageFile);
           } else {
-            await ref.read(profileActionsProvider.notifier).addChild(child);
+            await ref
+                .read(profileActionsProvider.notifier)
+                .addChild(child, imageFile: imageFile);
           }
         },
         onDelete: existingChild != null
@@ -306,6 +313,21 @@ class ProfileScreen extends ConsumerWidget {
       ref.read(profileActionsProvider.notifier).logPeriodStart(date);
     }
   }
+
+  Future<void> _pickProfileImage(BuildContext context, WidgetRef ref) async {
+    final picker = ImagePicker();
+    final pickedFile = await picker.pickImage(
+      source: ImageSource.gallery,
+      imageQuality: 70,
+      maxWidth: 800,
+    );
+
+    if (pickedFile != null) {
+      await ref
+          .read(profileActionsProvider.notifier)
+          .updateProfilePhoto(File(pickedFile.path));
+    }
+  }
 }
 
 // ============ SECTION WIDGETS ============
@@ -319,6 +341,7 @@ class _ProfileHeader extends StatelessWidget {
     required this.secondaryColor,
     required this.status,
     this.photoUrl,
+    this.onCameraTap,
   });
 
   final String name;
@@ -328,6 +351,7 @@ class _ProfileHeader extends StatelessWidget {
   final Color primaryColor;
   final Color textColor;
   final Color secondaryColor;
+  final VoidCallback? onCameraTap;
 
   @override
   Widget build(BuildContext context) {
@@ -353,65 +377,71 @@ class _ProfileHeader extends StatelessWidget {
       child: Row(
         children: [
           // Avatar
-          Stack(
-            children: [
-              Container(
-                width: 80,
-                height: 80,
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  gradient: LinearGradient(
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
-                    colors: [primaryColor, primaryColor.withValues(alpha: 0.7)],
-                  ),
-                  boxShadow: [
-                    BoxShadow(
-                      color: primaryColor.withValues(alpha: 0.3),
-                      blurRadius: 16,
-                      offset: const Offset(0, 6),
+          GestureDetector(
+            onTap: onCameraTap,
+            child: Stack(
+              children: [
+                Container(
+                  width: 80,
+                  height: 80,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    gradient: LinearGradient(
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
+                      colors: [
+                        primaryColor,
+                        primaryColor.withValues(alpha: 0.7),
+                      ],
                     ),
-                  ],
-                ),
-                child: photoUrl != null
-                    ? ClipOval(
-                        child: Image.network(photoUrl!, fit: BoxFit.cover),
-                      )
-                    : Center(
-                        child: Text(
-                          name.isNotEmpty ? name[0].toUpperCase() : 'U',
-                          style: GoogleFonts.outfit(
-                            fontSize: 32,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.white,
+                    boxShadow: [
+                      BoxShadow(
+                        color: primaryColor.withValues(alpha: 0.3),
+                        blurRadius: 16,
+                        offset: const Offset(0, 6),
+                      ),
+                    ],
+                  ),
+                  child: photoUrl != null
+                      ? ClipOval(
+                          child: Image.network(photoUrl!, fit: BoxFit.cover),
+                        )
+                      : Center(
+                          child: Text(
+                            name.isNotEmpty ? name[0].toUpperCase() : 'U',
+                            style: GoogleFonts.outfit(
+                              fontSize: 32,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.white,
+                            ),
                           ),
                         ),
-                      ),
-              ),
-              Positioned(
-                bottom: 0,
-                right: 0,
-                child: Container(
-                  padding: const EdgeInsets.all(6),
-                  decoration: BoxDecoration(
-                    color: Theme.of(context).scaffoldBackgroundColor,
-                    shape: BoxShape.circle,
-                  ),
+                ),
+                Positioned(
+                  bottom: 0,
+                  right: 0,
                   child: Container(
                     padding: const EdgeInsets.all(6),
                     decoration: BoxDecoration(
-                      color: primaryColor,
+                      color: Theme.of(context).scaffoldBackgroundColor,
                       shape: BoxShape.circle,
                     ),
-                    child: const Icon(
-                      Icons.camera_alt_rounded,
-                      size: 14,
-                      color: Colors.white,
+                    child: Container(
+                      padding: const EdgeInsets.all(6),
+                      decoration: BoxDecoration(
+                        color: primaryColor,
+                        shape: BoxShape.circle,
+                      ),
+                      child: const Icon(
+                        Icons.camera_alt_rounded,
+                        size: 14,
+                        color: Colors.white,
+                      ),
                     ),
                   ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
           const SizedBox(width: AppSpacing.md),
           // Name and email

@@ -55,49 +55,69 @@ class ChildSummaryCard extends StatelessWidget {
       child: Container(
         width: 160,
         margin: const EdgeInsets.only(right: 12),
-        padding: const EdgeInsets.all(12),
         decoration: BoxDecoration(
           color: cardColor,
-          borderRadius: BorderRadius.circular(16),
+          borderRadius: BorderRadius.circular(20),
+          image: child.photoUrl != null
+              ? DecorationImage(
+                  image: NetworkImage(child.photoUrl!),
+                  fit: BoxFit.cover,
+                )
+              : null,
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withValues(alpha: 0.05),
-              blurRadius: 8,
-              offset: const Offset(0, 2),
+              color: Colors.black.withValues(alpha: 0.1),
+              blurRadius: 12,
+              offset: const Offset(0, 4),
             ),
           ],
-          border: Border.all(
-            color: primaryColor.withValues(alpha: 0.1),
-            width: 1,
-          ),
         ),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            // Avatar
-            Container(
-              width: 60,
-              height: 60,
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                gradient: LinearGradient(
-                  colors: [primaryColor, primaryColor.withValues(alpha: 0.7)],
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                ),
-                boxShadow: [
-                  BoxShadow(
-                    color: primaryColor.withValues(alpha: 0.2),
-                    blurRadius: 8,
-                    offset: const Offset(0, 4),
-                  ),
-                ],
-              ),
-              child: child.photoUrl != null
-                  ? ClipOval(
-                      child: Image.network(child.photoUrl!, fit: BoxFit.cover),
-                    )
-                  : Center(
+        child: Container(
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(20),
+            gradient: child.photoUrl != null
+                ? LinearGradient(
+                    begin: Alignment.topCenter,
+                    end: Alignment.bottomCenter,
+                    colors: [
+                      Colors.transparent,
+                      Colors.black.withValues(alpha: 0.2),
+                      Colors.black.withValues(alpha: 0.8),
+                    ],
+                    stops: const [0.4, 0.6, 1.0],
+                  )
+                : null,
+          ),
+          padding: const EdgeInsets.all(12),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.end,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              if (child.photoUrl == null) ...[
+                // Avatar (only if no background photo)
+                Center(
+                  child: Container(
+                    width: 60,
+                    height: 60,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      gradient: LinearGradient(
+                        colors: [
+                          primaryColor,
+                          primaryColor.withValues(alpha: 0.7),
+                        ],
+                        begin: Alignment.topLeft,
+                        end: Alignment.bottomRight,
+                      ),
+                      boxShadow: [
+                        BoxShadow(
+                          color: primaryColor.withValues(alpha: 0.2),
+                          blurRadius: 8,
+                          offset: const Offset(0, 4),
+                        ),
+                      ],
+                    ),
+                    child: Center(
                       child: Text(
                         child.name.isNotEmpty
                             ? child.name[0].toUpperCase()
@@ -109,54 +129,70 @@ class ChildSummaryCard extends StatelessWidget {
                         ),
                       ),
                     ),
-            ),
-            const SizedBox(height: 12),
+                  ),
+                ),
+                const Spacer(),
+              ],
 
-            // Name & Age
-            Text(
-              child.name,
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
-              style: GoogleFonts.outfit(
-                fontSize: 16,
-                fontWeight: FontWeight.bold,
-                color: textColor,
+              // Name & Age
+              Text(
+                child.name,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                style: GoogleFonts.outfit(
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                  color: child.photoUrl != null ? Colors.white : textColor,
+                ),
               ),
-            ),
-            Text(
-              child.ageString,
-              style: GoogleFonts.outfit(fontSize: 12, color: secondaryColor),
-            ),
-            const SizedBox(height: 12),
+              Text(
+                child.ageString,
+                style: GoogleFonts.outfit(
+                  fontSize: 12,
+                  color: child.photoUrl != null
+                      ? Colors.white.withValues(alpha: 0.8)
+                      : secondaryColor,
+                ),
+              ),
+              const SizedBox(height: 8),
 
-            // Next Event
-            Container(
-              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-              decoration: BoxDecoration(
-                color: eventColor.withValues(alpha: 0.1),
-                borderRadius: BorderRadius.circular(8),
-              ),
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Icon(eventIcon, size: 12, color: eventColor),
-                  const SizedBox(width: 4),
-                  Flexible(
-                    child: Text(
-                      eventText,
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      style: GoogleFonts.outfit(
-                        fontSize: 11,
-                        fontWeight: FontWeight.w600,
-                        color: eventColor,
+              // Next Event
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                decoration: BoxDecoration(
+                  color: child.photoUrl != null
+                      ? Colors.white.withValues(alpha: 0.2)
+                      : eventColor.withValues(alpha: 0.1),
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Icon(
+                      eventIcon,
+                      size: 12,
+                      color: child.photoUrl != null ? Colors.white : eventColor,
+                    ),
+                    const SizedBox(width: 4),
+                    Flexible(
+                      child: Text(
+                        eventText,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: GoogleFonts.outfit(
+                          fontSize: 11,
+                          fontWeight: FontWeight.w600,
+                          color: child.photoUrl != null
+                              ? Colors.white
+                              : eventColor,
+                        ),
                       ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );

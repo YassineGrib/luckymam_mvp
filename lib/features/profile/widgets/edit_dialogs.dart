@@ -1,5 +1,7 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_spacing.dart';
@@ -534,7 +536,7 @@ class AddEditChildDialog extends StatefulWidget {
   });
 
   final Child? child;
-  final Future<void> Function(Child) onSave;
+  final Future<void> Function(Child, {File? imageFile}) onSave;
   final Future<void> Function()? onDelete;
 
   @override
@@ -545,6 +547,7 @@ class _AddEditChildDialogState extends State<AddEditChildDialog> {
   late TextEditingController _nameController;
   DateTime? _birthDate;
   ChildGender _gender = ChildGender.girl;
+  File? _imageFile;
   bool _isLoading = false;
 
   bool get isEditing => widget.child != null;
@@ -561,6 +564,19 @@ class _AddEditChildDialogState extends State<AddEditChildDialog> {
   void dispose() {
     _nameController.dispose();
     super.dispose();
+  }
+
+  Future<void> _pickImage() async {
+    final picker = ImagePicker();
+    final pickedFile = await picker.pickImage(
+      source: ImageSource.gallery,
+      imageQuality: 70,
+      maxWidth: 800,
+    );
+
+    if (pickedFile != null) {
+      setState(() => _imageFile = File(pickedFile.path));
+    }
   }
 
   Future<void> _selectDate() async {
@@ -598,7 +614,7 @@ class _AddEditChildDialogState extends State<AddEditChildDialog> {
         gender: _gender,
         photoUrl: widget.child?.photoUrl,
       );
-      await widget.onSave(child);
+      await widget.onSave(child, imageFile: _imageFile);
       if (mounted) Navigator.of(context).pop(true);
     } catch (e) {
       if (mounted) {
@@ -670,6 +686,68 @@ class _AddEditChildDialogState extends State<AddEditChildDialog> {
                 style: GoogleFonts.outfit(
                   fontSize: 20,
                   fontWeight: FontWeight.bold,
+                ),
+              ),
+              const SizedBox(height: AppSpacing.lg),
+
+              // Photo selection
+              Center(
+                child: GestureDetector(
+                  onTap: _pickImage,
+                  child: Stack(
+                    children: [
+                      Container(
+                        width: 100,
+                        height: 100,
+                        decoration: BoxDecoration(
+                          color: Colors.grey.shade200,
+                          shape: BoxShape.circle,
+                          border: Border.all(
+                            color: primaryColor.withValues(alpha: 0.2),
+                            width: 2,
+                          ),
+                          image: _imageFile != null
+                              ? DecorationImage(
+                                  image: FileImage(_imageFile!),
+                                  fit: BoxFit.cover,
+                                )
+                              : (widget.child?.photoUrl != null
+                                    ? DecorationImage(
+                                        image: NetworkImage(
+                                          widget.child!.photoUrl!,
+                                        ),
+                                        fit: BoxFit.cover,
+                                      )
+                                    : null),
+                        ),
+                        child:
+                            _imageFile == null && widget.child?.photoUrl == null
+                            ? Icon(
+                                Icons.add_a_photo_outlined,
+                                color: primaryColor,
+                                size: 32,
+                              )
+                            : null,
+                      ),
+                      Positioned(
+                        bottom: 0,
+                        right: 0,
+                        child: Container(
+                          padding: const EdgeInsets.all(6),
+                          decoration: BoxDecoration(
+                            color: primaryColor,
+                            shape: BoxShape.circle,
+                            border: Border.all(color: Colors.white, width: 2),
+                          ),
+                          child: const Icon(
+                            Icons.edit_rounded,
+                            color: Colors.white,
+                            size: 14,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
               ),
               const SizedBox(height: AppSpacing.lg),

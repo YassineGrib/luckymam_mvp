@@ -3,10 +3,10 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/theme/app_colors.dart';
 import '../widgets/daily_tip_card.dart';
-import '../widgets/mother_health_card.dart';
 import '../widgets/children_overview.dart';
 import '../widgets/personal_header.dart';
 import '../widgets/recent_capsules.dart';
+import '../widgets/cycle_tracking_section.dart';
 
 /// Dashboard tab - main home content with personalized sections.
 class DashboardTab extends ConsumerWidget {
@@ -29,14 +29,19 @@ class DashboardTab extends ConsumerWidget {
           slivers: [
             // Personal greeting header (Mother focus)
             const SliverToBoxAdapter(child: PersonalHeader()),
-            // Mother's Health Card
-            const SliverToBoxAdapter(child: MotherHealthCard()),
+
+            // Visual Cycle Tracking (Replaces the basic MotherHealthCard)
+            const SliverToBoxAdapter(child: CycleTrackingSection()),
+
             // Children's Overview
             const SliverToBoxAdapter(child: ChildrenOverview()),
+
             // Recent capsules preview
             const SliverToBoxAdapter(child: RecentCapsules()),
+
             // Daily tip card
             const SliverToBoxAdapter(child: DailyTipCard()),
+
             // Bottom padding for navigation bar
             const SliverPadding(padding: EdgeInsets.only(bottom: 100)),
           ],
