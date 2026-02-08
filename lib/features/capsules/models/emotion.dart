@@ -11,6 +11,28 @@ enum Emotion {
   proud,
   worried;
 
+  /// Get emoji for this emotion.
+  String get emoji {
+    switch (this) {
+      case Emotion.happy:
+        return '😊';
+      case Emotion.love:
+        return '❤️';
+      case Emotion.tender:
+        return '🥰';
+      case Emotion.sad:
+        return '😢';
+      case Emotion.surprised:
+        return '😯';
+      case Emotion.sleepy:
+        return '😴';
+      case Emotion.proud:
+        return '🤩';
+      case Emotion.worried:
+        return '😟';
+    }
+  }
+
   /// Get icon for this emotion.
   IconData get icon {
     switch (this) {

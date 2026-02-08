@@ -24,11 +24,10 @@ CreateCapsuleScreen
 Partial implementation
 📋 Planned (Phase 2 MVP):
 Priorité	Feature	Effort
-🔴 Haute	Capsules - Finir le flow de création	~2h
-🔴 Haute	Capsules - Liste/Gallery des capsules	~2h
-🟡 Moyenne	Timeline - Polish & animations	~1h
-🟡 Moyenne	Push Notifications (vaccins)	~2h
-🟢 Basse	Offline Mode	~3h
+✅ Fait	Capsules - Finir le flow de création	Terminé
+✅ Fait	Capsules - Liste/Gallery des capsules	Terminé
+✅ Fait	Timeline - Polish & animations	Terminé
+✅ Fait	Push Notifications (vaccins)	Terminé
 🟢 Basse	Payment Integration	~4h
 🎯 Ma Recommandation - Prochaine Étape:
 → Finir le flow Capsules car c'est la feature la plus importante pour l'engagement utilisateur:

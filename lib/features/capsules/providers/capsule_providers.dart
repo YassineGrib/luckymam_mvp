@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../models/capsule.dart';
 import '../models/emotion.dart';
 import '../services/capsule_service.dart';
+import '../../timeline/services/timeline_service.dart';
 
 /// Provider for CapsuleService instance.
 final capsuleServiceProvider = Provider<CapsuleService>((ref) {
@@ -147,13 +148,15 @@ class CapsuleActionsState {
 
 final capsuleActionsProvider =
     StateNotifierProvider<CapsuleActionsNotifier, CapsuleActionsState>((ref) {
-      return CapsuleActionsNotifier(ref.watch(capsuleServiceProvider));
+      return CapsuleActionsNotifier(ref.watch(capsuleServiceProvider), ref);
     });
 
 class CapsuleActionsNotifier extends StateNotifier<CapsuleActionsState> {
   final CapsuleService _service;
+  final Ref _ref;
 
-  CapsuleActionsNotifier(this._service) : super(const CapsuleActionsState());
+  CapsuleActionsNotifier(this._service, this._ref)
+    : super(const CapsuleActionsState());
 
   void clearMessages() {
     state = state.copyWith(error: null, successMessage: null);
@@ -180,6 +183,22 @@ class CapsuleActionsNotifier extends StateNotifier<CapsuleActionsState> {
         milestoneId: milestoneId,
         tags: tags,
       );
+
+      // If tied to a milestone, mark it as completed
+      if (milestoneId != null) {
+        try {
+          final timelineService = _ref.read(timelineServiceProvider);
+          await timelineService.completeMilestone(
+            userId: capsule.userId,
+            childId: childId,
+            milestoneId: milestoneId,
+            capsuleId: capsule.id,
+          );
+        } catch (e) {
+          // Log error but don't fail the whole operation
+          // debugPrint('Failed to complete milestone: $e');
+        }
+      }
       state = state.copyWith(
         isLoading: false,
         successMessage: 'Capsule créée avec succès',

@@ -68,7 +68,7 @@ final recentCapsulesProvider = Provider<List<Capsule>>((ref) {
             // Sort by date and take last 5
             final sorted = List<Capsule>.from(capsules)
               ..sort((a, b) => b.createdAt.compareTo(a.createdAt));
-            return sorted.take(5).toList();
+            return sorted.take(10).toList();
           }).value ??
           [];
     },

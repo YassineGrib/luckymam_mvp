@@ -5,12 +5,17 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 
+import 'package:intl/intl.dart';
+
+import '../../../core/services/notification_service.dart';
 import '../models/vaccine.dart';
 import '../models/vaccine_status.dart';
 
 /// Service for loading vaccine data and managing vaccination status.
 class VaccineService {
-  VaccineService();
+  final NotificationService _notificationService;
+
+  VaccineService(this._notificationService);
 
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
@@ -114,5 +119,49 @@ class VaccineService {
     if (collection == null) throw Exception('User not authenticated');
 
     await collection.doc(vaccineGroupId).update({'notes': notes});
+  }
+
+  /// Schedule reminders for incomplete vaccines.
+  Future<void> scheduleReminders({
+    required String childId,
+    required DateTime dob,
+    required String childName,
+  }) async {
+    final calendar = await loadVaccineCalendar();
+    final statuses = await getVaccinationStatuses(childId);
+    final completedGroups = statuses.map((s) => s.vaccineGroupId).toSet();
+
+    for (final group in calendar.groups) {
+      // Skip if completed
+      if (completedGroups.contains(group.id)) continue;
+
+      final dueDate = group.getExpectedDate(dob);
+      final now = DateTime.now();
+
+      // Skip if already passed (or very close)
+      if (dueDate.isBefore(now)) continue;
+
+      // Schedule for 9:00 AM on due date
+      final scheduleDate = DateTime(
+        dueDate.year,
+        dueDate.month,
+        dueDate.day,
+        9,
+        0,
+      );
+
+      // If 9 AM today is passed, schedule for tomorrow? No, just keep Date.
+
+      // Generate unique ID
+      final notificationId = (childId + group.id).hashCode;
+
+      await _notificationService.scheduleNotification(
+        id: notificationId,
+        title: 'Rappel Vaccin - $childName',
+        body:
+            'Le vaccin ${group.vaccineCodesLabel} est prévu pour le ${DateFormat('dd/MM/yyyy').format(dueDate)}',
+        scheduledDate: scheduleDate,
+      );
+    }
   }
 }

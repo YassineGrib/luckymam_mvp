@@ -1,12 +1,29 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../../core/services/notification_service.dart';
+import '../../profile/providers/profile_providers.dart';
 import '../models/vaccine.dart';
 import '../models/vaccine_status.dart';
 import '../services/vaccine_service.dart';
 
 /// Provider for VaccineService instance.
 final vaccineServiceProvider = Provider<VaccineService>((ref) {
-  return VaccineService();
+  final notificationService = ref.watch(notificationServiceProvider);
+  return VaccineService(notificationService);
+});
+
+/// Provider to schedule reminders for all children.
+final vaccineSchedulerProvider = FutureProvider<void>((ref) async {
+  final childrenAsync = await ref.watch(childrenProvider.future);
+  final service = ref.watch(vaccineServiceProvider);
+
+  for (final child in childrenAsync) {
+    await service.scheduleReminders(
+      childId: child.id,
+      dob: child.birthDate,
+      childName: child.name,
+    );
+  }
 });
 
 /// Provider for the vaccine calendar data.

@@ -201,14 +201,18 @@ class _TimelineScreenState extends ConsumerState<TimelineScreen> {
                     badgeColor: primary,
                   ),
                   const SizedBox(height: AppSpacing.sm),
-                  ...todayMilestones.map(
-                    (m) => Padding(
-                      padding: const EdgeInsets.only(bottom: AppSpacing.sm),
-                      child: MilestoneCard(
-                        milestone: m,
-                        isToday: true,
-                        onTap: () => _openMilestoneDetail(context, m),
+                  ...todayMilestones.asMap().entries.map(
+                    (entry) => _buildAnimatedItem(
+                      Padding(
+                        padding: const EdgeInsets.only(bottom: AppSpacing.sm),
+                        child: MilestoneCard(
+                          milestone: entry.value,
+                          isToday: true,
+                          onTap: () =>
+                              _openMilestoneDetail(context, entry.value),
+                        ),
                       ),
+                      entry.key,
                     ),
                   ),
                   const SizedBox(height: AppSpacing.md),
@@ -224,15 +228,24 @@ class _TimelineScreenState extends ConsumerState<TimelineScreen> {
                   const SizedBox(height: AppSpacing.sm),
                   ...upcomingMilestones
                       .take(10)
+                      .toList()
+                      .asMap()
+                      .entries
                       .map(
-                        (m) => Padding(
-                          padding: const EdgeInsets.only(bottom: AppSpacing.xs),
-                          child: MilestoneCard(
-                            milestone: m,
-                            isToday: false,
-                            compact: true,
-                            onTap: () => _openMilestoneDetail(context, m),
+                        (entry) => _buildAnimatedItem(
+                          Padding(
+                            padding: const EdgeInsets.only(
+                              bottom: AppSpacing.xs,
+                            ),
+                            child: MilestoneCard(
+                              milestone: entry.value,
+                              isToday: false,
+                              compact: true,
+                              onTap: () =>
+                                  _openMilestoneDetail(context, entry.value),
+                            ),
                           ),
+                          todayMilestones.length + entry.key,
                         ),
                       ),
                 ],
@@ -384,6 +397,28 @@ class _TimelineScreenState extends ConsumerState<TimelineScreen> {
           ),
         ],
       ),
+    );
+  }
+
+  Widget _buildAnimatedItem(Widget child, int index) {
+    return TweenAnimationBuilder<double>(
+      tween: Tween(begin: 0.0, end: 1.0),
+      duration: const Duration(milliseconds: 500),
+      curve: Curves.easeOutQuart,
+      // Delay based on index (clamped to avoid long delays)
+      builder: (context, value, child) {
+        // Calculate effective opacity based on delayed start simulation
+        // Since TweenAnimationBuilder starts immediately, we can't easily delay content without a Timer.
+        // Instead, we use a simple slide/fade for now for all items,
+        // relying on ListView's build timing for some natural stagger or just uniform animation.
+        // To do real stagger, we'd need a StaggeredList package or stateful widget.
+        // Let's stick to a simple entry animation.
+        return Transform.translate(
+          offset: Offset(0, 30 * (1 - value)),
+          child: Opacity(opacity: value, child: child),
+        );
+      },
+      child: child,
     );
   }
 

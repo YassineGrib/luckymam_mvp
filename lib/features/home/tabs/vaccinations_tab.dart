@@ -34,6 +34,7 @@ class _VaccinationsTabState extends ConsumerState<VaccinationsTab> {
         : AppColors.textSecondaryLight;
 
     final childrenAsync = ref.watch(childrenProvider);
+    ref.watch(vaccineSchedulerProvider); // Schedule notifications
 
     return Scaffold(
       backgroundColor: bgColor,

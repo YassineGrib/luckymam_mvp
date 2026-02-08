@@ -12,6 +12,16 @@ final timelineServiceProvider = Provider<TimelineService>((ref) {
   return TimelineService(FirebaseFirestore.instance);
 });
 
+/// Stream provider for milestone progress
+final milestoneProgressStreamProvider =
+    StreamProvider.family<List<MilestoneProgress>, String>((ref, childId) {
+      final user = ref.watch(profileProvider).value;
+      if (user == null) return Stream.value([]);
+
+      final service = ref.watch(timelineServiceProvider);
+      return service.watchMilestoneProgress(user.uid, childId);
+    });
+
 /// Provider for filtered milestones based on selected child
 final childMilestonesProvider =
     FutureProvider.family<List<MilestoneWithDueDate>, String>((
@@ -20,13 +30,33 @@ final childMilestonesProvider =
     ) async {
       final service = ref.watch(timelineServiceProvider);
       final children = await ref.watch(childrenProvider.future);
+      final progressList = await ref.watch(
+        milestoneProgressStreamProvider(childId).future,
+      );
 
       final child = children.firstWhere(
         (c) => c.id == childId,
         orElse: () => throw Exception('Child not found'),
       );
 
-      return service.getMilestonesForChild(child);
+      final milestones = service.getMilestonesForChild(child);
+
+      // Merge progress
+      return milestones.map((m) {
+        final progress = progressList
+            .where((p) => p.milestoneId == m.milestone.id)
+            .firstOrNull;
+
+        if (progress != null) {
+          return MilestoneWithDueDate(
+            milestone: m.milestone,
+            dueDate: m.dueDate,
+            isCompleted: progress.status == MilestoneStatus.completed,
+            capsuleId: progress.capsuleId,
+          );
+        }
+        return m;
+      }).toList();
     });
 
 /// Provider for today's milestones
@@ -217,11 +247,17 @@ class TimelineService {
         .collection('milestoneProgress')
         .where('childId', isEqualTo: childId)
         .snapshots()
-        .map(
-          (snapshot) => snapshot.docs
+        .map((snapshot) {
+          final list = snapshot.docs
               .map((doc) => MilestoneProgress.fromJson(doc.data(), doc.id))
-              .toList(),
-        );
+              .toList();
+          list.sort((a, b) {
+            final aDate = a.completedAt ?? DateTime(0);
+            final bDate = b.completedAt ?? DateTime(0);
+            return bDate.compareTo(aDate);
+          });
+          return list;
+        });
   }
 
   /// Mark milestone as completed
@@ -276,5 +312,24 @@ class TimelineService {
     );
 
     await docRef.set(progress.toJson());
+  }
+
+  /// Mark milestone as pending / uncomplete
+  Future<void> uncompleteMilestone({
+    required String userId,
+    required String childId,
+    required String milestoneId,
+  }) async {
+    final snapshot = await _firestore
+        .collection('users')
+        .doc(userId)
+        .collection('milestoneProgress')
+        .where('childId', isEqualTo: childId)
+        .where('milestoneId', isEqualTo: milestoneId)
+        .get();
+
+    for (final doc in snapshot.docs) {
+      await doc.reference.delete();
+    }
   }
 }
