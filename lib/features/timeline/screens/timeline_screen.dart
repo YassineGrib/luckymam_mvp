@@ -4,6 +4,7 @@ import 'package:google_fonts/google_fonts.dart';
 
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_spacing.dart';
+import '../../profile/models/profile_models.dart';
 import '../../profile/providers/profile_providers.dart';
 import '../models/phase.dart';
 import '../services/timeline_service.dart';
@@ -81,6 +82,7 @@ class _TimelineScreenState extends ConsumerState<TimelineScreen> {
                     _buildHeader(
                       context,
                       selectedChild.name,
+                      children,
                       textColor,
                       primary,
                     ),
@@ -119,24 +121,17 @@ class _TimelineScreenState extends ConsumerState<TimelineScreen> {
   Widget _buildHeader(
     BuildContext context,
     String childName,
+    List<Child> children,
     Color textColor,
     Color primary,
   ) {
-    return Padding(
-      padding: const EdgeInsets.all(AppSpacing.screenPaddingH),
+    return Container(
+      padding: const EdgeInsets.all(AppSpacing.md),
       child: Row(
         children: [
-          Container(
-            padding: const EdgeInsets.all(10),
-            decoration: BoxDecoration(
-              gradient: AppColors.primaryGradient,
-              borderRadius: BorderRadius.circular(12),
-            ),
-            child: const Icon(
-              Icons.auto_stories_rounded,
-              color: Colors.white,
-              size: 24,
-            ),
+          IconButton(
+            onPressed: () => Navigator.pop(context),
+            icon: Icon(Icons.arrow_back_ios_new_rounded, color: textColor),
           ),
           const SizedBox(width: AppSpacing.sm),
           Expanded(
@@ -162,7 +157,43 @@ class _TimelineScreenState extends ConsumerState<TimelineScreen> {
               ],
             ),
           ),
-          // Child selector dropdown could go here
+          if (children.length > 1)
+            PopupMenuButton<String>(
+              icon: Icon(Icons.swap_horiz_rounded, color: primary),
+              tooltip: 'Changer d\'enfant',
+              onSelected: (childId) {
+                ref.read(selectedChildIdProvider.notifier).state = childId;
+              },
+              itemBuilder: (context) => children.map((child) {
+                return PopupMenuItem<String>(
+                  value: child.id,
+                  child: Row(
+                    children: [
+                      if (child.photoUrl != null)
+                        CircleAvatar(
+                          radius: 12,
+                          backgroundImage: NetworkImage(child.photoUrl!),
+                        )
+                      else
+                        CircleAvatar(
+                          radius: 12,
+                          backgroundColor: primary.withOpacity(0.1),
+                          child: Text(
+                            child.name[0].toUpperCase(),
+                            style: TextStyle(
+                              fontSize: 10,
+                              color: primary,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ),
+                      const SizedBox(width: 8),
+                      Text(child.name, style: GoogleFonts.outfit()),
+                    ],
+                  ),
+                );
+              }).toList(),
+            ),
         ],
       ),
     );

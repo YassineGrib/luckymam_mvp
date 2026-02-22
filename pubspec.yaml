@@ -76,6 +76,7 @@ dev_dependencies:
   flutter_lints: ^6.0.0
   riverpod_generator: ^2.6.5
   build_runner: ^2.4.14
+  flutter_launcher_icons: ^0.13.1
 
 # The following section is specific to Flutter packages.
 flutter:
@@ -115,3 +116,9 @@ flutter:
   #
   # For details regarding fonts from package dependencies,
   # see https://flutter.dev/to/font-from-package
+
+flutter_launcher_icons:
+  android: "launcher_icon"
+  image_path: "assets/logo/image.png"
+  adaptive_icon_background: "#FFFFFF"
+  adaptive_icon_foreground: "assets/logo/image.png"
