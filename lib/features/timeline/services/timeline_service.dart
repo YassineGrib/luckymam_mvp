@@ -6,11 +6,33 @@ import '../../profile/providers/profile_providers.dart';
 import '../data/milestones_data.dart';
 import '../models/milestone.dart';
 import '../models/phase.dart';
+import 'milestone_notification_service.dart';
 
 /// Provider for TimelineService
 final timelineServiceProvider = Provider<TimelineService>((ref) {
   return TimelineService(FirebaseFirestore.instance);
 });
+
+/// Side-effect provider: auto-schedules milestone reminders for a child.
+///
+/// Watches [childMilestonesProvider] and schedules reminders whenever data
+/// is available. Dispose cleans up nothing — notification IDs are stable.
+final milestoneRemindersProvider = FutureProvider.autoDispose
+    .family<void, String>((ref, childId) async {
+      final childrenAsync = await ref.watch(childrenProvider.future);
+      final child = childrenAsync.where((c) => c.id == childId).firstOrNull;
+      if (child == null) return;
+
+      final milestones = await ref.watch(
+        childMilestonesProvider(childId).future,
+      );
+
+      final notifService = ref.watch(milestoneNotificationServiceProvider);
+      await notifService.scheduleAllReminders(
+        child: child,
+        milestones: milestones,
+      );
+    });
 
 /// Stream provider for milestone progress
 final milestoneProgressStreamProvider =

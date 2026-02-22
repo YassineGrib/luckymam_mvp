@@ -16,6 +16,7 @@ import 'help_screen.dart';
 import 'providers/profile_providers.dart';
 import 'widgets/edit_dialogs.dart';
 import 'widgets/profile_widgets.dart';
+import '../notifications/notifications_screen.dart';
 
 /// Full profile screen with Firestore integration.
 class ProfileScreen extends ConsumerWidget {
@@ -991,8 +992,12 @@ class _SettingsSection extends ConsumerWidget {
           textColor: textColor,
           secondaryColor: secondaryColor,
           title: 'Notifications',
-          subtitle: 'Activées',
-          onTap: () {},
+          subtitle: 'Gérer les rappels',
+          onTap: () {
+            Navigator.of(context).push(
+              MaterialPageRoute(builder: (_) => const NotificationsScreen()),
+            );
+          },
         ),
         _SettingsTile(
           icon: Icons.lock_outline_rounded,

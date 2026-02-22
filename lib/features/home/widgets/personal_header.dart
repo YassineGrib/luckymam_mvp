@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import '../../../core/theme/app_colors.dart';
+import '../../notifications/notifications_screen.dart';
 import '../../profile/models/profile_models.dart';
 import '../../profile/providers/profile_providers.dart';
 import '../providers/home_providers.dart';
@@ -183,6 +184,11 @@ class PersonalHeader extends ConsumerWidget {
                       ],
                     ),
                   ),
+
+                  // Notification bell
+                  _NotifBell(primary: primary),
+                  const SizedBox(width: 8),
+
                   // Avatar circle
                   GestureDetector(
                     onTap: () {
@@ -235,6 +241,34 @@ class PersonalHeader extends ConsumerWidget {
             ),
           ],
         ),
+      ),
+    );
+  }
+}
+
+// ─── Bell icon widget ─────────────────────────────────────────────────────────
+
+class _NotifBell extends StatelessWidget {
+  const _NotifBell({required this.primary});
+  final Color primary;
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: () {
+        Navigator.of(
+          context,
+        ).push(MaterialPageRoute(builder: (_) => const NotificationsScreen()));
+      },
+      child: Container(
+        width: 44,
+        height: 44,
+        decoration: BoxDecoration(
+          shape: BoxShape.circle,
+          color: primary.withValues(alpha: 0.1),
+          border: Border.all(color: primary.withValues(alpha: 0.2), width: 1),
+        ),
+        child: Icon(Icons.notifications_outlined, color: primary, size: 22),
       ),
     );
   }

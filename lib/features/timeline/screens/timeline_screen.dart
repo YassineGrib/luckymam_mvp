@@ -212,6 +212,9 @@ class _TimelineScreenState extends ConsumerState<TimelineScreen> {
     Color secondaryText,
     Color primary,
   ) {
+    // Side-effect: schedule milestone reminders whenever milestones are loaded.
+    ref.watch(milestoneRemindersProvider(childId));
+
     final allMilestonesAsync = ref.watch(childMilestonesProvider(childId));
 
     return allMilestonesAsync.when(

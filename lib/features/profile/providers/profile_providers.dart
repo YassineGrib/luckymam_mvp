@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../../../core/services/cycle_notification_service.dart';
 import '../models/profile_models.dart';
 import '../services/profile_service.dart';
 
@@ -48,7 +49,10 @@ final selectedChildProvider = Provider<AsyncValue<Child?>>((ref) {
 /// Provider for profile loading state notifier.
 final profileActionsProvider =
     StateNotifierProvider<ProfileActionsNotifier, ProfileActionsState>((ref) {
-      return ProfileActionsNotifier(ref.watch(profileServiceProvider));
+      return ProfileActionsNotifier(
+        ref.watch(profileServiceProvider),
+        ref.watch(cycleNotificationServiceProvider),
+      );
     });
 
 /// State for profile actions (loading, error handling).
@@ -79,8 +83,10 @@ class ProfileActionsState {
 /// Notifier for profile actions.
 class ProfileActionsNotifier extends StateNotifier<ProfileActionsState> {
   final ProfileService _service;
+  final CycleNotificationService _cycleNotif;
 
-  ProfileActionsNotifier(this._service) : super(const ProfileActionsState());
+  ProfileActionsNotifier(this._service, this._cycleNotif)
+    : super(const ProfileActionsState());
 
   /// Clear messages.
   void clearMessages() {
@@ -191,6 +197,13 @@ class ProfileActionsNotifier extends StateNotifier<ProfileActionsState> {
     state = state.copyWith(isLoading: true);
     try {
       await _service.logPeriodStart(date);
+
+      // Re-schedule cycle reminders with the new period date
+      final updatedProfile = await _service.getProfile();
+      if (updatedProfile != null) {
+        await _cycleNotif.scheduleReminders(updatedProfile.cycleInfo);
+      }
+
       state = state.copyWith(
         isLoading: false,
         successMessage: 'Règles enregistrées',

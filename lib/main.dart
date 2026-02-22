@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:lukymam_mvp/l10n/app_localizations.dart';
 import 'core/providers/theme_provider.dart';
 import 'core/router/app_router.dart';
+import 'core/services/notification_service.dart';
 import 'core/theme/app_theme.dart';
 import 'package:timezone/data/latest.dart' as tz;
 
@@ -14,8 +15,12 @@ Future<void> main() async {
   // Initialize Firebase
   await Firebase.initializeApp();
 
-  // Initialize Timezone
+  // Initialize Timezone (also done inside NotificationService, but belt+suspenders)
   tz.initializeTimeZones();
+
+  // Initialize notification service and request permissions
+  final notificationService = NotificationService();
+  await notificationService.requestPermissions();
 
   runApp(const ProviderScope(child: LuckymamApp()));
 }
