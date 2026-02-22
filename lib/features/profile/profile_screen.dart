@@ -7,6 +7,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import '../../l10n/app_localizations.dart';
 import '../../core/services/auth_service.dart';
+import '../../core/providers/theme_provider.dart';
 import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_spacing.dart';
 import 'models/profile_models.dart';
@@ -941,7 +942,7 @@ class _CycleSection extends StatelessWidget {
   }
 }
 
-class _SettingsSection extends StatelessWidget {
+class _SettingsSection extends ConsumerWidget {
   const _SettingsSection({
     required this.isDark,
     required this.primaryColor,
@@ -953,7 +954,7 @@ class _SettingsSection extends StatelessWidget {
   final VoidCallback onLogout;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final secondaryColor = isDark
         ? AppColors.textSecondaryDark
         : AppColors.textSecondaryLight;
@@ -972,7 +973,7 @@ class _SettingsSection extends StatelessWidget {
           trailing: Switch(
             value: isDark,
             onChanged: (value) {
-              // TODO: Implement theme toggle
+              ref.read(themeModeProvider.notifier).toggle();
             },
             activeColor: primaryColor,
           ),
