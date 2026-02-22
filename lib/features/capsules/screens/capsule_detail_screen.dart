@@ -36,30 +36,11 @@ class CapsuleDetailScreen extends ConsumerWidget {
       backgroundColor: Colors.black,
       body: Stack(
         children: [
-          // Full-screen photo with Hero
+          // Full-screen photo with living animation
           Positioned.fill(
             child: Hero(
               tag: 'capsule_${capsule.id}',
-              child: InteractiveViewer(
-                minScale: 1.0,
-                maxScale: 4.0,
-                child: CachedNetworkImage(
-                  imageUrl: capsule.photoUrl,
-                  fit: BoxFit.contain,
-                  placeholder: (context, url) => Shimmer.fromColors(
-                    baseColor: Colors.grey[800]!,
-                    highlightColor: Colors.grey[700]!,
-                    child: Container(color: Colors.black),
-                  ),
-                  errorWidget: (context, url, error) => const Center(
-                    child: Icon(
-                      Icons.broken_image_rounded,
-                      color: Colors.white54,
-                      size: 60,
-                    ),
-                  ),
-                ),
-              ),
+              child: _LivingCover(photoUrl: capsule.photoUrl),
             ),
           ),
 
@@ -332,6 +313,78 @@ class CapsuleDetailScreen extends ConsumerWidget {
             ),
           ),
         ],
+      ),
+    );
+  }
+}
+
+/// Animated cover image with slow Ken Burns effect.
+class _LivingCover extends StatefulWidget {
+  const _LivingCover({required this.photoUrl});
+
+  final String photoUrl;
+
+  @override
+  State<_LivingCover> createState() => _LivingCoverState();
+}
+
+class _LivingCoverState extends State<_LivingCover>
+    with SingleTickerProviderStateMixin {
+  late final AnimationController _controller;
+  late final Animation<double> _scaleAnimation;
+  late final Animation<Alignment> _alignAnimation;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = AnimationController(
+      vsync: this,
+      duration: const Duration(seconds: 25),
+    )..repeat(reverse: true);
+
+    _scaleAnimation = Tween<double>(
+      begin: 1.0,
+      end: 1.08,
+    ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeInOut));
+
+    _alignAnimation = AlignmentTween(
+      begin: const Alignment(-0.05, -0.05),
+      end: const Alignment(0.05, 0.05),
+    ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeInOut));
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return AnimatedBuilder(
+      animation: _controller,
+      builder: (context, child) {
+        return Transform.scale(
+          scale: _scaleAnimation.value,
+          alignment: _alignAnimation.value,
+          child: child,
+        );
+      },
+      child: CachedNetworkImage(
+        imageUrl: widget.photoUrl,
+        fit: BoxFit.cover,
+        placeholder: (context, url) => Shimmer.fromColors(
+          baseColor: Colors.grey[800]!,
+          highlightColor: Colors.grey[700]!,
+          child: Container(color: Colors.black),
+        ),
+        errorWidget: (context, url, error) => const Center(
+          child: Icon(
+            Icons.broken_image_rounded,
+            color: Colors.white54,
+            size: 60,
+          ),
+        ),
       ),
     );
   }

@@ -5,6 +5,7 @@ import 'package:shimmer/shimmer.dart';
 
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_spacing.dart';
+import '../../profile/models/profile_models.dart';
 import '../../profile/providers/profile_providers.dart';
 import '../models/capsule.dart';
 import '../providers/capsule_providers.dart';
@@ -283,84 +284,147 @@ class CapsulesGallery extends ConsumerWidget {
   ) {
     if (children.isEmpty) return const SizedBox.shrink();
 
+    final surface = isDark ? AppColors.surfaceDark : AppColors.surfaceLight;
+
     return Container(
-      height: 44,
+      height: 64,
       margin: const EdgeInsets.symmetric(
         horizontal: AppSpacing.screenPaddingH,
         vertical: AppSpacing.xs,
       ),
-      child: ListView(
+      child: ListView.separated(
         scrollDirection: Axis.horizontal,
-        children: [
-          // "All" pill
-          _buildChildPill(
-            context,
-            ref,
-            label: 'Tous',
-            childId: null,
-            isSelected: selectedChildId == null,
-            isDark: isDark,
-            primary: primary,
-            textColor: textColor,
-          ),
-          const SizedBox(width: AppSpacing.xs),
-          // Child pills
-          ...children.map(
-            (child) => Padding(
-              padding: const EdgeInsets.only(right: AppSpacing.xs),
-              child: _buildChildPill(
-                context,
-                ref,
-                label: child.name,
-                childId: child.id,
-                isSelected: selectedChildId == child.id,
-                isDark: isDark,
-                primary: primary,
-                textColor: textColor,
+        itemCount: children.length + 1,
+        separatorBuilder: (_, __) => const SizedBox(width: AppSpacing.sm),
+        itemBuilder: (context, index) {
+          // "All" card at index 0
+          if (index == 0) {
+            final isSelected = selectedChildId == null;
+            return GestureDetector(
+              onTap: () =>
+                  ref.read(capsuleFilterProvider.notifier).setChildId(null),
+              child: AnimatedContainer(
+                duration: const Duration(milliseconds: 200),
+                width: 80,
+                padding: const EdgeInsets.symmetric(
+                  horizontal: AppSpacing.sm,
+                  vertical: AppSpacing.xs,
+                ),
+                decoration: BoxDecoration(
+                  color: isSelected ? primary.withValues(alpha: 0.15) : surface,
+                  borderRadius: BorderRadius.circular(14),
+                  border: Border.all(
+                    color: isSelected ? primary : Colors.transparent,
+                    width: 2,
+                  ),
+                ),
+                child: Center(
+                  child: Text(
+                    'Tous',
+                    style: GoogleFonts.outfit(
+                      fontSize: 13,
+                      fontWeight: FontWeight.w600,
+                      color: isSelected ? primary : textColor,
+                    ),
+                  ),
+                ),
+              ),
+            );
+          }
+
+          final child = children[index - 1] as Child;
+          final isSelected = selectedChildId == child.id;
+
+          return GestureDetector(
+            onTap: () =>
+                ref.read(capsuleFilterProvider.notifier).setChildId(child.id),
+            child: AnimatedContainer(
+              duration: const Duration(milliseconds: 200),
+              width: 130,
+              padding: const EdgeInsets.symmetric(
+                horizontal: AppSpacing.sm,
+                vertical: AppSpacing.xs,
+              ),
+              decoration: BoxDecoration(
+                color: isSelected ? primary.withValues(alpha: 0.15) : surface,
+                borderRadius: BorderRadius.circular(14),
+                border: Border.all(
+                  color: isSelected ? primary : Colors.transparent,
+                  width: 2,
+                ),
+              ),
+              child: Row(
+                children: [
+                  Container(
+                    width: 36,
+                    height: 36,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      color: isSelected
+                          ? primary
+                          : secondaryText.withValues(alpha: 0.2),
+                      border: Border.all(
+                        color: isSelected
+                            ? primary.withValues(alpha: 0.5)
+                            : Colors.transparent,
+                        width: 2,
+                      ),
+                    ),
+                    clipBehavior: Clip.antiAlias,
+                    child: child.photoUrl != null && child.photoUrl!.isNotEmpty
+                        ? Image.network(
+                            child.photoUrl!,
+                            fit: BoxFit.cover,
+                            width: 36,
+                            height: 36,
+                            errorBuilder: (_, __, ___) => Center(
+                              child: Text(
+                                child.name.isNotEmpty
+                                    ? child.name[0].toUpperCase()
+                                    : '?',
+                                style: GoogleFonts.outfit(
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.bold,
+                                  color: isSelected
+                                      ? Colors.white
+                                      : secondaryText,
+                                ),
+                              ),
+                            ),
+                          )
+                        : Center(
+                            child: Text(
+                              child.name.isNotEmpty
+                                  ? child.name[0].toUpperCase()
+                                  : '?',
+                              style: GoogleFonts.outfit(
+                                fontSize: 14,
+                                fontWeight: FontWeight.bold,
+                                color: isSelected
+                                    ? Colors.white
+                                    : secondaryText,
+                              ),
+                            ),
+                          ),
+                  ),
+                  const SizedBox(width: AppSpacing.xs),
+                  Expanded(
+                    child: Text(
+                      child.name,
+                      style: GoogleFonts.outfit(
+                        fontSize: 13,
+                        fontWeight: FontWeight.w600,
+                        color: isSelected ? primary : textColor,
+                      ),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ),
+                ],
               ),
             ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildChildPill(
-    BuildContext context,
-    WidgetRef ref, {
-    required String label,
-    required String? childId,
-    required bool isSelected,
-    required bool isDark,
-    required Color primary,
-    required Color textColor,
-  }) {
-    return GestureDetector(
-      onTap: () {
-        ref.read(capsuleFilterProvider.notifier).setChildId(childId);
-      },
-      child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-        decoration: BoxDecoration(
-          color: isSelected
-              ? primary.withValues(alpha: 0.15)
-              : (isDark
-                    ? AppColors.surfaceContainerDark
-                    : AppColors.surfaceContainerLight),
-          borderRadius: BorderRadius.circular(20),
-          border: Border.all(
-            color: isSelected ? primary : Colors.transparent,
-            width: 1.5,
-          ),
-        ),
-        child: Text(
-          label,
-          style: GoogleFonts.outfit(
-            fontSize: 13,
-            fontWeight: isSelected ? FontWeight.w600 : FontWeight.w400,
-            color: isSelected ? primary : textColor,
-          ),
-        ),
+          );
+        },
       ),
     );
   }

@@ -7,8 +7,8 @@ import '../../../core/theme/app_spacing.dart';
 import '../../vaccines/models/vaccine_status.dart';
 import '../../vaccines/providers/vaccine_providers.dart';
 
-/// Card widget displaying a vaccine group with its status.
-class VaccineCard extends StatelessWidget {
+/// Card widget displaying a vaccine group with collapsible details.
+class VaccineCard extends StatefulWidget {
   const VaccineCard({
     super.key,
     required this.vaccineGroup,
@@ -19,6 +19,14 @@ class VaccineCard extends StatelessWidget {
   final VaccineGroupWithStatus vaccineGroup;
   final VoidCallback onMarkComplete;
   final VoidCallback onMarkIncomplete;
+
+  @override
+  State<VaccineCard> createState() => _VaccineCardState();
+}
+
+class _VaccineCardState extends State<VaccineCard>
+    with SingleTickerProviderStateMixin {
+  bool _isExpanded = false;
 
   @override
   Widget build(BuildContext context) {
@@ -44,18 +52,17 @@ class VaccineCard extends StatelessWidget {
           ),
         ],
       ),
-      child: Material(
-        color: Colors.transparent,
-        child: InkWell(
-          onTap: vaccineGroup.isCompleted ? onMarkIncomplete : onMarkComplete,
-          borderRadius: BorderRadius.circular(16),
-          child: Padding(
-            padding: const EdgeInsets.all(AppSpacing.md),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                // Header row with status icon and age
-                Row(
+      child: Column(
+        children: [
+          // Header — always visible, tappable to expand/collapse
+          Material(
+            color: Colors.transparent,
+            child: InkWell(
+              onTap: () => setState(() => _isExpanded = !_isExpanded),
+              borderRadius: BorderRadius.circular(16),
+              child: Padding(
+                padding: const EdgeInsets.all(AppSpacing.md),
+                child: Row(
                   children: [
                     _buildStatusIcon(isDark, primary),
                     const SizedBox(width: AppSpacing.sm),
@@ -64,7 +71,7 @@ class VaccineCard extends StatelessWidget {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            vaccineGroup.group.ageFr,
+                            widget.vaccineGroup.group.ageFr,
                             style: GoogleFonts.outfit(
                               fontSize: 18,
                               fontWeight: FontWeight.w600,
@@ -77,92 +84,196 @@ class VaccineCard extends StatelessWidget {
                       ),
                     ),
                     _buildActionButton(isDark, primary, textColor),
+                    const SizedBox(width: 4),
+                    AnimatedRotation(
+                      turns: _isExpanded ? 0.5 : 0.0,
+                      duration: const Duration(milliseconds: 200),
+                      child: Icon(
+                        Icons.keyboard_arrow_down_rounded,
+                        color: secondaryText,
+                        size: 24,
+                      ),
+                    ),
                   ],
                 ),
+              ),
+            ),
+          ),
 
-                const SizedBox(height: AppSpacing.sm),
+          // Collapsible details
+          AnimatedCrossFade(
+            firstChild: const SizedBox.shrink(),
+            secondChild: _buildDetails(
+              isDark,
+              textColor,
+              secondaryText,
+              primary,
+            ),
+            crossFadeState: _isExpanded
+                ? CrossFadeState.showSecond
+                : CrossFadeState.showFirst,
+            duration: const Duration(milliseconds: 200),
+            sizeCurve: Curves.easeInOut,
+          ),
+        ],
+      ),
+    );
+  }
 
-                // Vaccine list
-                ...vaccineGroup.group.vaccines.map(
-                  (vaccine) => Padding(
-                    padding: const EdgeInsets.only(
-                      left: 44,
-                      top: AppSpacing.xxs,
+  Widget _buildDetails(
+    bool isDark,
+    Color textColor,
+    Color secondaryText,
+    Color primary,
+  ) {
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(
+        AppSpacing.md,
+        0,
+        AppSpacing.md,
+        AppSpacing.md,
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Divider(height: 1),
+          const SizedBox(height: AppSpacing.sm),
+
+          // Vaccine list
+          ...widget.vaccineGroup.group.vaccines.map(
+            (vaccine) => Padding(
+              padding: const EdgeInsets.only(left: 44, top: AppSpacing.xxs),
+              child: Row(
+                children: [
+                  Container(
+                    width: 6,
+                    height: 6,
+                    decoration: BoxDecoration(
+                      color: widget.vaccineGroup.isCompleted
+                          ? AppColors.success
+                          : secondaryText,
+                      shape: BoxShape.circle,
                     ),
-                    child: Row(
+                  ),
+                  const SizedBox(width: AppSpacing.xs),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Container(
-                          width: 6,
-                          height: 6,
-                          decoration: BoxDecoration(
-                            color: vaccineGroup.isCompleted
-                                ? AppColors.success
-                                : secondaryText,
-                            shape: BoxShape.circle,
+                        Text(
+                          vaccine.code,
+                          style: GoogleFonts.outfit(
+                            fontSize: 14,
+                            fontWeight: FontWeight.w500,
+                            color: textColor.withValues(alpha: 0.9),
                           ),
                         ),
-                        const SizedBox(width: AppSpacing.xs),
-                        Expanded(
-                          child: Text(
-                            vaccine.code,
-                            style: GoogleFonts.outfit(
-                              fontSize: 14,
-                              fontWeight: FontWeight.w500,
-                              color: textColor.withValues(alpha: 0.9),
-                            ),
+                        Text(
+                          vaccine.nameFr,
+                          style: GoogleFonts.outfit(
+                            fontSize: 12,
+                            color: secondaryText,
                           ),
                         ),
                       ],
                     ),
                   ),
-                ),
+                ],
+              ),
+            ),
+          ),
 
-                // Notes if completed
-                if (vaccineGroup.status?.notes != null &&
-                    vaccineGroup.status!.notes!.isNotEmpty) ...[
-                  const SizedBox(height: AppSpacing.sm),
-                  Padding(
-                    padding: const EdgeInsets.only(left: 44),
-                    child: Container(
-                      padding: const EdgeInsets.all(AppSpacing.xs),
-                      decoration: BoxDecoration(
-                        color: isDark
-                            ? Colors.white.withValues(alpha: 0.05)
-                            : Colors.black.withValues(alpha: 0.03),
-                        borderRadius: BorderRadius.circular(8),
+          // Notes if completed
+          if (widget.vaccineGroup.status?.notes != null &&
+              widget.vaccineGroup.status!.notes!.isNotEmpty) ...[
+            const SizedBox(height: AppSpacing.sm),
+            Padding(
+              padding: const EdgeInsets.only(left: 44),
+              child: Container(
+                padding: const EdgeInsets.all(AppSpacing.xs),
+                decoration: BoxDecoration(
+                  color: isDark
+                      ? Colors.white.withValues(alpha: 0.05)
+                      : Colors.black.withValues(alpha: 0.03),
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: Row(
+                  children: [
+                    Icon(Icons.notes_rounded, size: 14, color: secondaryText),
+                    const SizedBox(width: AppSpacing.xxs),
+                    Expanded(
+                      child: Text(
+                        widget.vaccineGroup.status!.notes!,
+                        style: GoogleFonts.outfit(
+                          fontSize: 12,
+                          color: secondaryText,
+                        ),
                       ),
-                      child: Row(
-                        children: [
-                          Icon(
-                            Icons.notes_rounded,
-                            size: 14,
-                            color: secondaryText,
-                          ),
-                          const SizedBox(width: AppSpacing.xxs),
-                          Expanded(
-                            child: Text(
-                              vaccineGroup.status!.notes!,
-                              style: GoogleFonts.outfit(
-                                fontSize: 12,
-                                color: secondaryText,
-                              ),
-                            ),
-                          ),
-                        ],
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ],
+
+          // Mark action button inside details
+          const SizedBox(height: AppSpacing.sm),
+          SizedBox(
+            width: double.infinity,
+            child: widget.vaccineGroup.isCompleted
+                ? OutlinedButton.icon(
+                    onPressed: widget.onMarkIncomplete,
+                    icon: const Icon(Icons.undo_rounded, size: 18),
+                    label: Text(
+                      'Annuler le vaccin',
+                      style: GoogleFonts.outfit(fontWeight: FontWeight.w600),
+                    ),
+                    style: OutlinedButton.styleFrom(
+                      foregroundColor: AppColors.error,
+                      side: const BorderSide(color: AppColors.error),
+                      padding: const EdgeInsets.symmetric(vertical: 10),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                    ),
+                  )
+                : Container(
+                    decoration: BoxDecoration(
+                      gradient: AppColors.primaryGradient,
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: ElevatedButton.icon(
+                      onPressed: widget.onMarkComplete,
+                      icon: const Icon(
+                        Icons.check_rounded,
+                        size: 18,
+                        color: Colors.white,
+                      ),
+                      label: Text(
+                        'Marquer comme fait',
+                        style: GoogleFonts.outfit(
+                          fontWeight: FontWeight.w600,
+                          color: Colors.white,
+                        ),
+                      ),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.transparent,
+                        shadowColor: Colors.transparent,
+                        padding: const EdgeInsets.symmetric(vertical: 10),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
                       ),
                     ),
                   ),
-                ],
-              ],
-            ),
           ),
-        ),
+        ],
       ),
     );
   }
 
   Color _getBorderColor(bool isDark) {
-    switch (vaccineGroup.statusType) {
+    switch (widget.vaccineGroup.statusType) {
       case VaccineStatusType.completed:
         return AppColors.success.withValues(alpha: 0.5);
       case VaccineStatusType.overdue:
@@ -179,7 +290,7 @@ class VaccineCard extends StatelessWidget {
     Color color;
     Color bgColor;
 
-    switch (vaccineGroup.statusType) {
+    switch (widget.vaccineGroup.statusType) {
       case VaccineStatusType.completed:
         icon = Icons.check_circle_rounded;
         color = AppColors.success;
@@ -216,28 +327,31 @@ class VaccineCard extends StatelessWidget {
     String text;
     Color color = secondaryText;
 
-    switch (vaccineGroup.statusType) {
+    switch (widget.vaccineGroup.statusType) {
       case VaccineStatusType.completed:
-        final date = vaccineGroup.status?.completedAt;
+        final date = widget.vaccineGroup.status?.completedAt;
         text = date != null
             ? 'Fait le ${DateFormat('d MMM yyyy', 'fr').format(date)}'
             : 'Complété';
         color = AppColors.success;
         break;
       case VaccineStatusType.overdue:
-        text = 'En retard de ${-vaccineGroup.daysUntilDue} jours';
+        text = 'En retard de ${-widget.vaccineGroup.daysUntilDue} jours';
         color = AppColors.error;
         break;
       case VaccineStatusType.dueSoon:
-        if (vaccineGroup.daysUntilDue == 0) {
+        if (widget.vaccineGroup.daysUntilDue == 0) {
           text = 'Prévu aujourd\'hui';
         } else {
-          text = 'Dans ${vaccineGroup.daysUntilDue} jours';
+          text = 'Dans ${widget.vaccineGroup.daysUntilDue} jours';
         }
         color = AppColors.casablanca;
         break;
       case VaccineStatusType.upcoming:
-        text = DateFormat('d MMM yyyy', 'fr').format(vaccineGroup.expectedDate);
+        text = DateFormat(
+          'd MMM yyyy',
+          'fr',
+        ).format(widget.vaccineGroup.expectedDate);
         break;
     }
 
@@ -252,7 +366,7 @@ class VaccineCard extends StatelessWidget {
   }
 
   Widget _buildActionButton(bool isDark, Color primary, Color textColor) {
-    if (vaccineGroup.isCompleted) {
+    if (widget.vaccineGroup.isCompleted) {
       return Container(
         padding: const EdgeInsets.symmetric(
           horizontal: AppSpacing.sm,

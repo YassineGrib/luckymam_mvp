@@ -139,7 +139,7 @@ class _VaccinationsTabState extends ConsumerState<VaccinationsTab> {
     final surface = isDark ? AppColors.surfaceDark : AppColors.surfaceLight;
 
     return Container(
-      height: 70,
+      height: 64,
       margin: const EdgeInsets.symmetric(
         horizontal: AppSpacing.screenPaddingH,
         vertical: AppSpacing.sm,
@@ -156,13 +156,14 @@ class _VaccinationsTabState extends ConsumerState<VaccinationsTab> {
             onTap: () => setState(() => _selectedChild = child),
             child: AnimatedContainer(
               duration: const Duration(milliseconds: 200),
+              width: 130,
               padding: const EdgeInsets.symmetric(
-                horizontal: AppSpacing.md,
-                vertical: AppSpacing.sm,
+                horizontal: AppSpacing.sm,
+                vertical: AppSpacing.xs,
               ),
               decoration: BoxDecoration(
                 color: isSelected ? primary.withValues(alpha: 0.15) : surface,
-                borderRadius: BorderRadius.circular(16),
+                borderRadius: BorderRadius.circular(14),
                 border: Border.all(
                   color: isSelected ? primary : Colors.transparent,
                   width: 2,
@@ -170,41 +171,87 @@ class _VaccinationsTabState extends ConsumerState<VaccinationsTab> {
               ),
               child: Row(
                 children: [
-                  CircleAvatar(
-                    radius: 18,
-                    backgroundColor: isSelected
-                        ? primary
-                        : secondaryText.withValues(alpha: 0.2),
-                    child: Text(
-                      child.name.isNotEmpty ? child.name[0].toUpperCase() : '?',
-                      style: GoogleFonts.outfit(
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
-                        color: isSelected ? Colors.white : secondaryText,
+                  // Child photo or initial
+                  Container(
+                    width: 36,
+                    height: 36,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      color: isSelected
+                          ? primary
+                          : secondaryText.withValues(alpha: 0.2),
+                      border: Border.all(
+                        color: isSelected
+                            ? primary.withValues(alpha: 0.5)
+                            : Colors.transparent,
+                        width: 2,
                       ),
                     ),
+                    clipBehavior: Clip.antiAlias,
+                    child: child.photoUrl != null && child.photoUrl!.isNotEmpty
+                        ? Image.network(
+                            child.photoUrl!,
+                            fit: BoxFit.cover,
+                            width: 36,
+                            height: 36,
+                            errorBuilder: (_, __, ___) => Center(
+                              child: Text(
+                                child.name.isNotEmpty
+                                    ? child.name[0].toUpperCase()
+                                    : '?',
+                                style: GoogleFonts.outfit(
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.bold,
+                                  color: isSelected
+                                      ? Colors.white
+                                      : secondaryText,
+                                ),
+                              ),
+                            ),
+                          )
+                        : Center(
+                            child: Text(
+                              child.name.isNotEmpty
+                                  ? child.name[0].toUpperCase()
+                                  : '?',
+                              style: GoogleFonts.outfit(
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold,
+                                color: isSelected
+                                    ? Colors.white
+                                    : secondaryText,
+                              ),
+                            ),
+                          ),
                   ),
-                  const SizedBox(width: AppSpacing.sm),
-                  Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        child.name,
-                        style: GoogleFonts.outfit(
-                          fontSize: 14,
-                          fontWeight: FontWeight.w600,
-                          color: isSelected ? primary : textColor,
+                  const SizedBox(width: AppSpacing.xs),
+                  Expanded(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          child.name,
+                          style: GoogleFonts.outfit(
+                            fontSize: 13,
+                            fontWeight: FontWeight.w600,
+                            color: isSelected ? primary : textColor,
+                          ),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
                         ),
-                      ),
-                      Text(
-                        child.ageString,
-                        style: GoogleFonts.outfit(
-                          fontSize: 12,
-                          color: secondaryText,
+                        const SizedBox(height: 2),
+                        Text(
+                          child.ageString,
+                          style: GoogleFonts.outfit(
+                            fontSize: 11,
+                            color: secondaryText,
+                          ),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
                 ],
               ),
