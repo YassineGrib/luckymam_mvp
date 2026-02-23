@@ -5,6 +5,7 @@ import '../../../core/theme/app_colors.dart';
 import '../widgets/daily_tip_card.dart';
 import '../widgets/children_overview.dart';
 import '../widgets/health_shortcut_card.dart';
+import '../widgets/memory_book_shortcut_card.dart';
 import '../widgets/personal_header.dart';
 import '../widgets/recent_capsules.dart';
 import '../widgets/cycle_tracking_section.dart';
@@ -42,6 +43,9 @@ class DashboardTab extends ConsumerWidget {
 
             // Recent capsules preview
             const SliverToBoxAdapter(child: RecentCapsules()),
+
+            // Memory Book shortcut — Auto-album suggestions
+            const SliverToBoxAdapter(child: MemoryBookShortcutCard()),
 
             // Daily tip card
             const SliverToBoxAdapter(child: DailyTipCard()),

@@ -4,7 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../capsules/models/capsule.dart';
 import '../../capsules/models/emotion.dart';
 import '../../capsules/providers/capsule_providers.dart';
-import '../../profile/models/profile_models.dart';
+
 import '../../profile/providers/profile_providers.dart';
 import '../models/album_suggestion.dart';
 
