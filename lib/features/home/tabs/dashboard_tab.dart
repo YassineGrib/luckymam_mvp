@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../core/theme/app_colors.dart';
 import '../widgets/daily_tip_card.dart';
 import '../widgets/children_overview.dart';
+import '../widgets/health_shortcut_card.dart';
 import '../widgets/personal_header.dart';
 import '../widgets/recent_capsules.dart';
 import '../widgets/cycle_tracking_section.dart';
@@ -35,6 +36,9 @@ class DashboardTab extends ConsumerWidget {
 
             // Children's Overview
             const SliverToBoxAdapter(child: ChildrenOverview()),
+
+            // Health Hub shortcut — Growth & Appointments
+            const SliverToBoxAdapter(child: HealthShortcutCard()),
 
             // Recent capsules preview
             const SliverToBoxAdapter(child: RecentCapsules()),
