@@ -277,26 +277,9 @@ class _LoginScreenState extends State<LoginScreen> {
 
                 const SizedBox(height: AppSpacing.lg),
 
-                // Social Buttons
                 SocialButton.google(
                   text: l10n.signInWithGoogle,
                   onPressed: _isGoogleLoading ? null : _handleGoogleSignIn,
-                ),
-
-                const SizedBox(height: AppSpacing.sm),
-
-                SocialButton.apple(
-                  text: l10n.signInWithApple,
-                  onPressed: () {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(
-                        content: Text(
-                          'Cette fonctionnalité n\'est pas disponible dans la version MVP',
-                        ),
-                        backgroundColor: Colors.orange,
-                      ),
-                    );
-                  },
                 ),
 
                 const SizedBox(height: AppSpacing.xl),
