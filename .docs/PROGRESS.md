@@ -67,8 +67,7 @@
 
 ### Phase 4 Features
 - [x] Reels Educational Content (Short videos)
-- [ ] AI Support Chatbot (Arabic/French)
-- [ ] Social Sharing with Privacy Blur
+
 
 ---
 
