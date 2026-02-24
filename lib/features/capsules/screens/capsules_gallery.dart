@@ -13,6 +13,7 @@ import '../widgets/capsule_grid_item.dart';
 import '../widgets/emotion_picker.dart';
 import 'capsule_detail_screen.dart';
 import 'create_capsule_screen.dart';
+import '../../../shared/widgets/page_header_with_filter.dart';
 
 /// Gallery screen for viewing all capsules.
 class CapsulesGallery extends ConsumerWidget {
@@ -41,31 +42,84 @@ class CapsulesGallery extends ConsumerWidget {
       body: SafeArea(
         child: Column(
           children: [
-            // Header with add button and quota
-            _buildHeader(
-              context,
-              ref,
-              textColor,
-              secondaryText,
-              primary,
-              canCreate.valueOrNull ?? true,
-              remaining.valueOrNull ?? freemiumCapsuleLimit,
-            ),
-
-            // Child filter pills
+            // Header and Child filter using shared component
             childrenAsync.when(
               loading: () => const SizedBox(height: 50),
               error: (_, __) => const SizedBox.shrink(),
-              data: (children) => _buildChildFilter(
-                context,
-                ref,
-                children,
-                filters.childId,
-                isDark,
-                primary,
-                textColor,
-                secondaryText,
-              ),
+              data: (children) {
+                final rem = remaining.valueOrNull ?? freemiumCapsuleLimit;
+                final canMake = canCreate.valueOrNull ?? true;
+
+                return PageHeaderWithFilter(
+                  title: 'Mes Capsules',
+                  subtitleWidget: Row(
+                    children: [
+                      Text(
+                        '$rem restantes',
+                        style: GoogleFonts.outfit(
+                          fontSize: 13,
+                          color: rem > 5 ? secondaryText : AppColors.warning,
+                          fontWeight: rem <= 5
+                              ? FontWeight.w600
+                              : FontWeight.w400,
+                        ),
+                      ),
+                      const SizedBox(width: 4),
+                      if (rem <= 5)
+                        Icon(
+                          Icons.info_outline_rounded,
+                          size: 14,
+                          color: AppColors.warning,
+                        ),
+                    ],
+                  ),
+                  icon: Icons.photo_camera_rounded,
+                  childrenList: children.cast<Child>(),
+                  selectedChildId: filters.childId,
+                  allowAll: true,
+                  onChildSelected: (id) =>
+                      ref.read(capsuleFilterProvider.notifier).setChildId(id),
+                  trailing: GestureDetector(
+                    onTap: canMake
+                        ? () => Navigator.of(context).push(
+                            MaterialPageRoute(
+                              builder: (context) => const CreateCapsuleScreen(),
+                            ),
+                          )
+                        : () => _showQuotaExceededDialog(context),
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 16,
+                        vertical: 10,
+                      ),
+                      decoration: BoxDecoration(
+                        gradient: canMake ? AppColors.primaryGradient : null,
+                        color: canMake ? null : Colors.grey,
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Icon(
+                            canMake ? Icons.add_rounded : Icons.lock_rounded,
+                            color: Colors.white,
+                            size: 18,
+                          ),
+                          const SizedBox(width: 4),
+                          Text(
+                            'Capturer',
+                            style: GoogleFonts.outfit(
+                              fontSize: 13,
+                              fontWeight: FontWeight.w600,
+                              color: Colors.white,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                );
+              },
             ),
 
             // Emotion filter
@@ -98,118 +152,6 @@ class CapsulesGallery extends ConsumerWidget {
             ),
           ],
         ),
-      ),
-    );
-  }
-
-  Widget _buildHeader(
-    BuildContext context,
-    WidgetRef ref,
-    Color textColor,
-    Color secondaryText,
-    Color primary,
-    bool canCreate,
-    int remaining,
-  ) {
-    return Padding(
-      padding: const EdgeInsets.fromLTRB(
-        AppSpacing.screenPaddingH,
-        AppSpacing.md,
-        AppSpacing.screenPaddingH,
-        AppSpacing.sm,
-      ),
-      child: Row(
-        children: [
-          Container(
-            width: 48,
-            height: 48,
-            decoration: BoxDecoration(
-              gradient: AppColors.primaryGradient,
-              borderRadius: BorderRadius.circular(14),
-            ),
-            child: const Icon(
-              Icons.photo_camera_rounded,
-              color: Colors.white,
-              size: 24,
-            ),
-          ),
-          const SizedBox(width: AppSpacing.md),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  'Mes Capsules',
-                  style: GoogleFonts.outfit(
-                    fontSize: 22,
-                    fontWeight: FontWeight.bold,
-                    color: textColor,
-                  ),
-                ),
-                Row(
-                  children: [
-                    Text(
-                      '$remaining restantes',
-                      style: GoogleFonts.outfit(
-                        fontSize: 13,
-                        color: remaining > 5
-                            ? secondaryText
-                            : AppColors.warning,
-                        fontWeight: remaining <= 5
-                            ? FontWeight.w600
-                            : FontWeight.w400,
-                      ),
-                    ),
-                    const SizedBox(width: 4),
-                    if (remaining <= 5)
-                      Icon(
-                        Icons.info_outline_rounded,
-                        size: 14,
-                        color: AppColors.warning,
-                      ),
-                  ],
-                ),
-              ],
-            ),
-          ),
-          // Add button - disabled when quota exceeded
-          GestureDetector(
-            onTap: canCreate
-                ? () => Navigator.of(context).push(
-                    MaterialPageRoute(
-                      builder: (context) => const CreateCapsuleScreen(),
-                    ),
-                  )
-                : () => _showQuotaExceededDialog(context),
-            child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-              decoration: BoxDecoration(
-                gradient: canCreate ? AppColors.primaryGradient : null,
-                color: canCreate ? null : Colors.grey,
-                borderRadius: BorderRadius.circular(20),
-              ),
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Icon(
-                    canCreate ? Icons.add_rounded : Icons.lock_rounded,
-                    color: Colors.white,
-                    size: 18,
-                  ),
-                  const SizedBox(width: 4),
-                  Text(
-                    'Capturer',
-                    style: GoogleFonts.outfit(
-                      fontSize: 13,
-                      fontWeight: FontWeight.w600,
-                      color: Colors.white,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
-        ],
       ),
     );
   }
@@ -268,163 +210,6 @@ class CapsulesGallery extends ConsumerWidget {
             ),
           ),
         ],
-      ),
-    );
-  }
-
-  Widget _buildChildFilter(
-    BuildContext context,
-    WidgetRef ref,
-    List<dynamic> children,
-    String? selectedChildId,
-    bool isDark,
-    Color primary,
-    Color textColor,
-    Color secondaryText,
-  ) {
-    if (children.isEmpty) return const SizedBox.shrink();
-
-    final surface = isDark ? AppColors.surfaceDark : AppColors.surfaceLight;
-
-    return Container(
-      height: 64,
-      margin: const EdgeInsets.symmetric(
-        horizontal: AppSpacing.screenPaddingH,
-        vertical: AppSpacing.xs,
-      ),
-      child: ListView.separated(
-        scrollDirection: Axis.horizontal,
-        itemCount: children.length + 1,
-        separatorBuilder: (_, __) => const SizedBox(width: AppSpacing.sm),
-        itemBuilder: (context, index) {
-          // "All" card at index 0
-          if (index == 0) {
-            final isSelected = selectedChildId == null;
-            return GestureDetector(
-              onTap: () =>
-                  ref.read(capsuleFilterProvider.notifier).setChildId(null),
-              child: AnimatedContainer(
-                duration: const Duration(milliseconds: 200),
-                width: 80,
-                padding: const EdgeInsets.symmetric(
-                  horizontal: AppSpacing.sm,
-                  vertical: AppSpacing.xs,
-                ),
-                decoration: BoxDecoration(
-                  color: isSelected ? primary.withValues(alpha: 0.15) : surface,
-                  borderRadius: BorderRadius.circular(14),
-                  border: Border.all(
-                    color: isSelected ? primary : Colors.transparent,
-                    width: 2,
-                  ),
-                ),
-                child: Center(
-                  child: Text(
-                    'Tous',
-                    style: GoogleFonts.outfit(
-                      fontSize: 13,
-                      fontWeight: FontWeight.w600,
-                      color: isSelected ? primary : textColor,
-                    ),
-                  ),
-                ),
-              ),
-            );
-          }
-
-          final child = children[index - 1] as Child;
-          final isSelected = selectedChildId == child.id;
-
-          return GestureDetector(
-            onTap: () =>
-                ref.read(capsuleFilterProvider.notifier).setChildId(child.id),
-            child: AnimatedContainer(
-              duration: const Duration(milliseconds: 200),
-              width: 130,
-              padding: const EdgeInsets.symmetric(
-                horizontal: AppSpacing.sm,
-                vertical: AppSpacing.xs,
-              ),
-              decoration: BoxDecoration(
-                color: isSelected ? primary.withValues(alpha: 0.15) : surface,
-                borderRadius: BorderRadius.circular(14),
-                border: Border.all(
-                  color: isSelected ? primary : Colors.transparent,
-                  width: 2,
-                ),
-              ),
-              child: Row(
-                children: [
-                  Container(
-                    width: 36,
-                    height: 36,
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      color: isSelected
-                          ? primary
-                          : secondaryText.withValues(alpha: 0.2),
-                      border: Border.all(
-                        color: isSelected
-                            ? primary.withValues(alpha: 0.5)
-                            : Colors.transparent,
-                        width: 2,
-                      ),
-                    ),
-                    clipBehavior: Clip.antiAlias,
-                    child: child.photoUrl != null && child.photoUrl!.isNotEmpty
-                        ? Image.network(
-                            child.photoUrl!,
-                            fit: BoxFit.cover,
-                            width: 36,
-                            height: 36,
-                            errorBuilder: (_, __, ___) => Center(
-                              child: Text(
-                                child.name.isNotEmpty
-                                    ? child.name[0].toUpperCase()
-                                    : '?',
-                                style: GoogleFonts.outfit(
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.bold,
-                                  color: isSelected
-                                      ? Colors.white
-                                      : secondaryText,
-                                ),
-                              ),
-                            ),
-                          )
-                        : Center(
-                            child: Text(
-                              child.name.isNotEmpty
-                                  ? child.name[0].toUpperCase()
-                                  : '?',
-                              style: GoogleFonts.outfit(
-                                fontSize: 14,
-                                fontWeight: FontWeight.bold,
-                                color: isSelected
-                                    ? Colors.white
-                                    : secondaryText,
-                              ),
-                            ),
-                          ),
-                  ),
-                  const SizedBox(width: AppSpacing.xs),
-                  Expanded(
-                    child: Text(
-                      child.name,
-                      style: GoogleFonts.outfit(
-                        fontSize: 13,
-                        fontWeight: FontWeight.w600,
-                        color: isSelected ? primary : textColor,
-                      ),
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          );
-        },
       ),
     );
   }

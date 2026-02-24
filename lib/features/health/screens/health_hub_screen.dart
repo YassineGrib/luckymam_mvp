@@ -8,6 +8,7 @@ import '../../profile/models/profile_models.dart';
 import '../../profile/providers/profile_providers.dart';
 import '../screens/growth_screen.dart';
 import '../screens/appointments_screen.dart';
+import '../../../shared/widgets/page_header_with_filter.dart';
 
 /// Standalone "Santé enfant" screen — Growth + Appointments with child selector.
 /// Accessed via a shortcut card on the Dashboard, not the bottom nav.
@@ -75,12 +76,26 @@ class _HealthHubScreenState extends ConsumerState<HealthHubScreen>
 
             return Column(
               children: [
-                // ── Header ──────────────────────────────────────────────
-                _buildHeader(context, primary, textColor, secondaryText),
-
-                // ── Child selector (only when 2+ children) ─────────────
-                if (children.length > 1)
-                  _buildChildSelector(children, primary, textColor),
+                // ── Header & Child Selector ─────────────────────────────
+                PageHeaderWithFilter(
+                  title: 'Santé',
+                  subtitle: 'Croissance & Rendez-vous',
+                  icon: Icons.monitor_heart_rounded,
+                  showBackButton: true,
+                  childrenList: children,
+                  selectedChildId: _selectedChild?.id,
+                  allowAll: false,
+                  onChildSelected: (id) {
+                    if (id != null) {
+                      setState(() {
+                        _selectedChild = children.firstWhere(
+                          (c) => c.id == id,
+                          orElse: () => children.first,
+                        );
+                      });
+                    }
+                  },
+                ),
 
                 // ── Tab bar ─────────────────────────────────────────────
                 _buildTabBar(primary, textColor, isDark, surfaceColor),
@@ -102,118 +117,6 @@ class _HealthHubScreenState extends ConsumerState<HealthHubScreen>
       ),
     );
   }
-
-  // ─── Header ──────────────────────────────────────────────────────────────
-
-  Widget _buildHeader(
-    BuildContext context,
-    Color primary,
-    Color textColor,
-    Color secondaryText,
-  ) => Padding(
-    padding: const EdgeInsets.fromLTRB(
-      AppSpacing.screenPaddingH,
-      AppSpacing.md,
-      AppSpacing.screenPaddingH,
-      AppSpacing.sm,
-    ),
-    child: Row(
-      children: [
-        // Back button
-        GestureDetector(
-          onTap: () => Navigator.of(context).pop(),
-          child: Container(
-            width: 40,
-            height: 40,
-            decoration: BoxDecoration(
-              color: primary.withValues(alpha: 0.1),
-              borderRadius: BorderRadius.circular(12),
-            ),
-            child: Icon(
-              Icons.arrow_back_ios_new_rounded,
-              color: primary,
-              size: 18,
-            ),
-          ),
-        ),
-        const SizedBox(width: AppSpacing.md),
-        Container(
-          width: 44,
-          height: 44,
-          decoration: BoxDecoration(
-            gradient: AppColors.primaryGradient,
-            borderRadius: BorderRadius.circular(14),
-          ),
-          child: const Icon(
-            Icons.monitor_heart_rounded,
-            color: Colors.white,
-            size: 24,
-          ),
-        ),
-        const SizedBox(width: AppSpacing.md),
-        Expanded(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                'Santé',
-                style: GoogleFonts.outfit(
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold,
-                  color: textColor,
-                ),
-              ),
-              Text(
-                'Croissance & Rendez-vous',
-                style: GoogleFonts.outfit(fontSize: 12, color: secondaryText),
-              ),
-            ],
-          ),
-        ),
-      ],
-    ),
-  );
-
-  // ─── Child selector ───────────────────────────────────────────────────────
-
-  Widget _buildChildSelector(
-    List<Child> children,
-    Color primary,
-    Color textColor,
-  ) => SizedBox(
-    height: 44,
-    child: ListView.separated(
-      scrollDirection: Axis.horizontal,
-      padding: const EdgeInsets.symmetric(
-        horizontal: AppSpacing.screenPaddingH,
-      ),
-      itemCount: children.length,
-      separatorBuilder: (_, __) => const SizedBox(width: 8),
-      itemBuilder: (_, i) {
-        final child = children[i];
-        final selected = child.id == _selectedChild?.id;
-        return GestureDetector(
-          onTap: () => setState(() => _selectedChild = child),
-          child: AnimatedContainer(
-            duration: const Duration(milliseconds: 200),
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-            decoration: BoxDecoration(
-              color: selected ? primary : primary.withValues(alpha: 0.1),
-              borderRadius: BorderRadius.circular(22),
-            ),
-            child: Text(
-              child.name,
-              style: GoogleFonts.outfit(
-                fontSize: 13,
-                fontWeight: FontWeight.w600,
-                color: selected ? Colors.white : primary,
-              ),
-            ),
-          ),
-        );
-      },
-    ),
-  );
 
   // ─── Tab bar ──────────────────────────────────────────────────────────────
 

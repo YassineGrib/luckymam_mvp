@@ -9,6 +9,7 @@ import '../../profile/models/profile_models.dart';
 import '../../profile/providers/profile_providers.dart';
 import '../../vaccines/providers/vaccine_providers.dart';
 import '../../vaccines/widgets/vaccine_card.dart';
+import '../../../shared/widgets/page_header_with_filter.dart';
 
 /// Vaccinations tab - vaccine calendar with child selector.
 class VaccinationsTab extends ConsumerStatefulWidget {
@@ -57,17 +58,24 @@ class _VaccinationsTabState extends ConsumerState<VaccinationsTab> {
 
             return Column(
               children: [
-                // Header
-                _buildHeader(primary, textColor, secondaryText),
-
-                // Child selector
-                if (children.length > 1)
-                  _buildChildSelector(
-                    children,
-                    primary,
-                    textColor,
-                    secondaryText,
-                  ),
+                PageHeaderWithFilter(
+                  title: 'Calendrier Vaccinal',
+                  subtitle: 'Programme National Algérien',
+                  icon: Icons.vaccines_rounded,
+                  childrenList: children,
+                  selectedChildId: _selectedChild?.id,
+                  allowAll: false,
+                  onChildSelected: (id) {
+                    if (id != null) {
+                      setState(() {
+                        _selectedChild = children.firstWhere(
+                          (c) => c.id == id,
+                          orElse: () => children.first,
+                        );
+                      });
+                    }
+                  },
+                ),
 
                 // Vaccine list
                 Expanded(
@@ -77,187 +85,6 @@ class _VaccinationsTabState extends ConsumerState<VaccinationsTab> {
             );
           },
         ),
-      ),
-    );
-  }
-
-  Widget _buildHeader(Color primary, Color textColor, Color secondaryText) {
-    return Padding(
-      padding: const EdgeInsets.fromLTRB(
-        AppSpacing.screenPaddingH,
-        AppSpacing.md,
-        AppSpacing.screenPaddingH,
-        AppSpacing.sm,
-      ),
-      child: Row(
-        children: [
-          Container(
-            width: 48,
-            height: 48,
-            decoration: BoxDecoration(
-              gradient: AppColors.primaryGradient,
-              borderRadius: BorderRadius.circular(14),
-            ),
-            child: const Icon(
-              Icons.vaccines_rounded,
-              color: Colors.white,
-              size: 24,
-            ),
-          ),
-          const SizedBox(width: AppSpacing.md),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  'Calendrier Vaccinal',
-                  style: GoogleFonts.outfit(
-                    fontSize: 22,
-                    fontWeight: FontWeight.bold,
-                    color: textColor,
-                  ),
-                ),
-                Text(
-                  'Programme National Algérien',
-                  style: GoogleFonts.outfit(fontSize: 14, color: secondaryText),
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildChildSelector(
-    List<Child> children,
-    Color primary,
-    Color textColor,
-    Color secondaryText,
-  ) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-    final surface = isDark ? AppColors.surfaceDark : AppColors.surfaceLight;
-
-    return Container(
-      height: 64,
-      margin: const EdgeInsets.symmetric(
-        horizontal: AppSpacing.screenPaddingH,
-        vertical: AppSpacing.sm,
-      ),
-      child: ListView.separated(
-        scrollDirection: Axis.horizontal,
-        itemCount: children.length,
-        separatorBuilder: (_, __) => const SizedBox(width: AppSpacing.sm),
-        itemBuilder: (context, index) {
-          final child = children[index];
-          final isSelected = child.id == _selectedChild?.id;
-
-          return GestureDetector(
-            onTap: () => setState(() => _selectedChild = child),
-            child: AnimatedContainer(
-              duration: const Duration(milliseconds: 200),
-              width: 130,
-              padding: const EdgeInsets.symmetric(
-                horizontal: AppSpacing.sm,
-                vertical: AppSpacing.xs,
-              ),
-              decoration: BoxDecoration(
-                color: isSelected ? primary.withValues(alpha: 0.15) : surface,
-                borderRadius: BorderRadius.circular(14),
-                border: Border.all(
-                  color: isSelected ? primary : Colors.transparent,
-                  width: 2,
-                ),
-              ),
-              child: Row(
-                children: [
-                  // Child photo or initial
-                  Container(
-                    width: 36,
-                    height: 36,
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      color: isSelected
-                          ? primary
-                          : secondaryText.withValues(alpha: 0.2),
-                      border: Border.all(
-                        color: isSelected
-                            ? primary.withValues(alpha: 0.5)
-                            : Colors.transparent,
-                        width: 2,
-                      ),
-                    ),
-                    clipBehavior: Clip.antiAlias,
-                    child: child.photoUrl != null && child.photoUrl!.isNotEmpty
-                        ? Image.network(
-                            child.photoUrl!,
-                            fit: BoxFit.cover,
-                            width: 36,
-                            height: 36,
-                            errorBuilder: (_, __, ___) => Center(
-                              child: Text(
-                                child.name.isNotEmpty
-                                    ? child.name[0].toUpperCase()
-                                    : '?',
-                                style: GoogleFonts.outfit(
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.bold,
-                                  color: isSelected
-                                      ? Colors.white
-                                      : secondaryText,
-                                ),
-                              ),
-                            ),
-                          )
-                        : Center(
-                            child: Text(
-                              child.name.isNotEmpty
-                                  ? child.name[0].toUpperCase()
-                                  : '?',
-                              style: GoogleFonts.outfit(
-                                fontSize: 18,
-                                fontWeight: FontWeight.bold,
-                                color: isSelected
-                                    ? Colors.white
-                                    : secondaryText,
-                              ),
-                            ),
-                          ),
-                  ),
-                  const SizedBox(width: AppSpacing.xs),
-                  Expanded(
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          child.name,
-                          style: GoogleFonts.outfit(
-                            fontSize: 13,
-                            fontWeight: FontWeight.w600,
-                            color: isSelected ? primary : textColor,
-                          ),
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                        const SizedBox(height: 2),
-                        Text(
-                          child.ageString,
-                          style: GoogleFonts.outfit(
-                            fontSize: 11,
-                            color: secondaryText,
-                          ),
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          );
-        },
       ),
     );
   }

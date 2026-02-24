@@ -11,6 +11,7 @@ import '../models/album_suggestion.dart';
 import '../providers/memory_book_providers.dart';
 import '../widgets/album_cover_card.dart';
 import 'album_detail_screen.dart';
+import '../../../shared/widgets/page_header_with_filter.dart';
 
 /// Main Memory Book screen showing auto-generated album suggestions.
 class MemoryBookScreen extends ConsumerWidget {
@@ -37,22 +38,23 @@ class MemoryBookScreen extends ConsumerWidget {
       body: SafeArea(
         child: Column(
           children: [
-            // Header
-            _buildHeader(context, textColor, primary),
-
-            // Child filter pills
             childrenAsync.when(
               loading: () => const SizedBox(height: 50),
               error: (_, __) => const SizedBox.shrink(),
-              data: (children) => _buildChildFilter(
-                context,
-                ref,
-                children,
-                childFilter,
-                isDark,
-                primary,
-                textColor,
-                secondaryText,
+              data: (children) => PageHeaderWithFilter(
+                title: 'Livre de Mémoires',
+                subtitle: 'Albums auto-générés',
+                icon: Icons.auto_stories_rounded,
+                iconGradient: const LinearGradient(
+                  colors: [Color(0xFFFF6F00), Color(0xFFFFAB00)],
+                ),
+                showBackButton: true,
+                childrenList: children.cast<Child>(),
+                selectedChildId: childFilter,
+                allowAll: true,
+                onChildSelected: (id) {
+                  ref.read(memoryBookChildFilterProvider.notifier).state = id;
+                },
               ),
             ),
 
@@ -73,154 +75,6 @@ class MemoryBookScreen extends ConsumerWidget {
             ),
           ],
         ),
-      ),
-    );
-  }
-
-  Widget _buildHeader(BuildContext context, Color textColor, Color primary) {
-    return Padding(
-      padding: const EdgeInsets.fromLTRB(
-        AppSpacing.xs,
-        AppSpacing.md,
-        AppSpacing.screenPaddingH,
-        AppSpacing.sm,
-      ),
-      child: Row(
-        children: [
-          IconButton(
-            onPressed: () => Navigator.pop(context),
-            icon: Icon(Icons.arrow_back_ios_new_rounded, color: textColor),
-          ),
-          const SizedBox(width: AppSpacing.xs),
-          Container(
-            width: 44,
-            height: 44,
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                colors: [const Color(0xFFFF6F00), const Color(0xFFFFAB00)],
-              ),
-              borderRadius: BorderRadius.circular(13),
-            ),
-            child: const Icon(
-              Icons.auto_stories_rounded,
-              color: Colors.white,
-              size: 22,
-            ),
-          ),
-          const SizedBox(width: AppSpacing.md),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  'Livre de Mémoires',
-                  style: GoogleFonts.outfit(
-                    fontSize: 21,
-                    fontWeight: FontWeight.bold,
-                    color: textColor,
-                  ),
-                ),
-                Text(
-                  'Albums auto-générés',
-                  style: GoogleFonts.outfit(fontSize: 13, color: primary),
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildChildFilter(
-    BuildContext context,
-    WidgetRef ref,
-    List<dynamic> children,
-    String? selectedChildId,
-    bool isDark,
-    Color primary,
-    Color textColor,
-    Color secondaryText,
-  ) {
-    if (children.isEmpty) return const SizedBox.shrink();
-
-    final surface = isDark ? AppColors.surfaceDark : AppColors.surfaceLight;
-
-    return Container(
-      height: 50,
-      margin: const EdgeInsets.symmetric(
-        horizontal: AppSpacing.screenPaddingH,
-        vertical: AppSpacing.xs,
-      ),
-      child: ListView.separated(
-        scrollDirection: Axis.horizontal,
-        itemCount: children.length + 1,
-        separatorBuilder: (_, __) => const SizedBox(width: AppSpacing.sm),
-        itemBuilder: (context, index) {
-          if (index == 0) {
-            final isSelected = selectedChildId == null;
-            return GestureDetector(
-              onTap: () =>
-                  ref.read(memoryBookChildFilterProvider.notifier).state = null,
-              child: AnimatedContainer(
-                duration: const Duration(milliseconds: 200),
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 16,
-                  vertical: 10,
-                ),
-                decoration: BoxDecoration(
-                  color: isSelected ? primary.withValues(alpha: 0.15) : surface,
-                  borderRadius: BorderRadius.circular(14),
-                  border: Border.all(
-                    color: isSelected ? primary : Colors.transparent,
-                    width: 2,
-                  ),
-                ),
-                child: Center(
-                  child: Text(
-                    'Tous',
-                    style: GoogleFonts.outfit(
-                      fontSize: 13,
-                      fontWeight: FontWeight.w600,
-                      color: isSelected ? primary : textColor,
-                    ),
-                  ),
-                ),
-              ),
-            );
-          }
-
-          final child = children[index - 1] as Child;
-          final isSelected = selectedChildId == child.id;
-
-          return GestureDetector(
-            onTap: () =>
-                ref.read(memoryBookChildFilterProvider.notifier).state =
-                    child.id,
-            child: AnimatedContainer(
-              duration: const Duration(milliseconds: 200),
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-              decoration: BoxDecoration(
-                color: isSelected ? primary.withValues(alpha: 0.15) : surface,
-                borderRadius: BorderRadius.circular(14),
-                border: Border.all(
-                  color: isSelected ? primary : Colors.transparent,
-                  width: 2,
-                ),
-              ),
-              child: Center(
-                child: Text(
-                  child.name,
-                  style: GoogleFonts.outfit(
-                    fontSize: 13,
-                    fontWeight: FontWeight.w600,
-                    color: isSelected ? primary : textColor,
-                  ),
-                ),
-              ),
-            ),
-          );
-        },
       ),
     );
   }
