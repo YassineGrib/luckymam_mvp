@@ -15,6 +15,10 @@ import 'privacy_screen.dart';
 import 'help_screen.dart';
 import 'providers/profile_providers.dart';
 import 'widgets/edit_dialogs.dart';
+import '../subscription/models/subscription_models.dart';
+import '../subscription/providers/subscription_providers.dart';
+import '../subscription/screens/subscription_plans_screen.dart';
+import '../subscription/screens/album_claim_screen.dart';
 import 'widgets/profile_widgets.dart';
 import '../notifications/notifications_screen.dart';
 
@@ -160,7 +164,10 @@ class ProfileScreen extends ConsumerWidget {
                   ),
                 ),
 
-                // 4. Medical Information
+                // 4. Subscription (Mon Abonnement)
+                _SubscriptionSection(primaryColor: primaryColor),
+
+                // 5. Medical Information
                 profileAsync.when(
                   data: (profile) => _MedicalInfoSection(
                     medicalInfo: profile?.medicalInfo ?? const MedicalInfo(),
@@ -938,6 +945,138 @@ class _CycleSection extends StatelessWidget {
             minimumSize: const Size(double.infinity, 0),
           ),
         ),
+      ],
+    );
+  }
+}
+
+class _SubscriptionSection extends ConsumerWidget {
+  const _SubscriptionSection({required this.primaryColor});
+
+  final Color primaryColor;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final textColor = isDark ? Colors.white : AppColors.onSurfaceLight;
+    final subTextColor = isDark
+        ? AppColors.textSecondaryDark
+        : AppColors.textSecondaryLight;
+    final currentTier = ref.watch(currentTierValueProvider);
+    final isVip = ref.watch(isVipProvider);
+    final albumClaimed = ref.watch(albumClaimedProvider).valueOrNull ?? false;
+
+    final plan = SubscriptionPlan.allPlans.firstWhere(
+      (p) => p.tier == currentTier,
+    );
+
+    return ProfileSectionCard(
+      title: 'Mon Abonnement',
+      icon: Icons.workspace_premium_rounded,
+      iconColor: primaryColor,
+      children: [
+        // Current tier badge
+        Row(
+          children: [
+            Container(
+              padding: const EdgeInsets.all(10),
+              decoration: BoxDecoration(
+                color: plan.accentColor.withValues(alpha: 0.12),
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: Icon(plan.tier.icon, color: plan.accentColor, size: 24),
+            ),
+            const SizedBox(width: 14),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    plan.title,
+                    style: GoogleFonts.outfit(
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                      color: textColor,
+                    ),
+                  ),
+                  Text(
+                    plan.priceDZD == 0
+                        ? 'Forfait gratuit'
+                        : '${plan.priceLabel} ${plan.billingCycle}',
+                    style: GoogleFonts.outfit(
+                      fontSize: 13,
+                      color: subTextColor,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            TextButton(
+              onPressed: () => Navigator.of(context).push(
+                MaterialPageRoute(
+                  builder: (_) => const SubscriptionPlansScreen(),
+                ),
+              ),
+              child: Text(
+                'Gérer',
+                style: GoogleFonts.outfit(
+                  fontSize: 13,
+                  fontWeight: FontWeight.w600,
+                  color: primaryColor,
+                ),
+              ),
+            ),
+          ],
+        ),
+
+        // VIP album perk
+        if (isVip) ...[
+          const SizedBox(height: 14),
+          GestureDetector(
+            onTap: albumClaimed
+                ? null
+                : () => Navigator.of(context).push(
+                    MaterialPageRoute(builder: (_) => const AlbumClaimScreen()),
+                  ),
+            child: Container(
+              padding: const EdgeInsets.all(14),
+              decoration: BoxDecoration(
+                color: const Color(0xFFFF6F00).withValues(alpha: 0.08),
+                borderRadius: BorderRadius.circular(14),
+              ),
+              child: Row(
+                children: [
+                  Icon(
+                    albumClaimed
+                        ? Icons.check_circle_rounded
+                        : Icons.card_giftcard_rounded,
+                    color: const Color(0xFFFF6F00),
+                    size: 22,
+                  ),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: Text(
+                      albumClaimed
+                          ? 'Demande d\'album envoyée ✓'
+                          : 'Réclamer votre album imprimé gratuit 🎁',
+                      style: GoogleFonts.outfit(
+                        fontSize: 13,
+                        fontWeight: FontWeight.w600,
+                        color: const Color(0xFFFF6F00),
+                      ),
+                    ),
+                  ),
+                  if (!albumClaimed)
+                    const Icon(
+                      Icons.arrow_forward_ios_rounded,
+                      size: 14,
+                      color: Color(0xFFFF6F00),
+                    ),
+                ],
+              ),
+            ),
+          ),
+        ],
       ],
     );
   }

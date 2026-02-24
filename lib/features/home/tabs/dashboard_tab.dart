@@ -9,6 +9,7 @@ import '../widgets/memory_book_shortcut_card.dart';
 import '../widgets/personal_header.dart';
 import '../widgets/recent_capsules.dart';
 import '../widgets/cycle_tracking_section.dart';
+import '../widgets/upgrade_prompt_banner.dart';
 
 /// Dashboard tab - main home content with personalized sections.
 class DashboardTab extends ConsumerWidget {
@@ -31,6 +32,9 @@ class DashboardTab extends ConsumerWidget {
           slivers: [
             // Personal greeting header (Mother focus)
             const SliverToBoxAdapter(child: PersonalHeader()),
+
+            // Upgrade prompt for free-tier users
+            const SliverToBoxAdapter(child: UpgradePromptBanner()),
 
             // Visual Cycle Tracking (Replaces the basic MotherHealthCard)
             const SliverToBoxAdapter(child: CycleTrackingSection()),

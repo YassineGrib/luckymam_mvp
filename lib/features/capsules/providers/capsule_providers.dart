@@ -6,6 +6,7 @@ import '../models/capsule.dart';
 import '../models/emotion.dart';
 import '../services/capsule_service.dart';
 import '../../timeline/services/timeline_service.dart';
+import '../../subscription/providers/subscription_providers.dart';
 
 /// Provider for CapsuleService instance.
 final capsuleServiceProvider = Provider<CapsuleService>((ref) {
@@ -38,20 +39,22 @@ final capsuleCountProvider = FutureProvider<int>((ref) async {
 
 /// Quota limits by tier.
 const int freemiumCapsuleLimit = 25;
-const int premiumCapsuleLimit = 999; // Effectively unlimited
 
-/// Provider to check if user can create more capsules.
+/// Provider to check if user can create more capsules (tier-aware).
 final canCreateCapsuleProvider = FutureProvider<bool>((ref) async {
   final count = await ref.watch(capsuleCountProvider.future);
-  // TODO: Check user tier from profile when subscriptions are implemented
-  // For now, use freemium limit
-  return count < freemiumCapsuleLimit;
+  final limit = ref.watch(tierCapsuleLimitProvider);
+  // -1 means unlimited (Premium/VIP)
+  if (limit == -1) return true;
+  return count < limit;
 });
 
-/// Provider for remaining capsule quota.
+/// Provider for remaining capsule quota (tier-aware).
 final remainingCapsuleQuotaProvider = FutureProvider<int>((ref) async {
   final count = await ref.watch(capsuleCountProvider.future);
-  return (freemiumCapsuleLimit - count).clamp(0, freemiumCapsuleLimit);
+  final limit = ref.watch(tierCapsuleLimitProvider);
+  if (limit == -1) return 999; // Unlimited
+  return (limit - count).clamp(0, limit);
 });
 
 /// Filter state for capsules gallery.
