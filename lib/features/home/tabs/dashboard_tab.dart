@@ -8,6 +8,7 @@ import '../widgets/health_shortcut_card.dart';
 import '../widgets/memory_book_shortcut_card.dart';
 import '../widgets/personal_header.dart';
 import '../widgets/recent_capsules.dart';
+import '../widgets/reels_shortcut_card.dart';
 import '../widgets/cycle_tracking_section.dart';
 import '../widgets/upgrade_prompt_banner.dart';
 
@@ -47,6 +48,9 @@ class DashboardTab extends ConsumerWidget {
 
             // Recent capsules preview
             const SliverToBoxAdapter(child: RecentCapsules()),
+
+            // Reels shortcut — Educational video content
+            const SliverToBoxAdapter(child: ReelsShortcutCard()),
 
             // Memory Book shortcut — Auto-album suggestions
             const SliverToBoxAdapter(child: MemoryBookShortcutCard()),

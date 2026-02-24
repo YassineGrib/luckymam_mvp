@@ -66,7 +66,7 @@
 ## 📋 Planned (Not Started)
 
 ### Phase 4 Features
-- [ ] Reels Educational Content (Short videos)
+- [x] Reels Educational Content (Short videos)
 - [ ] AI Support Chatbot (Arabic/French)
 - [ ] Social Sharing with Privacy Blur
 
@@ -79,6 +79,7 @@ lib/
 ├── features/
 │   ├── capsule/                         ✅
 │   ├── memory_book/                     ✅ (NEW)
+│   ├── reels/                           ✅ (NEW)
 │   ├── subscription/                    ✅ (NEW)
 │   ├── notifications/                   ✅ (NEW)
 │   ├── vaccines/                        ✅

@@ -5,6 +5,7 @@ import '../../features/onboarding/onboarding_screen.dart';
 import '../../features/auth/login_screen.dart';
 import '../../features/auth/signup_screen.dart';
 import '../../features/home/home_screen.dart';
+import '../../features/reels/screens/reels_screen.dart';
 
 /// App router configuration with soft page transitions.
 class AppRouter {
@@ -61,6 +62,16 @@ class AppRouter {
         pageBuilder: (context, state) => _buildPageWithTransition(
           key: state.pageKey,
           child: const HomeScreen(),
+        ),
+      ),
+
+      // Reels (Educational short videos)
+      GoRoute(
+        path: '/reels',
+        name: 'reels',
+        pageBuilder: (context, state) => _buildPageWithTransition(
+          key: state.pageKey,
+          child: const ReelsScreen(),
         ),
       ),
     ],
