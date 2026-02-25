@@ -94,7 +94,7 @@ class PersonalHeader extends ConsumerWidget {
             // Background Pattern Overlay
             Positioned.fill(
               child: Opacity(
-                opacity: isDark ? 0.03 : 0.05,
+                opacity: isDark ? 0.15 : 0.25,
                 child: Image.asset(
                   'assets/images/heroPatern.png',
                   fit: BoxFit.cover,
