@@ -16,9 +16,6 @@ class RecentCapsules extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final secondaryColor = isDark
-        ? AppColors.textSecondaryDark
-        : AppColors.textSecondaryLight;
     final primary = isDark ? AppColors.primaryDark : AppColors.primaryLight;
 
     final capsules = ref.watch(recentCapsulesProvider);
@@ -28,50 +25,6 @@ class RecentCapsules extends ConsumerWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        // Section header
-        Padding(
-          padding: const EdgeInsets.fromLTRB(20, 20, 20, 12),
-          child: Row(
-            children: [
-              Icon(
-                Icons.photo_library_rounded,
-                color: secondaryColor,
-                size: 20,
-              ),
-              const SizedBox(width: 8),
-              Text(
-                'VOS DERNIÈRES CAPSULES',
-                style: GoogleFonts.outfit(
-                  fontSize: 14,
-                  fontWeight: FontWeight.bold,
-                  color: secondaryColor,
-                  letterSpacing: 1.2,
-                ),
-              ),
-              const Spacer(),
-              if (capsules.isNotEmpty)
-                TextButton(
-                  onPressed: () {
-                    // Navigate to capsules tab (index 2)
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(
-                        content: Text('Voir toutes les capsules'),
-                        duration: Duration(seconds: 1),
-                      ),
-                    );
-                  },
-                  child: Text(
-                    'Voir tout',
-                    style: GoogleFonts.outfit(
-                      fontSize: 13,
-                      color: primary,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
-                ),
-            ],
-          ),
-        ),
         // Capsules horizontal list
         SizedBox(
           height: 100,

@@ -66,10 +66,19 @@ class DashboardTab extends ConsumerWidget {
             const SliverToBoxAdapter(child: ChildrenOverview()),
 
             // ─── Mes Souvenirs ───────────────────────────────────────
-            const SliverToBoxAdapter(
+            SliverToBoxAdapter(
               child: SectionHeader(
                 title: 'Mes Souvenirs',
                 icon: Icons.photo_library_rounded,
+                trailing: 'Voir tout',
+                onTrailingTap: () {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                      content: Text('Voir toutes les capsules'),
+                      duration: Duration(seconds: 1),
+                    ),
+                  );
+                },
               ),
             ),
             const SliverToBoxAdapter(child: RecentCapsules()),
