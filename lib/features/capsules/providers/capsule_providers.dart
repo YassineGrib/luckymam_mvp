@@ -174,6 +174,8 @@ class CapsuleActionsNotifier extends StateNotifier<CapsuleActionsState> {
     required Emotion emotion,
     String? milestoneId,
     List<String> tags = const [],
+    DateTime? capturedAt,
+    CapsuleCategory? category,
   }) async {
     state = state.copyWith(isLoading: true);
     try {
@@ -185,6 +187,8 @@ class CapsuleActionsNotifier extends StateNotifier<CapsuleActionsState> {
         emotion: emotion,
         milestoneId: milestoneId,
         tags: tags,
+        capturedAt: capturedAt,
+        category: category,
       );
 
       // If tied to a milestone, mark it as completed

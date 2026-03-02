@@ -4,8 +4,10 @@ import '../../features/splash/splash_screen.dart';
 import '../../features/onboarding/onboarding_screen.dart';
 import '../../features/auth/login_screen.dart';
 import '../../features/auth/signup_screen.dart';
+import '../../features/auth/privacy_policy_screen.dart';
 import '../../features/home/home_screen.dart';
 import '../../features/reels/screens/reels_screen.dart';
+import '../../features/subscription/screens/diamond_sponsors_screen.dart';
 
 /// App router configuration with soft page transitions.
 class AppRouter {
@@ -72,6 +74,26 @@ class AppRouter {
         pageBuilder: (context, state) => _buildPageWithTransition(
           key: state.pageKey,
           child: const ReelsScreen(),
+        ),
+      ),
+
+      // Privacy Policy & Terms of Use
+      GoRoute(
+        path: '/privacy-policy',
+        name: 'privacy-policy',
+        pageBuilder: (context, state) => _buildPageWithTransition(
+          key: state.pageKey,
+          child: const PrivacyPolicyScreen(),
+        ),
+      ),
+
+      // Diamond Sponsors
+      GoRoute(
+        path: '/sponsors-diamant',
+        name: 'sponsors-diamant',
+        pageBuilder: (context, state) => _buildPageWithTransition(
+          key: state.pageKey,
+          child: const DiamondSponsorsScreen(),
         ),
       ),
     ],

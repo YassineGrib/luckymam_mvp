@@ -8,6 +8,7 @@ import '../../profile/models/profile_models.dart';
 import '../../profile/providers/profile_providers.dart';
 import '../providers/home_providers.dart';
 import '../../profile/profile_screen.dart';
+import '../../../shared/widgets/app_logo.dart';
 
 /// Personal greeting header with user context.
 class PersonalHeader extends ConsumerWidget {
@@ -112,6 +113,9 @@ class PersonalHeader extends ConsumerWidget {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
+                        // LuckyMam logo + brand name
+                        const LuckyMamLogo(size: 22, showText: true),
+                        const SizedBox(height: 8),
                         // Greeting
                         Text(
                           '$greeting,',

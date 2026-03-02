@@ -2,6 +2,50 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 
 import 'emotion.dart';
 
+/// Life phase category for a capsule.
+enum CapsuleCategory {
+  preGestation,
+  gestation,
+  postPartum,
+  enfance,
+  adulte;
+
+  String get labelFr {
+    switch (this) {
+      case CapsuleCategory.preGestation:
+        return 'Pré-gestation';
+      case CapsuleCategory.gestation:
+        return 'Gestation';
+      case CapsuleCategory.postPartum:
+        return 'Post-partum';
+      case CapsuleCategory.enfance:
+        return 'Enfance';
+      case CapsuleCategory.adulte:
+        return 'Adulte';
+    }
+  }
+
+  String get emoji {
+    switch (this) {
+      case CapsuleCategory.preGestation:
+        return '🌱';
+      case CapsuleCategory.gestation:
+        return '🤰';
+      case CapsuleCategory.postPartum:
+        return '👶';
+      case CapsuleCategory.enfance:
+        return '🧒';
+      case CapsuleCategory.adulte:
+        return '🌟';
+    }
+  }
+
+  static CapsuleCategory? fromString(String? value) {
+    if (value == null) return null;
+    return CapsuleCategory.values.where((e) => e.name == value).firstOrNull;
+  }
+}
+
 /// Capsule model - a memory capture with photo, audio, and emotion.
 class Capsule {
   final String id;
@@ -17,6 +61,12 @@ class Capsule {
   final DateTime createdAt;
   final DateTime updatedAt;
 
+  /// Actual date the photo/moment was captured (may differ from createdAt).
+  final DateTime? capturedAt;
+
+  /// Life phase category of this memory.
+  final CapsuleCategory? category;
+
   const Capsule({
     required this.id,
     required this.userId,
@@ -30,6 +80,8 @@ class Capsule {
     this.isFavorite = false,
     required this.createdAt,
     required this.updatedAt,
+    this.capturedAt,
+    this.category,
   });
 
   /// Create from Firestore document.
@@ -52,6 +104,10 @@ class Capsule {
       updatedAt: data['updatedAt'] != null
           ? (data['updatedAt'] as Timestamp).toDate()
           : DateTime.now(),
+      capturedAt: data['capturedAt'] != null
+          ? (data['capturedAt'] as Timestamp).toDate()
+          : null,
+      category: CapsuleCategory.fromString(data['category'] as String?),
     );
   }
 
@@ -69,6 +125,8 @@ class Capsule {
       'isFavorite': isFavorite,
       'createdAt': Timestamp.fromDate(createdAt),
       'updatedAt': Timestamp.fromDate(updatedAt),
+      'capturedAt': capturedAt != null ? Timestamp.fromDate(capturedAt!) : null,
+      'category': category?.name,
     };
   }
 
@@ -96,6 +154,10 @@ class Capsule {
     bool? isFavorite,
     DateTime? createdAt,
     DateTime? updatedAt,
+    DateTime? capturedAt,
+    CapsuleCategory? category,
+    bool clearCapturedAt = false,
+    bool clearCategory = false,
   }) {
     return Capsule(
       id: id ?? this.id,
@@ -110,6 +172,8 @@ class Capsule {
       isFavorite: isFavorite ?? this.isFavorite,
       createdAt: createdAt ?? this.createdAt,
       updatedAt: updatedAt ?? this.updatedAt,
+      capturedAt: clearCapturedAt ? null : (capturedAt ?? this.capturedAt),
+      category: clearCategory ? null : (category ?? this.category),
     );
   }
 }

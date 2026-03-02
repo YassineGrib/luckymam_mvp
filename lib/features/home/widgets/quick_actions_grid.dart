@@ -46,7 +46,7 @@ class QuickActionsGrid extends StatelessWidget {
           const SizedBox(width: 12),
           Expanded(
             child: _QuickActionItem(
-              icon: Icons.vaccines_rounded,
+              icon: Icons.monitor_heart_rounded,
               color: AppColors.success,
               cardColor: cardColor,
               isDark: isDark,

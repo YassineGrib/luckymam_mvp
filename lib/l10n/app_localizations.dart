@@ -109,7 +109,7 @@ abstract class AppLocalizations {
   /// No description provided for @welcomeSubtitle.
   ///
   /// In fr, this message translates to:
-  /// **'Capturez chaque moment précieux de votre maternité'**
+  /// **'Capturer chaque moment précieux de votre vie de maman'**
   String get welcomeSubtitle;
 
   /// No description provided for @getStarted.

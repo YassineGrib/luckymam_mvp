@@ -23,7 +23,7 @@ class PhaseCarousel extends StatelessWidget {
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return SizedBox(
-      height: 100,
+      height: 74,
       child: ListView.builder(
         scrollDirection: Axis.horizontal,
         padding: const EdgeInsets.symmetric(
@@ -43,8 +43,11 @@ class PhaseCarousel extends StatelessWidget {
               onTap: () => onPhaseSelected(phase),
               child: AnimatedContainer(
                 duration: const Duration(milliseconds: 200),
-                width: 140,
-                padding: const EdgeInsets.all(AppSpacing.sm),
+                width: 130,
+                padding: const EdgeInsets.symmetric(
+                  horizontal: AppSpacing.sm,
+                  vertical: 6,
+                ),
                 decoration: BoxDecoration(
                   color: isSelected
                       ? phase.color.withOpacity(isDark ? 0.3 : 0.15)
@@ -80,7 +83,7 @@ class PhaseCarousel extends StatelessWidget {
                       children: [
                         Icon(
                           phase.icon,
-                          size: 24,
+                          size: 18,
                           color: isSelected ? phase.color : null,
                         ),
                         if (isCurrent)

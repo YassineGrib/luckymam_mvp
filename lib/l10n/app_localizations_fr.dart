@@ -16,7 +16,7 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get welcomeSubtitle =>
-      'Capturez chaque moment précieux de votre maternité';
+      'Capturer chaque moment précieux de votre vie de maman';
 
   @override
   String get getStarted => 'Commencer';

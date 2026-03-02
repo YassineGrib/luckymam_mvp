@@ -9,6 +9,7 @@ import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_spacing.dart';
 import '../../profile/models/profile_models.dart';
 import '../../profile/providers/profile_providers.dart';
+import '../models/capsule.dart';
 import '../models/emotion.dart';
 import '../providers/capsule_providers.dart';
 import '../widgets/audio_recorder.dart';
@@ -35,6 +36,8 @@ class _CreateCapsuleScreenState extends ConsumerState<CreateCapsuleScreen> {
   Child? _selectedChild;
   final List<String> _tags = [];
   final TextEditingController _tagController = TextEditingController();
+  DateTime? _capturedAt;
+  CapsuleCategory? _selectedCategory;
 
   bool _isLoading = false;
 
@@ -108,6 +111,14 @@ class _CreateCapsuleScreenState extends ConsumerState<CreateCapsuleScreen> {
             _buildPhotoSection(isDark, primary, textColor, secondaryText),
             const SizedBox(height: AppSpacing.lg),
 
+            // Category selector (mandatory)
+            _buildCategorySection(isDark, primary, textColor, secondaryText),
+            const SizedBox(height: AppSpacing.lg),
+
+            // Date of capture
+            _buildDateSection(isDark, primary, textColor, secondaryText),
+            const SizedBox(height: AppSpacing.lg),
+
             // Child selector
             childrenAsync.when(
               loading: () => const SizedBox.shrink(),
@@ -155,6 +166,7 @@ class _CreateCapsuleScreenState extends ConsumerState<CreateCapsuleScreen> {
 
             // Tags
             _buildTagsSection(isDark, primary, textColor, secondaryText),
+            const SizedBox(height: AppSpacing.xl),
           ],
         ),
       ),
@@ -165,6 +177,7 @@ class _CreateCapsuleScreenState extends ConsumerState<CreateCapsuleScreen> {
       _selectedPhoto != null &&
       _selectedChild != null &&
       _selectedEmotion != null &&
+      _selectedCategory != null &&
       !_isLoading;
 
   Widget _buildPhotoSection(
@@ -427,6 +440,189 @@ class _CreateCapsuleScreenState extends ConsumerState<CreateCapsuleScreen> {
     );
   }
 
+  Widget _buildCategorySection(
+    bool isDark,
+    Color primary,
+    Color textColor,
+    Color secondaryText,
+  ) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          children: [
+            Text(
+              '📂 Catégorie',
+              style: GoogleFonts.outfit(
+                fontSize: 14,
+                fontWeight: FontWeight.w600,
+                color: textColor,
+              ),
+            ),
+            const SizedBox(width: 4),
+            Text(
+              '(obligatoire)',
+              style: GoogleFonts.outfit(fontSize: 12, color: AppColors.error),
+            ),
+          ],
+        ),
+        const SizedBox(height: AppSpacing.sm),
+        Wrap(
+          spacing: AppSpacing.sm,
+          runSpacing: AppSpacing.sm,
+          children: CapsuleCategory.values.map((cat) {
+            final isSelected = _selectedCategory == cat;
+            return GestureDetector(
+              onTap: () => setState(() => _selectedCategory = cat),
+              child: AnimatedContainer(
+                duration: const Duration(milliseconds: 200),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 14,
+                  vertical: 10,
+                ),
+                decoration: BoxDecoration(
+                  color: isSelected
+                      ? primary.withValues(alpha: 0.15)
+                      : (isDark
+                            ? AppColors.surfaceContainerDark
+                            : AppColors.surfaceContainerLight),
+                  borderRadius: BorderRadius.circular(20),
+                  border: Border.all(
+                    color: isSelected ? primary : Colors.transparent,
+                    width: 2,
+                  ),
+                ),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text(cat.emoji, style: const TextStyle(fontSize: 16)),
+                    const SizedBox(width: 6),
+                    Text(
+                      cat.labelFr,
+                      style: GoogleFonts.outfit(
+                        fontSize: 13,
+                        fontWeight: isSelected
+                            ? FontWeight.w700
+                            : FontWeight.w400,
+                        color: isSelected ? primary : textColor,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            );
+          }).toList(),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildDateSection(
+    bool isDark,
+    Color primary,
+    Color textColor,
+    Color secondaryText,
+  ) {
+    final formattedDate = _capturedAt != null
+        ? '${_capturedAt!.day.toString().padLeft(2, '0')}/${_capturedAt!.month.toString().padLeft(2, '0')}/${_capturedAt!.year}'
+        : null;
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          '📅 Date de la photo',
+          style: GoogleFonts.outfit(
+            fontSize: 14,
+            fontWeight: FontWeight.w600,
+            color: textColor,
+          ),
+        ),
+        const SizedBox(height: AppSpacing.sm),
+        GestureDetector(
+          onTap: () => _pickCapturedDate(),
+          child: Container(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+            decoration: BoxDecoration(
+              color: isDark
+                  ? AppColors.inputBackgroundDark
+                  : AppColors.inputBackgroundLight,
+              borderRadius: BorderRadius.circular(12),
+              border: _capturedAt != null
+                  ? Border.all(color: primary.withValues(alpha: 0.5))
+                  : null,
+            ),
+            child: Row(
+              children: [
+                Icon(
+                  Icons.calendar_today_rounded,
+                  size: 18,
+                  color: _capturedAt != null ? primary : secondaryText,
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Text(
+                    formattedDate ?? 'Aujourd’hui (par défaut)',
+                    style: GoogleFonts.outfit(
+                      fontSize: 14,
+                      color: _capturedAt != null ? textColor : secondaryText,
+                    ),
+                  ),
+                ),
+                if (_capturedAt != null)
+                  GestureDetector(
+                    onTap: () => setState(() => _capturedAt = null),
+                    child: Icon(
+                      Icons.close_rounded,
+                      size: 16,
+                      color: secondaryText,
+                    ),
+                  ),
+              ],
+            ),
+          ),
+        ),
+        const SizedBox(height: 4),
+        Text(
+          'Utile si la photo a été prise à une autre date',
+          style: GoogleFonts.outfit(
+            fontSize: 11,
+            color: secondaryText,
+            fontStyle: FontStyle.italic,
+          ),
+        ),
+      ],
+    );
+  }
+
+  Future<void> _pickCapturedDate() async {
+    final picked = await showDatePicker(
+      context: context,
+      initialDate: _capturedAt ?? DateTime.now(),
+      firstDate: DateTime(2000),
+      lastDate: DateTime.now(),
+      helpText: 'Date de la photo',
+      confirmText: 'Confirmer',
+      cancelText: 'Annuler',
+      builder: (context, child) {
+        final primary = Theme.of(context).brightness == Brightness.dark
+            ? AppColors.primaryDark
+            : AppColors.primaryLight;
+        return Theme(
+          data: Theme.of(context).copyWith(
+            colorScheme: Theme.of(
+              context,
+            ).colorScheme.copyWith(primary: primary, onPrimary: Colors.white),
+          ),
+          child: child!,
+        );
+      },
+    );
+    if (picked != null) {
+      setState(() => _capturedAt = picked);
+    }
+  }
+
   void _addTag() {
     final tag = _tagController.text.trim();
     if (tag.isNotEmpty && !_tags.contains(tag)) {
@@ -570,6 +766,8 @@ class _CreateCapsuleScreenState extends ConsumerState<CreateCapsuleScreen> {
           emotion: _selectedEmotion!,
           milestoneId: widget.milestoneId,
           tags: _tags,
+          capturedAt: _capturedAt,
+          category: _selectedCategory,
         );
 
     setState(() => _isLoading = false);

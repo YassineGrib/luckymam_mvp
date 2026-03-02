@@ -46,7 +46,7 @@ class _HomeScreenState extends State<HomeScreen> {
     NavItem(
       icon: Icons.vaccines_outlined,
       activeIcon: Icons.vaccines_rounded,
-      label: 'Vaccins',
+      label: 'Santé',
     ),
     NavItem(
       icon: Icons.person_outline_rounded,

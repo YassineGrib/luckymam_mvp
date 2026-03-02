@@ -1,8 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:video_player/video_player.dart';
+
+import '../../../core/theme/app_colors.dart';
 
 /// Full-screen video player for a single reel.
 /// Auto-plays when [isActive], pauses when not.
+/// Features: rose gradient play button + LuckyMam logo watermark.
 class ReelPlayer extends StatefulWidget {
   const ReelPlayer({
     super.key,
@@ -17,14 +21,25 @@ class ReelPlayer extends StatefulWidget {
   State<ReelPlayer> createState() => _ReelPlayerState();
 }
 
-class _ReelPlayerState extends State<ReelPlayer> {
+class _ReelPlayerState extends State<ReelPlayer>
+    with SingleTickerProviderStateMixin {
   late VideoPlayerController _controller;
+  late AnimationController _pulseAnim;
+  late Animation<double> _scaleAnim;
   bool _initialized = false;
-  bool _showPlayIcon = false;
+  bool _showPlayOverlay = false;
 
   @override
   void initState() {
     super.initState();
+    _pulseAnim = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 180),
+    );
+    _scaleAnim = Tween<double>(
+      begin: 1.0,
+      end: 0.88,
+    ).animate(CurvedAnimation(parent: _pulseAnim, curve: Curves.easeOut));
     _initController();
   }
 
@@ -56,26 +71,30 @@ class _ReelPlayerState extends State<ReelPlayer> {
   @override
   void dispose() {
     _controller.dispose();
+    _pulseAnim.dispose();
     super.dispose();
   }
 
   void _togglePlayPause() {
     if (!_initialized) return;
 
+    _pulseAnim.forward().then((_) => _pulseAnim.reverse());
+
     setState(() {
       if (_controller.value.isPlaying) {
         _controller.pause();
-        _showPlayIcon = true;
+        _showPlayOverlay = true;
       } else {
         _controller.play();
-        _showPlayIcon = false;
+        _showPlayOverlay = false;
       }
     });
 
+    // Auto-hide after 2s if paused
     if (!_controller.value.isPlaying) {
       Future.delayed(const Duration(seconds: 2), () {
         if (mounted && !_controller.value.isPlaying) {
-          setState(() => _showPlayIcon = false);
+          setState(() => _showPlayOverlay = false);
         }
       });
     }
@@ -87,7 +106,10 @@ class _ReelPlayerState extends State<ReelPlayer> {
       return Container(
         color: Colors.black,
         child: const Center(
-          child: CircularProgressIndicator(color: Colors.white54),
+          child: CircularProgressIndicator(
+            color: AppColors.magentaPink,
+            strokeWidth: 2.5,
+          ),
         ),
       );
     }
@@ -112,35 +134,67 @@ class _ReelPlayerState extends State<ReelPlayer> {
             ),
           ),
 
-          // Play/Pause icon overlay
-          AnimatedOpacity(
-            opacity: _showPlayIcon ? 1.0 : 0.0,
-            duration: const Duration(milliseconds: 200),
-            child: Container(
-              width: 72,
-              height: 72,
-              decoration: BoxDecoration(
-                color: Colors.black.withValues(alpha: 0.4),
-                shape: BoxShape.circle,
-              ),
-              child: const Icon(
-                Icons.play_arrow_rounded,
-                color: Colors.white,
-                size: 48,
+          // LuckyMam logo watermark (top-right, semi-transparent)
+          Positioned(
+            top: 90,
+            right: 16,
+            child: Opacity(
+              opacity: 0.25,
+              child: SvgPicture.asset(
+                'assets/logo/logo svg.svg',
+                width: 36,
+                height: 36,
+                colorFilter: const ColorFilter.mode(
+                  Colors.white,
+                  BlendMode.srcIn,
+                ),
               ),
             ),
           ),
 
-          // Progress bar at bottom
+          // ── Rose gradient play/pause overlay ─────────────────────
+          AnimatedOpacity(
+            opacity: _showPlayOverlay ? 1.0 : 0.0,
+            duration: const Duration(milliseconds: 200),
+            child: ScaleTransition(
+              scale: _scaleAnim,
+              child: Container(
+                width: 80,
+                height: 80,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  gradient: const LinearGradient(
+                    colors: [AppColors.magentaPink, AppColors.coral],
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                  ),
+                  boxShadow: [
+                    BoxShadow(
+                      color: AppColors.magentaPink.withValues(alpha: 0.5),
+                      blurRadius: 20,
+                      spreadRadius: 2,
+                    ),
+                  ],
+                ),
+                child: const Icon(
+                  Icons.play_arrow_rounded,
+                  color: Colors.white,
+                  size: 44,
+                ),
+              ),
+            ),
+          ),
+
+          // Progress bar at bottom — rose tinted
           Positioned(
             left: 0,
             right: 0,
             bottom: 0,
             child: VideoProgressIndicator(
               _controller,
-              allowScrubbing: false,
+              allowScrubbing: true,
               colors: const VideoProgressColors(
-                playedColor: Colors.white,
+                playedColor: AppColors.magentaPink,
                 bufferedColor: Colors.white24,
                 backgroundColor: Colors.white10,
               ),

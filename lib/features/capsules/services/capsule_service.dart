@@ -69,6 +69,8 @@ class CapsuleService {
     required Emotion emotion,
     String? milestoneId,
     List<String> tags = const [],
+    DateTime? capturedAt,
+    CapsuleCategory? category,
   }) async {
     if (_userId == null) throw Exception('User not authenticated');
 
@@ -106,6 +108,8 @@ class CapsuleService {
       isFavorite: false,
       createdAt: now,
       updatedAt: now,
+      capturedAt: capturedAt,
+      category: category,
     );
 
     await _capsulesRef.doc(capsuleId).set(capsule.toFirestore());

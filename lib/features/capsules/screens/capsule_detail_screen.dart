@@ -1,6 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:shimmer/shimmer.dart';
@@ -77,6 +78,31 @@ class CapsuleDetailScreen extends ConsumerWidget {
                     Colors.black.withValues(alpha: 0.9),
                     Colors.transparent,
                   ],
+                ),
+              ),
+            ),
+          ),
+
+          // ── LuckyMam watermark (bas droite) ───────────────────
+          Positioned(
+            right: 16,
+            bottom: MediaQuery.of(context).size.height * 0.35,
+            child: Opacity(
+              opacity: 0.30,
+              child: Container(
+                padding: const EdgeInsets.all(8),
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: Colors.black.withValues(alpha: 0.20),
+                ),
+                child: SvgPicture.asset(
+                  'assets/logo/logo svg.svg',
+                  width: 40,
+                  height: 40,
+                  colorFilter: const ColorFilter.mode(
+                    Colors.white,
+                    BlendMode.srcIn,
+                  ),
                 ),
               ),
             ),
@@ -192,6 +218,27 @@ class CapsuleDetailScreen extends ConsumerWidget {
                         ),
                       ],
                     ),
+
+                    // Category & date badges
+                    if (capsule.category != null ||
+                        capsule.capturedAt != null) ...[
+                      const SizedBox(height: AppSpacing.sm),
+                      Wrap(
+                        spacing: 8,
+                        children: [
+                          if (capsule.category != null)
+                            _InfoBadge(
+                              label:
+                                  '${capsule.category!.emoji} ${capsule.category!.labelFr}',
+                            ),
+                          if (capsule.capturedAt != null)
+                            _InfoBadge(
+                              label:
+                                  '📅 ${DateFormat('d MMM yyyy', 'fr_FR').format(capsule.capturedAt!)}',
+                            ),
+                        ],
+                      ),
+                    ],
 
                     // Audio player
                     if (capsule.hasAudio) ...[
@@ -384,6 +431,33 @@ class _LivingCoverState extends State<_LivingCover>
             color: Colors.white54,
             size: 60,
           ),
+        ),
+      ),
+    );
+  }
+}
+
+/// Small translucent badge used in the detail overlay.
+class _InfoBadge extends StatelessWidget {
+  const _InfoBadge({required this.label});
+
+  final String label;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+      decoration: BoxDecoration(
+        color: Colors.white.withValues(alpha: 0.18),
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: Colors.white24),
+      ),
+      child: Text(
+        label,
+        style: GoogleFonts.outfit(
+          fontSize: 12,
+          color: Colors.white,
+          fontWeight: FontWeight.w500,
         ),
       ),
     );

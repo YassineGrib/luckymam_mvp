@@ -57,21 +57,23 @@ class OnboardingScreen extends StatelessWidget {
 
                   const SizedBox(height: AppSpacing.md),
 
-                  // Title with highlighted word
+                  // Title with highlighted phrase
                   RichText(
                     text: TextSpan(
                       style: GoogleFonts.outfit(
-                        fontSize: 36,
+                        fontSize: 30,
                         fontWeight: FontWeight.bold,
                         color: Colors.white,
-                        height: 1.2,
+                        height: 1.3,
                       ),
                       children: [
                         TextSpan(
-                          text: 'Chaque ',
+                          text: 'Des souvenirs \u00e0 transmettre,\n',
                           style: TextStyle(color: AppColors.magentaPink),
                         ),
-                        const TextSpan(text: 'Moment\nCompte'),
+                        const TextSpan(
+                          text: 'des \u00e9motions \u00e0 revivre',
+                        ),
                       ],
                     ),
                   ),

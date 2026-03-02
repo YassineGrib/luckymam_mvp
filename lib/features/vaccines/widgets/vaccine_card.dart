@@ -6,6 +6,7 @@ import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_spacing.dart';
 import '../../vaccines/models/vaccine_status.dart';
 import '../../vaccines/providers/vaccine_providers.dart';
+import '../../vaccines/screens/vaccine_detail_screen.dart';
 
 /// Card widget displaying a vaccine group with collapsible details.
 class VaccineCard extends StatefulWidget {
@@ -176,6 +177,43 @@ class _VaccineCardState extends State<VaccineCard>
                           ),
                         ),
                       ],
+                    ),
+                  ),
+                  // En savoir plus link
+                  GestureDetector(
+                    onTap: () => Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder: (_) => VaccineDetailScreen(vaccine: vaccine),
+                      ),
+                    ),
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 8,
+                        vertical: 4,
+                      ),
+                      decoration: BoxDecoration(
+                        color: primary.withValues(alpha: 0.1),
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Icon(
+                            Icons.info_outline_rounded,
+                            size: 12,
+                            color: primary,
+                          ),
+                          const SizedBox(width: 3),
+                          Text(
+                            'Détails',
+                            style: GoogleFonts.outfit(
+                              fontSize: 11,
+                              fontWeight: FontWeight.w600,
+                              color: primary,
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
                   ),
                 ],

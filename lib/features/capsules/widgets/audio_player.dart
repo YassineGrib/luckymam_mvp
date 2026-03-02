@@ -5,6 +5,8 @@ import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
+import '../../../core/theme/app_colors.dart';
+
 /// SoundCloud-style audio player — no box, bigger waveform, floating style.
 class CapsuleAudioPlayer extends StatefulWidget {
   const CapsuleAudioPlayer({
@@ -189,14 +191,14 @@ class _CapsuleAudioPlayerState extends State<CapsuleAudioPlayer>
               height: 52,
               decoration: BoxDecoration(
                 gradient: const LinearGradient(
-                  colors: [Color(0xFFFF5500), Color(0xFFFF8800)],
+                  colors: [AppColors.magentaPink, AppColors.coral],
                   begin: Alignment.topLeft,
                   end: Alignment.bottomRight,
                 ),
                 shape: BoxShape.circle,
                 boxShadow: [
                   BoxShadow(
-                    color: const Color(0xFFFF5500).withValues(alpha: 0.5),
+                    color: AppColors.magentaPink.withValues(alpha: 0.5),
                     blurRadius: _isPlaying ? 20 : 10,
                     spreadRadius: _isPlaying ? 3 : 0,
                   ),
@@ -240,7 +242,7 @@ class _CapsuleAudioPlayerState extends State<CapsuleAudioPlayer>
               painter: _WaveformPainter(
                 bars: _waveformBars,
                 progress: progress,
-                activeColor: const Color(0xFFFF5500),
+                activeColor: AppColors.magentaPink,
                 inactiveColor: Colors.white.withValues(alpha: 0.22),
               ),
             ),

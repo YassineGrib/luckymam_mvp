@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:intl/intl.dart';
 
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_spacing.dart';
+import '../../capsules/screens/capsule_detail_screen.dart';
 import '../../capsules/screens/create_capsule_screen.dart';
+import '../../capsules/providers/capsule_providers.dart';
 import '../models/phase.dart';
 import '../services/timeline_service.dart';
 
@@ -146,53 +149,100 @@ class MilestoneDetailScreen extends ConsumerWidget {
                   ),
                   const SizedBox(height: AppSpacing.xl),
 
-                  // Linked capsule preview (if exists)
+                  // Capsule liée — bouton pour lire
                   if (milestone.capsuleId != null) ...[
                     Row(
                       children: [
-                        Icon(
-                          Icons.camera_alt_rounded,
+                        const Icon(
+                          Icons.photo_camera_rounded,
                           size: 16,
-                          color: textColor,
+                          color: AppColors.success,
                         ),
                         const SizedBox(width: 6),
                         Text(
-                          'Capsule liée',
+                          'Capsule réalisée',
                           style: GoogleFonts.outfit(
                             fontSize: 16,
                             fontWeight: FontWeight.w600,
                             color: textColor,
                           ),
                         ),
-                      ],
-                    ),
-                    const SizedBox(height: AppSpacing.sm),
-                    Container(
-                      padding: const EdgeInsets.all(AppSpacing.md),
-                      decoration: BoxDecoration(
-                        color: isDark
-                            ? AppColors.surfaceDark
-                            : AppColors.surfaceLight,
-                        borderRadius: BorderRadius.circular(12),
-                        border: Border.all(
-                          color: AppColors.success.withOpacity(0.5),
-                        ),
-                      ),
-                      child: Row(
-                        children: [
-                          const Icon(
-                            Icons.check_circle_rounded,
-                            color: AppColors.success,
-                          ),
-                          const SizedBox(width: AppSpacing.sm),
+                        if (milestone.completedAt != null) ...[
+                          const Spacer(),
                           Text(
-                            'Moment capturé!',
+                            DateFormat(
+                              'd MMM yyyy',
+                              'fr_FR',
+                            ).format(milestone.completedAt!),
                             style: GoogleFonts.outfit(
+                              fontSize: 12,
                               color: AppColors.success,
                               fontWeight: FontWeight.w600,
                             ),
                           ),
                         ],
+                      ],
+                    ),
+                    const SizedBox(height: AppSpacing.sm),
+                    GestureDetector(
+                      onTap: () => _openLinkedCapsule(context, ref),
+                      child: Container(
+                        padding: const EdgeInsets.all(AppSpacing.md),
+                        decoration: BoxDecoration(
+                          color: AppColors.success.withValues(alpha: 0.08),
+                          borderRadius: BorderRadius.circular(12),
+                          border: Border.all(
+                            color: AppColors.success.withValues(alpha: 0.4),
+                          ),
+                        ),
+                        child: Row(
+                          children: [
+                            Container(
+                              width: 40,
+                              height: 40,
+                              decoration: BoxDecoration(
+                                shape: BoxShape.circle,
+                                color: AppColors.success.withValues(
+                                  alpha: 0.15,
+                                ),
+                              ),
+                              child: const Icon(
+                                Icons.play_circle_rounded,
+                                color: AppColors.success,
+                                size: 22,
+                              ),
+                            ),
+                            const SizedBox(width: AppSpacing.sm),
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    'Voir la capsule',
+                                    style: GoogleFonts.outfit(
+                                      color: AppColors.success,
+                                      fontWeight: FontWeight.w700,
+                                      fontSize: 14,
+                                    ),
+                                  ),
+                                  Text(
+                                    'Appuyez pour ouvrir le souvenir',
+                                    style: GoogleFonts.outfit(
+                                      color: AppColors.success.withValues(
+                                        alpha: 0.7,
+                                      ),
+                                      fontSize: 11,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            const Icon(
+                              Icons.chevron_right_rounded,
+                              color: AppColors.success,
+                            ),
+                          ],
+                        ),
                       ),
                     ),
                     const SizedBox(height: AppSpacing.xl),
@@ -221,9 +271,9 @@ class MilestoneDetailScreen extends ConsumerWidget {
                         child: _buildSecondaryButton(
                           context,
                           ref,
-                          icon: Icons.skip_next_rounded,
-                          label: 'Passer',
-                          onTap: () => _skip(context, ref),
+                          icon: Icons.close_rounded,
+                          label: 'Fermer',
+                          onTap: () => Navigator.pop(context),
                         ),
                       ),
                     ],
@@ -377,6 +427,26 @@ class MilestoneDetailScreen extends ConsumerWidget {
     );
   }
 
+  void _openLinkedCapsule(BuildContext context, WidgetRef ref) {
+    if (milestone.capsuleId == null) return;
+    final capsules = ref.read(capsulesProvider).value ?? [];
+    final capsule = capsules
+        .where((c) => c.id == milestone.capsuleId)
+        .firstOrNull;
+    if (capsule == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Capsule introuvable'),
+          behavior: SnackBarBehavior.floating,
+        ),
+      );
+      return;
+    }
+    Navigator.of(context).push(
+      MaterialPageRoute(builder: (_) => CapsuleDetailScreen(capsule: capsule)),
+    );
+  }
+
   void _markComplete(BuildContext context, WidgetRef ref) {
     // TODO: Implement with TimelineService.completeMilestone
     ScaffoldMessenger.of(context).showSnackBar(
@@ -385,11 +455,6 @@ class MilestoneDetailScreen extends ConsumerWidget {
         behavior: SnackBarBehavior.floating,
       ),
     );
-    Navigator.pop(context);
-  }
-
-  void _skip(BuildContext context, WidgetRef ref) {
-    // TODO: Implement with TimelineService.skipMilestone
     Navigator.pop(context);
   }
 }

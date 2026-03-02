@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import '../../../core/theme/app_colors.dart';
+import '../../profile/child_profile_screen.dart';
 import '../../profile/profile_screen.dart';
 import '../providers/home_providers.dart';
 import 'child_summary_card.dart';
@@ -58,11 +59,10 @@ class ChildrenOverview extends ConsumerWidget {
                     nextVaccine: summary.nextVaccine,
                     nextMilestone: summary.nextMilestone,
                     onTap: () {
-                      // Navigate to child details (e.g. Profile for now, or Timeline)
-                      // TODO: Maybe navigate to Timeline with this child selected?
                       Navigator.of(context).push(
                         MaterialPageRoute(
-                          builder: (_) => const ProfileScreen(),
+                          builder: (_) =>
+                              ChildProfileScreen(child: summary.child),
                         ),
                       );
                     },

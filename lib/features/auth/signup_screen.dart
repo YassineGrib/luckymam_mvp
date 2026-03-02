@@ -266,6 +266,11 @@ class _SignUpScreenState extends State<SignUpScreen> {
                   isLoading: _isLoading,
                 ),
 
+                const SizedBox(height: AppSpacing.md),
+
+                // RGPD Consent Mention
+                _ConsentMention(isDark: isDark, secondaryColor: secondaryColor),
+
                 const SizedBox(height: AppSpacing.lg),
 
                 // OR Divider
@@ -347,6 +352,81 @@ class _OrDivider extends StatelessWidget {
         ),
         Expanded(child: Divider(color: dividerColor)),
       ],
+    );
+  }
+}
+
+/// RGPD consent mention shown below the sign-up button.
+/// Tapping the underlined links navigates to the privacy policy page.
+class _ConsentMention extends StatelessWidget {
+  const _ConsentMention({required this.isDark, required this.secondaryColor});
+
+  final bool isDark;
+  final Color secondaryColor;
+
+  @override
+  Widget build(BuildContext context) {
+    final linkColor = isDark ? AppColors.primaryDark : AppColors.primaryLight;
+
+    return Container(
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        color: isDark
+            ? AppColors.surfaceDark
+            : AppColors.magentaPink.withOpacity(0.05),
+        borderRadius: BorderRadius.circular(10),
+        border: Border.all(
+          color: isDark
+              ? AppColors.dividerDark
+              : AppColors.magentaPink.withOpacity(0.2),
+        ),
+      ),
+      child: RichText(
+        textAlign: TextAlign.center,
+        text: TextSpan(
+          style: TextStyle(fontSize: 11.5, color: secondaryColor, height: 1.6),
+          children: [
+            const TextSpan(
+              text:
+                  'En créant un compte, vous nous donnez la permission de stocker '
+                  'en toute sécurité votre date du terme, la date de naissance de votre '
+                  'bébé et toute autre donnée saisie. En continuant, vous acceptez la ',
+            ),
+            WidgetSpan(
+              child: GestureDetector(
+                onTap: () => context.push('/privacy-policy'),
+                child: Text(
+                  'politique de confidentialité',
+                  style: TextStyle(
+                    fontSize: 11.5,
+                    color: linkColor,
+                    fontWeight: FontWeight.w600,
+                    decoration: TextDecoration.underline,
+                    height: 1.6,
+                  ),
+                ),
+              ),
+            ),
+            const TextSpan(text: ' et les '),
+            WidgetSpan(
+              child: GestureDetector(
+                onTap: () => context.push('/privacy-policy'),
+                child: Text(
+                  "conditions d'utilisation",
+                  style: TextStyle(
+                    fontSize: 11.5,
+                    color: linkColor,
+                    fontWeight: FontWeight.w600,
+                    decoration: TextDecoration.underline,
+                    height: 1.6,
+                  ),
+                ),
+              ),
+            ),
+            const TextSpan(text: '.'),
+          ],
+        ),
+      ),
     );
   }
 }

@@ -4,7 +4,7 @@ import 'package:google_fonts/google_fonts.dart';
 
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_spacing.dart';
-import '../../profile/models/profile_models.dart';
+
 import '../../profile/providers/profile_providers.dart';
 import '../models/phase.dart';
 import '../services/timeline_service.dart';
@@ -24,6 +24,7 @@ class TimelineScreen extends ConsumerStatefulWidget {
 class _TimelineScreenState extends ConsumerState<TimelineScreen> {
   Phase _selectedPhase = Phase.postPartum;
   String? _lastChildId;
+  TimelineViewMode _viewMode = TimelineViewMode.horizontal;
 
   @override
   Widget build(BuildContext context) {
@@ -92,7 +93,7 @@ class _TimelineScreenState extends ConsumerState<TimelineScreen> {
                       icon: Icons.auto_stories_rounded,
                       iconColor: primary,
                       iconGradient: null,
-                      showBackButton: true,
+                      showBackButton: false,
                       childrenList: children,
                       selectedChildId: selectedChild.id,
                       allowAll: false,
@@ -101,6 +102,7 @@ class _TimelineScreenState extends ConsumerState<TimelineScreen> {
                           ref.read(selectedChildIdProvider.notifier).state = id;
                         }
                       },
+                      trailing: _buildViewToggle(context, primary, isDark),
                     ),
 
                     // Phase carousel
@@ -162,6 +164,7 @@ class _TimelineScreenState extends ConsumerState<TimelineScreen> {
         return TimelineRail(
           milestones: phaseMilestones,
           phase: _selectedPhase,
+          viewMode: _viewMode,
           onMilestoneTap: (m) => _openMilestoneDetail(context, m),
         );
       },
@@ -276,6 +279,56 @@ class _TimelineScreenState extends ConsumerState<TimelineScreen> {
         builder: (context) => MilestoneDetailScreen(
           milestone: milestone,
           childId: selectedChild.id,
+        ),
+      ),
+    );
+  }
+
+  /// Compact toggle button shown in the header trailing slot
+  Widget _buildViewToggle(BuildContext context, Color primary, bool isDark) {
+    final isH = _viewMode == TimelineViewMode.horizontal;
+    final surface = isDark ? AppColors.surfaceDark : Colors.white;
+    final border = isDark ? AppColors.dividerDark : AppColors.dividerLight;
+
+    return GestureDetector(
+      onTap: () => setState(
+        () => _viewMode = isH
+            ? TimelineViewMode.vertical
+            : TimelineViewMode.horizontal,
+      ),
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 200),
+        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+        decoration: BoxDecoration(
+          color: surface,
+          borderRadius: BorderRadius.circular(20),
+          border: Border.all(color: border),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withValues(alpha: 0.06),
+              blurRadius: 6,
+              offset: const Offset(0, 2),
+            ),
+          ],
+        ),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(
+              isH ? Icons.view_stream_rounded : Icons.view_column_rounded,
+              size: 16,
+              color: primary,
+            ),
+            const SizedBox(width: 5),
+            Text(
+              isH ? 'Vertical' : 'Horizontal',
+              style: GoogleFonts.outfit(
+                fontSize: 11,
+                fontWeight: FontWeight.w600,
+                color: primary,
+              ),
+            ),
+          ],
         ),
       ),
     );

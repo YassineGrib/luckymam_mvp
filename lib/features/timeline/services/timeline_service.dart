@@ -75,6 +75,7 @@ final childMilestonesProvider =
             dueDate: m.dueDate,
             isCompleted: progress.status == MilestoneStatus.completed,
             capsuleId: progress.capsuleId,
+            completedAt: progress.completedAt,
           );
         }
         return m;
@@ -154,11 +155,15 @@ class MilestoneWithDueDate {
   final bool isCompleted;
   final String? capsuleId;
 
+  /// Actual date when the milestone was completed (from Firestore progress)
+  final DateTime? completedAt;
+
   const MilestoneWithDueDate({
     required this.milestone,
     this.dueDate,
     this.isCompleted = false,
     this.capsuleId,
+    this.completedAt,
   });
 
   bool get isDueToday {
