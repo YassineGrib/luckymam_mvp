@@ -1,10 +1,12 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import '../../shared/widgets/app_logo.dart';
 import '../../shared/widgets/gradient_scaffold.dart';
+import '../subscription/screens/diamond_sponsors_screen.dart';
 
 /// Animated splash screen with logo fade-in.
-/// Auto-navigates to onboarding after 2.5 seconds.
+/// Shows sponsors interstitial (2s) then routes to home or onboarding.
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
 
@@ -42,11 +44,25 @@ class _SplashScreenState extends State<SplashScreen>
 
     _controller.forward();
 
-    // Navigate to onboarding after delay
+    // After logo animation → show sponsors interstitial
     Future.delayed(const Duration(milliseconds: 2500), () {
-      if (mounted) {
-        context.go('/onboarding');
-      }
+      if (!mounted) return;
+      final user = FirebaseAuth.instance.currentUser;
+      final destination = user != null ? '/home' : '/onboarding';
+      // Show sponsors overlay for 2 s then navigate
+      showModalBottomSheet<void>(
+        context: context,
+        isScrollControlled: true,
+        isDismissible: false,
+        enableDrag: false,
+        backgroundColor: Colors.transparent,
+        builder: (ctx) => _SponsorInterstitial(
+          onDone: () {
+            Navigator.of(ctx).pop();
+            context.go(destination);
+          },
+        ),
+      );
     });
   }
 
@@ -75,6 +91,85 @@ class _SplashScreenState extends State<SplashScreen>
             variant: LogoVariant.vertical,
             size: LogoSize.large,
           ),
+        ),
+      ),
+    );
+  }
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Sponsor Interstitial — shows for 2 seconds after splash, then auto-dismisses
+// ─────────────────────────────────────────────────────────────────────────────
+
+class _SponsorInterstitial extends StatefulWidget {
+  const _SponsorInterstitial({required this.onDone});
+  final VoidCallback onDone;
+
+  @override
+  State<_SponsorInterstitial> createState() => _SponsorInterstitialState();
+}
+
+class _SponsorInterstitialState extends State<_SponsorInterstitial> {
+  @override
+  void initState() {
+    super.initState();
+    // Auto dismiss after 2 seconds
+    Future.delayed(const Duration(seconds: 2), () {
+      if (mounted) widget.onDone();
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      height: MediaQuery.of(context).size.height * 0.85,
+      child: ClipRRect(
+        borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
+        child: Stack(
+          children: [
+            // Full DiamondSponsorsScreen content (without AppBar)
+            const DiamondSponsorsScreen(),
+            // Top "skip" bar
+            Positioned(
+              top: 0,
+              left: 0,
+              right: 0,
+              child: Container(
+                color: Colors.transparent,
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 12,
+                ),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    const SizedBox(),
+                    GestureDetector(
+                      onTap: widget.onDone,
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 12,
+                          vertical: 6,
+                        ),
+                        decoration: BoxDecoration(
+                          color: Colors.black45,
+                          borderRadius: BorderRadius.circular(20),
+                        ),
+                        child: const Text(
+                          'Passer ›',
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 12,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ],
         ),
       ),
     );

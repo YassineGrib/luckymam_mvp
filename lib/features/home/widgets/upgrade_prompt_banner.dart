@@ -87,7 +87,7 @@ class UpgradePromptBanner extends ConsumerWidget {
                   borderRadius: BorderRadius.circular(10),
                 ),
                 child: Text(
-                  '500 DZD',
+                  '2490 DZD',
                   style: GoogleFonts.outfit(
                     fontSize: 12,
                     fontWeight: FontWeight.bold,

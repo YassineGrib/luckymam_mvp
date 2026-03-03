@@ -3,6 +3,7 @@ import 'dart:math';
 
 import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import '../../../core/theme/app_colors.dart';
@@ -13,10 +14,14 @@ class CapsuleAudioPlayer extends StatefulWidget {
     super.key,
     required this.audioUrl,
     required this.duration,
+    this.onPlayingChanged,
   });
 
   final String audioUrl;
   final int duration;
+
+  /// Called whenever play/pause state changes.
+  final ValueChanged<bool>? onPlayingChanged;
 
   @override
   State<CapsuleAudioPlayer> createState() => _CapsuleAudioPlayerState();
@@ -64,8 +69,9 @@ class _CapsuleAudioPlayerState extends State<CapsuleAudioPlayer>
 
     _stateSubscription = _player.onPlayerStateChanged.listen((state) {
       if (!mounted) return;
+      final playing = state == PlayerState.playing;
       setState(() {
-        _isPlaying = state == PlayerState.playing;
+        _isPlaying = playing;
         if (state == PlayerState.completed) {
           _position = Duration.zero;
           _pulseController.stop();
@@ -76,6 +82,8 @@ class _CapsuleAudioPlayerState extends State<CapsuleAudioPlayer>
           _pulseController.stop();
         }
       });
+      // Notify parent
+      widget.onPlayingChanged?.call(playing);
     });
   }
 
@@ -212,12 +220,23 @@ class _CapsuleAudioPlayerState extends State<CapsuleAudioPlayer>
                         color: Colors.white,
                       ),
                     )
-                  : Icon(
-                      _isPlaying
-                          ? Icons.pause_rounded
-                          : Icons.play_arrow_rounded,
+                  : _isPlaying
+                  // Pause icon when playing
+                  ? const Icon(
+                      Icons.pause_rounded,
                       color: Colors.white,
                       size: 28,
+                    )
+                  // App logo when paused/stopped
+                  : Padding(
+                      padding: const EdgeInsets.all(10),
+                      child: SvgPicture.asset(
+                        'assets/logo/logo svg.svg',
+                        colorFilter: const ColorFilter.mode(
+                          Colors.white,
+                          BlendMode.srcIn,
+                        ),
+                      ),
                     ),
             ),
           );
