@@ -883,29 +883,41 @@ function App() {
           <div className="flex flex-wrap justify-center gap-6 pt-4">
 
             {/* Play Store */}
-            <a href="#" className="neo-btn neo-btn-white flex items-center gap-3 px-6 py-3">
+            <a 
+              href="#" 
+              onClick={(e) => { e.preventDefault(); alert("Bientôt disponible sur Google Play Store ! En attendant, vous pouvez télécharger et installer l'APK directement."); }}
+              className="neo-btn neo-btn-white flex items-center gap-3 px-6 py-3 opacity-80 cursor-pointer"
+            >
               <Smartphone className="w-6 h-6 text-charcoal-dark" />
               <div className="text-left">
-                <span className="text-[10px] block font-bold uppercase text-charcoal-dark/50">Disponible sur</span>
+                <span className="text-[10px] block font-bold uppercase text-charcoal-dark/50">Bientôt sur</span>
                 <span className="font-display font-black text-sm">Google Play</span>
               </div>
             </a>
 
             {/* App Store */}
-            <a href="#" className="neo-btn neo-btn-white flex items-center gap-3 px-6 py-3">
+            <a 
+              href="#" 
+              onClick={(e) => { e.preventDefault(); alert("Bientôt disponible sur l'App Store ! En attendant, vous pouvez télécharger et installer l'APK directement sur les appareils compatibles."); }}
+              className="neo-btn neo-btn-white flex items-center gap-3 px-6 py-3 opacity-80 cursor-pointer"
+            >
               <Smartphone className="w-6 h-6 text-charcoal-dark" />
               <div className="text-left">
-                <span className="text-[10px] block font-bold uppercase text-charcoal-dark/50">Télécharger sur</span>
+                <span className="text-[10px] block font-bold uppercase text-charcoal-dark/50">Bientôt sur</span>
                 <span className="font-display font-black text-sm">App Store</span>
               </div>
             </a>
 
             {/* Direct APK */}
-            <a href="#" className="neo-btn flex items-center gap-3 px-6 py-3 bg-charcoal-dark text-white border-white">
+            <a 
+              href="/luckymam-v1.0.0.apk" 
+              download="luckymam-v1.0.0.apk"
+              className="neo-btn flex items-center gap-3 px-6 py-3 bg-charcoal-dark text-white border-white hover:scale-105 transition-transform"
+            >
               <Download className="w-6 h-6 text-white" />
               <div className="text-left">
                 <span className="text-[10px] block font-bold uppercase text-white/50">Installation directe</span>
-                <span className="font-display font-black text-sm">Fichier APK</span>
+                <span className="font-display font-black text-sm">Fichier APK (v1.0.0)</span>
               </div>
             </a>
 
