@@ -132,9 +132,18 @@ class CapsuleService {
 
         final doc = await vaccineStatusRef.get();
         if (doc.exists) {
-          await vaccineStatusRef.update({
-            'capsuleId': capsuleId,
-          });
+          final data = doc.data();
+          final hasCompletedAt = data != null && data['completedAt'] != null;
+          if (hasCompletedAt) {
+            await vaccineStatusRef.update({
+              'capsuleId': capsuleId,
+            });
+          } else {
+            await vaccineStatusRef.update({
+              'capsuleId': capsuleId,
+              'completedAt': Timestamp.fromDate(now),
+            });
+          }
         } else {
           await vaccineStatusRef.set({
             'capsuleId': capsuleId,

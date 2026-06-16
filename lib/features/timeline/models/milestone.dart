@@ -44,8 +44,7 @@ class Milestone {
   bool get isMedical => category == MilestoneCategory.sante;
 
   /// Check if this milestone can have a capsule
-  bool get canHaveCapsule =>
-      actionType == 'capsule' || actionType == 'celebration';
+  bool get canHaveCapsule => true;
 }
 
 /// User's progress on a specific milestone

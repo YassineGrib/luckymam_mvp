@@ -50,6 +50,15 @@ class _VaccineCardState extends ConsumerState<VaccineCard>
         ? AppColors.textSecondaryDark
         : AppColors.textSecondaryLight;
 
+    final capsuleId = widget.vaccineGroup.status?.capsuleId;
+    Capsule? linkedCapsule;
+    if (capsuleId != null) {
+      final capsulesAsync = ref.watch(capsulesProvider);
+      linkedCapsule = capsulesAsync.whenOrNull(
+        data: (list) => list.where((c) => c.id == capsuleId).firstOrNull,
+      );
+    }
+
     return Container(
       margin: const EdgeInsets.only(bottom: AppSpacing.md),
       decoration: BoxDecoration(
@@ -95,7 +104,7 @@ class _VaccineCardState extends ConsumerState<VaccineCard>
                         ],
                       ),
                     ),
-                    _buildActionButton(isDark, primary, textColor),
+                    _buildActionButton(isDark, primary, textColor, linkedCapsule),
                     const SizedBox(width: 4),
                     AnimatedRotation(
                       turns: _isExpanded ? 0.5 : 0.0,
@@ -585,7 +594,68 @@ class _VaccineCardState extends ConsumerState<VaccineCard>
     );
   }
 
-  Widget _buildActionButton(bool isDark, Color primary, Color textColor) {
+  Widget _buildActionButton(
+    bool isDark,
+    Color primary,
+    Color textColor,
+    Capsule? linkedCapsule,
+  ) {
+    if (linkedCapsule != null) {
+      return GestureDetector(
+        onTap: () {
+          // Log analytical event
+          final AnalyticsService analytics = AnalyticsService();
+          analytics.logEvent(
+            'vax_capsule_viewed',
+            parameters: {
+              'childId': widget.childId,
+              'vaccineGroupId': widget.vaccineGroup.group.id,
+              'capsuleId': linkedCapsule.id,
+            },
+          );
+          Navigator.of(context).push(
+            MaterialPageRoute(
+              builder: (_) => CapsuleDetailScreen(capsule: linkedCapsule),
+            ),
+          );
+        },
+        child: Container(
+          width: 36,
+          height: 36,
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(8),
+            border: Border.all(
+              color: isDark ? AppColors.success.withValues(alpha: 0.5) : AppColors.success,
+              width: 1.5,
+            ),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withValues(alpha: isDark ? 0.3 : 0.08),
+                blurRadius: 4,
+                offset: const Offset(0, 1),
+              ),
+            ],
+          ),
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(6),
+            child: CachedNetworkImage(
+              imageUrl: linkedCapsule.photoUrl,
+              fit: BoxFit.cover,
+              placeholder: (context, url) => Shimmer.fromColors(
+                baseColor: isDark ? Colors.grey[800]! : Colors.grey[300]!,
+                highlightColor: isDark ? Colors.grey[700]! : Colors.grey[100]!,
+                child: Container(color: Colors.white),
+              ),
+              errorWidget: (context, url, error) => Container(
+                color: isDark ? Colors.grey[800] : Colors.grey[200],
+                child: const Icon(Icons.broken_image, size: 16, color: Colors.grey),
+              ),
+            ),
+          ),
+        ),
+      );
+    }
+
     if (widget.vaccineGroup.isCompleted) {
       return Container(
         padding: const EdgeInsets.symmetric(
