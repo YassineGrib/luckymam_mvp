@@ -1,9 +1,9 @@
-# 📋 Rapport de Mise à Jour — LuckyMam MVP
+# 📋 Rapport de Mise à Jour — Luckymam MVP
 ## Optimisation de l'Expérience Utilisateur & Préparation Release
 
 ---
 
-> **Client :** LuckyMam  
+> **Client :** Luckymam  
 > **Date :** 03 Mars 2026  
 > **Type :** Mise à jour technique & design  
 > **Statut :** Livré ✅
@@ -31,7 +31,7 @@ Aujourd'hui, nous nous sommes concentrés sur l'immersion émotionnelle dans la 
 ### 🎵 Personnalisation du Lecteur Audio
 *Branding et intégration visuelle.*
 
-- **Logo LuckyMam** : L'icône standard "Play" a été remplacée par le logo officiel LuckyMam (SVG) au cœur du bouton de lecture.
+- **Logo Luckymam** : L'icône standard "Play" a été remplacée par le logo officiel Luckymam (SVG) au cœur du bouton de lecture.
 - **Synchronisation d'État** : Le module audio communique désormais en temps réel avec l'écran parent pour déclencher automatiquement le mode immersif.
 
 ---
@@ -39,9 +39,9 @@ Aujourd'hui, nous nous sommes concentrés sur l'immersion émotionnelle dans la 
 ### 🔐 Infrastructure & Sécurité (Release)
 *Préparation pour le déploiement réel.*
 
-- **Signature Release officielle** : Création du keystore de production ([luckymam-release.jks](file:///c:/Development/Mobile/FlutterDev/luckymam_mvp/luckymam-release.jks)). L'application est désormais signée professionnellement pour la release, et non plus avec des clés temporaires de test.
+- **Signature Release officielle** : Création du keystore de production ([Luckymam-release.jks](file:///c:/Development/Mobile/FlutterDev/Luckymam_mvp/Luckymam-release.jks)). L'application est désormais signée professionnellement pour la release, et non plus avec des clés temporaires de test.
 - **Google Auth (Release fix)** : Le problème de connexion Google en version APK/Release est résolu. L'empreinte SHA-1 de production a été enregistrée dans la console Firebase.
-- **Sécurisation des Clés** : Mise en place d'un fichier [key.properties](file:///c:/Development/Mobile/FlutterDev/luckymam_mvp/android/key.properties) pour gérer les mots de passe de signature de manière isolée et sécurisée.
+- **Sécurisation des Clés** : Mise en place d'un fichier [key.properties](file:///c:/Development/Mobile/FlutterDev/Luckymam_mvp/android/key.properties) pour gérer les mots de passe de signature de manière isolée et sécurisée.
 
 ---
 
@@ -54,12 +54,12 @@ Aujourd'hui, nous nous sommes concentrés sur l'immersion émotionnelle dans la 
 
 | Composant | Action réalisée |
 |-----------|------------------|
-| [CapsuleDetailScreen](file:///c:/Development/Mobile/FlutterDev/luckymam_mvp/lib/features/capsules/screens/capsule_detail_screen.dart#20-29) | Refonte complète en `ConsumerStatefulWidget` pour la gestion des animations d'opacité. |
-| [CapsuleAudioPlayer](file:///c:/Development/Mobile/FlutterDev/luckymam_mvp/lib/features/capsules/widgets/audio_player.dart#12-29) | Intégration du logo LuckyMam et ajout d'un callback d'état `onPlayingChanged`. |
-| `Signing Config` | Migration de la config `debug` vers `release` dans [build.gradle.kts](file:///c:/Development/Mobile/FlutterDev/luckymam_mvp/android/build.gradle.kts). |
-| [Firebase](file:///c:/Development/Mobile/FlutterDev/luckymam_mvp/lib/core/services/auth_service.dart#146-169) | Enregistrement du fingerprint SHA-1 de production (`2E:AD:C4:88...`). |
+| [CapsuleDetailScreen](file:///c:/Development/Mobile/FlutterDev/Luckymam_mvp/lib/features/capsules/screens/capsule_detail_screen.dart#20-29) | Refonte complète en `ConsumerStatefulWidget` pour la gestion des animations d'opacité. |
+| [CapsuleAudioPlayer](file:///c:/Development/Mobile/FlutterDev/Luckymam_mvp/lib/features/capsules/widgets/audio_player.dart#12-29) | Intégration du logo Luckymam et ajout d'un callback d'état `onPlayingChanged`. |
+| `Signing Config` | Migration de la config `debug` vers `release` dans [build.gradle.kts](file:///c:/Development/Mobile/FlutterDev/Luckymam_mvp/android/build.gradle.kts). |
+| [Firebase](file:///c:/Development/Mobile/FlutterDev/Luckymam_mvp/lib/core/services/auth_service.dart#146-169) | Enregistrement du fingerprint SHA-1 de production (`2E:AD:C4:88...`). |
 
 ---
 
 
-*Rapport généré le 03 Mars 2026 — LuckyMam MVP Support*
+*Rapport généré le 03 Mars 2026 — Luckymam MVP Support*

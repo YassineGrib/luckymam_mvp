@@ -1,8 +1,8 @@
 {
   "project_info": {
     "project_number": "834179717761",
-    "project_id": "luckymam-app-dv",
-    "storage_bucket": "luckymam-app-dv.firebasestorage.app"
+    "project_id": "Luckymam-app-dv",
+    "storage_bucket": "Luckymam-app-dv.firebasestorage.app"
   },
   "client": [
     {
@@ -97,7 +97,7 @@
       "client_info": {
         "mobilesdk_app_id": "1:834179717761:android:a0dabb7d164d821d270b80",
         "android_client_info": {
-          "package_name": "com.luckymam.luckymam"
+          "package_name": "com.Luckymam.Luckymam"
         }
       },
       "oauth_client": [

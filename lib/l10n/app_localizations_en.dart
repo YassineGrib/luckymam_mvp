@@ -4,9 +4,9 @@ import 'app_localizations.dart';
 
 // ignore_for_file: type=lint
 
-/// The translations for French (`fr`).
-class AppLocalizationsFr extends AppLocalizations {
-  AppLocalizationsFr([String locale = 'fr']) : super(locale);
+/// The translations for English (`en`).
+class AppLocalizationsEn extends AppLocalizations {
+  AppLocalizationsEn([String locale = 'en']) : super(locale);
 
   @override
   String get appName => 'Luckymam';
@@ -25,79 +25,77 @@ class AppLocalizationsFr extends AppLocalizations {
   String get swipeToGetStarted => 'Glissez pour commencer';
 
   @override
-  String get login => 'Connexion';
+  String get login => 'Login';
 
   @override
-  String get signUp => 'S\'inscrire';
+  String get signUp => 'Sign Up';
 
   @override
-  String get loginTitle => 'Connectez-vous à votre compte';
+  String get loginTitle => 'Log in to your account';
 
   @override
   String get loginSubtitle =>
-      'Accédez à votre compte pour gérer vos paramètres et explorer les fonctionnalités';
+      'Access your account to manage settings and explore features';
 
   @override
-  String get signUpTitle => 'Créez votre compte';
+  String get signUpTitle => 'Create your account';
 
   @override
-  String get email => 'E-mail';
+  String get email => 'Email';
 
   @override
-  String get emailHint => 'votre@email.com';
+  String get emailHint => 'your@email.com';
 
   @override
-  String get password => 'Mot de passe';
+  String get password => 'Password';
 
   @override
-  String get confirmPassword => 'Confirmer le mot de passe';
+  String get confirmPassword => 'Confirm Password';
 
   @override
-  String get rememberMe => 'Se souvenir de moi';
+  String get rememberMe => 'Remember me';
 
   @override
-  String get forgotPassword => 'Mot de passe oublié ?';
+  String get forgotPassword => 'Forgot Password?';
 
   @override
-  String get or => 'OU';
+  String get or => 'OR';
 
   @override
-  String get signInWithGoogle => 'Continuer avec Google';
+  String get signInWithGoogle => 'Continue with Google';
 
   @override
   String get signInWithApple => 'Continuer avec Apple';
 
   @override
-  String get dontHaveAccount => 'Vous n\'avez pas de compte ?';
+  String get dontHaveAccount => 'Don\'t have an account?';
 
   @override
-  String get alreadyHaveAccount => 'Vous avez déjà un compte ?';
+  String get alreadyHaveAccount => 'Already have an account?';
 
   @override
-  String get continueText => 'Continuer';
+  String get continueText => 'Continue';
 
   @override
-  String get errorRequired => 'Ce champ est requis';
+  String get errorRequired => 'This field is required';
 
   @override
-  String get errorInvalidEmail => 'E-mail invalide';
+  String get errorInvalidEmail => 'Invalid email';
 
   @override
-  String get errorPasswordTooShort =>
-      'Le mot de passe doit contenir au moins 8 caractères';
+  String get errorPasswordTooShort => 'Password must be at least 8 characters';
 
   @override
-  String get errorPasswordsDoNotMatch =>
-      'Les mots de passe ne correspondent pas';
+  String get errorPasswordsDoNotMatch => 'Passwords do not match';
 
   @override
-  String get name => 'Nom complet';
+  String get name => 'Full Name';
 
   @override
-  String get nameHint => 'Votre nom complet';
+  String get nameHint => 'Your full name';
 
   @override
-  String get errorNameTooShort => 'Le nom doit contenir au moins 2 caractères';
+  String get errorNameTooShort => 'Name must be at least 2 characters';
 
   @override
   String get featureNotAvailableMVP =>
@@ -210,18 +208,17 @@ class AppLocalizationsFr extends AppLocalizations {
   String get appVersion => 'Version 1.0.0';
 
   @override
-  String get law1807Title => 'Loi 18-07 Protection des Données';
+  String get law1807Title => 'Law 18-07 Personal Data Protection';
 
   @override
   String get law1807Text =>
-      'Conformément aux dispositions de la Loi n° 18-07 du 10 juin 2018 relative à la protection des personnes physiques dans le traitement des données à caractère personnel, vous acceptez que vos données personnelles soient collectées, traitées et stockées en toute sécurité par Luckymam pour le bon fonctionnement de l\'application. Vous pouvez exercer vos droits d\'accès, de rectification et de suppression à tout moment.';
+      'In accordance with the provisions of Law No. 18-07 of June 10, 2018, relating to the protection of individuals with regard to the processing of personal data, you consent to the collection, processing, and secure storage of your personal data by Luckymam for the sole purpose of providing our services. You can exercise your rights to access, rectify, or delete your data at any time.';
 
   @override
-  String get law1807Checkbox => 'J’accepte la Loi 18/07';
+  String get law1807Checkbox => 'I accept Law 18/07';
 
   @override
-  String get law1807Error =>
-      'L’acceptation de la Loi 18/07 est obligatoire pour continuer.';
+  String get law1807Error => 'Acceptance of Law 18/07 is required to continue.';
 
   @override
   String get capsule => 'Capsule';

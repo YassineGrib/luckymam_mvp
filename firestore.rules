@@ -37,6 +37,20 @@ service cloud.firestore {
       }
     }
     
+    // Consent logs - append-only (write-once), read by user
+    match /consent_logs/{logId} {
+      allow create: if request.auth != null && request.resource.data.userId == request.auth.uid;
+      allow read: if request.auth != null && request.auth.uid == resource.data.userId;
+      allow update, delete: if false;
+    }
+    
+    // Analytics logs - append-only (write-once), read by user
+    match /analytics_logs/{logId} {
+      allow create: if request.auth != null && request.resource.data.userId == request.auth.uid;
+      allow read: if request.auth != null && request.auth.uid == resource.data.userId;
+      allow update, delete: if false;
+    }
+
     // Default deny for other collections
     match /{document=**} {
       allow read, write: if false;

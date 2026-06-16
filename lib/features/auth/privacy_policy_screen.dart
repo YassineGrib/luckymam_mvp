@@ -146,7 +146,7 @@ class PrivacyPolicyScreen extends StatelessWidget {
                   '• Droit à l\'effacement (« droit à l\'oubli »)\n'
                   '• Droit à la portabilité de vos données\n'
                   '• Droit d\'opposition au traitement\n\n'
-                  'Pour exercer ces droits : privacy@luckymam.com',
+                  'Pour exercer ces droits : privacy@Luckymam.com',
             ),
 
             _PolicyCard(
@@ -269,7 +269,7 @@ class PrivacyPolicyScreen extends StatelessWidget {
                   ),
                   const SizedBox(height: 4),
                   Text(
-                    'Contactez-nous à privacy@luckymam.com',
+                    'Contactez-nous à privacy@Luckymam.com',
                     style: GoogleFonts.outfit(
                       fontSize: 13,
                       color: secondaryColor,

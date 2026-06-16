@@ -9,6 +9,7 @@ import '../../core/theme/app_spacing.dart';
 import '../../shared/widgets/buttons/primary_button.dart';
 import '../../shared/widgets/buttons/social_button.dart';
 import '../../shared/widgets/inputs/app_text_field.dart';
+import '../profile/services/profile_service.dart';
 
 /// Login screen matching the reference dark UI design.
 class LoginScreen extends StatefulWidget {
@@ -77,17 +78,29 @@ class _LoginScreenState extends State<LoginScreen> {
     // Save or clear email based on Remember Me
     await _saveOrClearEmail();
 
-    setState(() => _isLoading = false);
-
     if (result.isSuccess) {
+      String destination = '/law-consent';
+      try {
+        final profile = await ProfileService().getProfile();
+        if (profile != null && profile.consent1807 == true) {
+          destination = '/home';
+        }
+      } catch (e) {
+        debugPrint('Error checking compliance on login: $e');
+      }
+
+      if (!mounted) return;
+      setState(() => _isLoading = false);
+
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text('Bienvenue ${result.user?.displayName ?? ""}!'),
           backgroundColor: Colors.green,
         ),
       );
-      context.go('/home');
+      context.go(destination);
     } else {
+      setState(() => _isLoading = false);
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(result.errorMessage ?? 'Erreur inconnue'),
@@ -105,17 +118,29 @@ class _LoginScreenState extends State<LoginScreen> {
 
     if (!mounted) return;
 
-    setState(() => _isGoogleLoading = false);
-
     if (result.isSuccess) {
+      String destination = '/law-consent';
+      try {
+        final profile = await ProfileService().getProfile();
+        if (profile != null && profile.consent1807 == true) {
+          destination = '/home';
+        }
+      } catch (e) {
+        debugPrint('Error checking compliance on Google login: $e');
+      }
+
+      if (!mounted) return;
+      setState(() => _isGoogleLoading = false);
+
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text('Bienvenue ${result.user?.displayName ?? ""}!'),
           backgroundColor: Colors.green,
         ),
       );
-      context.go('/home');
+      context.go(destination);
     } else {
+      setState(() => _isGoogleLoading = false);
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(result.errorMessage ?? 'Erreur inconnue'),

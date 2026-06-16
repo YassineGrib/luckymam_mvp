@@ -222,7 +222,7 @@ class DiamondSponsorsScreen extends StatelessWidget {
                       borderRadius: BorderRadius.circular(12),
                     ),
                     child: Text(
-                      'sponsors@luckymam.com',
+                      'sponsors@Luckymam.com',
                       style: GoogleFonts.outfit(
                         fontSize: 13,
                         fontWeight: FontWeight.w600,

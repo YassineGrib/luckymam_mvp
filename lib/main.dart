@@ -4,6 +4,7 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:lukymam_mvp/l10n/app_localizations.dart';
 import 'core/providers/theme_provider.dart';
+import 'core/providers/locale_provider.dart';
 import 'core/router/app_router.dart';
 import 'core/services/notification_service.dart';
 import 'core/theme/app_theme.dart';
@@ -32,6 +33,7 @@ class LuckymamApp extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final themeMode = ref.watch(themeModeProvider);
+    final activeLocale = ref.watch(localeProvider);
 
     return MaterialApp.router(
       title: 'Luckymam',
@@ -41,10 +43,13 @@ class LuckymamApp extends ConsumerWidget {
       theme: AppTheme.lightTheme,
       darkTheme: AppTheme.darkTheme,
       themeMode: themeMode,
-      // Localization - French default
-      locale: const Locale('fr'),
+
+      // Localization
+      locale: activeLocale,
       supportedLocales: const [
         Locale('fr'), // French - default
+        Locale('ar'), // Arabic
+        Locale('en'), // English
       ],
       localizationsDelegates: const [
         AppLocalizations.delegate,

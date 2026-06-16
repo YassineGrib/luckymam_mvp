@@ -5,6 +5,7 @@ import '../../features/onboarding/onboarding_screen.dart';
 import '../../features/auth/login_screen.dart';
 import '../../features/auth/signup_screen.dart';
 import '../../features/auth/privacy_policy_screen.dart';
+import '../../features/auth/law_1807_consent_screen.dart';
 import '../../features/home/home_screen.dart';
 import '../../features/reels/screens/reels_screen.dart';
 import '../../features/subscription/screens/diamond_sponsors_screen.dart';
@@ -94,6 +95,16 @@ class AppRouter {
         pageBuilder: (context, state) => _buildPageWithTransition(
           key: state.pageKey,
           child: const DiamondSponsorsScreen(),
+        ),
+      ),
+
+      // Law 18-07 Privacy Consent Compliance Screen
+      GoRoute(
+        path: '/law-consent',
+        name: 'law-consent',
+        pageBuilder: (context, state) => _buildPageWithTransition(
+          key: state.pageKey,
+          child: const Law1807ConsentScreen(),
         ),
       ),
     ],

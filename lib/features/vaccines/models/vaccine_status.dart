@@ -23,11 +23,13 @@ class VaccineStatus {
     required this.vaccineGroupId,
     this.completedAt,
     this.notes,
+    this.capsuleId,
   });
 
   final String vaccineGroupId;
   final DateTime? completedAt;
   final String? notes;
+  final String? capsuleId;
 
   bool get isCompleted => completedAt != null;
 
@@ -36,6 +38,7 @@ class VaccineStatus {
       vaccineGroupId: id,
       completedAt: (data['completedAt'] as Timestamp?)?.toDate(),
       notes: data['notes'] as String?,
+      capsuleId: data['capsuleId'] as String?,
     );
   }
 
@@ -45,14 +48,16 @@ class VaccineStatus {
           ? Timestamp.fromDate(completedAt!)
           : null,
       'notes': notes,
+      'capsuleId': capsuleId,
     };
   }
 
-  VaccineStatus copyWith({DateTime? completedAt, String? notes}) {
+  VaccineStatus copyWith({DateTime? completedAt, String? notes, String? capsuleId}) {
     return VaccineStatus(
       vaccineGroupId: vaccineGroupId,
       completedAt: completedAt ?? this.completedAt,
       notes: notes ?? this.notes,
+      capsuleId: capsuleId ?? this.capsuleId,
     );
   }
 

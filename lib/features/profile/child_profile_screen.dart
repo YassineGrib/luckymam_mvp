@@ -473,13 +473,13 @@ class _HeroHeader extends StatelessWidget {
               ),
             ),
           ),
-          // LuckyMam watermark
+          // Luckymam watermark
           Positioned(
             top: 16,
             right: 16,
             child: Opacity(
               opacity: 0.25,
-              child: const LuckyMamLogo(size: 24, color: Colors.white),
+              child: const LuckymamLogo(size: 24, color: Colors.white),
             ),
           ),
           // Content

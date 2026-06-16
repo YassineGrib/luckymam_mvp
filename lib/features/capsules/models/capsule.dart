@@ -52,6 +52,7 @@ class Capsule {
   final String userId;
   final String childId;
   final String? milestoneId;
+  final String? vaccineGroupId;
   final String photoUrl;
   final String? audioUrl;
   final int? audioDuration; // seconds
@@ -72,6 +73,7 @@ class Capsule {
     required this.userId,
     required this.childId,
     this.milestoneId,
+    this.vaccineGroupId,
     required this.photoUrl,
     this.audioUrl,
     this.audioDuration,
@@ -92,6 +94,7 @@ class Capsule {
       userId: data['userId'] ?? '',
       childId: data['childId'] ?? '',
       milestoneId: data['milestoneId'],
+      vaccineGroupId: data['vaccineGroupId'],
       photoUrl: data['photoUrl'] ?? '',
       audioUrl: data['audioUrl'],
       audioDuration: data['audioDuration'],
@@ -117,6 +120,7 @@ class Capsule {
       'userId': userId,
       'childId': childId,
       'milestoneId': milestoneId,
+      'vaccineGroupId': vaccineGroupId,
       'photoUrl': photoUrl,
       'audioUrl': audioUrl,
       'audioDuration': audioDuration,
@@ -146,6 +150,7 @@ class Capsule {
     String? userId,
     String? childId,
     String? milestoneId,
+    String? vaccineGroupId,
     String? photoUrl,
     String? audioUrl,
     int? audioDuration,
@@ -164,6 +169,7 @@ class Capsule {
       userId: userId ?? this.userId,
       childId: childId ?? this.childId,
       milestoneId: milestoneId ?? this.milestoneId,
+      vaccineGroupId: vaccineGroupId ?? this.vaccineGroupId,
       photoUrl: photoUrl ?? this.photoUrl,
       audioUrl: audioUrl ?? this.audioUrl,
       audioDuration: audioDuration ?? this.audioDuration,

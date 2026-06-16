@@ -117,6 +117,7 @@ class _VaccinationsTabState extends ConsumerState<VaccinationsTab> {
           itemBuilder: (context, index) {
             final group = vaccineGroups[index];
             return VaccineCard(
+              childId: child.id,
               vaccineGroup: group,
               onMarkComplete: () => _showMarkCompleteDialog(child, group),
               onMarkIncomplete: () => _showMarkIncompleteDialog(child, group),

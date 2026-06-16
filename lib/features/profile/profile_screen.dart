@@ -21,6 +21,7 @@ import '../subscription/screens/subscription_plans_screen.dart';
 import '../subscription/screens/album_claim_screen.dart';
 import 'widgets/profile_widgets.dart';
 import '../notifications/notifications_screen.dart';
+import '../../core/providers/locale_provider.dart';
 
 /// Full profile screen with Firestore integration.
 class ProfileScreen extends ConsumerWidget {
@@ -1093,15 +1094,80 @@ class _SettingsSection extends ConsumerWidget {
   final Color primaryColor;
   final VoidCallback onLogout;
 
+  void _showLanguageDialog(BuildContext context, WidgetRef ref) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        final activeLocale = ref.watch(localeProvider);
+        final dialogTitle = activeLocale.languageCode == 'ar'
+            ? 'اختر اللغة'
+            : activeLocale.languageCode == 'en'
+                ? 'Select Language'
+                : 'Choisir la langue';
+
+        return AlertDialog(
+          title: Text(
+            dialogTitle,
+            style: GoogleFonts.outfit(fontWeight: FontWeight.bold),
+          ),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              _buildLanguageOption(context, ref, const Locale('fr'), 'Français'),
+              _buildLanguageOption(context, ref, const Locale('ar'), 'العربية'),
+              _buildLanguageOption(context, ref, const Locale('en'), 'English'),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _buildLanguageOption(
+    BuildContext context,
+    WidgetRef ref,
+    Locale locale,
+    String label,
+  ) {
+    final activeLocale = ref.watch(localeProvider);
+    final isSelected = activeLocale == locale;
+    return ListTile(
+      title: Text(
+        label,
+        style: GoogleFonts.outfit(
+          fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+        ),
+      ),
+      trailing: isSelected
+          ? const Icon(Icons.check, color: AppColors.magentaPink)
+          : null,
+      onTap: () {
+        ref.read(localeProvider.notifier).setLocale(locale);
+        Navigator.of(context).pop();
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final secondaryColor = isDark
         ? AppColors.textSecondaryDark
         : AppColors.textSecondaryLight;
     final textColor = isDark ? Colors.white : AppColors.onSurfaceLight;
+    final activeLocale = ref.watch(localeProvider);
+
+    final langLabel = activeLocale.languageCode == 'ar'
+        ? 'العربية'
+        : activeLocale.languageCode == 'en'
+            ? 'English'
+            : 'Français';
 
     return ProfileSectionCard(
-      title: 'Paramètres',
+      title: activeLocale.languageCode == 'ar' 
+          ? 'الإعدادات' 
+          : activeLocale.languageCode == 'en'
+              ? 'Settings'
+              : 'Paramètres',
       icon: Icons.settings_rounded,
       iconColor: Colors.grey,
       children: [
@@ -1109,7 +1175,11 @@ class _SettingsSection extends ConsumerWidget {
           icon: Icons.dark_mode_outlined,
           textColor: textColor,
           secondaryColor: secondaryColor,
-          title: 'Thème sombre',
+          title: activeLocale.languageCode == 'ar' 
+              ? 'المظهر الداكن' 
+              : activeLocale.languageCode == 'en'
+                  ? 'Dark Theme'
+                  : 'Thème sombre',
           trailing: Switch(
             value: isDark,
             onChanged: (value) {
@@ -1122,16 +1192,28 @@ class _SettingsSection extends ConsumerWidget {
           icon: Icons.language_outlined,
           textColor: textColor,
           secondaryColor: secondaryColor,
-          title: 'Langue',
-          subtitle: 'Français',
-          onTap: () {},
+          title: activeLocale.languageCode == 'ar' 
+              ? 'اللغة' 
+              : activeLocale.languageCode == 'en'
+                  ? 'Language'
+                  : 'Langue',
+          subtitle: langLabel,
+          onTap: () => _showLanguageDialog(context, ref),
         ),
         _SettingsTile(
           icon: Icons.notifications_outlined,
           textColor: textColor,
           secondaryColor: secondaryColor,
-          title: 'Notifications',
-          subtitle: 'Gérer les rappels',
+          title: activeLocale.languageCode == 'ar' 
+              ? 'الإشعارات' 
+              : activeLocale.languageCode == 'en'
+                  ? 'Notifications'
+                  : 'Notifications',
+          subtitle: activeLocale.languageCode == 'ar' 
+              ? 'إدارة التنبيهات' 
+              : activeLocale.languageCode == 'en'
+                  ? 'Manage reminders'
+                  : 'Gérer les rappels',
           onTap: () {
             Navigator.of(context).push(
               MaterialPageRoute(builder: (_) => const NotificationsScreen()),
@@ -1142,7 +1224,11 @@ class _SettingsSection extends ConsumerWidget {
           icon: Icons.lock_outline_rounded,
           textColor: textColor,
           secondaryColor: secondaryColor,
-          title: 'Confidentialité',
+          title: activeLocale.languageCode == 'ar' 
+              ? 'الخصوصية' 
+              : activeLocale.languageCode == 'en'
+                  ? 'Privacy'
+                  : 'Confidentialité',
           onTap: () {
             Navigator.of(
               context,
@@ -1153,7 +1239,11 @@ class _SettingsSection extends ConsumerWidget {
           icon: Icons.help_outline_rounded,
           textColor: textColor,
           secondaryColor: secondaryColor,
-          title: 'Aide & Support',
+          title: activeLocale.languageCode == 'ar' 
+              ? 'المساعدة والدعم' 
+              : activeLocale.languageCode == 'en'
+                  ? 'Help & Support'
+                  : 'Aide & Support',
           onTap: () {
             Navigator.of(
               context,
@@ -1166,7 +1256,13 @@ class _SettingsSection extends ConsumerWidget {
           child: OutlinedButton.icon(
             onPressed: onLogout,
             icon: const Icon(Icons.logout_rounded),
-            label: const Text('Déconnexion'),
+            label: Text(
+              activeLocale.languageCode == 'ar' 
+                  ? 'تسجيل الخروج' 
+                  : activeLocale.languageCode == 'en'
+                      ? 'Logout'
+                      : 'Déconnexion',
+            ),
             style: OutlinedButton.styleFrom(
               foregroundColor: Colors.red,
               side: const BorderSide(color: Colors.red),

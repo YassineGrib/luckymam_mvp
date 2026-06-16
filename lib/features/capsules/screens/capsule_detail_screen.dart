@@ -415,12 +415,12 @@ class _CapsuleDetailScreenState extends ConsumerState<CapsuleDetailScreen> {
       final response = await http.get(Uri.parse(capsule.photoUrl));
       final file = XFile.fromData(
         response.bodyBytes,
-        name: 'luckymam_${capsule.id}.jpg',
+        name: 'Luckymam_${capsule.id}.jpg',
         mimeType: 'image/jpeg',
       );
 
       final text =
-          '✨ Un souvenir précieux via LuckyMam\n${capsule.emotion.labelFr}';
+          '✨ Un souvenir précieux via Luckymam\n${capsule.emotion.labelFr}';
 
       await SharePlus.instance.share(ShareParams(files: [file], text: text));
     } catch (e) {
@@ -451,8 +451,8 @@ class _CapsuleDetailScreenState extends ConsumerState<CapsuleDetailScreen> {
       // Download then save
       await Gal.putImageBytes(
         (await http.get(Uri.parse(capsule.photoUrl))).bodyBytes,
-        album: 'LuckyMam',
-        name: 'luckymam_${capsule.id}',
+        album: 'Luckymam',
+        name: 'Luckymam_${capsule.id}',
       );
       if (context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -466,7 +466,7 @@ class _CapsuleDetailScreenState extends ConsumerState<CapsuleDetailScreen> {
                 ),
                 const SizedBox(width: 8),
                 Text(
-                  'Enregistré dans l\'album LuckyMam 📸',
+                  'Enregistré dans l\'album Luckymam 📸',
                   style: GoogleFonts.outfit(color: Colors.white),
                 ),
               ],

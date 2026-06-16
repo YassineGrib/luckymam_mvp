@@ -232,6 +232,9 @@ class UserProfile {
   final DateTime? lastPregnancyDate;
   final MedicalInfo medicalInfo;
   final CycleInfo cycleInfo;
+  final bool? consent1807;
+  final DateTime? consent1807Timestamp;
+  final String? consent1807TextVersion;
   final DateTime createdAt;
   final DateTime updatedAt;
 
@@ -247,6 +250,9 @@ class UserProfile {
     this.lastPregnancyDate,
     this.medicalInfo = const MedicalInfo(),
     this.cycleInfo = const CycleInfo(),
+    this.consent1807,
+    this.consent1807Timestamp,
+    this.consent1807TextVersion,
     required this.createdAt,
     required this.updatedAt,
   });
@@ -273,6 +279,11 @@ class UserProfile {
           : null,
       medicalInfo: MedicalInfo.fromFirestore(data['medicalInfo']),
       cycleInfo: CycleInfo.fromFirestore(data['cycleInfo']),
+      consent1807: data['consent1807'] as bool?,
+      consent1807Timestamp: data['consent1807Timestamp'] != null
+          ? (data['consent1807Timestamp'] as Timestamp).toDate()
+          : null,
+      consent1807TextVersion: data['consent1807TextVersion'] as String?,
       createdAt: data['createdAt'] != null
           ? (data['createdAt'] as Timestamp).toDate()
           : DateTime.now(),
@@ -297,6 +308,11 @@ class UserProfile {
           : null,
       'medicalInfo': medicalInfo.toFirestore(),
       'cycleInfo': cycleInfo.toFirestore(),
+      'consent1807': consent1807,
+      'consent1807Timestamp': consent1807Timestamp != null
+          ? Timestamp.fromDate(consent1807Timestamp!)
+          : null,
+      'consent1807TextVersion': consent1807TextVersion,
       'createdAt': Timestamp.fromDate(createdAt),
       'updatedAt': Timestamp.fromDate(DateTime.now()),
     };
@@ -318,6 +334,9 @@ class UserProfile {
     DateTime? lastPregnancyDate,
     MedicalInfo? medicalInfo,
     CycleInfo? cycleInfo,
+    bool? consent1807,
+    DateTime? consent1807Timestamp,
+    String? consent1807TextVersion,
     DateTime? createdAt,
     DateTime? updatedAt,
   }) {
@@ -333,6 +352,9 @@ class UserProfile {
       lastPregnancyDate: lastPregnancyDate ?? this.lastPregnancyDate,
       medicalInfo: medicalInfo ?? this.medicalInfo,
       cycleInfo: cycleInfo ?? this.cycleInfo,
+      consent1807: consent1807 ?? this.consent1807,
+      consent1807Timestamp: consent1807Timestamp ?? this.consent1807Timestamp,
+      consent1807TextVersion: consent1807TextVersion ?? this.consent1807TextVersion,
       createdAt: createdAt ?? this.createdAt,
       updatedAt: updatedAt ?? DateTime.now(),
     );

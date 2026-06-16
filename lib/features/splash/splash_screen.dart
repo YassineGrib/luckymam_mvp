@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import '../../shared/widgets/app_logo.dart';
 import '../../shared/widgets/gradient_scaffold.dart';
 import '../subscription/screens/diamond_sponsors_screen.dart';
+import '../profile/services/profile_service.dart';
 
 /// Animated splash screen with logo fade-in.
 /// Shows sponsors interstitial (2s) then routes to home or onboarding.
@@ -45,10 +46,25 @@ class _SplashScreenState extends State<SplashScreen>
     _controller.forward();
 
     // After logo animation → show sponsors interstitial
-    Future.delayed(const Duration(milliseconds: 2500), () {
+    Future.delayed(const Duration(milliseconds: 2500), () async {
       if (!mounted) return;
       final user = FirebaseAuth.instance.currentUser;
-      final destination = user != null ? '/home' : '/onboarding';
+      String destination = '/onboarding';
+
+      if (user != null) {
+        try {
+          final profile = await ProfileService().getProfile();
+          if (profile != null && profile.consent1807 == true) {
+            destination = '/home';
+          } else {
+            destination = '/law-consent';
+          }
+        } catch (e) {
+          destination = '/law-consent';
+        }
+      }
+
+      if (!mounted) return;
       // Show sponsors overlay for 2 s then navigate
       showModalBottomSheet<void>(
         context: context,

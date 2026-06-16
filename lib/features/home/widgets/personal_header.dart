@@ -113,8 +113,8 @@ class PersonalHeader extends ConsumerWidget {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        // LuckyMam logo + brand name
-                        const LuckyMamLogo(size: 22, showText: true),
+                        // Luckymam logo + brand name
+                        const LuckymamLogo(size: 22, showText: true),
                         const SizedBox(height: 8),
                         // Greeting
                         Text(

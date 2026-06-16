@@ -5,6 +5,8 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:intl/intl.dart' as intl;
 
+import 'app_localizations_ar.dart';
+import 'app_localizations_en.dart';
 import 'app_localizations_fr.dart';
 
 // ignore_for_file: type=lint
@@ -92,7 +94,11 @@ abstract class AppLocalizations {
       ];
 
   /// A list of this localizations delegate's supported locales.
-  static const List<Locale> supportedLocales = <Locale>[Locale('fr')];
+  static const List<Locale> supportedLocales = <Locale>[
+    Locale('ar'),
+    Locale('en'),
+    Locale('fr'),
+  ];
 
   /// The app name
   ///
@@ -433,13 +439,13 @@ abstract class AppLocalizations {
   /// No description provided for @emailSupportHint.
   ///
   /// In fr, this message translates to:
-  /// **'support@luckymam.com'**
+  /// **'support@Luckymam.com'**
   String get emailSupportHint;
 
   /// No description provided for @sendEmailPrompt.
   ///
   /// In fr, this message translates to:
-  /// **'Envoyez-nous un email à support@luckymam.com'**
+  /// **'Envoyez-nous un email à support@Luckymam.com'**
   String get sendEmailPrompt;
 
   /// No description provided for @liveChat.
@@ -465,6 +471,36 @@ abstract class AppLocalizations {
   /// In fr, this message translates to:
   /// **'Version 1.0.0'**
   String get appVersion;
+
+  /// No description provided for @law1807Title.
+  ///
+  /// In fr, this message translates to:
+  /// **'Loi 18-07 Protection des Données'**
+  String get law1807Title;
+
+  /// No description provided for @law1807Text.
+  ///
+  /// In fr, this message translates to:
+  /// **'Conformément aux dispositions de la Loi n° 18-07 du 10 juin 2018 relative à la protection des personnes physiques dans le traitement des données à caractère personnel, vous acceptez que vos données personnelles soient collectées, traitées et stockées en toute sécurité par Luckymam pour le bon fonctionnement de l\'application. Vous pouvez exercer vos droits d\'accès, de rectification et de suppression à tout moment.'**
+  String get law1807Text;
+
+  /// No description provided for @law1807Checkbox.
+  ///
+  /// In fr, this message translates to:
+  /// **'J’accepte la Loi 18/07'**
+  String get law1807Checkbox;
+
+  /// No description provided for @law1807Error.
+  ///
+  /// In fr, this message translates to:
+  /// **'L’acceptation de la Loi 18/07 est obligatoire pour continuer.'**
+  String get law1807Error;
+
+  /// No description provided for @capsule.
+  ///
+  /// In fr, this message translates to:
+  /// **'Capsule'**
+  String get capsule;
 }
 
 class _AppLocalizationsDelegate
@@ -478,7 +514,7 @@ class _AppLocalizationsDelegate
 
   @override
   bool isSupported(Locale locale) =>
-      <String>['fr'].contains(locale.languageCode);
+      <String>['ar', 'en', 'fr'].contains(locale.languageCode);
 
   @override
   bool shouldReload(_AppLocalizationsDelegate old) => false;
@@ -487,6 +523,10 @@ class _AppLocalizationsDelegate
 AppLocalizations lookupAppLocalizations(Locale locale) {
   // Lookup logic when only language code is specified.
   switch (locale.languageCode) {
+    case 'ar':
+      return AppLocalizationsAr();
+    case 'en':
+      return AppLocalizationsEn();
     case 'fr':
       return AppLocalizationsFr();
   }

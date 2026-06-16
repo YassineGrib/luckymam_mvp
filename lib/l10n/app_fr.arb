@@ -59,10 +59,15 @@
   "faqDataSecurityAnswer": "Oui, toutes vos données sont cryptées et stockées de manière sécurisée. Consultez notre politique de confidentialité pour plus de détails.",
   "contactUs": "Nous contacter",
   "emailSupport": "Email",
-  "emailSupportHint": "support@luckymam.com",
-  "sendEmailPrompt": "Envoyez-nous un email à support@luckymam.com",
+  "emailSupportHint": "support@Luckymam.com",
+  "sendEmailPrompt": "Envoyez-nous un email à support@Luckymam.com",
   "liveChat": "Chat en direct",
   "liveChatUnavailable": "Disponible bientôt",
   "featureComingSoon": "Cette fonctionnalité sera disponible prochainement",
-  "appVersion": "Version 1.0.0"
+  "appVersion": "Version 1.0.0",
+  "law1807Title": "Loi 18-07 Protection des Données",
+  "law1807Text": "Conformément aux dispositions de la Loi n° 18-07 du 10 juin 2018 relative à la protection des personnes physiques dans le traitement des données à caractère personnel, vous acceptez que vos données personnelles soient collectées, traitées et stockées en toute sécurité par Luckymam pour le bon fonctionnement de l'application. Vous pouvez exercer vos droits d'accès, de rectification et de suppression à tout moment.",
+  "law1807Checkbox": "J’accepte la Loi 18/07",
+  "law1807Error": "L’acceptation de la Loi 18/07 est obligatoire pour continuer.",
+  "capsule": "Capsule"
 }

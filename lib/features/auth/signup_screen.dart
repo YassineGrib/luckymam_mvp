@@ -65,7 +65,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
         debugPrint('Error creating initial profile: $e');
       }
 
-      // Navigate to home/dashboard on success
+      // Navigate to law consent screen on success
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
@@ -73,7 +73,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
           backgroundColor: Colors.green,
         ),
       );
-      context.go('/home');
+      context.go('/law-consent');
     } else {
       // Show error message
       ScaffoldMessenger.of(context).showSnackBar(
@@ -93,17 +93,29 @@ class _SignUpScreenState extends State<SignUpScreen> {
 
     if (!mounted) return;
 
-    setState(() => _isGoogleLoading = false);
-
     if (result.isSuccess) {
+      String destination = '/law-consent';
+      try {
+        final profile = await ProfileService().getProfile();
+        if (profile != null && profile.consent1807 == true) {
+          destination = '/home';
+        }
+      } catch (e) {
+        debugPrint('Error checking compliance on Google signup: $e');
+      }
+
+      if (!mounted) return;
+      setState(() => _isGoogleLoading = false);
+
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text('Bienvenue ${result.user?.displayName ?? ""}!'),
           backgroundColor: Colors.green,
         ),
       );
-      context.go('/home');
+      context.go(destination);
     } else {
+      setState(() => _isGoogleLoading = false);
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(result.errorMessage ?? 'Erreur inconnue'),

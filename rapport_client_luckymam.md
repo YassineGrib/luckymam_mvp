@@ -1,20 +1,20 @@
-# 📋 Rapport de Livraison — LuckyMam MVP
+# 📋 Rapport de Livraison — Luckymam MVP
 ## Application Mobile Maternité & Famille
 
 ---
 
-> **Client :** LuckyMam  
+> **Client :** Luckymam  
 > **Date de livraison :** 02 Mars 2026  
 > **Version :** 1.0.0 (Build 1)  
 > **Plateforme :** Android (APK Release)  
 > **Taille APK :** 108.2 MB  
-> **Fichier :** [build/app/outputs/flutter-apk/app-release.apk](file:///c:/Development/Mobile/FlutterDev/luckymam_mvp/build/app/outputs/flutter-apk/app-release.apk)
+> **Fichier :** [build/app/outputs/flutter-apk/app-release.apk](file:///c:/Development/Mobile/FlutterDev/Luckymam_mvp/build/app/outputs/flutter-apk/app-release.apk)
 
 ---
 
 ## ✅ Résumé Exécutif
 
-L'ensemble des **36 modifications** demandées ont été réalisées et validées. La version **1.0.0** de l'application LuckyMam est prête pour distribution. Le build de release Android a été généré avec succès sans aucune erreur de compilation.
+L'ensemble des **36 modifications** demandées ont été réalisées et validées. La version **1.0.0** de l'application Luckymam est prête pour distribution. Le build de release Android a été généré avec succès sans aucune erreur de compilation.
 
 ---
 
@@ -40,7 +40,7 @@ L'ensemble des **36 modifications** demandées ont été réalisées et validée
 | # | Modification | Détail |
 |---|-------------|--------|
 | 7 | **Mentions RGPD** | Ajout d'un bloc de consentement RGPD sur l'écran d'inscription |
-| 8 | **Page Politique de Confidentialité** | Nouvelle page complète [privacy_policy_screen.dart](file:///c:/Development/Mobile/FlutterDev/luckymam_mvp/lib/features/auth/privacy_policy_screen.dart) avec sections détaillées |
+| 8 | **Page Politique de Confidentialité** | Nouvelle page complète [privacy_policy_screen.dart](file:///c:/Development/Mobile/FlutterDev/Luckymam_mvp/lib/features/auth/privacy_policy_screen.dart) avec sections détaillées |
 | 9 | **Thème par défaut** | Application démarrée en mode **Clair** par défaut |
 
 ---
@@ -64,14 +64,14 @@ L'ensemble des **36 modifications** demandées ont été réalisées et validée
 | 15 | **Harmonisation des icônes** | Icône *Santé* changée en `monitor_heart_rounded` pour la différencier de *Vaccins* |
 | 16 | **Redesign Accès Rapide** | Passage à un layout 4×1 (une ligne), fond coloré plein sans padding blanc |
 | 17 | **Bouton « Vos Enfants »** | Navigue désormais vers une **page de profil individuel** par enfant (cf. détail ci-dessous) |
-| 18 | **Logo LuckyMam global** | Logo visible sur toutes les pages : Accueil, Timeline, Reels, Capsules, Profil Enfant |
+| 18 | **Logo Luckymam global** | Logo visible sur toutes les pages : Accueil, Timeline, Reels, Capsules, Profil Enfant |
 
 #### 📱 Détail — Écran Profil Enfant (nouveau)
 
 Un tout nouvel écran dédié à chaque enfant a été créé, incluant :
 
 - **En-tête hero** avec gradient coloré (bleu pour garçon / rose pour fille), avatar, prénom, âge et date de naissance
-- **Logo LuckyMam en filigrane** dans l'en-tête
+- **Logo Luckymam en filigrane** dans l'en-tête
 - **3 cartes statistiques** : nombre de capsules · vaccins réalisés / total · âge
 - **2 boutons d'action rapide** : accès à la Timeline · créer une nouvelle Capsule
 - **Galerie de souvenirs** : grille 3×3 des capsules avec badges catégorie et micro
@@ -85,7 +85,7 @@ Un tout nouvel écran dédié à chaque enfant a été créé, incluant :
 |---|-------------|--------|
 | 19 | **Correction bug retour** | La navigation retour fonctionnait de manière incorrecte |
 | 20 | **Scroll horizontal + vertical** | Double scroll fluide dans la vue timeline |
-| 21 | **Logo sur les nœuds** | Logo LuckyMam affiché sur les nœuds de la Timeline |
+| 21 | **Logo sur les nœuds** | Logo Luckymam affiché sur les nœuds de la Timeline |
 | 22 | **Icône date de complétion** | Ajout d'un indicateur visuel de date de réalisation |
 | 23 | **Date réelle Firestore** | Sauvegarde et affichage de la date exacte de complétion |
 | 24 | **Lien vers Capsule** | Depuis Timeline, bouton pour voir/créer la capsule associée au jalon |
@@ -99,7 +99,7 @@ Un tout nouvel écran dédié à chaque enfant a été créé, incluant :
 
 | # | Modification | Détail |
 |---|-------------|--------|
-| 28 | **Filigrane logo sur les images** | Logo LuckyMam semi-transparent sur toutes les photos en mode détail |
+| 28 | **Filigrane logo sur les images** | Logo Luckymam semi-transparent sur toutes les photos en mode détail |
 | 29 | **Date de réalisation** | Sélecteur de date dans la création de capsule (ex : date réelle de la photo) |
 | 30 | **Sélecteur de catégorie** | 5 catégories avec emojis : 🌱 Pré-gestation · 🤰 Gestation · 👶 Post-partum · 🧒 Enfance · 🌟 Adulte |
 
@@ -126,7 +126,7 @@ Un tout nouvel écran dédié à chaque enfant a été créé, incluant :
 
 | # | Modification | Détail |
 |---|-------------|--------|
-| 34 | **Widget LuckyMamLogo** | Composant réutilisable `LuckyMamLogo` créé et intégré sur toutes les pages clés |
+| 34 | **Widget LuckymamLogo** | Composant réutilisable `LuckymamLogo` créé et intégré sur toutes les pages clés |
 | 35 | **Bouton Play Reels** | Redesign du bouton play : gradient rose, effet glow, animation de scale |
 | 36 | **Cohérence visuelle globale** | Logo présent sur : Accueil · Timeline · Reels · Capsules · Profil Enfant |
 
@@ -183,4 +183,4 @@ Un tout nouvel écran dédié à chaque enfant a été créé, incluant :
 
 > **Toutes les 36 modifications ont été livrées et le build release Android est prêt.**
 
-*Rapport généré le 02 Mars 2026 — LuckyMam v1.0.0*
+*Rapport généré le 02 Mars 2026 — Luckymam v1.0.0*

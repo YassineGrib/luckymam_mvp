@@ -18,8 +18,15 @@ import '../widgets/emotion_picker.dart';
 /// Screen for creating a new capsule.
 class CreateCapsuleScreen extends ConsumerStatefulWidget {
   final String? milestoneId;
+  final String? vaccineGroupId;
+  final String? preselectedChildId;
 
-  const CreateCapsuleScreen({super.key, this.milestoneId});
+  const CreateCapsuleScreen({
+    super.key,
+    this.milestoneId,
+    this.vaccineGroupId,
+    this.preselectedChildId,
+  });
 
   @override
   ConsumerState<CreateCapsuleScreen> createState() =>
@@ -40,6 +47,14 @@ class _CreateCapsuleScreenState extends ConsumerState<CreateCapsuleScreen> {
   CapsuleCategory? _selectedCategory;
 
   bool _isLoading = false;
+
+  @override
+  void initState() {
+    super.initState();
+    if (widget.vaccineGroupId != null) {
+      _selectedCategory = CapsuleCategory.enfance;
+    }
+  }
 
   @override
   void dispose() {
@@ -289,7 +304,16 @@ class _CreateCapsuleScreenState extends ConsumerState<CreateCapsuleScreen> {
     }
 
     // Auto-select first child if not selected
-    _selectedChild ??= children.first;
+    if (_selectedChild == null && children.isNotEmpty) {
+      if (widget.preselectedChildId != null) {
+        _selectedChild = children.firstWhere(
+          (c) => c.id == widget.preselectedChildId,
+          orElse: () => children.first,
+        );
+      } else {
+        _selectedChild = children.first;
+      }
+    }
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -765,6 +789,7 @@ class _CreateCapsuleScreenState extends ConsumerState<CreateCapsuleScreen> {
           audioDuration: _audioDuration,
           emotion: _selectedEmotion!,
           milestoneId: widget.milestoneId,
+          vaccineGroupId: widget.vaccineGroupId,
           tags: _tags,
           capturedAt: _capturedAt,
           category: _selectedCategory,

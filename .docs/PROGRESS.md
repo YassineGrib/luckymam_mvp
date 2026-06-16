@@ -94,9 +94,9 @@ lib/
 
 | Service | Status | Project |
 |---------|:------:|---------|
-| Authentication | ✅ Active | luckymam-app-dv |
-| Firestore | ✅ Active | luckymam-app-dv |
-| Storage | ✅ Active | luckymam-app-dv |
+| Authentication | ✅ Active | Luckymam-app-dv |
+| Firestore | ✅ Active | Luckymam-app-dv |
+| Storage | ✅ Active | Luckymam-app-dv |
 | Security Rules | ✅ Deployed | 2026-02-23 |
 
 ---

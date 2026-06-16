@@ -1,31 +1,42 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
+import 'package:shimmer/shimmer.dart';
 
+import '../../../core/services/analytics_service.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_spacing.dart';
+import '../../../l10n/app_localizations.dart';
+import '../../capsules/models/capsule.dart';
+import '../../capsules/providers/capsule_providers.dart';
+import '../../capsules/screens/capsule_detail_screen.dart';
+import '../../capsules/screens/create_capsule_screen.dart';
 import '../../vaccines/models/vaccine_status.dart';
 import '../../vaccines/providers/vaccine_providers.dart';
 import '../../vaccines/screens/vaccine_detail_screen.dart';
 
 /// Card widget displaying a vaccine group with collapsible details.
-class VaccineCard extends StatefulWidget {
+class VaccineCard extends ConsumerStatefulWidget {
   const VaccineCard({
     super.key,
+    required this.childId,
     required this.vaccineGroup,
     required this.onMarkComplete,
     required this.onMarkIncomplete,
   });
 
+  final String childId;
   final VaccineGroupWithStatus vaccineGroup;
   final VoidCallback onMarkComplete;
   final VoidCallback onMarkIncomplete;
 
   @override
-  State<VaccineCard> createState() => _VaccineCardState();
+  ConsumerState<VaccineCard> createState() => _VaccineCardState();
 }
 
-class _VaccineCardState extends State<VaccineCard>
+class _VaccineCardState extends ConsumerState<VaccineCard>
     with SingleTickerProviderStateMixin {
   bool _isExpanded = false;
 
@@ -183,7 +194,11 @@ class _VaccineCardState extends State<VaccineCard>
                   GestureDetector(
                     onTap: () => Navigator.of(context).push(
                       MaterialPageRoute(
-                        builder: (_) => VaccineDetailScreen(vaccine: vaccine),
+                        builder: (_) => VaccineDetailScreen(
+                          vaccine: vaccine,
+                          childId: widget.childId,
+                          vaccineGroupId: widget.vaccineGroup.group.id,
+                        ),
                       ),
                     ),
                     child: Container(
@@ -305,7 +320,174 @@ class _VaccineCardState extends State<VaccineCard>
                     ),
                   ),
           ),
+
+          // Capsule Section
+          const SizedBox(height: AppSpacing.sm),
+          const Divider(height: 1),
+          const SizedBox(height: AppSpacing.sm),
+          _buildCapsuleSection(isDark, textColor, secondaryText, primary),
         ],
+      ),
+    );
+  }
+
+  Widget _buildCapsuleSection(
+    bool isDark,
+    Color textColor,
+    Color secondaryText,
+    Color primary,
+  ) {
+    final capsuleId = widget.vaccineGroup.status?.capsuleId;
+    if (capsuleId == null) {
+      return _buildCapsuleCTA(primary);
+    }
+
+    final capsulesAsync = ref.watch(capsulesProvider);
+    return capsulesAsync.when(
+      loading: () => Center(
+        child: SizedBox(
+          width: 24,
+          height: 24,
+          child: CircularProgressIndicator(strokeWidth: 2, color: primary),
+        ),
+      ),
+      error: (_, __) => _buildCapsuleCTA(primary),
+      data: (list) {
+        final capsule = list.where((c) => c.id == capsuleId).firstOrNull;
+        if (capsule == null) {
+          return _buildCapsuleCTA(primary);
+        }
+        return _buildLinkedCapsuleRow(capsule, isDark, textColor, secondaryText);
+      },
+    );
+  }
+
+  Widget _buildLinkedCapsuleRow(
+    Capsule capsule,
+    bool isDark,
+    Color textColor,
+    Color secondaryText,
+  ) {
+    return Row(
+      children: [
+        ClipRRect(
+          borderRadius: BorderRadius.circular(12),
+          child: GestureDetector(
+            onTap: () {
+              // Log analytical event
+              final AnalyticsService analytics = AnalyticsService();
+              analytics.logEvent(
+                'vax_capsule_viewed',
+                parameters: {
+                  'childId': widget.childId,
+                  'vaccineGroupId': widget.vaccineGroup.group.id,
+                  'capsuleId': capsule.id,
+                },
+              );
+              Navigator.of(context).push(
+                MaterialPageRoute(
+                  builder: (_) => CapsuleDetailScreen(capsule: capsule),
+                ),
+              );
+            },
+            child: SizedBox(
+              width: 56,
+              height: 56,
+              child: Hero(
+                tag: 'capsule_${capsule.id}',
+                child: CachedNetworkImage(
+                  imageUrl: capsule.photoUrl,
+                  fit: BoxFit.cover,
+                  placeholder: (context, url) => Shimmer.fromColors(
+                    baseColor: isDark ? Colors.grey[800]! : Colors.grey[300]!,
+                    highlightColor: isDark ? Colors.grey[700]! : Colors.grey[100]!,
+                    child: Container(color: Colors.white),
+                  ),
+                  errorWidget: (context, url, error) => Container(
+                    color: isDark ? Colors.grey[800] : Colors.grey[200],
+                    child: const Icon(Icons.broken_image, size: 20, color: Colors.grey),
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ),
+        const SizedBox(width: AppSpacing.md),
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                'Souvenir lié 🌟',
+                style: GoogleFonts.outfit(
+                  fontSize: 14,
+                  fontWeight: FontWeight.w600,
+                  color: textColor,
+                ),
+              ),
+              const SizedBox(height: 2),
+              Text(
+                '${capsule.emotion.emoji} ${capsule.emotion.labelFr}',
+                style: GoogleFonts.outfit(
+                  fontSize: 12,
+                  color: secondaryText,
+                ),
+              ),
+            ],
+          ),
+        ),
+        IconButton(
+          onPressed: () {
+            // Log analytical event
+            final AnalyticsService analytics = AnalyticsService();
+            analytics.logEvent(
+              'vax_capsule_viewed',
+              parameters: {
+                'childId': widget.childId,
+                'vaccineGroupId': widget.vaccineGroup.group.id,
+                'capsuleId': capsule.id,
+              },
+            );
+            Navigator.of(context).push(
+              MaterialPageRoute(
+                builder: (_) => CapsuleDetailScreen(capsule: capsule),
+              ),
+            );
+          },
+          icon: Icon(Icons.arrow_forward_ios_rounded, size: 16, color: secondaryText),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildCapsuleCTA(Color primary) {
+    final l10n = AppLocalizations.of(context)!;
+    return SizedBox(
+      width: double.infinity,
+      child: OutlinedButton.icon(
+        onPressed: () {
+          Navigator.of(context).push(
+            MaterialPageRoute(
+              builder: (_) => CreateCapsuleScreen(
+                vaccineGroupId: widget.vaccineGroup.group.id,
+                preselectedChildId: widget.childId,
+              ),
+            ),
+          );
+        },
+        icon: Icon(Icons.camera_enhance_rounded, size: 18, color: primary),
+        label: Text(
+          l10n.capsule,
+          style: GoogleFonts.outfit(fontWeight: FontWeight.w600),
+        ),
+        style: OutlinedButton.styleFrom(
+          foregroundColor: primary,
+          side: BorderSide(color: primary, width: 1.5),
+          padding: const EdgeInsets.symmetric(vertical: 12),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
+        ),
       ),
     );
   }

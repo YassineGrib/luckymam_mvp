@@ -3,8 +3,10 @@ import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
+import 'package:flutter/foundation.dart';
 import 'package:uuid/uuid.dart';
 
+import '../../../core/services/analytics_service.dart';
 import '../models/capsule.dart';
 import '../models/emotion.dart';
 
@@ -14,6 +16,7 @@ class CapsuleService {
   final FirebaseStorage _storage = FirebaseStorage.instance;
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final Uuid _uuid = const Uuid();
+  final AnalyticsService _analytics = AnalyticsService();
 
   /// Get current user ID.
   String? get _userId => _auth.currentUser?.uid;
@@ -68,6 +71,7 @@ class CapsuleService {
     int? audioDuration,
     required Emotion emotion,
     String? milestoneId,
+    String? vaccineGroupId,
     List<String> tags = const [],
     DateTime? capturedAt,
     CapsuleCategory? category,
@@ -100,6 +104,7 @@ class CapsuleService {
       userId: _userId!,
       childId: childId,
       milestoneId: milestoneId,
+      vaccineGroupId: vaccineGroupId,
       photoUrl: photoUrl,
       audioUrl: audioUrl,
       audioDuration: audioDuration,
@@ -113,6 +118,44 @@ class CapsuleService {
     );
 
     await _capsulesRef.doc(capsuleId).set(capsule.toFirestore());
+
+    // If tied to a vaccine group, update the vaccine status
+    if (vaccineGroupId != null) {
+      try {
+        final vaccineStatusRef = _firestore
+            .collection('users')
+            .doc(_userId)
+            .collection('children')
+            .doc(childId)
+            .collection('vaccinations')
+            .doc(vaccineGroupId);
+
+        final doc = await vaccineStatusRef.get();
+        if (doc.exists) {
+          await vaccineStatusRef.update({
+            'capsuleId': capsuleId,
+          });
+        } else {
+          await vaccineStatusRef.set({
+            'capsuleId': capsuleId,
+            'completedAt': Timestamp.fromDate(now),
+          });
+        }
+      } catch (e) {
+        debugPrint('Error updating vaccine status with capsuleId: $e');
+      }
+
+      // Log analytical event for vaccine capsule creation
+      await _analytics.logEvent(
+        'vax_capsule_created',
+        parameters: {
+          'childId': childId,
+          'vaccineGroupId': vaccineGroupId,
+          'capsuleId': capsuleId,
+        },
+      );
+    }
+
     return capsule;
   }
 

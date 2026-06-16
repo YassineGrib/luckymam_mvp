@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
-/// Reusable LuckyMam SVG logo widget — uses the real brand asset.
+/// Reusable Luckymam SVG logo widget — uses the real brand asset.
 /// Replaces the old AppLogo which used placeholder PNGs.
-class LuckyMamLogo extends StatelessWidget {
-  const LuckyMamLogo({
+class LuckymamLogo extends StatelessWidget {
+  const LuckymamLogo({
     super.key,
     this.size = 36,
     this.color,
@@ -17,7 +17,7 @@ class LuckyMamLogo extends StatelessWidget {
   /// Optional color tint (null = use original SVG colors)
   final Color? color;
 
-  /// Whether to show "LuckyMam" text next to the logo
+  /// Whether to show "Luckymam" text next to the logo
   final bool showText;
 
   @override
@@ -40,7 +40,7 @@ class LuckyMamLogo extends StatelessWidget {
         svgWidget,
         const SizedBox(width: 8),
         Text(
-          'LuckyMam',
+          'Luckymam',
           style: TextStyle(
             fontSize: size * 0.55,
             fontWeight: FontWeight.w800,
@@ -79,9 +79,9 @@ class AppLogo extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     if (variant == LogoVariant.horizontal) {
-      return LuckyMamLogo(size: _iconSize, showText: true);
+      return LuckymamLogo(size: _iconSize, showText: true);
     }
-    return LuckyMamLogo(size: _iconSize);
+    return LuckymamLogo(size: _iconSize);
   }
 }
 

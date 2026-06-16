@@ -6,7 +6,7 @@ import '../../../core/theme/app_colors.dart';
 
 /// Full-screen video player for a single reel.
 /// Auto-plays when [isActive], pauses when not.
-/// Features: rose gradient play button + LuckyMam logo watermark.
+/// Features: rose gradient play button + Luckymam logo watermark.
 class ReelPlayer extends StatefulWidget {
   const ReelPlayer({
     super.key,
@@ -134,7 +134,7 @@ class _ReelPlayerState extends State<ReelPlayer>
             ),
           ),
 
-          // LuckyMam logo watermark (top-right, semi-transparent)
+          // Luckymam logo watermark (top-right, semi-transparent)
           Positioned(
             top: 90,
             right: 16,
