@@ -191,10 +191,10 @@ class AppLocalizationsFr extends AppLocalizations {
   String get emailSupport => 'Email';
 
   @override
-  String get emailSupportHint => 'support@Luckymam.com';
+  String get emailSupportHint => 'support@luckymam.site';
 
   @override
-  String get sendEmailPrompt => 'Envoyez-nous un email à support@Luckymam.com';
+  String get sendEmailPrompt => 'Envoyez-nous un email à support@luckymam.site';
 
   @override
   String get liveChat => 'Chat en direct';

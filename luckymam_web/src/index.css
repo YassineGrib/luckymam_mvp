@@ -2,10 +2,18 @@
 
 @theme {
   --color-clay-bg: #FFFDF6;
-  --color-coral-primary: #FF6B57;
-  --color-sunshine-gold: #FFD369;
-  --color-charcoal-dark: #1E1E1E;
-  --color-soft-gray: #F3F3F3;
+  --color-negroni: #FEE4C1;
+  --color-willow-brook: #E0EBDD;
+  
+  /* Brand colors matching app_colors.dart */
+  --color-coral-primary: #E85A71;   /* App's coral */
+  --color-magenta-pink: #A7316E;    /* App's magentaPink */
+  --color-smalt-blue: #4F8289;      /* App's smaltBlue */
+  --color-sunshine-gold: #FED672;   /* App's goldenrod */
+  --color-charcoal-dark: #130F0B;   /* App's oil */
+  --color-hit-pink: #FAB187;        /* App's hitPink */
+  --color-casablanca: #F9AD4A;      /* App's casablanca */
+  
   --font-display: "Space Grotesk", sans-serif;
   --font-sans: "Inter", sans-serif;
 }
@@ -13,7 +21,7 @@
 @layer base {
   body {
     background-color: #FFFDF6;
-    color: #1E1E1E;
+    color: #130F0B;
     font-family: "Inter", sans-serif;
     overflow-x: hidden;
   }
@@ -27,19 +35,19 @@
 /* Custom Neo-Brutalist Utilities */
 @layer utilities {
   .neo-border {
-    border: 2.5px solid #1E1E1E;
+    border: 2.5px solid #130F0B;
   }
   
   .neo-shadow-sm {
-    box-shadow: 2px 2px 0px 0px #1E1E1E;
+    box-shadow: 2px 2px 0px 0px #130F0B;
   }
   
   .neo-shadow {
-    box-shadow: 4px 4px 0px 0px #1E1E1E;
+    box-shadow: 4px 4px 0px 0px #130F0B;
   }
   
   .neo-shadow-lg {
-    box-shadow: 8px 8px 0px 0px #1E1E1E;
+    box-shadow: 8px 8px 0px 0px #130F0B;
   }
   
   .neo-shadow-hover {
@@ -48,12 +56,12 @@
   
   .neo-shadow-hover:hover {
     transform: translate(-2px, -2px);
-    box-shadow: 6px 6px 0px 0px #1E1E1E;
+    box-shadow: 6px 6px 0px 0px #130F0B;
   }
   
   .neo-shadow-hover:active {
     transform: translate(2px, 2px);
-    box-shadow: 2px 2px 0px 0px #1E1E1E;
+    box-shadow: 2px 2px 0px 0px #130F0B;
   }
 
   .neo-btn {
@@ -64,32 +72,32 @@
     font-family: "Space Grotesk", sans-serif;
     font-weight: 700;
     text-transform: uppercase;
-    background-color: #FF6B57;
+    background-color: #E85A71;
     color: #FFFFFF;
-    border: 2.5px solid #1E1E1E;
-    box-shadow: 4px 4px 0px 0px #1E1E1E;
+    border: 2.5px solid #130F0B;
+    box-shadow: 4px 4px 0px 0px #130F0B;
     transition: all 0.15s cubic-bezier(0.175, 0.885, 0.32, 1.275);
     cursor: pointer;
   }
 
   .neo-btn:hover {
     transform: translate(-2px, -2px);
-    box-shadow: 6px 6px 0px 0px #1E1E1E;
+    box-shadow: 6px 6px 0px 0px #130F0B;
   }
 
   .neo-btn:active {
     transform: translate(2px, 2px);
-    box-shadow: 2px 2px 0px 0px #1E1E1E;
+    box-shadow: 2px 2px 0px 0px #130F0B;
   }
   
   .neo-btn-gold {
-    background-color: #FFD369;
-    color: #1E1E1E;
+    background-color: #FED672;
+    color: #130F0B;
   }
 
   .neo-btn-white {
     background-color: #FFFFFF;
-    color: #1E1E1E;
+    color: #130F0B;
   }
 }
 
@@ -100,11 +108,11 @@
 
 ::-webkit-scrollbar-track {
   background: #FFFDF6;
-  border-left: 2.5px solid #1E1E1E;
+  border-left: 2.5px solid #130F0B;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #1E1E1E;
+  background: #130F0B;
   border: 1px solid #FFFDF6;
 }
 

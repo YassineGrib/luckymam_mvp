@@ -439,13 +439,13 @@ abstract class AppLocalizations {
   /// No description provided for @emailSupportHint.
   ///
   /// In fr, this message translates to:
-  /// **'support@Luckymam.com'**
+  /// **'support@luckymam.site'**
   String get emailSupportHint;
 
   /// No description provided for @sendEmailPrompt.
   ///
   /// In fr, this message translates to:
-  /// **'Envoyez-nous un email à support@Luckymam.com'**
+  /// **'Envoyez-nous un email à support@luckymam.site'**
   String get sendEmailPrompt;
 
   /// No description provided for @liveChat.
