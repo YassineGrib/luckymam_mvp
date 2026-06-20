@@ -1,0 +1,128 @@
+﻿ID;Épic;Feature;User Story;Description;Critères d’acceptation (Gherkin / tests);Priorité (MoSCoW);Estimation (Story Points);Dépendances;Roadmap Phase;Donnée personnelle (DPIA);Sécurité (menaces/contrôles);Admin/Backoffice;Tracking (analytics/event);i18n/l10n;Notes
+LM2-118;Privacy & Compliance;Consentement Loi 18-07;En tant qu’utilisatrice, je veux accepter la Loi 18/07 afin de valider ma demande/inscription.;Afficher le texte légal Loi 18/07 et une case obligatoire « J’accepte ». Sauvegarder la preuve de consentement (consent=true/false, horodatage, version du texte).;"Scenario: Blocage sans acceptation
+Given je suis sur l’écran contenant le texte Loi 18/07
+When je tente de continuer sans cocher « J’accepte »
+Then la progression est bloquée
+And un message clair indique que l’acceptation est obligatoire
+
+Scenario: Consentement sauvegardé
+Given je coche « J’accepte »
+When je clique sur « Continuer »
+Then la progression est autorisée
+And le système sauvegarde consent=true, timestamp, version_texte";Must;5;LM2-004;M1-M3;Consentement;"Preuve de consentement horodatée; protection anti-altération côté serveur (audit log / hash).";Non;law1807_viewed,law1807_accepted,law1807_blocked;FR/AR/EN;Addendum 27-04-2026.
+LM2-119;Branding & UI;Splash branding;En tant qu’utilisatrice, je veux voir le logo et le nom Luckymam à l’ouverture de l’app.;Sur l’écran d’entrée (splash), afficher le logo existant + le texte « Luckymam » (orthographe exacte). Support RTL.;"Given j’ouvre l’application
+When l’écran splash s’affiche
+Then le logo Luckymam est visible
+And le texte « Luckymam » est visible et lisible
+And l’affichage fonctionne en RTL (arabe)";Should;3;;M1-M3;—;—;Non;splash_shown;FR/AR/EN;Addendum 27-04-2026.
+LM2-120;Branding & Qualité;Normalisation libellés;En tant qu’utilisatrice, je veux voir le nom de la marque écrit correctement partout.;Remplacer toutes les occurrences UI « LuckyMam » → « Luckymam » (strings, titres, headers, etc.).;"Given je navigue sur les écrans principaux
+Then aucune occurrence « LuckyMam » n’est visible
+And « Luckymam » est affiché partout à la place";Must;3;LM2-088;M1-M3;—;—;Non;—;FR/AR/EN;Addendum 27-04-2026.
+LM2-121;UI/UX;Header Home;En tant qu’utilisatrice, je veux une photo de profil plus visible sur la Home.;Agrandir la taille de l’avatar sur Home (responsive, touch target conforme).;"Given je suis sur la Home
+Then l’avatar est plus grand qu’avant
+And la mise en page reste stable sur petits écrans
+And l’avatar reste cliquable (touch target conforme)";Should;2;;M1-M3;—;—;Non;profile_avatar_tapped;FR/AR/EN;Addendum 27-04-2026.
+LM2-122;Monétisation;Ads gating & timers;En tant qu’utilisatrice, je veux une expérience adaptée à mon plan (durée pub ou absence).;"Règles pubs par plan: Standard ≥5s non-skippable; Freemium ≥3s non-skippable; VIP: 0 pub (aucun appel SDK/pub). Timer contrôlé côté app + enforcement côté serveur via entitlements.";"Scenario: Freemium - 3s minimum
+Given mon plan est Freemium
+When une publicité s’affiche
+Then je ne peux pas la fermer avant 3 secondes
+
+Scenario: Standard - 5s minimum
+Given mon plan est Standard
+When une publicité s’affiche
+Then je ne peux pas la fermer avant 5 secondes
+
+Scenario: VIP - zéro publicité
+Given mon plan est VIP
+When j’utilise l’app
+Then aucune pub ne s’affiche
+And aucun appel au provider/SDK pub n’est déclenché";Must;8;"LM2-043;LM2-113;LM2-047";M4-M6;SDK/Tracking (si ads);"Contrôle serveur (entitlements/feature flags) + anti-bypass; conformité consentement analytics/ads.";Oui;ad_impression,ad_timer_started,ad_closed,ad_blocked_vip;FR/AR/EN;Hypothèse: plans Freemium/Standard/VIP.
+LM2-123;Onboarding & Profil;Statut utilisateur;En tant qu’utilisatrice, je veux indiquer que je souhaite être enceinte (HOPE).;Ajouter un statut profil « HOPE » (souhaite être enceinte) en plus de « MAMAN » et « ENCEINTE ». Impacts UI: pas de bloc grossesse (DPA/semaines) si HOPE.;"Given je suis dans l’écran profil
+When je sélectionne le statut « HOPE »
+Then le statut est sauvegardé
+And les écrans liés à la grossesse (DPA/semaines) ne s’affichent pas";Must;5;LM2-005;M1-M3;Données santé (statut);"Chiffrement au repos + minimisation; contrôle accès.";Non;status_selected;FR/AR/EN;Addendum 27-04-2026.
+LM2-124;Santé;Grossesse — DPA & âge gestationnel;En tant que femme enceinte, je veux connaître ma semaine de grossesse et ma DPA à partir de mes dernières règles.;"Si statut=ENCEINTE: demander DDR (date dernières règles) puis calculer DPA=DDR+280j; afficher « Vous êtes à la XX semaine » + « DPA = J-XX jours ». Mise à jour automatique quotidienne.";"Scenario: visible uniquement si enceinte
+Given mon statut est « ENCEINTE »
+When j’ouvre « Ma Santé »
+Then je vois un bloc affichant « Vous êtes à la XX semaine »
+And je vois « DPA = J-XX jours »
+
+Scenario: caché si non enceinte
+Given mon statut est « MAMAN » ou « HOPE »
+When j’ouvre « Ma Santé »
+Then je ne vois pas le bloc DPA
+
+Scenario: recalcul automatique
+Given DDR est renseignée
+When la date du jour change
+Then semaine et J-XX se mettent à jour";Must;8;LM2-005;M1-M3;Données santé (dates);"Chiffrement; analytics sans dates exactes; validation inputs.";Non;pregnancy_panel_viewed,lmp_saved,edd_computed;FR/AR/EN;Possibilité future: ajustement par longueur de cycle.
+LM2-125;Santé / UI;Graph poids;En tant qu’utilisatrice, je veux que la courbe de poids soit lisible jusqu’à 80 kg.;Adapter l’axe Y (ou dynamique) pour couvrir au minimum 0–80 kg, sans tronquer les points. Option: étendre au-delà si valeurs >80.;"Given j’ai des valeurs de poids jusqu’à 80 kg
+When j’affiche la courbe
+Then toutes les valeurs sont visibles et non tronquées
+And l’échelle est correcte jusqu’à 80 kg";Should;3;;M1-M3;Données santé;"Chiffrement au repos si stocké; minimisation.";Non;weight_chart_viewed;FR/AR/EN;Addendum 27-04-2026.
+LM2-126;Engagement;Shortcut notifications;En tant qu’utilisatrice, je veux accéder rapidement aux réglages de notifications.;Ajouter un raccourci vers les préférences notifications (catégories + quiet hours).;"Given je suis sur Home (ou Settings)
+When je clique sur « Raccourcis notifications »
+Then j’ouvre l’écran de préférences notifications
+And je peux activer/désactiver des catégories";Should;3;"LM2-082;LM2-004";M4-M6;Préférences;"Opt-in push; stockage sécurisé des préférences.";Non;notif_shortcut_opened,notif_prefs_updated;FR/AR/EN;Addendum 27-04-2026.
+LM2-127;Timeline;Capsule sur jalons;En tant que maman, je veux pouvoir créer une capsule émotionnelle pour chaque jalon.;Chaque jalon doit proposer « Créer capsule » (ou « Voir capsule » si existante) et permettre l’association capsule↔jalon.;"Given je consulte un jalon (quel qu’il soit)
+Then je vois l’action « Créer une capsule »
+And après création, je peux ouvrir la capsule depuis ce jalon";Must;8;"LM2-017;LM2-023";M1-M3;Photo+audio;"Upload signé + chiffrement; contrôle quota.";Non;milestone_capsule_cta_shown,milestone_capsule_created;FR/AR/EN;Addendum 27-04-2026.
+LM2-128;Timeline;Quick add;En tant que maman, je veux ajouter rapidement une capsule ou un jalon depuis la timeline.;Ajouter un bouton « + » sur la timeline qui ouvre un menu : (1) Créer capsule maintenant (2) Ajouter jalon personnalisé.;"Given je suis sur la Timeline
+When je clique sur « + »
+Then je vois au moins 2 actions: « Créer capsule » et « Ajouter jalon »";Should;5;"LM2-019;LM2-023";M4-M6;—;"Validation inputs; règles anti-spam (limites).";Non;timeline_quickadd_opened,timeline_quickadd_selected;FR/AR/EN;Addendum 27-04-2026.
+LM2-129;Timeline;Thumbnail capsule;En tant que maman, je veux voir la miniature de ma capsule sur le jalon.;Après enregistrement capsule, afficher la vignette (thumbnail) sur la carte du jalon + refresh immédiat.;"Given j’ai créé une capsule pour un jalon
+When je reviens sur la timeline
+Then la carte du jalon affiche la vignette de la capsule";Must;5;"LM2-127;LM2-026";M4-M6;Médias;"Cache sécurisé; pas d’EXIF si export.";Non;milestone_thumbnail_rendered;FR/AR/EN;Addendum 27-04-2026.
+LM2-130;Timeline;Conseils jalon;En tant que maman, je veux obtenir des conseils pour comprendre le jalon et réussir ma photo.;Ajouter bouton « Conseil » sur le détail jalon : ouvre une fiche (explication + suggestions de positions photo). Contenu statique V1.;"Given je suis sur un jalon
+When je clique « Conseil »
+Then une page/modale s’ouvre avec explication du jalon
+And une section propose des conseils photo";Should;5;LM2-018;M7-M9;—;Contenu versionné si fourni via CMS.;Non;milestone_advice_opened;FR/AR/EN;Option: alimenter via règles jalons admin (LM2-021) ultérieurement.
+LM2-131;Engagement;Rappels jalons;En tant que maman, je veux programmer un rappel pour un jalon.;Ajouter bouton « Rappel » sur jalon : planification notification + deep link vers jalon + options snooze.;"Scenario: programmation
+Given je suis sur un jalon
+When je clique « Rappel » et je choisis une date/heure
+Then un rappel est enregistré
+And je reçois la notification à l’heure prévue (si opt-in)
+
+Scenario: deep link
+Given je tape sur la notification
+Then l’app ouvre directement le jalon concerné";Must;8;"LM2-083;LM2-081;LM2-004";M4-M6;Préférences notif;"Rate limiting; validation deep links; opt-in requis.";Non;milestone_reminder_set,milestone_reminder_fired,milestone_reminder_opened;FR/AR/EN;Addendum 27-04-2026.
+LM2-132;Santé;Capsules vaccins;En tant que maman, je veux créer une capsule liée à un vaccin et revoir sa photo.;Sur chaque vaccin (liste/détail), ajouter CTA « Capsule ». Après création, associer capsule au vaccin et afficher vignette photo sur la fiche vaccin.;"Given je suis sur un vaccin
+When je clique « Capsule » et j’enregistre
+Then la capsule est associée à ce vaccin
+And la photo miniature apparaît sur la fiche vaccin";Should;8;"LM2-039;LM2-023";M7-M9;Santé + médias;"Chiffrement; contrôle accès; consent partage.";Non;vax_capsule_created,vax_capsule_viewed;FR/AR/EN;Addendum 27-04-2026.
+LM2-133;Santé / Reels;Reels par vaccin;En tant que maman, je veux accéder à des reels éducatifs spécifiques à un vaccin.;Ajouter bouton « Reels » sur la fiche vaccin : ouvre le flux reels filtré par tag vaccin.;"Given je suis sur un vaccin
+When je clique « Reels »
+Then un flux reels s’ouvre
+And le flux est filtré sur ce vaccin";Should;5;"LM2-033;LM2-034;LM2-039";M7-M9;—;"Modération contenu; throttling.";Oui;vax_reels_opened,reel_view_from_vax;FR/AR/EN;Addendum 27-04-2026.
+LM2-134;Album;Album prédéfini;En tant que maman, je veux un album prédéfini basé sur des évènements, en attachant mes capsules.;Créer des modèles prédéfinis d’album avec une liste d’évènements. Chaque évènement peut être rempli via sélection d’une capsule existante ou création d’une nouvelle capsule liée.;"Given je choisis « Album prédéfini »
+When je sélectionne un évènement
+Then je peux attacher une capsule existante
+Or je peux créer une nouvelle capsule liée à l’évènement";Should;13;"LM2-023;LM2-026";M10-M12;Médias;Respect privacy level + liens sécurisés.;Non;album_template_selected,album_event_slot_filled;FR/AR/EN;Addendum 27-04-2026.
+LM2-135;Album;Album standard;En tant que maman, je veux un album vide à remplir librement avec mes capsules.;Créer un modèle standard (pages/slots vides) avec ajout de capsules/photos et sauvegarde brouillon.;"Given je choisis « Album standard »
+When j’ajoute une capsule dans un slot
+Then le slot affiche la capsule
+And l’album conserve l’état (brouillon) si je quitte";Should;13;"LM2-105;LM2-023";M10-M12;Médias;"Chiffrement médias; contrôle accès.";Non;album_standard_created,album_slot_added,album_draft_saved;FR/AR/EN;Addendum 27-04-2026.
+LM2-136;Album / Partage;Album publié (lien);En tant que maman, je veux publier un album en ligne pour le partager.;Publier un album en générant un lien de consultation (read-only) sécurisé, révocable et expirant. Respecter la confidentialité.;"Given mon album est prêt
+When je clique « Publier »
+Then un lien unique est généré
+And le lien donne accès à l’album en lecture seule
+And je peux désactiver le lien (unpublish)";Could;13;LM2-030;M10-M12;Partage médias;"URL signée + expiration + révocation; pas d’indexation.";Non;album_published,album_link_created,album_link_revoked;FR/AR/EN;Addendum 27-04-2026.
+LM2-137;Album papier;Bridge album -> impression;En tant que maman, je veux commander l’impression d’un album (prédéfini ou standard).;Depuis un album (prédéfini/standard), accès direct au flow album papier: prévisualisation PDF + commande.;"Given je suis dans un album (prédéfini ou standard)
+When je clique « Commander »
+Then je passe par la prévisualisation PDF
+And je peux finaliser une commande d’impression";Must;8;"LM2-104;LM2-116";M10-M12;Adresse + médias;Chiffrement + RBAC + audit commande.;Oui;album_print_cta_clicked,pdf_preview_opened,order_created;FR/AR/EN;Addendum 27-04-2026.
+LM2-138;Marketplace;Catalogue produits partenaires;En tant qu’utilisatrice, je veux découvrir les produits des partenaires sur un marketplace.;Créer une page Marketplace avec listing produits (image, titre, prix, partenaire) + page détail produit + CTA commander.;"Given j’ouvre « Marketplace »
+Then je vois une liste de produits partenaires
+
+When je clique sur un produit
+Then j’ouvre la fiche produit avec détails et CTA « Commander »";Could;13;;M10-M12;—;"Validation contenu (URLs/images); anti-injection.";Oui;marketplace_opened,product_viewed;FR/AR/EN;Prévoir backoffice produits (à créer) ou contenu statique V1.
+LM2-139;Marketplace;Commande produit partenaire;En tant qu’utilisatrice, je veux commander un produit partenaire depuis l’app.;Panier + adresse + confirmation commande (paiement optionnel V1). Prévoir statuts commande et historique.;"Scenario: Passage de commande
+Given je suis sur une fiche produit
+When je clique « Commander » et je renseigne les informations requises
+Then une commande est créée
+And je vois un écran de confirmation
+
+Scenario: Historique
+Given j’ai passé une commande
+When j’ouvre « Mes commandes »
+Then je vois la commande et son statut";Could;21;LM2-058;M10-M12;Adresse / Tel;"Chiffrement; anti-fraude basique; audit log.";Oui;product_added_to_cart,checkout_started,purchase_completed;FR/AR/EN;Si paiement intégré, réutiliser LM2-044 (PSP) sinon commande « à confirmer ».

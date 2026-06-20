@@ -119,7 +119,21 @@ class AuthService {
       return AuthResult.success(user);
     } catch (e) {
       debugPrint('Google SignIn Error: $e');
-      return AuthResult.failure('Erreur de connexion Google');
+      final msg = e.toString();
+      if (msg.contains('network_error') || msg.contains('NetworkException')) {
+        return AuthResult.failure('Pas de connexion réseau');
+      }
+      if (msg.contains('sign_in_failed') || msg.contains('ApiException: 10')) {
+        return AuthResult.failure(
+          'Connexion Google échouée (SHA-1 non enregistré dans Firebase)',
+        );
+      }
+      if (msg.contains('ApiException: 12')) {
+        return AuthResult.failure(
+          'Google Play Services non disponible sur cet appareil',
+        );
+      }
+      return AuthResult.failure('Erreur de connexion Google: $msg');
     }
   }
 
