@@ -160,6 +160,12 @@ class PersonalHeader extends ConsumerWidget {
                                     size: 14,
                                     color: Colors.pink,
                                   )
+                                else if (profile?.status == UserStatus.hope)
+                                  const Icon(
+                                    Icons.favorite_border_rounded,
+                                    size: 14,
+                                    color: Colors.purple,
+                                  )
                                 else
                                   const Icon(
                                     Icons.child_friendly_rounded,
@@ -203,19 +209,19 @@ class PersonalHeader extends ConsumerWidget {
                       );
                     },
                     child: Container(
-                      width: 60,
-                      height: 60,
+                      width: 72,
+                      height: 72,
                       decoration: BoxDecoration(
                         shape: BoxShape.circle,
                         border: Border.all(
                           color: primary.withValues(alpha: 0.2),
-                          width: 2,
+                          width: 2.5,
                         ),
                         boxShadow: [
                           BoxShadow(
-                            color: primary.withValues(alpha: 0.2),
-                            blurRadius: 10,
-                            offset: const Offset(0, 4),
+                            color: primary.withValues(alpha: 0.25),
+                            blurRadius: 14,
+                            offset: const Offset(0, 5),
                           ),
                         ],
                       ),
@@ -231,7 +237,7 @@ class PersonalHeader extends ConsumerWidget {
                                 child: Text(
                                   name.isNotEmpty ? name[0].toUpperCase() : 'M',
                                   style: GoogleFonts.outfit(
-                                    fontSize: 24,
+                                    fontSize: 30,
                                     fontWeight: FontWeight.bold,
                                     color: Colors.white,
                                   ),

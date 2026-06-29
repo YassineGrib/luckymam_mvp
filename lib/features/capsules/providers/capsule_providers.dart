@@ -2,6 +2,8 @@ import 'dart:io';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../../core/providers/auth_provider.dart';
+import '../../../core/services/analytics_service.dart';
 import '../models/capsule.dart';
 import '../models/emotion.dart';
 import '../services/capsule_service.dart';
@@ -15,6 +17,9 @@ final capsuleServiceProvider = Provider<CapsuleService>((ref) {
 
 /// Stream provider for all capsules.
 final capsulesProvider = StreamProvider<List<Capsule>>((ref) {
+  final uid = ref.watch(userIdProvider);
+  if (uid == null) return Stream.value([]);
+
   final service = ref.watch(capsuleServiceProvider);
   return service.watchCapsules();
 });
@@ -24,6 +29,9 @@ final capsulesByChildProvider = StreamProvider.family<List<Capsule>, String?>((
   ref,
   childId,
 ) {
+  final uid = ref.watch(userIdProvider);
+  if (uid == null) return Stream.value([]);
+
   final service = ref.watch(capsuleServiceProvider);
   if (childId == null) {
     return service.watchCapsules();
@@ -114,6 +122,9 @@ class CapsuleFilterNotifier extends StateNotifier<CapsuleFilterState> {
 
 /// Filtered capsules based on filter state.
 final filteredCapsulesProvider = StreamProvider<List<Capsule>>((ref) {
+  final uid = ref.watch(userIdProvider);
+  if (uid == null) return Stream.value([]);
+
   final service = ref.watch(capsuleServiceProvider);
   final filters = ref.watch(capsuleFilterProvider);
 
@@ -203,9 +214,12 @@ class CapsuleActionsNotifier extends StateNotifier<CapsuleActionsState> {
             milestoneId: milestoneId,
             capsuleId: capsule.id,
           );
+          AnalyticsService().logEvent('milestone_capsule_created', parameters: {
+            'milestone_id': milestoneId,
+            'capsule_id': capsule.id,
+          });
         } catch (e) {
           // Log error but don't fail the whole operation
-          // debugPrint('Failed to complete milestone: $e');
         }
       }
       state = state.copyWith(

@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../../../core/providers/auth_provider.dart';
 import '../../../core/services/cycle_notification_service.dart';
 import '../models/profile_models.dart';
 import '../services/profile_service.dart';
@@ -11,12 +12,18 @@ final profileServiceProvider = Provider<ProfileService>((ref) {
 
 /// Stream provider for current user profile.
 final profileProvider = StreamProvider<UserProfile?>((ref) {
+  final uid = ref.watch(userIdProvider);
+  if (uid == null) return Stream.value(null);
+
   final service = ref.watch(profileServiceProvider);
   return service.watchProfile();
 });
 
 /// Stream provider for children list.
 final childrenProvider = StreamProvider<List<Child>>((ref) {
+  final uid = ref.watch(userIdProvider);
+  if (uid == null) return Stream.value([]);
+
   final service = ref.watch(profileServiceProvider);
   return service.watchChildren();
 });
@@ -207,6 +214,23 @@ class ProfileActionsNotifier extends StateNotifier<ProfileActionsState> {
       state = state.copyWith(
         isLoading: false,
         successMessage: 'Règles enregistrées',
+      );
+    } catch (e) {
+      state = state.copyWith(
+        isLoading: false,
+        error: 'Erreur: ${e.toString()}',
+      );
+    }
+  }
+
+  /// Save DDR for pregnancy DPA calculation.
+  Future<void> savePregnancyLmp(DateTime lmpDate) async {
+    state = state.copyWith(isLoading: true);
+    try {
+      await _service.savePregnancyLmp(lmpDate);
+      state = state.copyWith(
+        isLoading: false,
+        successMessage: 'Date de début de grossesse enregistrée',
       );
     } catch (e) {
       state = state.copyWith(

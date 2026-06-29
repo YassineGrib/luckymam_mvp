@@ -15,14 +15,17 @@ class AnalyticsService {
 
   /// Log a custom analytics event.
   Future<void> logEvent(String eventName, {Map<String, dynamic>? parameters}) async {
-    final userId = _auth.currentUser?.uid ?? 'anonymous';
+    final user = _auth.currentUser;
     final timestamp = FieldValue.serverTimestamp();
 
-    debugPrint('Analytics Event: $eventName | User: $userId | Params: $parameters');
+    debugPrint('Analytics Event: $eventName | User: ${user?.uid ?? 'anonymous'} | Params: $parameters');
+
+    // Only write to Firestore when the user is authenticated to avoid permission errors
+    if (user == null) return;
 
     try {
       await _firestore.collection('analytics_logs').add({
-        'userId': userId,
+        'userId': user.uid,
         'eventName': eventName,
         'parameters': parameters ?? {},
         'timestamp': timestamp,
@@ -30,6 +33,16 @@ class AnalyticsService {
     } catch (e) {
       debugPrint('Error writing analytics event to Firestore: $e');
     }
+  }
+
+  /// Event: Splash screen shown.
+  Future<void> logSplashShown() async {
+    await logEvent('splash_shown');
+  }
+
+  /// Event: User selected a profile status.
+  Future<void> logStatusSelected(String status) async {
+    await logEvent('status_selected', parameters: {'status': status});
   }
 
   /// Event: Law 18-07 consent screen viewed.

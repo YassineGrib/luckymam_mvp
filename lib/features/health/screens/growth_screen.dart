@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 
+import '../../../core/services/analytics_service.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_spacing.dart';
 import '../../profile/models/profile_models.dart';
@@ -20,6 +21,8 @@ class GrowthScreen extends ConsumerStatefulWidget {
 }
 
 class _GrowthScreenState extends ConsumerState<GrowthScreen> {
+  bool _analyticsLogged = false;
+
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
@@ -44,7 +47,15 @@ class _GrowthScreenState extends ConsumerState<GrowthScreen> {
             style: GoogleFonts.outfit(color: AppColors.error),
           ),
         ),
-        data: (entries) => CustomScrollView(
+        data: (entries) {
+          if (!_analyticsLogged) {
+            _analyticsLogged = true;
+            AnalyticsService().logEvent('weight_chart_viewed', parameters: {
+              'child_id': widget.child.id,
+              'entry_count': entries.length,
+            });
+          }
+          return CustomScrollView(
           slivers: [
             // Chart section
             SliverToBoxAdapter(
@@ -177,7 +188,8 @@ class _GrowthScreenState extends ConsumerState<GrowthScreen> {
                 ),
               ),
           ],
-        ),
+          );
+        },
       ),
       floatingActionButton: FloatingActionButton.extended(
         backgroundColor: primary,

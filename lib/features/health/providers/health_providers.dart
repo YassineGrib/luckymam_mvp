@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../../core/providers/auth_provider.dart';
 import '../models/appointment.dart';
 import '../models/growth_entry.dart';
 import '../services/appointment_service.dart';
@@ -23,6 +24,9 @@ final appointmentServiceProvider = Provider<AppointmentService>(
 /// Live stream of growth entries for a given child, sorted by date desc.
 final growthEntriesProvider = StreamProvider.autoDispose
     .family<List<GrowthEntry>, String>((ref, childId) {
+      final uid = ref.watch(userIdProvider);
+      if (uid == null) return Stream.value([]);
+
       final service = ref.watch(growthServiceProvider);
       return service.watchEntries(childId);
     });
@@ -105,6 +109,9 @@ final growthActionsProvider =
 /// Live stream of appointments for a given child, sorted by date desc.
 final appointmentsProvider = StreamProvider.autoDispose
     .family<List<Appointment>, String>((ref, childId) {
+      final uid = ref.watch(userIdProvider);
+      if (uid == null) return Stream.value([]);
+
       final service = ref.watch(appointmentServiceProvider);
       return service.watchAppointments(childId);
     });

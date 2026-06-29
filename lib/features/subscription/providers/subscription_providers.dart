@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../../../core/providers/auth_provider.dart';
 
 import '../models/subscription_models.dart';
 
@@ -10,7 +11,7 @@ import '../models/subscription_models.dart';
 
 /// Current user's subscription tier, read from Firestore.
 final currentTierProvider = StreamProvider<SubscriptionTier>((ref) {
-  final uid = FirebaseAuth.instance.currentUser?.uid;
+  final uid = ref.watch(userIdProvider);
   if (uid == null) return Stream.value(SubscriptionTier.free);
 
   return FirebaseFirestore.instance
@@ -68,7 +69,7 @@ final isVipProvider = Provider<bool>((ref) {
 
 /// Whether the VIP album perk has been claimed.
 final albumClaimedProvider = StreamProvider<bool>((ref) {
-  final uid = FirebaseAuth.instance.currentUser?.uid;
+  final uid = ref.watch(userIdProvider);
   if (uid == null) return Stream.value(false);
 
   return FirebaseFirestore.instance

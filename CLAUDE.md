@@ -104,3 +104,63 @@ Algerian Law 18-07 (data privacy) consent is collected at first launch via `Law1
 - Services are plain classes instantiated inside Riverpod `Provider`s — they are not singletons accessed globally.
 - Prices are in **DZD** (Algerian Dinar).
 - The app is Android-only for now; iOS-specific code is absent.
+
+## Workflow — Backlog Tickets
+
+Every ticket in `docs/updates/issues/` follows this sequence. Do **not** skip any step.
+
+### 1. Implement
+- Read the issue file before touching any code.
+- Run `flutter analyze` on every modified file before declaring done. Zero new issues required.
+
+### 2. Update TASKS.md
+- Change ticket status to `✅ Terminé` in `docs/updates/TASKS.md`.
+- Increment the "✅ Terminé" counter and decrement "⬜ À faire".
+
+### 3. Create client report — MANDATORY
+After **every** completed ticket, create a report file at:
+
+```
+docs/reports/rapport_client_YYYY-MM-DD_LM2-XXX.md
+```
+
+Use today's date (`currentDate` from context). The report must follow this exact structure:
+
+```markdown
+# Rapport — LM2-XXX : <Titre du ticket>
+
+**Date :** YYYY-MM-DD
+**Ticket :** LM2-XXX
+**Priorité :** <Must/Should/Could> Have · X SP
+**Statut :** ✅ Terminé
+
+---
+
+## Ce qui a été fait
+
+### 1. <Sous-titre>
+<Description détaillée de chaque changement>
+
+---
+
+## Fichiers modifiés
+
+| Fichier | Changement |
+|---------|-----------|
+| `path/to/file.dart` | Description courte |
+
+---
+
+## Résultat
+
+| Critère | Statut |
+|---------|--------|
+| <Critère d'acceptation> | ✅ |
+| `flutter analyze` clean | ✅ |
+```
+
+### 4. Add report link to TASKS.md
+Add the new report to the `> Rapports :` line at the top of `docs/updates/TASKS.md`.
+
+### 5. Update issue file
+Change the `**Statut**` field in `docs/updates/issues/LM2-XXX.md` from `⬜ À faire` to `✅ Terminé`.

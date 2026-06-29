@@ -149,9 +149,34 @@ class GrowthChartWidget extends StatelessWidget {
   final DateTime childBirthDate;
   final bool isGirl;
 
-  double _ageMonths(DateTime date) {
-    final diff = date.difference(childBirthDate);
-    return diff.inDays / 30.44;
+  double _ageMonths(DateTime date) => date.difference(childBirthDate).inDays / 30.44;
+
+  /// Round [v] up to the next multiple of [step].
+  double _ceilTo(double v, double step) => (v / step).ceil() * step;
+
+  /// Compute smart Y-axis ceiling: at least 80 kg, above any real data point.
+  double _computeMaxY(List<FlSpot> userSpots) {
+    const minCeiling = 80.0;
+    if (userSpots.isEmpty) return minCeiling;
+    final maxData = userSpots.map((s) => s.y).reduce((a, b) => a > b ? a : b);
+    final padded = maxData * 1.15;
+    final ceiling = padded > minCeiling ? padded : minCeiling;
+    return _ceilTo(ceiling, 10);
+  }
+
+  /// Pick a Y label interval that keeps the axis readable.
+  double _yInterval(double maxY) {
+    if (maxY <= 30) return 5;
+    if (maxY <= 60) return 10;
+    return 20;
+  }
+
+  /// Compute smart X-axis ceiling: at least 60 months, up to child's current age + 6.
+  double _computeMaxX() {
+    final ageMonths = _ageMonths(DateTime.now());
+    const minCeiling = 60.0;
+    if (ageMonths <= minCeiling) return minCeiling;
+    return _ceilTo(ageMonths + 6, 12);
   }
 
   @override
@@ -159,17 +184,19 @@ class GrowthChartWidget extends StatelessWidget {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final primary = isDark ? AppColors.primaryDark : AppColors.primaryLight;
     final gridColor = isDark ? Colors.white12 : Colors.black12;
+    final labelColor = isDark ? AppColors.textSecondaryDark : AppColors.textSecondaryLight;
 
-    final ref = isGirl ? _whoWeightP50Girls : _whoWeightP50Boys;
+    final whoRef = isGirl ? _whoWeightP50Girls : _whoWeightP50Boys;
+    final maxX = _computeMaxX();
 
     // WHO reference spots (monthly 0-60)
     final refSpots = [
-      for (var i = 0; i < ref.length; i++) FlSpot(i.toDouble(), ref[i]),
+      for (var i = 0; i < whoRef.length; i++) FlSpot(i.toDouble(), whoRef[i]),
     ];
 
-    // User data spots — only entries with weight
+    // User data spots — only entries with weight; X clamped to maxX
     final userSpots = entries.where((e) => e.weightKg != null).map((e) {
-      final months = _ageMonths(e.date).clamp(0.0, 60.0);
+      final months = _ageMonths(e.date).clamp(0.0, maxX);
       return FlSpot(months, e.weightKg!);
     }).toList()..sort((a, b) => a.x.compareTo(b.x));
 
@@ -177,62 +204,57 @@ class GrowthChartWidget extends StatelessWidget {
       return _buildEmpty(primary);
     }
 
+    final maxY = _computeMaxY(userSpots);
+    final yInterval = _yInterval(maxY);
+    final xInterval = maxX <= 60 ? 6.0 : 12.0;
+
     return Padding(
       padding: const EdgeInsets.fromLTRB(8, 16, 24, 8),
       child: LineChart(
         LineChartData(
           minX: 0,
-          maxX: 60,
+          maxX: maxX,
           minY: 0,
-          maxY: 25,
+          maxY: maxY,
           gridData: FlGridData(
             show: true,
             drawHorizontalLine: true,
             drawVerticalLine: false,
-            getDrawingHorizontalLine: (_) =>
-                FlLine(color: gridColor, strokeWidth: 1),
+            horizontalInterval: yInterval,
+            getDrawingHorizontalLine: (_) => FlLine(color: gridColor, strokeWidth: 1),
           ),
           borderData: FlBorderData(show: false),
           titlesData: FlTitlesData(
             leftTitles: AxisTitles(
               sideTitles: SideTitles(
                 showTitles: true,
-                reservedSize: 36,
-                getTitlesWidget: (v, _) => Text(
-                  '${v.toInt()} kg',
-                  style: GoogleFonts.outfit(
-                    fontSize: 10,
-                    color: isDark
-                        ? AppColors.textSecondaryDark
-                        : AppColors.textSecondaryLight,
-                  ),
-                ),
+                reservedSize: 40,
+                interval: yInterval,
+                getTitlesWidget: (v, meta) {
+                  // Hide the max label to avoid overlap with top edge
+                  if (v == maxY) return const SizedBox.shrink();
+                  return Text(
+                    '${v.toInt()} kg',
+                    style: GoogleFonts.outfit(fontSize: 10, color: labelColor),
+                  );
+                },
               ),
             ),
             bottomTitles: AxisTitles(
               sideTitles: SideTitles(
                 showTitles: true,
-                interval: 6,
+                interval: xInterval,
                 getTitlesWidget: (v, _) => Text(
                   '${v.toInt()}m',
-                  style: GoogleFonts.outfit(
-                    fontSize: 10,
-                    color: isDark
-                        ? AppColors.textSecondaryDark
-                        : AppColors.textSecondaryLight,
-                  ),
+                  style: GoogleFonts.outfit(fontSize: 10, color: labelColor),
                 ),
               ),
             ),
-            rightTitles: const AxisTitles(
-              sideTitles: SideTitles(showTitles: false),
-            ),
-            topTitles: const AxisTitles(
-              sideTitles: SideTitles(showTitles: false),
-            ),
+            rightTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
+            topTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
           ),
           lineBarsData: [
-            // WHO reference curve
+            // WHO reference curve (only up to 60 months)
             LineChartBarData(
               spots: refSpots,
               isCurved: true,
@@ -250,7 +272,7 @@ class GrowthChartWidget extends StatelessWidget {
                 barWidth: 2.5,
                 dotData: FlDotData(
                   show: true,
-                  getDotPainter: (_, __, ___, ____) => FlDotCirclePainter(
+                  getDotPainter: (spot, pct, bar, idx) => FlDotCirclePainter(
                     radius: 4,
                     color: primary,
                     strokeWidth: 2,
@@ -265,8 +287,7 @@ class GrowthChartWidget extends StatelessWidget {
           ],
           lineTouchData: LineTouchData(
             touchTooltipData: LineTouchTooltipData(
-              getTooltipColor: (_) =>
-                  isDark ? AppColors.surfaceDark : Colors.white,
+              getTooltipColor: (_) => isDark ? AppColors.surfaceDark : Colors.white,
               getTooltipItems: (spots) => spots
                   .map(
                     (s) => LineTooltipItem(

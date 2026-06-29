@@ -3,11 +3,15 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 
+import 'package:firebase_auth/firebase_auth.dart';
+
+import '../../../core/services/analytics_service.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_spacing.dart';
 import '../../capsules/screens/capsule_detail_screen.dart';
 import '../../capsules/screens/create_capsule_screen.dart';
 import '../../capsules/providers/capsule_providers.dart';
+import '../data/milestone_advice_data.dart';
 import '../models/phase.dart';
 import '../services/timeline_service.dart';
 
@@ -254,6 +258,11 @@ class MilestoneDetailScreen extends ConsumerWidget {
 
                   const SizedBox(height: AppSpacing.md),
 
+                  // Conseil button
+                  _buildConseilButton(context, m),
+
+                  const SizedBox(height: AppSpacing.md),
+
                   // Secondary actions
                   Row(
                     children: [
@@ -336,6 +345,13 @@ class MilestoneDetailScreen extends ConsumerWidget {
   }
 
   Widget _buildCaptureButton(BuildContext context) {
+    // Fire once when the CTA is displayed
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      AnalyticsService().logEvent('milestone_capsule_cta_shown', parameters: {
+        'milestone_id': milestone.milestone.id,
+      });
+    });
+
     return GestureDetector(
       onTap: () => _openCreateCapsule(context),
       child: Container(
@@ -447,14 +463,385 @@ class MilestoneDetailScreen extends ConsumerWidget {
     );
   }
 
-  void _markComplete(BuildContext context, WidgetRef ref) {
-    // TODO: Implement with TimelineService.completeMilestone
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text('Jalon marqué comme terminé'),
-        behavior: SnackBarBehavior.floating,
+  Widget _buildConseilButton(BuildContext context, dynamic m) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    return GestureDetector(
+      onTap: () => _showConseilSheet(context, m),
+      child: Container(
+        width: double.infinity,
+        padding: const EdgeInsets.symmetric(vertical: 14),
+        decoration: BoxDecoration(
+          color: isDark ? AppColors.surfaceDark : AppColors.surfaceLight,
+          borderRadius: BorderRadius.circular(16),
+          border: Border.all(
+            color: milestone.milestone.category.color.withValues(alpha: 0.4),
+          ),
+        ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(
+              Icons.lightbulb_rounded,
+              size: 20,
+              color: milestone.milestone.category.color,
+            ),
+            const SizedBox(width: AppSpacing.sm),
+            Text(
+              'Conseils & idées photo',
+              style: GoogleFonts.outfit(
+                fontSize: 15,
+                fontWeight: FontWeight.w600,
+                color: milestone.milestone.category.color,
+              ),
+            ),
+          ],
+        ),
       ),
     );
-    Navigator.pop(context);
+  }
+
+  void _showConseilSheet(BuildContext context, dynamic m) {
+    final advice = getMilestoneAdvice(
+      milestone.milestone.id,
+      milestone.milestone.category,
+    );
+
+    AnalyticsService().logEvent(
+      'milestone_advice_opened',
+      parameters: {'milestone_id': milestone.milestone.id},
+    );
+
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (_) => _ConseilSheet(
+        milestone: milestone,
+        advice: advice,
+      ),
+    );
+  }
+
+  void _markComplete(BuildContext context, WidgetRef ref) async {
+    final service = ref.read(timelineServiceProvider);
+    final uid = FirebaseAuth.instance.currentUser?.uid;
+    if (uid == null) return;
+
+    try {
+      await service.completeMilestone(
+        userId: uid,
+        childId: childId,
+        milestoneId: milestone.milestone.id,
+      );
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Jalon marqué comme terminé ✓'),
+            behavior: SnackBarBehavior.floating,
+            backgroundColor: AppColors.success,
+          ),
+        );
+        Navigator.pop(context);
+      }
+    } catch (e) {
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Erreur : $e'),
+            behavior: SnackBarBehavior.floating,
+            backgroundColor: AppColors.error,
+          ),
+        );
+      }
+    }
+  }
+}
+
+/// Bottom sheet showing explanation + photo tips for a milestone
+class _ConseilSheet extends StatelessWidget {
+  const _ConseilSheet({
+    required this.milestone,
+    required this.advice,
+  });
+
+  final MilestoneWithDueDate milestone;
+  final MilestoneAdvice advice;
+
+  @override
+  Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final bgColor = isDark ? AppColors.surfaceDark : Colors.white;
+    final textColor = isDark ? AppColors.onSurfaceDark : AppColors.onSurfaceLight;
+    final secondaryColor = isDark ? AppColors.textSecondaryDark : AppColors.textSecondaryLight;
+    final categoryColor = milestone.milestone.category.color;
+
+    return DraggableScrollableSheet(
+      initialChildSize: 0.65,
+      minChildSize: 0.4,
+      maxChildSize: 0.92,
+      builder: (context, scrollController) {
+        return Container(
+          decoration: BoxDecoration(
+            color: bgColor,
+            borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
+          ),
+          child: Column(
+            children: [
+              // Handle
+              const SizedBox(height: 12),
+              Center(
+                child: Container(
+                  width: 40,
+                  height: 4,
+                  decoration: BoxDecoration(
+                    color: isDark ? AppColors.dividerDark : AppColors.dividerLight,
+                    borderRadius: BorderRadius.circular(2),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 16),
+              // Header
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 20),
+                child: Row(
+                  children: [
+                    Container(
+                      padding: const EdgeInsets.all(10),
+                      decoration: BoxDecoration(
+                        color: categoryColor.withValues(alpha: 0.12),
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: Icon(Icons.lightbulb_rounded, color: categoryColor, size: 22),
+                    ),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            'Conseils',
+                            style: GoogleFonts.outfit(
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
+                              color: textColor,
+                            ),
+                          ),
+                          Text(
+                            milestone.milestone.titleFr,
+                            style: GoogleFonts.outfit(
+                              fontSize: 13,
+                              color: secondaryColor,
+                            ),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ],
+                      ),
+                    ),
+                    IconButton(
+                      onPressed: () => Navigator.pop(context),
+                      icon: Icon(Icons.close_rounded, color: secondaryColor),
+                    ),
+                  ],
+                ),
+              ),
+              const Divider(height: 24),
+              // Scrollable content
+              Expanded(
+                child: ListView(
+                  controller: scrollController,
+                  padding: const EdgeInsets.fromLTRB(20, 0, 20, 32),
+                  children: [
+                    // Explanation section
+                    _SectionTitle(
+                      icon: Icons.info_outline_rounded,
+                      label: 'Comprendre ce jalon',
+                      color: categoryColor,
+                    ),
+                    const SizedBox(height: 10),
+                    Container(
+                      padding: const EdgeInsets.all(16),
+                      decoration: BoxDecoration(
+                        color: categoryColor.withValues(alpha: 0.07),
+                        borderRadius: BorderRadius.circular(14),
+                      ),
+                      child: Text(
+                        advice.explanation,
+                        style: GoogleFonts.outfit(
+                          fontSize: 14,
+                          height: 1.6,
+                          color: textColor,
+                        ),
+                      ),
+                    ),
+                    // Key points section (medical info, vaccine details, etc.)
+                    if (advice.keyPoints.isNotEmpty) ...[
+                      const SizedBox(height: 24),
+                      _SectionTitle(
+                        icon: Icons.check_circle_outline_rounded,
+                        label: 'À retenir',
+                        color: AppColors.info,
+                      ),
+                      const SizedBox(height: 10),
+                      ...advice.keyPoints.map(
+                        (point) => _KeyPointTile(
+                          point: point,
+                          textColor: textColor,
+                        ),
+                      ),
+                    ],
+                    const SizedBox(height: 24),
+                    // Photo tips section
+                    _SectionTitle(
+                      icon: Icons.camera_alt_rounded,
+                      label: 'Idées pour la photo',
+                      color: AppColors.magentaPink,
+                    ),
+                    const SizedBox(height: 10),
+                    ...advice.photoTips.asMap().entries.map(
+                      (entry) => _PhotoTipTile(
+                        number: entry.key + 1,
+                        tip: entry.value,
+                        isDark: isDark,
+                        textColor: textColor,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+}
+
+class _SectionTitle extends StatelessWidget {
+  const _SectionTitle({
+    required this.icon,
+    required this.label,
+    required this.color,
+  });
+
+  final IconData icon;
+  final String label;
+  final Color color;
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      children: [
+        Icon(icon, size: 18, color: color),
+        const SizedBox(width: 8),
+        Text(
+          label,
+          style: GoogleFonts.outfit(
+            fontSize: 15,
+            fontWeight: FontWeight.w700,
+            color: color,
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+class _PhotoTipTile extends StatelessWidget {
+  const _PhotoTipTile({
+    required this.number,
+    required this.tip,
+    required this.isDark,
+    required this.textColor,
+  });
+
+  final int number;
+  final String tip;
+  final bool isDark;
+  final Color textColor;
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 10),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Container(
+            width: 26,
+            height: 26,
+            decoration: BoxDecoration(
+              gradient: AppColors.primaryGradient,
+              borderRadius: BorderRadius.circular(8),
+            ),
+            child: Center(
+              child: Text(
+                '$number',
+                style: GoogleFonts.outfit(
+                  fontSize: 13,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.white,
+                ),
+              ),
+            ),
+          ),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Padding(
+              padding: const EdgeInsets.only(top: 3),
+              child: Text(
+                tip,
+                style: GoogleFonts.outfit(
+                  fontSize: 14,
+                  height: 1.5,
+                  color: textColor,
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _KeyPointTile extends StatelessWidget {
+  const _KeyPointTile({
+    required this.point,
+    required this.textColor,
+  });
+
+  final String point;
+  final Color textColor;
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 10),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Padding(
+            padding: EdgeInsets.only(top: 2),
+            child: Icon(
+              Icons.check_rounded,
+              size: 18,
+              color: AppColors.info,
+            ),
+          ),
+          const SizedBox(width: 10),
+          Expanded(
+            child: Text(
+              point,
+              style: GoogleFonts.outfit(
+                fontSize: 14,
+                height: 1.5,
+                color: textColor,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
   }
 }

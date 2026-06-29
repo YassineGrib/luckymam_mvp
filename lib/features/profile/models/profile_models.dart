@@ -3,7 +3,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 /// User profile status enumeration.
 enum UserStatus {
   pregnant, // Enceinte
-  mom, // Maman
+  mom,      // Maman
+  hope,     // Souhaite être enceinte
 }
 
 /// Child gender enumeration.
@@ -319,8 +320,16 @@ class UserProfile {
   }
 
   /// Status display label.
-  String get statusLabel =>
-      status == UserStatus.pregnant ? 'Enceinte' : 'Maman';
+  String get statusLabel {
+    switch (status) {
+      case UserStatus.pregnant:
+        return 'Enceinte';
+      case UserStatus.hope:
+        return 'En espoir';
+      case UserStatus.mom:
+        return 'Maman';
+    }
+  }
 
   UserProfile copyWith({
     String? uid,

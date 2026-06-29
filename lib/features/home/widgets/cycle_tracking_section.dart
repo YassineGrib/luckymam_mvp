@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 
+import '../../../core/services/analytics_service.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../profile/models/profile_models.dart';
 import '../../profile/providers/profile_providers.dart';
@@ -25,7 +26,7 @@ class _CycleTrackingSectionState extends ConsumerState<CycleTrackingSection> {
 
     return profileAsync.when(
       loading: () => const SizedBox.shrink(),
-      error: (_, __) => const SizedBox.shrink(),
+      error: (err, st) => const SizedBox.shrink(),
       data: (profile) {
         if (profile == null) return const SizedBox.shrink();
 
@@ -36,9 +37,13 @@ class _CycleTrackingSectionState extends ConsumerState<CycleTrackingSection> {
           padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 4),
           child: GestureDetector(
             onTap: () {
+              final expanding = !_isExpanded;
               setState(() {
-                _isExpanded = !_isExpanded;
+                _isExpanded = expanding;
               });
+              if (expanding && isPregnant) {
+                AnalyticsService().logEvent('pregnancy_panel_viewed');
+              }
             },
             child: AnimatedContainer(
               duration: const Duration(milliseconds: 300),
@@ -82,19 +87,38 @@ class _CycleTrackingSectionState extends ConsumerState<CycleTrackingSection> {
     );
   }
 
+  // ── Pregnancy helpers ────────────────────────────────────────────────────────
+
+  int _pregnancyWeek(DateTime lmp) =>
+      DateTime.now().difference(lmp).inDays ~/ 7;
+
+  DateTime _dpa(DateTime lmp) => lmp.add(const Duration(days: 280));
+
+  int _daysUntilDpa(DateTime lmp) =>
+      _dpa(lmp).difference(DateTime.now()).inDays;
+
+  // ── Header ───────────────────────────────────────────────────────────────────
+
   Widget _buildHeader(
     BuildContext context,
     bool isPregnant,
     CycleInfo cycleInfo,
   ) {
+    IconData icon = Icons.water_drop_rounded;
     String title = 'Suivi du Cycle';
     String subtitle = 'Activer le suivi';
-    IconData icon = Icons.water_drop_rounded; // Or loop_rounded
 
     if (isPregnant) {
-      title = 'Ma Grossesse';
-      subtitle = 'Suivi hebdomadaire et conseils';
       icon = Icons.pregnant_woman_rounded;
+      title = 'Ma Grossesse';
+      final lmp = cycleInfo.lastPeriodDate;
+      if (lmp != null) {
+        final week = _pregnancyWeek(lmp);
+        final daysLeft = _daysUntilDpa(lmp);
+        subtitle = 'Semaine $week · DPA dans $daysLeft j';
+      } else {
+        subtitle = 'Renseigner ma date de début';
+      }
     } else if (cycleInfo.isTracking && cycleInfo.lastPeriodDate != null) {
       subtitle = 'Jour ${cycleInfo.currentDay} · ${cycleInfo.currentPhase}';
     }
@@ -164,23 +188,7 @@ class _CycleTrackingSectionState extends ConsumerState<CycleTrackingSection> {
     CycleInfo cycleInfo,
   ) {
     if (isPregnant) {
-      return Padding(
-        padding: const EdgeInsets.fromLTRB(18, 0, 18, 18),
-        child: Column(
-          children: [
-            Container(color: Colors.white.withValues(alpha: 0.2), height: 1),
-            const SizedBox(height: 16),
-            Text(
-              'Profitez de chaque instant de votre grossesse. Plus de fonctionnalités arriveront bientôt !',
-              style: GoogleFonts.outfit(
-                color: Colors.white.withValues(alpha: 0.9),
-                fontSize: 13,
-              ),
-              textAlign: TextAlign.center,
-            ),
-          ],
-        ),
-      );
+      return _buildPregnancyContent(context, cycleInfo);
     }
 
     if (!cycleInfo.isTracking || cycleInfo.lastPeriodDate == null) {
@@ -325,6 +333,212 @@ class _CycleTrackingSectionState extends ConsumerState<CycleTrackingSection> {
         ],
       ),
     );
+  }
+
+  Widget _buildPregnancyContent(BuildContext context, CycleInfo cycleInfo) {
+    final lmp = cycleInfo.lastPeriodDate;
+
+    if (lmp == null) {
+      // No DDR set — prompt user
+      return Padding(
+        padding: const EdgeInsets.fromLTRB(18, 0, 18, 18),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Container(color: Colors.white.withValues(alpha: 0.2), height: 1),
+            const SizedBox(height: 16),
+            Text(
+              'Renseignez votre date de dernières règles (DDR)\npour suivre votre grossesse semaine par semaine.',
+              style: GoogleFonts.outfit(
+                color: Colors.white.withValues(alpha: 0.9),
+                fontSize: 13,
+              ),
+              textAlign: TextAlign.center,
+            ),
+            const SizedBox(height: 14),
+            ElevatedButton.icon(
+              onPressed: () => _enterLmp(context),
+              icon: const Icon(Icons.calendar_today_rounded, size: 16),
+              label: Text(
+                'Entrer ma DDR',
+                style: GoogleFonts.outfit(fontWeight: FontWeight.bold),
+              ),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.white,
+                foregroundColor: AppColors.magentaPink,
+                elevation: 0,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                padding: const EdgeInsets.symmetric(vertical: 12),
+              ),
+            ),
+          ],
+        ),
+      );
+    }
+
+    final week = _pregnancyWeek(lmp);
+    final dpa = _dpa(lmp);
+    final daysLeft = _daysUntilDpa(lmp);
+    final dpaLabel =
+        '${dpa.day.toString().padLeft(2, '0')}/${dpa.month.toString().padLeft(2, '0')}/${dpa.year}';
+    final progress = (week / 40).clamp(0.0, 1.0);
+
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(18, 0, 18, 18),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Container(color: Colors.white.withValues(alpha: 0.2), height: 1),
+          const SizedBox(height: 16),
+          Row(
+            children: [
+              // Week ring
+              Stack(
+                alignment: Alignment.center,
+                children: [
+                  SizedBox(
+                    width: 70,
+                    height: 70,
+                    child: CircularProgressIndicator(
+                      value: progress,
+                      strokeWidth: 6,
+                      backgroundColor: Colors.white.withValues(alpha: 0.2),
+                      valueColor: const AlwaysStoppedAnimation(Colors.white),
+                      strokeCap: StrokeCap.round,
+                    ),
+                  ),
+                  Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Text(
+                        'SA',
+                        style: GoogleFonts.outfit(
+                          fontSize: 10,
+                          color: Colors.white70,
+                        ),
+                      ),
+                      Text(
+                        '$week',
+                        style: GoogleFonts.outfit(
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.white,
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+              const SizedBox(width: 20),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Semaine $week / 40',
+                      style: GoogleFonts.outfit(
+                        fontSize: 14,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white,
+                      ),
+                    ),
+                    const SizedBox(height: 6),
+                    Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 8,
+                        vertical: 4,
+                      ),
+                      decoration: BoxDecoration(
+                        color: Colors.white.withValues(alpha: 0.2),
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: Text(
+                        'DPA : $dpaLabel',
+                        style: GoogleFonts.outfit(
+                          fontSize: 11,
+                          fontWeight: FontWeight.w600,
+                          color: Colors.white,
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 6),
+                    Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 8,
+                        vertical: 4,
+                      ),
+                      decoration: BoxDecoration(
+                        color: Colors.white.withValues(alpha: 0.2),
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: Text(
+                        'J−$daysLeft avant l\'accouchement',
+                        style: GoogleFonts.outfit(
+                          fontSize: 11,
+                          fontWeight: FontWeight.w600,
+                          color: Colors.white,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 14),
+          OutlinedButton(
+            onPressed: () => _enterLmp(context),
+            style: OutlinedButton.styleFrom(
+              foregroundColor: Colors.white,
+              side: const BorderSide(color: Colors.white54),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12),
+              ),
+              padding: const EdgeInsets.symmetric(vertical: 10),
+            ),
+            child: Text(
+              'Modifier ma DDR',
+              style: GoogleFonts.outfit(fontSize: 12),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _enterLmp(BuildContext context) async {
+    final now = DateTime.now();
+    final date = await showDatePicker(
+      context: context,
+      initialDate: now.subtract(const Duration(days: 70)),
+      firstDate: now.subtract(const Duration(days: 280)),
+      lastDate: now,
+      helpText: 'Date de dernières règles (DDR)',
+      builder: (context, child) {
+        return Theme(
+          data: Theme.of(context).copyWith(
+            colorScheme: ColorScheme.fromSeed(
+              seedColor: AppColors.magentaPink,
+              primary: AppColors.magentaPink,
+            ),
+          ),
+          child: child!,
+        );
+      },
+    );
+
+    if (date != null && mounted) {
+      await ref.read(profileActionsProvider.notifier).savePregnancyLmp(date);
+      AnalyticsService().logEvent('lmp_saved');
+      final lmp = date;
+      final dpa = lmp.add(const Duration(days: 280));
+      AnalyticsService().logEvent('edd_computed', parameters: {
+        'edd': dpa.toIso8601String(),
+        'week': DateTime.now().difference(lmp).inDays ~/ 7,
+      });
+    }
   }
 
   String _getPhaseDescription(String phase) {

@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import '../../shared/widgets/app_logo.dart';
 import '../../shared/widgets/gradient_scaffold.dart';
+import '../../core/services/analytics_service.dart';
 import '../subscription/screens/diamond_sponsors_screen.dart';
 import '../profile/services/profile_service.dart';
 
@@ -44,6 +45,9 @@ class _SplashScreenState extends State<SplashScreen>
     );
 
     _controller.forward();
+
+    // Log splash shown event
+    AnalyticsService().logSplashShown();
 
     // After logo animation → show sponsors interstitial
     Future.delayed(const Duration(milliseconds: 2500), () async {
@@ -104,7 +108,7 @@ class _SplashScreenState extends State<SplashScreen>
             );
           },
           child: const AppLogo(
-            variant: LogoVariant.vertical,
+            variant: LogoVariant.horizontal,
             size: LogoSize.large,
           ),
         ),

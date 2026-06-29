@@ -1,5 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../../core/providers/auth_provider.dart';
 import '../../../core/services/notification_service.dart';
 import '../../profile/providers/profile_providers.dart';
 import '../models/vaccine.dart';
@@ -35,6 +36,9 @@ final vaccineCalendarProvider = FutureProvider<VaccineCalendar>((ref) async {
 /// Provider for vaccination statuses of a specific child.
 final childVaccinationStatusesProvider =
     StreamProvider.family<List<VaccineStatus>, String>((ref, childId) {
+      final uid = ref.watch(userIdProvider);
+      if (uid == null) return Stream.value([]);
+
       final service = ref.watch(vaccineServiceProvider);
       return service.watchVaccinationStatuses(childId);
     });

@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import '../../../core/theme/app_colors.dart';
+import '../../profile/models/profile_models.dart';
 import '../../profile/providers/profile_providers.dart';
 import '../../profile/profile_screen.dart';
 
@@ -54,9 +55,7 @@ class MotherHealthCard extends ConsumerWidget {
               if (profile == null) return const SizedBox.shrink();
 
               final cycleInfo = profile.cycleInfo;
-              final isPregnant =
-                  profile.status ==
-                  'pregnant'; // Using string check or enum if imported
+              final isPregnant = profile.status == UserStatus.pregnant;
 
               return Row(
                 children: [

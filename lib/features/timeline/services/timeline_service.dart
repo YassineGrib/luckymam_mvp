@@ -64,7 +64,7 @@ final childMilestonesProvider =
       final milestones = service.getMilestonesForChild(child);
 
       // Merge progress
-      return milestones.map((m) {
+      final merged = milestones.map((m) {
         final progress = progressList
             .where((p) => p.milestoneId == m.milestone.id)
             .firstOrNull;
@@ -80,6 +80,47 @@ final childMilestonesProvider =
         }
         return m;
       }).toList();
+
+      // Batch-fetch photoUrl for linked capsules
+      final uid = ref.read(profileProvider).value?.uid;
+      if (uid != null) {
+        final capsuleIds = merged
+            .where((m) => m.capsuleId != null)
+            .map((m) => m.capsuleId!)
+            .toSet();
+
+        if (capsuleIds.isNotEmpty) {
+          final thumbnails = <String, String>{};
+          await Future.wait(
+            capsuleIds.map((id) async {
+              final doc = await FirebaseFirestore.instance
+                  .collection('users')
+                  .doc(uid)
+                  .collection('capsules')
+                  .doc(id)
+                  .get();
+              final url = doc.data()?['photoUrl'] as String?;
+              if (url != null && url.isNotEmpty) thumbnails[id] = url;
+            }),
+          );
+
+          return merged.map((m) {
+            if (m.capsuleId != null && thumbnails.containsKey(m.capsuleId)) {
+              return MilestoneWithDueDate(
+                milestone: m.milestone,
+                dueDate: m.dueDate,
+                isCompleted: m.isCompleted,
+                capsuleId: m.capsuleId,
+                thumbnailUrl: thumbnails[m.capsuleId],
+                completedAt: m.completedAt,
+              );
+            }
+            return m;
+          }).toList();
+        }
+      }
+
+      return merged;
     });
 
 /// Provider for today's milestones
@@ -154,6 +195,7 @@ class MilestoneWithDueDate {
   final DateTime? dueDate;
   final bool isCompleted;
   final String? capsuleId;
+  final String? thumbnailUrl;
 
   /// Actual date when the milestone was completed (from Firestore progress)
   final DateTime? completedAt;
@@ -163,6 +205,7 @@ class MilestoneWithDueDate {
     this.dueDate,
     this.isCompleted = false,
     this.capsuleId,
+    this.thumbnailUrl,
     this.completedAt,
   });
 

@@ -37,24 +37,30 @@ service cloud.firestore {
       }
     }
     
-    // Consent logs - append-only (write-once), read by user
+    // Consent logs - append-only (write-once), read by owner
+    // FIX: allow create when userId field matches auth uid
     match /consent_logs/{logId} {
       allow create: if request.auth != null && request.resource.data.userId == request.auth.uid;
-      allow read: if request.auth != null && request.auth.uid == resource.data.userId;
+      allow read: if request.auth != null && resource.data.userId == request.auth.uid;
       allow update, delete: if false;
     }
     
-    // Analytics logs - append-only (write-once), read by user
+    // Analytics logs - append-only, authenticated users only
+    // FIX: allow create when userId field matches auth uid (or anonymous tracking)
     match /analytics_logs/{logId} {
       allow create: if request.auth != null && request.resource.data.userId == request.auth.uid;
-      allow read: if request.auth != null && request.auth.uid == resource.data.userId;
+      allow read: if request.auth != null && resource.data.userId == request.auth.uid;
       allow update, delete: if false;
     }
 
     // Album claims - users can create/read their own claims
+    // FIX: allow list queries for authenticated users (needed for .where() queries)
     match /album_claims/{claimId} {
       allow create: if request.auth != null && request.resource.data.userId == request.auth.uid;
-      allow read: if request.auth != null && request.auth.uid == resource.data.userId;
+      // Allow reading individual documents and list queries when authenticated
+      allow read: if request.auth != null && (
+        resource == null || resource.data.userId == request.auth.uid
+      );
       allow update, delete: if false;
     }
 

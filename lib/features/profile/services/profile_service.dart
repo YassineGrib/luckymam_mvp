@@ -208,6 +208,18 @@ class ProfileService {
     await updateCycleInfo(updatedCycle);
   }
 
+  /// Save DDR (date des dernières règles) for pregnancy tracking.
+  Future<void> savePregnancyLmp(DateTime lmpDate) async {
+    final profile = await getProfile();
+    if (profile == null) return;
+
+    final updatedCycle = profile.cycleInfo.copyWith(
+      lastPeriodDate: lmpDate,
+      isTracking: true,
+    );
+    await updateCycleInfo(updatedCycle);
+  }
+
   // ============ STATUS OPERATIONS ============
 
   /// Update user status (pregnant/mom).

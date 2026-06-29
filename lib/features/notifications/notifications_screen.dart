@@ -3,8 +3,11 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import '../../core/theme/app_colors.dart';
+import 'package:flutter/services.dart';
+
+import '../../core/services/analytics_service.dart';
 import '../../core/services/notification_service.dart';
+import '../../core/theme/app_colors.dart';
 
 // ─── Preferences keys ────────────────────────────────────────────────
 const _kVaccineKey = 'notif_vaccine';
@@ -178,6 +181,33 @@ class NotificationsScreen extends ConsumerWidget {
                     ],
                   ),
                 ),
+                // ── Raccourci: paramètres système ──────────────
+                Tooltip(
+                  message: 'Paramètres système',
+                  child: GestureDetector(
+                    onTap: () async {
+                      AnalyticsService().logEvent('notif_shortcut_opened');
+                      try {
+                        await const MethodChannel('luckymam/settings')
+                            .invokeMethod('openNotificationSettings');
+                      } catch (e) {
+                        debugPrint('openNotificationSettings: $e');
+                      }
+                    },
+                    child: Container(
+                      padding: const EdgeInsets.all(10),
+                      decoration: BoxDecoration(
+                        color: Colors.white.withOpacity(0.2),
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: const Icon(
+                        Icons.settings_rounded,
+                        color: Colors.white,
+                        size: 22,
+                      ),
+                    ),
+                  ),
+                ),
               ],
             ),
           ),
@@ -193,7 +223,11 @@ class NotificationsScreen extends ConsumerWidget {
             title: 'Rappels Vaccination',
             subtitle: '2 jours avant la date du vaccin, à 09h00',
             value: prefs.vaccine,
-            onChanged: notifier.setVaccine,
+            onChanged: (v) async {
+              await notifier.setVaccine(v);
+              AnalyticsService().logEvent('notif_prefs_updated',
+                  parameters: {'channel': 'vaccine', 'enabled': v});
+            },
             activeColor: Colors.green,
           ),
           const SizedBox(height: 12),
@@ -207,7 +241,11 @@ class NotificationsScreen extends ConsumerWidget {
             title: 'Jalons de Développement',
             subtitle: '7 jours avant chaque étape clé, à 09h00',
             value: prefs.milestone,
-            onChanged: notifier.setMilestone,
+            onChanged: (v) async {
+              await notifier.setMilestone(v);
+              AnalyticsService().logEvent('notif_prefs_updated',
+                  parameters: {'channel': 'milestone', 'enabled': v});
+            },
             activeColor: Colors.orange,
           ),
           const SizedBox(height: 12),
@@ -221,7 +259,11 @@ class NotificationsScreen extends ConsumerWidget {
             title: 'Cycle Féminin',
             subtitle: 'Règles dans 2 jours • Phase ovulatoire — à 08h00',
             value: prefs.cycle,
-            onChanged: notifier.setCycle,
+            onChanged: (v) async {
+              await notifier.setCycle(v);
+              AnalyticsService().logEvent('notif_prefs_updated',
+                  parameters: {'channel': 'cycle', 'enabled': v});
+            },
             activeColor: Colors.deepPurpleAccent,
           ),
 

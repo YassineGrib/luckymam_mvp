@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 
+import '../../../core/services/analytics_service.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_spacing.dart';
 import '../models/milestone.dart';
@@ -115,8 +116,10 @@ class MilestoneCard extends StatelessWidget {
               ),
             ),
             const SizedBox(width: AppSpacing.sm),
-            // Action button
-            if (m.canHaveCapsule)
+            // Thumbnail or souvenir badge
+            if (milestone.capsuleId != null)
+              _MilestoneThumbnail(milestone: milestone)
+            else if (m.canHaveCapsule)
               Container(
                 padding: const EdgeInsets.symmetric(
                   horizontal: 12,
@@ -214,17 +217,24 @@ class MilestoneCard extends StatelessWidget {
                 overflow: TextOverflow.ellipsis,
               ),
             ),
-            // Days until due
-            Text(
-              milestone.daysUntilDue > 0
-                  ? 'J+${milestone.daysUntilDue}'
-                  : dueText,
-              style: GoogleFonts.outfit(
-                fontSize: 12,
-                fontWeight: FontWeight.w500,
-                color: category.color,
+            // Capsule badge or days until due
+            if (milestone.capsuleId != null)
+              const Icon(
+                Icons.check_circle_rounded,
+                size: 18,
+                color: AppColors.success,
+              )
+            else
+              Text(
+                milestone.daysUntilDue > 0
+                    ? 'J+${milestone.daysUntilDue}'
+                    : dueText,
+                style: GoogleFonts.outfit(
+                  fontSize: 12,
+                  fontWeight: FontWeight.w500,
+                  color: category.color,
+                ),
               ),
-            ),
             const SizedBox(width: 4),
             Icon(
               Icons.chevron_right_rounded,
@@ -235,6 +245,81 @@ class MilestoneCard extends StatelessWidget {
             ),
           ],
         ),
+      ),
+    );
+  }
+}
+
+/// Shows a capsule thumbnail if available, otherwise the "Souvenir ✓" badge.
+/// Fires milestone_thumbnail_rendered analytics on first paint.
+class _MilestoneThumbnail extends StatefulWidget {
+  const _MilestoneThumbnail({required this.milestone});
+  final MilestoneWithDueDate milestone;
+
+  @override
+  State<_MilestoneThumbnail> createState() => _MilestoneThumbnailState();
+}
+
+class _MilestoneThumbnailState extends State<_MilestoneThumbnail> {
+  bool _analyticsLogged = false;
+
+  @override
+  Widget build(BuildContext context) {
+    final url = widget.milestone.thumbnailUrl;
+
+    if (url != null && url.isNotEmpty) {
+      if (!_analyticsLogged) {
+        _analyticsLogged = true;
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          AnalyticsService().logEvent(
+            'milestone_thumbnail_rendered',
+            parameters: {
+              'milestone_id': widget.milestone.milestone.id,
+              'capsule_id': widget.milestone.capsuleId ?? '',
+            },
+          );
+        });
+      }
+
+      return ClipRRect(
+        borderRadius: BorderRadius.circular(10),
+        child: Image.network(
+          url,
+          width: 56,
+          height: 56,
+          fit: BoxFit.cover,
+          errorBuilder: (context, error, stackTrace) =>
+              _souveniurBadge(),
+        ),
+      );
+    }
+
+    return _souveniurBadge();
+  }
+
+  Widget _souveniurBadge() {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+      decoration: BoxDecoration(
+        color: AppColors.success.withValues(alpha: 0.12),
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(color: AppColors.success.withValues(alpha: 0.4)),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          const Icon(Icons.check_circle_rounded,
+              color: AppColors.success, size: 15),
+          const SizedBox(width: 4),
+          Text(
+            'Souvenir',
+            style: GoogleFonts.outfit(
+              fontSize: 12,
+              fontWeight: FontWeight.w600,
+              color: AppColors.success,
+            ),
+          ),
+        ],
       ),
     );
   }

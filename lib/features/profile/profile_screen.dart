@@ -7,6 +7,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import '../../l10n/app_localizations.dart';
 import '../../core/services/auth_service.dart';
+import '../../core/services/analytics_service.dart';
 import '../../core/providers/theme_provider.dart';
 import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_spacing.dart';
@@ -22,6 +23,8 @@ import '../subscription/screens/album_claim_screen.dart';
 import 'widgets/profile_widgets.dart';
 import '../notifications/notifications_screen.dart';
 import '../../core/providers/locale_provider.dart';
+import '../../core/providers/display_provider.dart';
+import '../timeline/widgets/timeline_rail.dart';
 
 /// Full profile screen with Firestore integration.
 class ProfileScreen extends ConsumerWidget {
@@ -140,6 +143,7 @@ class ProfileScreen extends ConsumerWidget {
                       ref
                           .read(profileActionsProvider.notifier)
                           .updateStatus(status);
+                      AnalyticsService().logStatusSelected(status.name);
                     },
                   ),
                   loading: () =>
@@ -148,7 +152,8 @@ class ProfileScreen extends ConsumerWidget {
                       const _ErrorSectionCard(title: 'Statut Actuel'),
                 ),
 
-                // 3. Children
+                // 3. Children — masqué si HOPE ou ENCEINTE
+                if (profileAsync.valueOrNull?.status == UserStatus.mom)
                 childrenAsync.when(
                   data: (children) => _ChildrenSection(
                     children: children,
@@ -185,20 +190,28 @@ class ProfileScreen extends ConsumerWidget {
                       const _ErrorSectionCard(title: 'Informations Médicales'),
                 ),
 
-                // 5. Menstrual Cycle
+                // 5. Cycle / Grossesse
                 profileAsync.when(
-                  data: (profile) => _CycleSection(
-                    cycleInfo: profile?.cycleInfo ?? const CycleInfo(),
-                    onLogPeriod: () => _showLogPeriodDialog(context, ref),
-                    onEditSettings: () => _showEditCycleSettings(
-                      context,
-                      ref,
-                      profile?.cycleInfo ?? const CycleInfo(),
-                    ),
-                  ),
+                  data: (profile) {
+                    if (profile?.status == UserStatus.pregnant) {
+                      return _PregnancySection(
+                        cycleInfo: profile?.cycleInfo ?? const CycleInfo(),
+                        onEnterLmp: () => _showEnterLmpDialog(context, ref),
+                      );
+                    }
+                    return _CycleSection(
+                      cycleInfo: profile?.cycleInfo ?? const CycleInfo(),
+                      onLogPeriod: () => _showLogPeriodDialog(context, ref),
+                      onEditSettings: () => _showEditCycleSettings(
+                        context,
+                        ref,
+                        profile?.cycleInfo ?? const CycleInfo(),
+                      ),
+                    );
+                  },
                   loading: () =>
                       const _LoadingSectionCard(title: 'Cycle Menstruel'),
-                  error: (_, __) =>
+                  error: (err, st) =>
                       const _ErrorSectionCard(title: 'Cycle Menstruel'),
                 ),
 
@@ -311,6 +324,33 @@ class ProfileScreen extends ConsumerWidget {
     );
   }
 
+  void _showEnterLmpDialog(BuildContext context, WidgetRef ref) async {
+    final now = DateTime.now();
+    final date = await showDatePicker(
+      context: context,
+      initialDate: now.subtract(const Duration(days: 70)),
+      firstDate: now.subtract(const Duration(days: 280)),
+      lastDate: now,
+      helpText: 'Date de dernières règles (DDR)',
+      builder: (context, child) {
+        return Theme(
+          data: Theme.of(context).copyWith(
+            colorScheme: ColorScheme.fromSeed(
+              seedColor: AppColors.magentaPink,
+              primary: AppColors.magentaPink,
+            ),
+          ),
+          child: child!,
+        );
+      },
+    );
+
+    if (date != null) {
+      ref.read(profileActionsProvider.notifier).savePregnancyLmp(date);
+      AnalyticsService().logEvent('lmp_saved');
+    }
+  }
+
   void _showLogPeriodDialog(BuildContext context, WidgetRef ref) async {
     final date = await showDatePicker(
       context: context,
@@ -365,10 +405,16 @@ class _ProfileHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final statusLabel = status == UserStatus.pregnant ? 'Enceinte' : 'Maman';
+    final statusLabel = status == UserStatus.pregnant
+        ? 'Enceinte'
+        : status == UserStatus.hope
+            ? 'En espoir'
+            : 'Maman';
     final statusColor = status == UserStatus.pregnant
         ? Colors.pink
-        : Colors.green;
+        : status == UserStatus.hope
+            ? Colors.purple
+            : Colors.green;
 
     return Container(
       padding: EdgeInsets.fromLTRB(
@@ -655,6 +701,12 @@ class _StatusSelector extends StatelessWidget {
             Icons.child_friendly_rounded,
             'Maman',
           ),
+          _buildOption(
+            context,
+            UserStatus.hope,
+            Icons.favorite_border_rounded,
+            'Espoir',
+          ),
         ],
       ),
     );
@@ -851,6 +903,84 @@ class _MedicalInfoSection extends StatelessWidget {
           value: medicalInfo.doctorName ?? 'Non renseigné',
           icon: Icons.person_outline_rounded,
           onEdit: onEdit,
+        ),
+      ],
+    );
+  }
+}
+
+class _PregnancySection extends StatelessWidget {
+  const _PregnancySection({
+    required this.cycleInfo,
+    required this.onEnterLmp,
+  });
+
+  final CycleInfo cycleInfo;
+  final VoidCallback onEnterLmp;
+
+  int _week(DateTime lmp) => DateTime.now().difference(lmp).inDays ~/ 7;
+  DateTime _dpa(DateTime lmp) => lmp.add(const Duration(days: 280));
+  int _daysLeft(DateTime lmp) => _dpa(lmp).difference(DateTime.now()).inDays;
+
+  @override
+  Widget build(BuildContext context) {
+    final lmp = cycleInfo.lastPeriodDate;
+    final dateFormat = DateFormat('dd MMMM yyyy', 'fr_FR');
+
+    return ProfileSectionCard(
+      title: 'Ma Grossesse',
+      icon: Icons.pregnant_woman_rounded,
+      iconColor: Colors.pink,
+      children: [
+        if (lmp == null) ...[
+          Padding(
+            padding: const EdgeInsets.symmetric(vertical: AppSpacing.sm),
+            child: Text(
+              'Renseignez votre DDR pour calculer votre DPA et votre semaine d\'aménorrhée.',
+              style: GoogleFonts.outfit(fontSize: 14, color: Colors.grey),
+            ),
+          ),
+        ] else ...[
+          ProfileInfoRow(
+            label: 'DDR (dernières règles)',
+            value: dateFormat.format(lmp),
+            icon: Icons.event_outlined,
+            onEdit: onEnterLmp,
+          ),
+          ProfileInfoRow(
+            label: 'Semaine d\'aménorrhée',
+            value: 'SA ${_week(lmp)} / 40',
+            icon: Icons.loop_rounded,
+            valueColor: Colors.pink,
+          ),
+          ProfileInfoRow(
+            label: 'DPA (date présumée)',
+            value: dateFormat.format(_dpa(lmp)),
+            icon: Icons.child_care_rounded,
+            valueColor: Colors.pink,
+          ),
+          ProfileInfoRow(
+            label: 'Compte à rebours',
+            value: 'J−${_daysLeft(lmp)} avant l\'accouchement',
+            icon: Icons.hourglass_bottom_rounded,
+          ),
+        ],
+        const SizedBox(height: AppSpacing.sm),
+        ElevatedButton.icon(
+          onPressed: onEnterLmp,
+          icon: const Icon(Icons.calendar_today_rounded),
+          label: Text(
+            lmp == null ? 'Entrer ma DDR' : 'Modifier ma DDR',
+          ),
+          style: ElevatedButton.styleFrom(
+            backgroundColor: Colors.pink,
+            foregroundColor: Colors.white,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(12),
+            ),
+            padding: const EdgeInsets.symmetric(vertical: 12),
+            minimumSize: const Size(double.infinity, 0),
+          ),
         ),
       ],
     );
@@ -1200,12 +1330,16 @@ class _SettingsSection extends ConsumerWidget {
           subtitle: langLabel,
           onTap: () => _showLanguageDialog(context, ref),
         ),
+        _DisplaySettingsTile(
+          textColor: textColor,
+          secondaryColor: secondaryColor,
+        ),
         _SettingsTile(
           icon: Icons.notifications_outlined,
           textColor: textColor,
           secondaryColor: secondaryColor,
-          title: activeLocale.languageCode == 'ar' 
-              ? 'الإشعارات' 
+          title: activeLocale.languageCode == 'ar'
+              ? 'الإشعارات'
               : activeLocale.languageCode == 'en'
                   ? 'Notifications'
                   : 'Notifications',
@@ -1274,6 +1408,120 @@ class _SettingsSection extends ConsumerWidget {
           ),
         ),
       ],
+    );
+  }
+}
+
+/// Inline toggle for timeline view mode (horizontal / vertical)
+class _DisplaySettingsTile extends ConsumerWidget {
+  const _DisplaySettingsTile({
+    required this.textColor,
+    required this.secondaryColor,
+  });
+
+  final Color textColor;
+  final Color secondaryColor;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final mode = ref.watch(timelineViewModeProvider);
+    final isHorizontal = mode == TimelineViewMode.horizontal;
+
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 4),
+      child: Row(
+        children: [
+          Icon(Icons.view_quilt_rounded, size: 20, color: secondaryColor),
+          const SizedBox(width: 14),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'Affichage Timeline',
+                  style: GoogleFonts.outfit(
+                    fontSize: 14,
+                    fontWeight: FontWeight.w500,
+                    color: textColor,
+                  ),
+                ),
+                Text(
+                  isHorizontal ? 'Vue horizontale' : 'Vue verticale',
+                  style: GoogleFonts.outfit(
+                    fontSize: 12,
+                    color: secondaryColor,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          // Segmented icon toggle
+          Container(
+            decoration: BoxDecoration(
+              color: secondaryColor.withValues(alpha: 0.12),
+              borderRadius: BorderRadius.circular(10),
+            ),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                _ViewModeButton(
+                  icon: Icons.view_column_rounded,
+                  selected: isHorizontal,
+                  tooltip: 'Horizontale',
+                  onTap: () => ref
+                      .read(timelineViewModeProvider.notifier)
+                      .setMode(TimelineViewMode.horizontal),
+                ),
+                _ViewModeButton(
+                  icon: Icons.view_stream_rounded,
+                  selected: !isHorizontal,
+                  tooltip: 'Verticale',
+                  onTap: () => ref
+                      .read(timelineViewModeProvider.notifier)
+                      .setMode(TimelineViewMode.vertical),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _ViewModeButton extends StatelessWidget {
+  const _ViewModeButton({
+    required this.icon,
+    required this.selected,
+    required this.tooltip,
+    required this.onTap,
+  });
+
+  final IconData icon;
+  final bool selected;
+  final String tooltip;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return Tooltip(
+      message: tooltip,
+      child: GestureDetector(
+        onTap: onTap,
+        child: AnimatedContainer(
+          duration: const Duration(milliseconds: 180),
+          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 7),
+          decoration: BoxDecoration(
+            color: selected ? AppColors.magentaPink : Colors.transparent,
+            borderRadius: BorderRadius.circular(10),
+          ),
+          child: Icon(
+            icon,
+            size: 18,
+            color: selected ? Colors.white : Colors.grey,
+          ),
+        ),
+      ),
     );
   }
 }

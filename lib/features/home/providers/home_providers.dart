@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../capsules/models/capsule.dart';
@@ -23,50 +24,64 @@ class ChildSummary {
 
 /// Provider for all children summaries
 final childrenSummaryProvider = FutureProvider<List<ChildSummary>>((ref) async {
-  final children = await ref.watch(childrenProvider.future);
-  if (children.isEmpty) return [];
+  try {
+    final children = await ref.watch(childrenProvider.future);
+    if (children.isEmpty) return [];
 
-  final summaries = <ChildSummary>[];
+    final summaries = <ChildSummary>[];
 
-  for (final child in children) {
-    // 1. Get next vaccine
-    final vaccines = await ref.watch(
-      vaccineGroupsWithStatusProvider((
-        childId: child.id,
-        birthDate: child.birthDate,
-      )).future,
-    );
+    for (final child in children) {
+      VaccineGroupWithStatus? nextVaccine;
+      try {
+        // Use ref.read instead of ref.watch to avoid async gap tracking issues in Riverpod
+        final vaccines = await ref.read(
+          vaccineGroupsWithStatusProvider((
+            childId: child.id,
+            birthDate: child.birthDate,
+          )).future,
+        );
 
-    final pendingVaccines =
-        vaccines
-            .where(
-              (v) =>
-                  v.statusType == VaccineStatusType.upcoming ||
-                  v.statusType == VaccineStatusType.dueSoon ||
-                  v.statusType == VaccineStatusType.overdue,
-            )
-            .toList()
-          ..sort((a, b) => a.expectedDate.compareTo(b.expectedDate));
+        final pendingVaccines =
+            vaccines
+                .where(
+                  (v) =>
+                      v.statusType == VaccineStatusType.upcoming ||
+                      v.statusType == VaccineStatusType.dueSoon ||
+                      v.statusType == VaccineStatusType.overdue,
+                )
+                .toList()
+              ..sort((a, b) => a.expectedDate.compareTo(b.expectedDate));
 
-    final nextVaccine = pendingVaccines.firstOrNull;
+        nextVaccine = pendingVaccines.firstOrNull;
+      } catch (e, stack) {
+        debugPrint('Error getting vaccines for child ${child.id}: $e\n$stack');
+      }
 
-    // 2. Get next milestone
-    final milestones = await ref.watch(
-      upcomingMilestonesProvider(child.id).future,
-    );
-    // upcomingMilestonesProvider already sorts by date
-    final nextMilestone = milestones.firstOrNull;
+      MilestoneWithDueDate? nextMilestone;
+      try {
+        // Use ref.read instead of ref.watch to avoid async gap tracking issues in Riverpod
+        final milestones = await ref.read(
+          upcomingMilestonesProvider(child.id).future,
+        );
+        nextMilestone = milestones.firstOrNull;
+      } catch (e, stack) {
+        debugPrint('Error getting milestones for child ${child.id}: $e\n$stack');
+      }
 
-    summaries.add(
-      ChildSummary(
-        child: child,
-        nextVaccine: nextVaccine,
-        nextMilestone: nextMilestone,
-      ),
-    );
+      summaries.add(
+        ChildSummary(
+          child: child,
+          nextVaccine: nextVaccine,
+          nextMilestone: nextMilestone,
+        ),
+      );
+    }
+
+    return summaries;
+  } catch (e, stack) {
+    debugPrint('Error in childrenSummaryProvider: $e\n$stack');
+    rethrow;
   }
-
-  return summaries;
 });
 
 /// Provider for recent capsules (last 10)
@@ -81,8 +96,26 @@ final recentCapsulesProvider = Provider<List<Capsule>>((ref) {
       [];
 });
 
-/// Daily tips based on phase (static data)
-const List<String> _dailyTips = [
+/// Daily tips by status
+const List<String> _tipsHope = [
+  "Prenez soin de vous : une alimentation équilibrée prépare votre corps à accueillir la vie.",
+  "Le stress peut influencer la fertilité. Accordez-vous des moments de sérénité.",
+  "Tenez un journal de votre cycle — chaque donnée compte.",
+  "L'acide folique est essentiel dès maintenant. Parlez-en à votre médecin.",
+  "Votre chemin est unique. Célébrez chaque étape, aussi petite soit-elle.",
+  "La patience est une force. Votre moment viendra 💜",
+];
+
+const List<String> _tipsPregnant = [
+  "Parlez à votre bébé ! Il reconnaît déjà votre voix dès le 6ème mois.",
+  "Une promenade quotidienne de 20 minutes est bénéfique pour vous deux.",
+  "Hydratez-vous bien — votre corps travaille double en ce moment.",
+  "Notez vos ressentis aujourd'hui. Ce journal sera précieux plus tard.",
+  "Chaque coup de pied est un message d'amour 🩷",
+  "Reposez-vous sans culpabilité. C'est du travail, accoucher !",
+];
+
+const List<String> _tipsMom = [
   "Parlez à votre bébé ! Il reconnaît déjà votre voix.",
   "Prenez du temps pour vous. Une maman heureuse = un bébé heureux.",
   "Chaque moment est précieux. Capturez-le dans une capsule !",
@@ -95,13 +128,23 @@ const List<String> _dailyTips = [
   "Respirez profondément. Vous êtes une super maman !",
 ];
 
-/// Provider for daily tip (changes each day)
+/// Provider for daily tip adapted to user status
 final dailyTipProvider = Provider<String>((ref) {
   final dayOfYear = DateTime.now()
       .difference(DateTime(DateTime.now().year, 1, 1))
       .inDays;
 
-  return _dailyTips[dayOfYear % _dailyTips.length];
+  final profile = ref.watch(profileProvider).valueOrNull;
+  final status = profile?.status ?? UserStatus.mom;
+
+  switch (status) {
+    case UserStatus.hope:
+      return _tipsHope[dayOfYear % _tipsHope.length];
+    case UserStatus.pregnant:
+      return _tipsPregnant[dayOfYear % _tipsPregnant.length];
+    case UserStatus.mom:
+      return _tipsMom[dayOfYear % _tipsMom.length];
+  }
 });
 
 /// Greeting based on time of day
