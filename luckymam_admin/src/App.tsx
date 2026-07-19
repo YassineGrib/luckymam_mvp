@@ -7,6 +7,8 @@ import { MarketplaceOrdersScreen } from './features/orders/MarketplaceOrdersScre
 import { SettingsScreen } from './features/settings/SettingsScreen'
 import { UserManagementScreen } from './features/users/UserManagementScreen'
 import { MarketplaceCatalogueScreen } from './features/marketplace/MarketplaceCatalogueScreen'
+import { ReelsCatalogueScreen } from './features/reels/ReelsCatalogueScreen'
+import { OverviewDashboardScreen } from './features/dashboard/OverviewDashboardScreen'
 import { SettingsProvider } from './lib/SettingsContext'
 
 export function App() {
@@ -16,12 +18,14 @@ export function App() {
         <BrowserRouter>
           <Routes>
             <Route element={<AppShell />}>
-              <Route index element={<PrintOrdersScreen />} />
+              <Route index element={<OverviewDashboardScreen />} />
+              <Route path="print-orders" element={<PrintOrdersScreen />} />
               <Route path="album-claims" element={<AlbumClaimsScreen />} />
               <Route path="marketplace-orders" element={<MarketplaceOrdersScreen />} />
               <Route path="settings" element={<SettingsScreen />} />
               <Route path="users" element={<UserManagementScreen />} />
               <Route path="marketplace-catalog" element={<MarketplaceCatalogueScreen />} />
+              <Route path="reels-catalog" element={<ReelsCatalogueScreen />} />
             </Route>
           </Routes>
         </BrowserRouter>

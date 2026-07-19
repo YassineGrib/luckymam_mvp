@@ -44,7 +44,12 @@ class _ReelPlayerState extends State<ReelPlayer>
   }
 
   Future<void> _initController() async {
-    _controller = VideoPlayerController.asset(widget.assetPath);
+    final path = widget.assetPath;
+    if (path.startsWith('http://') || path.startsWith('https://')) {
+      _controller = VideoPlayerController.networkUrl(Uri.parse(path));
+    } else {
+      _controller = VideoPlayerController.asset(path);
+    }
     await _controller.initialize();
     _controller.setLooping(true);
     _controller.setVolume(1.0);

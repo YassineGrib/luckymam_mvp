@@ -1,4 +1,7 @@
+import 'dart:async';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter/foundation.dart';
 import '../models/reel_item.dart';
 
 /// Hardcoded local reels enriched with categories (will be replaced with Firestore later).
@@ -79,21 +82,84 @@ final _initialReels = <ReelItem>[
 
 /// Manages the list of reels and favorites state.
 class ReelsNotifier extends StateNotifier<List<ReelItem>> {
-  ReelsNotifier() : super(_initialReels);
+  ReelsNotifier() : super(_initialReels) {
+    _listenToReels();
+  }
 
-  void toggleFavorite(String reelId) {
+  StreamSubscription? _subscription;
+  final List<String> _localFavorites = [];
+
+  void _listenToReels() {
+    _subscription = FirebaseFirestore.instance
+        .collection('reels')
+        .snapshots()
+        .listen((snap) {
+      if (snap.docs.isEmpty) {
+        // Fallback to local mock data if firestore is empty
+        state = _initialReels.map((r) {
+          return r.copyWith(isFavorite: _localFavorites.contains(r.id));
+        }).toList();
+        return;
+      }
+      state = snap.docs.map((doc) {
+        final data = doc.data();
+        final categoryStr = data['category'] as String?;
+        final category = ReelCategory.values.firstWhere(
+          (c) => c.name == categoryStr,
+          orElse: () => ReelCategory.vaccins,
+        );
+        final isFav = _localFavorites.contains(doc.id);
+        return ReelItem(
+          id: doc.id,
+          title: data['title'] ?? '',
+          description: data['description'] ?? '',
+          assetPath: data['assetPath'] ?? '',
+          author: data['author'] ?? 'Luckymam',
+          likeCount: data['likeCount'] ?? 0,
+          category: category,
+          isFavorite: isFav,
+          vaccineTags: List<String>.from(data['vaccineTags'] ?? []),
+        );
+      }).toList();
+    });
+  }
+
+  Future<void> toggleFavorite(String reelId) async {
+    final wasFavorite = _localFavorites.contains(reelId);
+    if (wasFavorite) {
+      _localFavorites.remove(reelId);
+    } else {
+      _localFavorites.add(reelId);
+    }
+
     state = [
-      for (final reel in state)
-        if (reel.id == reelId)
-          reel.copyWith(
-            isFavorite: !reel.isFavorite,
-            likeCount: reel.isFavorite
-                ? reel.likeCount - 1
-                : reel.likeCount + 1,
+      for (final r in state)
+        if (r.id == reelId)
+          r.copyWith(
+            isFavorite: !wasFavorite,
+            likeCount: wasFavorite ? r.likeCount - 1 : r.likeCount + 1,
           )
         else
-          reel,
+          r
     ];
+
+    try {
+      final docRef = FirebaseFirestore.instance.collection('reels').doc(reelId);
+      final docSnap = await docRef.get();
+      if (docSnap.exists) {
+        await docRef.update({
+          'likeCount': FieldValue.increment(wasFavorite ? -1 : 1),
+        });
+      }
+    } catch (e) {
+      debugPrint('Error updating reel likeCount: $e');
+    }
+  }
+
+  @override
+  void dispose() {
+    _subscription?.cancel();
+    super.dispose();
   }
 }
 

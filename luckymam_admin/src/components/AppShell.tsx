@@ -5,7 +5,7 @@ import { auth } from '../lib/firebase'
 import { useAuth } from '../features/auth/useAuth'
 import { useSettings } from '../lib/SettingsContext'
 import logo from '../assets/logo.png'
-import { ClipboardList, Award, ShoppingBag, LogOut, User, Settings, ChevronLeft, ChevronRight, Users, Package } from 'lucide-react'
+import { ClipboardList, Award, ShoppingBag, LogOut, User, Settings, ChevronLeft, ChevronRight, Users, Package, Film, LayoutDashboard } from 'lucide-react'
 
 export function AppShell() {
   const { user, role } = useAuth()
@@ -24,20 +24,24 @@ export function AppShell() {
 
   const t = {
     fr: {
+      dashboard: "Vue d'ensemble",
       orders: "Commandes d'impression",
       claims: "Albums VIP offerts",
       marketplace: "Commandes Marketplace",
       catalog: "Catalogue Marketplace",
+      reels: "Reels éducatifs",
       users: "Utilisateurs",
       settings: "Paramètres",
       logout: "Déconnexion",
       adminPortal: "Portail Admin",
     },
     en: {
+      dashboard: "Overview",
       orders: "Print Orders",
       claims: "VIP Album Claims",
       marketplace: "Marketplace Orders",
       catalog: "Marketplace Catalog",
+      reels: "Educational Reels",
       users: "Users",
       settings: "Settings",
       logout: "Log Out",
@@ -46,10 +50,12 @@ export function AppShell() {
   }[language]
 
   const NAV_ITEMS = [
-    { to: '/', label: t.orders, icon: ClipboardList, end: true },
+    { to: '/', label: t.dashboard, icon: LayoutDashboard, end: true },
+    { to: '/print-orders', label: t.orders, icon: ClipboardList },
     { to: '/album-claims', label: t.claims, icon: Award },
     { to: '/marketplace-orders', label: t.marketplace, icon: ShoppingBag },
     { to: '/marketplace-catalog', label: t.catalog, icon: Package },
+    { to: '/reels-catalog', label: t.reels, icon: Film },
     { to: '/users', label: t.users, icon: Users },
     { to: '/settings', label: t.settings, icon: Settings },
   ]
