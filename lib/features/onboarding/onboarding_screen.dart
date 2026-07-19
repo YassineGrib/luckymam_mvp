@@ -14,7 +14,6 @@ class OnboardingScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
-    final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return Scaffold(
       body: Stack(
@@ -31,8 +30,8 @@ class OnboardingScreen extends StatelessWidget {
                 end: Alignment.bottomCenter,
                 colors: [
                   Colors.transparent,
-                  Colors.black.withOpacity(0.3),
-                  Colors.black.withOpacity(0.85),
+                  Colors.black.withValues(alpha: 0.3),
+                  Colors.black.withValues(alpha: 0.85),
                   Colors.black,
                 ],
                 stops: const [0.0, 0.4, 0.7, 1.0],
@@ -85,7 +84,7 @@ class OnboardingScreen extends StatelessWidget {
                     l10n.welcomeSubtitle,
                     style: GoogleFonts.outfit(
                       fontSize: 14,
-                      color: Colors.white.withOpacity(0.7),
+                      color: Colors.white.withValues(alpha: 0.7),
                       height: 1.5,
                     ),
                   ),
@@ -134,9 +133,9 @@ class _SwipeToStartButtonState extends State<_SwipeToStartButton> {
     return Container(
       height: _buttonSize + (_padding * 2),
       decoration: BoxDecoration(
-        color: Colors.white.withOpacity(0.1),
+        color: Colors.white.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(30),
-        border: Border.all(color: Colors.white.withOpacity(0.2), width: 1),
+        border: Border.all(color: Colors.white.withValues(alpha: 0.2), width: 1),
       ),
       child: Stack(
         children: [
@@ -147,7 +146,7 @@ class _SwipeToStartButtonState extends State<_SwipeToStartButton> {
               style: GoogleFonts.outfit(
                 fontSize: 14,
                 fontWeight: FontWeight.w500,
-                color: Colors.white.withOpacity(0.7),
+                color: Colors.white.withValues(alpha: 0.7),
               ),
             ),
           ),
@@ -160,7 +159,7 @@ class _SwipeToStartButtonState extends State<_SwipeToStartButton> {
             child: Center(
               child: Icon(
                 Icons.keyboard_double_arrow_right,
-                color: Colors.white.withOpacity(0.5),
+                color: Colors.white.withValues(alpha: 0.5),
                 size: 24,
               ),
             ),
@@ -196,7 +195,7 @@ class _SwipeToStartButtonState extends State<_SwipeToStartButton> {
                   shape: BoxShape.circle,
                   boxShadow: [
                     BoxShadow(
-                      color: AppColors.magentaPink.withOpacity(0.4),
+                      color: AppColors.magentaPink.withValues(alpha: 0.4),
                       blurRadius: 12,
                       offset: const Offset(0, 4),
                     ),

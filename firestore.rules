@@ -2,6 +2,13 @@ rules_version = '2';
 
 service cloud.firestore {
   match /databases/{database}/documents {
+    // True only for Firebase Auth users carrying the `admin` custom claim,
+    // granted out-of-band via luckymam_admin/scripts/setAdminClaim.mjs.
+    // No admin UI action bypasses this — it's the actual security boundary.
+    function isAdmin() {
+      return request.auth != null && request.auth.token.admin == true;
+    }
+
     // Users collection - users can read/write their own document
     match /users/{userId} {
       allow read, write: if request.auth != null && request.auth.uid == userId;
@@ -35,6 +42,16 @@ service cloud.firestore {
       match /milestoneProgress/{progressId} {
         allow read, write: if request.auth != null && request.auth.uid == userId;
       }
+
+      // Predefined albums subcollection - users can manage their own albums
+      match /predefinedAlbums/{albumId} {
+        allow read, write: if request.auth != null && request.auth.uid == userId;
+      }
+
+      // Standard (free-form) albums subcollection - users can manage their own albums
+      match /standardAlbums/{albumId} {
+        allow read, write: if request.auth != null && request.auth.uid == userId;
+      }
     }
     
     // Consent logs - append-only (write-once), read by owner
@@ -53,15 +70,77 @@ service cloud.firestore {
       allow update, delete: if false;
     }
 
-    // Album claims - users can create/read their own claims
+    // Album claims - users can create/read their own claims. Admins can
+    // additionally read every claim and transition its status (only) from
+    // the backoffice order-fulfillment console.
     // FIX: allow list queries for authenticated users (needed for .where() queries)
     match /album_claims/{claimId} {
       allow create: if request.auth != null && request.resource.data.userId == request.auth.uid;
       // Allow reading individual documents and list queries when authenticated
       allow read: if request.auth != null && (
-        resource == null || resource.data.userId == request.auth.uid
+        resource == null || resource.data.userId == request.auth.uid || isAdmin()
       );
-      allow update, delete: if false;
+      allow update: if isAdmin()
+        && request.resource.data.diff(resource.data).affectedKeys()
+             .hasOnly(['status', 'statusUpdatedAt', 'statusUpdatedBy'])
+        && request.resource.data.status in ['pending', 'processing', 'shipped', 'delivered'];
+      allow delete: if false;
+    }
+
+    // Print orders - users can create/read their own orders (audit trail).
+    // Admins can read every order and transition its status (only) — no
+    // other field is ever writable client-side, by anyone.
+    match /print_orders/{orderId} {
+      allow create: if request.auth != null && request.resource.data.userId == request.auth.uid;
+      allow read: if request.auth != null && (
+        resource == null || resource.data.userId == request.auth.uid || isAdmin()
+      );
+      allow update: if isAdmin()
+        && request.resource.data.diff(resource.data).affectedKeys()
+             .hasOnly(['status', 'statusUpdatedAt', 'statusUpdatedBy'])
+        && request.resource.data.status in ['pending', 'processing', 'shipped', 'delivered'];
+      allow delete: if false;
+    }
+
+    // Marketplace orders - users can create/read their own orders. Admins
+    // can read every order and transition its status (only).
+    match /marketplace_orders/{orderId} {
+      allow create: if request.auth != null && request.resource.data.userId == request.auth.uid;
+      allow read: if request.auth != null && (
+        resource == null || resource.data.userId == request.auth.uid || isAdmin()
+      );
+      allow update: if isAdmin()
+        && request.resource.data.diff(resource.data).affectedKeys()
+             .hasOnly(['status', 'statusUpdatedAt', 'statusUpdatedBy'])
+        && request.resource.data.status in ['pending', 'confirmed', 'shipped', 'delivered', 'cancelled'];
+      allow delete: if false;
+    }
+
+    // Marketplace catalogue - public read (authenticated users), admin-only
+    // write. Populated by the backoffice; the mobile app streams these
+    // collections once Phase 2's provider swap lands (currently static
+    // Dart data in lib/features/marketplace/data/marketplace_data.dart).
+    match /marketplace_products/{productId} {
+      allow read: if request.auth != null;
+      allow write: if isAdmin();
+    }
+    match /marketplace_partners/{partnerId} {
+      allow read: if request.auth != null;
+      allow write: if isAdmin();
+    }
+
+    // House ads inventory - same pattern, backs lib/features/ads once its
+    // provider is swapped from the static house_ads_data.dart list.
+    match /house_ads/{adId} {
+      allow read: if request.auth != null;
+      allow write: if isAdmin();
+    }
+
+    // Reels catalogue - same pattern, backs lib/features/reels once its
+    // provider is swapped from the static initial list in reels_provider.dart.
+    match /reels/{reelId} {
+      allow read: if request.auth != null;
+      allow write: if isAdmin();
     }
 
     // Default deny for other collections

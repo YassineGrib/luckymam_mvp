@@ -182,7 +182,7 @@ Color _nodeColor(_NodeStatus status, Phase phase) {
 }
 
 /// Luckymam SVG logo as a connector node
-Widget _LuckymamLogo(double size, Color color) {
+Widget _luckymamLogo(double size, Color color) {
   return Container(
     width: size,
     height: size,
@@ -384,9 +384,9 @@ class _HorizontalNode extends StatelessWidget {
                 isCompleted
                     ? _completedIcon(currentDotSize)
                     : isOverdue
-                    ? _LuckymamLogo(currentDotSize, AppColors.error)
+                    ? _luckymamLogo(currentDotSize, AppColors.error)
                     : isCurrent
-                    ? _LuckymamLogo(currentDotSize, phase.color)
+                    ? _luckymamLogo(currentDotSize, phase.color)
                     : _plainDot(dotSize, color, isDark),
 
                 // Right line
@@ -506,9 +506,9 @@ class _VerticalNode extends StatelessWidget {
                 isCompleted
                     ? _completedIcon(currentDotSize)
                     : isOverdue
-                    ? _LuckymamLogo(currentDotSize, AppColors.error)
+                    ? _luckymamLogo(currentDotSize, AppColors.error)
                     : isCurrent
-                    ? _LuckymamLogo(currentDotSize, phase.color)
+                    ? _luckymamLogo(currentDotSize, phase.color)
                     : _plainDot(dotSize, color, isDark),
 
                 if (!isLast)

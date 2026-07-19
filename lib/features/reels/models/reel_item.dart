@@ -72,6 +72,11 @@ class ReelItem {
   final int likeCount;
   final ReelCategory category;
 
+  /// Vaccine codes this reel is relevant to (e.g. 'BCG', 'ROR'), used to
+  /// filter reels opened from a specific vaccine's fiche. Empty for reels
+  /// not tied to a specific vaccine.
+  final List<String> vaccineTags;
+
   const ReelItem({
     required this.id,
     required this.title,
@@ -81,6 +86,7 @@ class ReelItem {
     this.author = 'Luckymam',
     this.isFavorite = false,
     this.likeCount = 0,
+    this.vaccineTags = const [],
   });
 
   ReelItem copyWith({
@@ -92,6 +98,7 @@ class ReelItem {
     bool? isFavorite,
     int? likeCount,
     ReelCategory? category,
+    List<String>? vaccineTags,
   }) {
     return ReelItem(
       id: id ?? this.id,
@@ -102,6 +109,7 @@ class ReelItem {
       isFavorite: isFavorite ?? this.isFavorite,
       likeCount: likeCount ?? this.likeCount,
       category: category ?? this.category,
+      vaccineTags: vaccineTags ?? this.vaccineTags,
     );
   }
 }

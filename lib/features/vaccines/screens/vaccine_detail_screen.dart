@@ -12,6 +12,7 @@ import '../../capsules/models/capsule.dart';
 import '../../capsules/providers/capsule_providers.dart';
 import '../../capsules/screens/capsule_detail_screen.dart';
 import '../../capsules/screens/create_capsule_screen.dart';
+import '../../reels/screens/reels_screen.dart';
 import '../models/vaccine.dart';
 import '../providers/vaccine_providers.dart';
 
@@ -311,6 +312,10 @@ class VaccineDetailScreen extends ConsumerWidget {
                   _buildCapsuleSection(context, ref, isDark, surface, textColor, secondaryText, accentColor),
                   const SizedBox(height: 16),
 
+                  // Reels Section
+                  _buildReelsSection(context, surface, textColor, secondaryText, accentColor),
+                  const SizedBox(height: 16),
+
                   // Disclaimer
                   Container(
                     padding: const EdgeInsets.all(AppSpacing.md),
@@ -385,7 +390,7 @@ class VaccineDetailScreen extends ConsumerWidget {
           child: CircularProgressIndicator(strokeWidth: 2, color: accentColor),
         ),
       ),
-      error: (_, __) => _buildCapsuleCTA(context, accentColor, surface, textColor, secondaryText, isDark),
+      error: (_, _) => _buildCapsuleCTA(context, accentColor, surface, textColor, secondaryText, isDark),
       data: (list) {
         final capsule = list.where((c) => c.id == capsuleId).firstOrNull;
         if (capsule == null) {
@@ -604,6 +609,106 @@ class VaccineDetailScreen extends ConsumerWidget {
               icon: Icon(Icons.add_rounded, size: 18, color: accentColor),
               label: Text(
                 l10n.capsule,
+                style: GoogleFonts.outfit(fontWeight: FontWeight.w600),
+              ),
+              style: OutlinedButton.styleFrom(
+                foregroundColor: accentColor,
+                side: BorderSide(color: accentColor, width: 1.5),
+                padding: const EdgeInsets.symmetric(vertical: 12),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildReelsSection(
+    BuildContext context,
+    Color surface,
+    Color textColor,
+    Color secondaryText,
+    Color accentColor,
+  ) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    return Container(
+      padding: const EdgeInsets.all(AppSpacing.md),
+      decoration: BoxDecoration(
+        color: surface,
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(
+          color: isDark ? AppColors.dividerDark : AppColors.dividerLight,
+        ),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Container(
+                width: 32,
+                height: 32,
+                decoration: BoxDecoration(
+                  color: accentColor.withValues(alpha: 0.12),
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: Icon(
+                  Icons.play_circle_outline_rounded,
+                  size: 18,
+                  color: accentColor,
+                ),
+              ),
+              const SizedBox(width: 10),
+              Text(
+                'Reels éducatifs 🎬',
+                style: GoogleFonts.outfit(
+                  fontSize: 15,
+                  fontWeight: FontWeight.bold,
+                  color: textColor,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 12),
+          Text(
+            'Regardez des vidéos courtes sur ce vaccin réalisées par des professionnels de santé.',
+            style: GoogleFonts.outfit(
+              fontSize: 13,
+              color: secondaryText,
+              height: 1.5,
+            ),
+          ),
+          const SizedBox(height: 12),
+          SizedBox(
+            width: double.infinity,
+            child: OutlinedButton.icon(
+              onPressed: () {
+                AnalyticsService().logEvent(
+                  'vax_reels_opened',
+                  parameters: {
+                    'childId': childId,
+                    'vaccineCode': vaccine.code,
+                  },
+                );
+                Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (_) => ReelsScreen(
+                      initialVaccineCodes: [vaccine.code],
+                      initialVaccineLabel: vaccine.code,
+                    ),
+                  ),
+                );
+              },
+              icon: Icon(
+                Icons.play_circle_fill_rounded,
+                size: 18,
+                color: accentColor,
+              ),
+              label: Text(
+                'Reels',
                 style: GoogleFonts.outfit(fontWeight: FontWeight.w600),
               ),
               style: OutlinedButton.styleFrom(

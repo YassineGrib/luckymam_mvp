@@ -11,8 +11,11 @@ import '../../../core/theme/app_spacing.dart';
 import '../../capsules/screens/capsule_detail_screen.dart';
 import '../../capsules/screens/create_capsule_screen.dart';
 import '../../capsules/providers/capsule_providers.dart';
+import '../../notifications/notifications_screen.dart' show notificationPrefsProvider;
+import '../../profile/providers/profile_providers.dart';
 import '../data/milestone_advice_data.dart';
 import '../models/phase.dart';
+import '../services/milestone_notification_service.dart';
 import '../services/timeline_service.dart';
 
 /// Detail screen for a single milestone
@@ -59,7 +62,7 @@ class MilestoneDetailScreen extends ConsumerWidget {
               background: Container(
                 decoration: BoxDecoration(
                   gradient: LinearGradient(
-                    colors: [category.color, category.color.withOpacity(0.7)],
+                    colors: [category.color, category.color.withValues(alpha: 0.7)],
                     begin: Alignment.topCenter,
                     end: Alignment.bottomCenter,
                   ),
@@ -78,7 +81,7 @@ class MilestoneDetailScreen extends ConsumerWidget {
                             vertical: 4,
                           ),
                           decoration: BoxDecoration(
-                            color: Colors.white.withOpacity(0.2),
+                            color: Colors.white.withValues(alpha: 0.2),
                             borderRadius: BorderRadius.circular(20),
                           ),
                           child: Text(
@@ -263,6 +266,11 @@ class MilestoneDetailScreen extends ConsumerWidget {
 
                   const SizedBox(height: AppSpacing.md),
 
+                  // Reminder button
+                  _buildReminderButton(context, ref),
+
+                  const SizedBox(height: AppSpacing.md),
+
                   // Secondary actions
                   Row(
                     children: [
@@ -308,7 +316,7 @@ class MilestoneDetailScreen extends ConsumerWidget {
     return Container(
       padding: const EdgeInsets.all(AppSpacing.md),
       decoration: BoxDecoration(
-        color: color.withOpacity(isDark ? 0.2 : 0.1),
+        color: color.withValues(alpha: isDark ? 0.2 : 0.1),
         borderRadius: BorderRadius.circular(12),
       ),
       child: Column(
@@ -362,7 +370,7 @@ class MilestoneDetailScreen extends ConsumerWidget {
           borderRadius: BorderRadius.circular(16),
           boxShadow: [
             BoxShadow(
-              color: AppColors.magentaPink.withOpacity(0.4),
+              color: AppColors.magentaPink.withValues(alpha: 0.4),
               blurRadius: 12,
               offset: const Offset(0, 4),
             ),
@@ -518,6 +526,83 @@ class MilestoneDetailScreen extends ConsumerWidget {
       builder: (_) => _ConseilSheet(
         milestone: milestone,
         advice: advice,
+      ),
+    );
+  }
+
+  Widget _buildReminderButton(BuildContext context, WidgetRef ref) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final reminderAsync = ref.watch(
+      milestoneReminderProvider((
+        childId: childId,
+        milestoneId: milestone.milestone.id,
+      )),
+    );
+
+    return reminderAsync.when(
+      loading: () => const SizedBox(height: 48),
+      error: (_, _) => const SizedBox.shrink(),
+      data: (reminderDate) {
+        final isSet = reminderDate != null;
+        final color = isSet ? AppColors.success : AppColors.info;
+
+        return GestureDetector(
+          onTap: () => _showReminderSheet(context, ref, reminderDate),
+          child: Container(
+            width: double.infinity,
+            padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 16),
+            decoration: BoxDecoration(
+              color: isSet
+                  ? AppColors.success.withValues(alpha: 0.08)
+                  : (isDark ? AppColors.surfaceDark : AppColors.surfaceLight),
+              borderRadius: BorderRadius.circular(16),
+              border: Border.all(color: color.withValues(alpha: 0.4)),
+            ),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Icon(
+                  isSet
+                      ? Icons.notifications_active_rounded
+                      : Icons.notifications_none_rounded,
+                  size: 20,
+                  color: color,
+                ),
+                const SizedBox(width: AppSpacing.sm),
+                Flexible(
+                  child: Text(
+                    isSet
+                        ? 'Rappel le ${DateFormat('d MMM à HH:mm', 'fr_FR').format(reminderDate)}'
+                        : 'Programmer un rappel',
+                    style: GoogleFonts.outfit(
+                      fontSize: 15,
+                      fontWeight: FontWeight.w600,
+                      color: color,
+                    ),
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  void _showReminderSheet(
+    BuildContext context,
+    WidgetRef ref,
+    DateTime? currentReminder,
+  ) {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (_) => _ReminderSheet(
+        milestone: milestone,
+        childId: childId,
+        currentReminder: currentReminder,
       ),
     );
   }
@@ -841,6 +926,393 @@ class _KeyPointTile extends StatelessWidget {
             ),
           ),
         ],
+      ),
+    );
+  }
+}
+
+/// Bottom sheet to schedule, reschedule, or cancel a milestone reminder.
+class _ReminderSheet extends ConsumerStatefulWidget {
+  const _ReminderSheet({
+    required this.milestone,
+    required this.childId,
+    required this.currentReminder,
+  });
+
+  final MilestoneWithDueDate milestone;
+  final String childId;
+  final DateTime? currentReminder;
+
+  @override
+  ConsumerState<_ReminderSheet> createState() => _ReminderSheetState();
+}
+
+class _ReminderSheetState extends ConsumerState<_ReminderSheet> {
+  bool _busy = false;
+
+  @override
+  Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final bgColor = isDark ? AppColors.surfaceDark : Colors.white;
+    final textColor = isDark
+        ? AppColors.onSurfaceDark
+        : AppColors.onSurfaceLight;
+    final secondaryColor = isDark
+        ? AppColors.textSecondaryDark
+        : AppColors.textSecondaryLight;
+    final now = DateTime.now();
+
+    final presets = <_ReminderPreset>[
+      _ReminderPreset(
+        label: 'Demain',
+        subtitle: DateFormat(
+          'd MMM à 09:00',
+          'fr_FR',
+        ).format(DateTime(now.year, now.month, now.day + 1, 9)),
+        dateTime: DateTime(now.year, now.month, now.day + 1, 9),
+      ),
+      _ReminderPreset(
+        label: 'Dans 3 jours',
+        subtitle: DateFormat(
+          'd MMM à 09:00',
+          'fr_FR',
+        ).format(DateTime(now.year, now.month, now.day + 3, 9)),
+        dateTime: DateTime(now.year, now.month, now.day + 3, 9),
+      ),
+      _ReminderPreset(
+        label: 'Dans 1 semaine',
+        subtitle: DateFormat(
+          'd MMM à 09:00',
+          'fr_FR',
+        ).format(DateTime(now.year, now.month, now.day + 7, 9)),
+        dateTime: DateTime(now.year, now.month, now.day + 7, 9),
+      ),
+      if (widget.milestone.dueDate != null &&
+          widget.milestone.dueDate!.isAfter(now))
+        _ReminderPreset(
+          label: 'Le jour du jalon',
+          subtitle: DateFormat(
+            'd MMM à 09:00',
+            'fr_FR',
+          ).format(widget.milestone.dueDate!),
+          dateTime: DateTime(
+            widget.milestone.dueDate!.year,
+            widget.milestone.dueDate!.month,
+            widget.milestone.dueDate!.day,
+            9,
+          ),
+        ),
+    ];
+
+    return Container(
+      padding: const EdgeInsets.fromLTRB(20, 12, 20, 32),
+      decoration: BoxDecoration(
+        color: bgColor,
+        borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
+      ),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Center(
+            child: Container(
+              width: 40,
+              height: 4,
+              decoration: BoxDecoration(
+                color: isDark
+                    ? AppColors.dividerDark
+                    : AppColors.dividerLight,
+                borderRadius: BorderRadius.circular(2),
+              ),
+            ),
+          ),
+          const SizedBox(height: 16),
+          Row(
+            children: [
+              Container(
+                padding: const EdgeInsets.all(10),
+                decoration: BoxDecoration(
+                  color: AppColors.info.withValues(alpha: 0.12),
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: const Icon(
+                  Icons.notifications_active_rounded,
+                  color: AppColors.info,
+                  size: 22,
+                ),
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Programmer un rappel',
+                      style: GoogleFonts.outfit(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                        color: textColor,
+                      ),
+                    ),
+                    Text(
+                      widget.milestone.milestone.titleFr,
+                      style: GoogleFonts.outfit(
+                        fontSize: 13,
+                        color: secondaryColor,
+                      ),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ],
+                ),
+              ),
+              IconButton(
+                onPressed: () => Navigator.pop(context),
+                icon: Icon(Icons.close_rounded, color: secondaryColor),
+              ),
+            ],
+          ),
+          const SizedBox(height: 20),
+          ...presets.map(
+            (p) => _ReminderTile(
+              label: p.label,
+              subtitle: p.subtitle,
+              icon: Icons.schedule_rounded,
+              isDark: isDark,
+              onTap: _busy ? null : () => _schedule(p.dateTime),
+            ),
+          ),
+          _ReminderTile(
+            label: 'Choisir une date et heure',
+            subtitle: 'Sélection manuelle',
+            icon: Icons.edit_calendar_rounded,
+            isDark: isDark,
+            onTap: _busy ? null : _pickCustomDateTime,
+          ),
+          if (widget.currentReminder != null) ...[
+            const SizedBox(height: 8),
+            _ReminderTile(
+              label: 'Annuler le rappel',
+              subtitle: 'Supprimer le rappel programmé',
+              icon: Icons.notifications_off_rounded,
+              isDark: isDark,
+              destructive: true,
+              onTap: _busy ? null : _cancelReminder,
+            ),
+          ],
+        ],
+      ),
+    );
+  }
+
+  Future<void> _pickCustomDateTime() async {
+    final now = DateTime.now();
+    final date = await showDatePicker(
+      context: context,
+      initialDate: now.add(const Duration(days: 1)),
+      firstDate: now,
+      lastDate: now.add(const Duration(days: 730)),
+    );
+    if (date == null || !mounted) return;
+
+    final time = await showTimePicker(
+      context: context,
+      initialTime: const TimeOfDay(hour: 9, minute: 0),
+    );
+    if (time == null || !mounted) return;
+
+    final scheduledFor = DateTime(
+      date.year,
+      date.month,
+      date.day,
+      time.hour,
+      time.minute,
+    );
+    await _schedule(scheduledFor);
+  }
+
+  Future<void> _schedule(DateTime scheduledFor) async {
+    if (scheduledFor.isBefore(DateTime.now())) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Choisissez une date dans le futur'),
+          behavior: SnackBarBehavior.floating,
+          backgroundColor: AppColors.error,
+        ),
+      );
+      return;
+    }
+
+    final prefsEnabled = ref.read(notificationPrefsProvider).milestone;
+    if (!prefsEnabled) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text(
+            'Activez les notifications de jalons dans Paramètres > Notifications',
+          ),
+          behavior: SnackBarBehavior.floating,
+          backgroundColor: AppColors.error,
+        ),
+      );
+      return;
+    }
+
+    setState(() => _busy = true);
+    try {
+      final children = await ref.read(childrenProvider.future);
+      final child = children.where((c) => c.id == widget.childId).firstOrNull;
+      if (child == null) return;
+
+      final service = ref.read(milestoneNotificationServiceProvider);
+      await service.scheduleCustomReminder(
+        child: child,
+        milestone: widget.milestone,
+        scheduledFor: scheduledFor,
+      );
+
+      AnalyticsService().logEvent(
+        'milestone_reminder_set',
+        parameters: {
+          'milestone_id': widget.milestone.milestone.id,
+          'scheduled_for': scheduledFor.toIso8601String(),
+        },
+      );
+
+      ref.invalidate(
+        milestoneReminderProvider((
+          childId: widget.childId,
+          milestoneId: widget.milestone.milestone.id,
+        )),
+      );
+
+      if (mounted) {
+        Navigator.pop(context);
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(
+              'Rappel programmé le ${DateFormat('d MMM à HH:mm', 'fr_FR').format(scheduledFor)} ✓',
+            ),
+            behavior: SnackBarBehavior.floating,
+            backgroundColor: AppColors.success,
+          ),
+        );
+      }
+    } finally {
+      if (mounted) setState(() => _busy = false);
+    }
+  }
+
+  Future<void> _cancelReminder() async {
+    setState(() => _busy = true);
+    try {
+      final service = ref.read(milestoneNotificationServiceProvider);
+      await service.cancelCustomReminder(
+        childId: widget.childId,
+        milestoneId: widget.milestone.milestone.id,
+      );
+
+      ref.invalidate(
+        milestoneReminderProvider((
+          childId: widget.childId,
+          milestoneId: widget.milestone.milestone.id,
+        )),
+      );
+
+      if (mounted) {
+        Navigator.pop(context);
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Rappel annulé'),
+            behavior: SnackBarBehavior.floating,
+          ),
+        );
+      }
+    } finally {
+      if (mounted) setState(() => _busy = false);
+    }
+  }
+}
+
+class _ReminderPreset {
+  const _ReminderPreset({
+    required this.label,
+    required this.subtitle,
+    required this.dateTime,
+  });
+
+  final String label;
+  final String subtitle;
+  final DateTime dateTime;
+}
+
+class _ReminderTile extends StatelessWidget {
+  const _ReminderTile({
+    required this.label,
+    required this.subtitle,
+    required this.icon,
+    required this.isDark,
+    required this.onTap,
+    this.destructive = false,
+  });
+
+  final String label;
+  final String subtitle;
+  final IconData icon;
+  final bool isDark;
+  final bool destructive;
+  final VoidCallback? onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    final color = destructive ? AppColors.error : AppColors.info;
+    final textColor = isDark
+        ? AppColors.onSurfaceDark
+        : AppColors.onSurfaceLight;
+    final secondaryColor = isDark
+        ? AppColors.textSecondaryDark
+        : AppColors.textSecondaryLight;
+
+    return Opacity(
+      opacity: onTap == null ? 0.5 : 1,
+      child: GestureDetector(
+        onTap: onTap,
+        child: Container(
+          margin: const EdgeInsets.only(bottom: 8),
+          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+          decoration: BoxDecoration(
+            color: color.withValues(alpha: 0.07),
+            borderRadius: BorderRadius.circular(14),
+          ),
+          child: Row(
+            children: [
+              Icon(icon, color: color, size: 20),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      label,
+                      style: GoogleFonts.outfit(
+                        fontSize: 14,
+                        fontWeight: FontWeight.w600,
+                        color: textColor,
+                      ),
+                    ),
+                    Text(
+                      subtitle,
+                      style: GoogleFonts.outfit(
+                        fontSize: 12,
+                        color: secondaryColor,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              Icon(Icons.chevron_right_rounded, color: secondaryColor),
+            ],
+          ),
+        ),
       ),
     );
   }

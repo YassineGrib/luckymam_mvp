@@ -50,7 +50,7 @@ class PhaseCarousel extends StatelessWidget {
                 ),
                 decoration: BoxDecoration(
                   color: isSelected
-                      ? phase.color.withOpacity(isDark ? 0.3 : 0.15)
+                      ? phase.color.withValues(alpha: isDark ? 0.3 : 0.15)
                       : isDark
                       ? AppColors.surfaceDark
                       : AppColors.surfaceLight,
@@ -66,7 +66,7 @@ class PhaseCarousel extends StatelessWidget {
                   boxShadow: isSelected
                       ? [
                           BoxShadow(
-                            color: phase.color.withOpacity(0.3),
+                            color: phase.color.withValues(alpha: 0.3),
                             blurRadius: 8,
                             offset: const Offset(0, 2),
                           ),
@@ -152,7 +152,7 @@ class PhaseCarousel extends StatelessWidget {
           child: LinearProgressIndicator(
             value: progress,
             minHeight: 4,
-            backgroundColor: phase.color.withOpacity(0.2),
+            backgroundColor: phase.color.withValues(alpha: 0.2),
             valueColor: AlwaysStoppedAnimation<Color>(phase.color),
           ),
         ),

@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -32,6 +34,12 @@ class NotificationService {
 
   bool _initialized = false;
 
+  /// Emits the payload of whichever notification the user just tapped
+  /// (foreground or background). Used for deep-linking. Static so every
+  /// instance of this service shares the same tap stream.
+  static final ValueNotifier<String?> onNotificationTapped =
+      ValueNotifier<String?>(null);
+
   NotificationService() {
     _init();
   }
@@ -58,11 +66,20 @@ class NotificationService {
     await _plugin.initialize(
       initSettings,
       onDidReceiveNotificationResponse: (details) {
-        // TODO: route to the relevant screen via payload
         debugPrint('[Notif] tapped payload=${details.payload}');
+        onNotificationTapped.value = details.payload;
       },
     );
     _initialized = true;
+  }
+
+  /// Returns the payload of the notification that launched the app from a
+  /// terminated state, or null if the app wasn't launched via a notification.
+  Future<String?> getLaunchPayload() async {
+    await _ensure();
+    final details = await _plugin.getNotificationAppLaunchDetails();
+    if (details?.didNotificationLaunchApp != true) return null;
+    return details?.notificationResponse?.payload;
   }
 
   // ─── Permissions ────────────────────────────────────────────────────────────
@@ -126,6 +143,47 @@ class NotificationService {
       channelName: _milestoneChannelName,
       channelDesc: 'Alertes étapes de développement',
       payload: 'milestone',
+    );
+  }
+
+  /// Schedules a user-picked reminder for a specific milestone at the exact
+  /// [scheduledFor] date/time. Tapping the notification deep-links back to
+  /// the milestone via a JSON payload carrying [childId] and [milestoneId].
+  Future<void> scheduleMilestoneCustomReminder({
+    required int id,
+    required String childId,
+    required String milestoneId,
+    required String childName,
+    required String milestoneTitle,
+    required DateTime scheduledFor,
+  }) async {
+    await _ensure();
+    final now = tz.TZDateTime.now(tz.local);
+    final notify = tz.TZDateTime(
+      tz.local,
+      scheduledFor.year,
+      scheduledFor.month,
+      scheduledFor.day,
+      scheduledFor.hour,
+      scheduledFor.minute,
+    );
+    if (notify.isBefore(now)) return;
+
+    final payload = jsonEncode({
+      'type': 'milestone_reminder',
+      'childId': childId,
+      'milestoneId': milestoneId,
+    });
+
+    await _zonedSchedule(
+      id: id,
+      title: '⏰ Rappel – $childName',
+      body: '"$milestoneTitle" — Appuyez pour ouvrir',
+      scheduledDate: notify,
+      channelId: _milestoneChannelId,
+      channelName: _milestoneChannelName,
+      channelDesc: 'Alertes étapes de développement',
+      payload: payload,
     );
   }
 

@@ -54,7 +54,7 @@ class _HealthTabState extends ConsumerState<HealthTab>
       body: SafeArea(
         child: childrenAsync.when(
           loading: () => const Center(child: CircularProgressIndicator()),
-          error: (_, __) => _buildError(textColor),
+          error: (_, _) => _buildError(textColor),
           data: (children) {
             if (children.isEmpty) {
               return _buildNoChildren(primary, textColor, secondaryText);
@@ -174,7 +174,7 @@ class _HealthTabState extends ConsumerState<HealthTab>
         horizontal: AppSpacing.screenPaddingH,
       ),
       itemCount: children.length,
-      separatorBuilder: (_, __) => const SizedBox(width: 8),
+      separatorBuilder: (_, _) => const SizedBox(width: 8),
       itemBuilder: (_, i) {
         final child = children[i];
         final selected = child.id == _selectedChild?.id;

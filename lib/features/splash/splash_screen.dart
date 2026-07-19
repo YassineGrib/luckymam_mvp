@@ -1,22 +1,27 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../shared/widgets/app_logo.dart';
 import '../../shared/widgets/gradient_scaffold.dart';
 import '../../core/services/analytics_service.dart';
+import '../ads/providers/ads_providers.dart';
+import '../ads/screens/interstitial_ad_screen.dart';
+import '../subscription/providers/subscription_providers.dart';
 import '../subscription/screens/diamond_sponsors_screen.dart';
 import '../profile/services/profile_service.dart';
 
 /// Animated splash screen with logo fade-in.
-/// Shows sponsors interstitial (2s) then routes to home or onboarding.
-class SplashScreen extends StatefulWidget {
+/// Shows sponsors interstitial (2s), then the launch ad slot (plan-gated),
+/// then routes to home or onboarding.
+class SplashScreen extends ConsumerStatefulWidget {
   const SplashScreen({super.key});
 
   @override
-  State<SplashScreen> createState() => _SplashScreenState();
+  ConsumerState<SplashScreen> createState() => _SplashScreenState();
 }
 
-class _SplashScreenState extends State<SplashScreen>
+class _SplashScreenState extends ConsumerState<SplashScreen>
     with SingleTickerProviderStateMixin {
   late AnimationController _controller;
   late Animation<double> _fadeAnimation;
@@ -69,7 +74,7 @@ class _SplashScreenState extends State<SplashScreen>
       }
 
       if (!mounted) return;
-      // Show sponsors overlay for 2 s then navigate
+      // Show sponsors overlay for 2 s, then the launch ad slot, then navigate
       showModalBottomSheet<void>(
         context: context,
         isScrollControlled: true,
@@ -79,11 +84,45 @@ class _SplashScreenState extends State<SplashScreen>
         builder: (ctx) => _SponsorInterstitial(
           onDone: () {
             Navigator.of(ctx).pop();
-            context.go(destination);
+            _showLaunchAdThenGo(destination);
           },
         ),
       );
     });
+  }
+
+  /// Launch ad slot: only for signed-in users heading to home, gated by
+  /// plan (VIP: none). Waits for the real tier before deciding, so a VIP
+  /// is never shown an ad because the tier hadn't loaded yet.
+  Future<void> _showLaunchAdThenGo(String destination) async {
+    if (destination != '/home') {
+      if (mounted) context.go(destination);
+      return;
+    }
+    try {
+      await ref
+          .read(currentTierProvider.future)
+          .timeout(const Duration(seconds: 3));
+    } catch (_) {
+      // Tier unknown — skip the ad rather than guessing.
+      if (mounted) context.go(destination);
+      return;
+    }
+    if (!mounted) return;
+
+    final ad = await ref.read(adGateProvider).requestSplashAd();
+    if (!mounted) return;
+    if (ad == null) {
+      context.go(destination);
+      return;
+    }
+    InterstitialAdScreen.show(
+      context,
+      ad,
+      onDone: () {
+        if (mounted) context.go(destination);
+      },
+    );
   }
 
   @override

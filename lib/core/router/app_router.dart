@@ -7,6 +7,7 @@ import '../../features/auth/signup_screen.dart';
 import '../../features/auth/privacy_policy_screen.dart';
 import '../../features/auth/law_1807_consent_screen.dart';
 import '../../features/home/home_screen.dart';
+import '../../features/marketplace/screens/marketplace_screen.dart';
 import '../../features/reels/screens/reels_screen.dart';
 import '../../features/subscription/screens/diamond_sponsors_screen.dart';
 
@@ -14,7 +15,13 @@ import '../../features/subscription/screens/diamond_sponsors_screen.dart';
 class AppRouter {
   AppRouter._();
 
+  /// Root navigator key — used to push routes (e.g. notification deep links)
+  /// from outside the widget tree that has a BuildContext.
+  static final GlobalKey<NavigatorState> navigatorKey =
+      GlobalKey<NavigatorState>();
+
   static final GoRouter router = GoRouter(
+    navigatorKey: navigatorKey,
     initialLocation: '/',
     debugLogDiagnostics: true,
     routes: [
@@ -85,6 +92,16 @@ class AppRouter {
         pageBuilder: (context, state) => _buildPageWithTransition(
           key: state.pageKey,
           child: const PrivacyPolicyScreen(),
+        ),
+      ),
+
+      // Partner Marketplace
+      GoRoute(
+        path: '/marketplace',
+        name: 'marketplace',
+        pageBuilder: (context, state) => _buildPageWithTransition(
+          key: state.pageKey,
+          child: const MarketplaceScreen(),
         ),
       ),
 

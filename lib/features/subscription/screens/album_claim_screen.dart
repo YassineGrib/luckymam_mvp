@@ -71,8 +71,9 @@ class _AlbumClaimScreenState extends ConsumerState<AlbumClaimScreen> {
       }
     });
 
-    if (_submitted || albumClaimed)
+    if (_submitted || albumClaimed) {
       return _buildSubmittedView(context, textColor);
+    }
 
     return Scaffold(
       backgroundColor: bgColor,
@@ -188,7 +189,7 @@ class _AlbumClaimScreenState extends ConsumerState<AlbumClaimScreen> {
 
                       childrenAsync.when(
                         loading: () => const CircularProgressIndicator(),
-                        error: (_, __) => Text(
+                        error: (_, _) => Text(
                           'Erreur de chargement',
                           style: GoogleFonts.outfit(color: AppColors.error),
                         ),

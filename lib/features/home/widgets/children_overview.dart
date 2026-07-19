@@ -41,7 +41,7 @@ class ChildrenOverview extends ConsumerWidget {
               itemCount: 3,
               itemBuilder: (context, index) => _buildSkeleton(context),
             ),
-            error: (_, __) => const SizedBox.shrink(),
+            error: (_, _) => const SizedBox.shrink(),
             data: (summaries) {
               return ListView.builder(
                 scrollDirection: Axis.horizontal,

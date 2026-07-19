@@ -53,16 +53,18 @@ class NotificationPrefsNotifier extends StateNotifier<NotificationPrefs> {
   Future<void> setVaccine(bool value) async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setBool(_kVaccineKey, value);
-    if (!value)
+    if (!value) {
       await NotificationService().cancelNotificationsByChannel('vaccine');
+    }
     state = state.copyWith(vaccine: value);
   }
 
   Future<void> setMilestone(bool value) async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setBool(_kMilestoneKey, value);
-    if (!value)
+    if (!value) {
       await NotificationService().cancelNotificationsByChannel('milestone');
+    }
     state = state.copyWith(milestone: value);
   }
 
@@ -130,14 +132,14 @@ class NotificationsScreen extends ConsumerWidget {
             padding: const EdgeInsets.all(20),
             decoration: BoxDecoration(
               gradient: LinearGradient(
-                colors: [primary, primary.withOpacity(0.7)],
+                colors: [primary, primary.withValues(alpha: 0.7)],
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
               ),
               borderRadius: BorderRadius.circular(20),
               boxShadow: [
                 BoxShadow(
-                  color: primary.withOpacity(0.3),
+                  color: primary.withValues(alpha: 0.3),
                   blurRadius: 16,
                   offset: const Offset(0, 6),
                 ),
@@ -148,7 +150,7 @@ class NotificationsScreen extends ConsumerWidget {
                 Container(
                   padding: const EdgeInsets.all(12),
                   decoration: BoxDecoration(
-                    color: Colors.white.withOpacity(0.2),
+                    color: Colors.white.withValues(alpha: 0.2),
                     borderRadius: BorderRadius.circular(14),
                   ),
                   child: const Icon(
@@ -175,7 +177,7 @@ class NotificationsScreen extends ConsumerWidget {
                         'Gérez vos rappels personnalisés',
                         style: GoogleFonts.outfit(
                           fontSize: 13,
-                          color: Colors.white.withOpacity(0.85),
+                          color: Colors.white.withValues(alpha: 0.85),
                         ),
                       ),
                     ],
@@ -197,7 +199,7 @@ class NotificationsScreen extends ConsumerWidget {
                     child: Container(
                       padding: const EdgeInsets.all(10),
                       decoration: BoxDecoration(
-                        color: Colors.white.withOpacity(0.2),
+                        color: Colors.white.withValues(alpha: 0.2),
                         borderRadius: BorderRadius.circular(12),
                       ),
                       child: const Icon(
@@ -273,9 +275,9 @@ class NotificationsScreen extends ConsumerWidget {
           Container(
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
-              color: primary.withOpacity(0.07),
+              color: primary.withValues(alpha: 0.07),
               borderRadius: BorderRadius.circular(14),
-              border: Border.all(color: primary.withOpacity(0.15)),
+              border: Border.all(color: primary.withValues(alpha: 0.15)),
             ),
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -340,12 +342,12 @@ class _NotifCard extends StatelessWidget {
         color: cardColor,
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
-          color: value ? activeColor.withOpacity(0.3) : Colors.transparent,
+          color: value ? activeColor.withValues(alpha: 0.3) : Colors.transparent,
           width: 1.5,
         ),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.04),
+            color: Colors.black.withValues(alpha: 0.04),
             blurRadius: 10,
             offset: const Offset(0, 3),
           ),
@@ -387,7 +389,11 @@ class _NotifCard extends StatelessWidget {
             ),
           ),
           const SizedBox(width: 8),
-          Switch(value: value, onChanged: onChanged, activeColor: activeColor),
+          Switch(
+            value: value,
+            onChanged: onChanged,
+            activeThumbColor: activeColor,
+          ),
         ],
       ),
     );

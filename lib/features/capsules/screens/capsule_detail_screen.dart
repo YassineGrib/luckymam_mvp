@@ -80,7 +80,7 @@ class _CapsuleDetailScreenState extends ConsumerState<CapsuleDetailScreen> {
                           begin: Alignment.topCenter,
                           end: Alignment.bottomCenter,
                           colors: [
-                            Colors.black.withOpacity(0.7),
+                            Colors.black.withValues(alpha: 0.7),
                             Colors.transparent,
                           ],
                         ),
@@ -342,7 +342,7 @@ class _CapsuleDetailScreenState extends ConsumerState<CapsuleDetailScreen> {
                                           vertical: 6,
                                         ),
                                         decoration: BoxDecoration(
-                                          color: Colors.white.withOpacity(0.15),
+                                          color: Colors.white.withValues(alpha: 0.15),
                                           borderRadius: BorderRadius.circular(
                                             16,
                                           ),
@@ -517,7 +517,7 @@ class _CapsuleDetailScreenState extends ConsumerState<CapsuleDetailScreen> {
                 gradient: LinearGradient(
                   colors: [
                     AppColors.primaryLight,
-                    AppColors.primaryLight.withOpacity(0.7),
+                    AppColors.primaryLight.withValues(alpha: 0.7),
                   ],
                 ),
               ),

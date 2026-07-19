@@ -28,7 +28,7 @@ class PersonalHeader extends ConsumerWidget {
       padding: const EdgeInsets.fromLTRB(20, 16, 20, 8),
       child: profileAsync.when(
         loading: () => _buildSkeleton(textColor),
-        error: (_, __) =>
+        error: (_, _) =>
             _buildGreeting(context, ref, textColor, secondaryColor, null),
         data: (profile) =>
             _buildGreeting(context, ref, textColor, secondaryColor, profile),

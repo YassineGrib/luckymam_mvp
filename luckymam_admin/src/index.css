@@ -1,0 +1,21 @@
+@import "tailwindcss";
+
+@theme {
+  /* Brand colors matching lib/core/theme/app_colors.dart */
+  --color-coral-primary: #E85A71;
+  --color-magenta-pink: #A7316E;
+  --color-smalt-blue: #4F8289;
+  --color-sunshine-gold: #FED672;
+  --color-casablanca: #F9AD4A;
+  --color-success: #43A047;
+  --color-warning: #FED672;
+  --color-error: #E53935;
+  --color-info: #4F8289;
+
+  --font-sans: "Inter", system-ui, sans-serif;
+}
+
+body {
+  font-family: var(--font-sans);
+  background-color: #F5F5F5;
+}

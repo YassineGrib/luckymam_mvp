@@ -58,15 +58,16 @@ class _HealthHubScreenState extends ConsumerState<HealthHubScreen>
       body: SafeArea(
         child: childrenAsync.when(
           loading: () => const Center(child: CircularProgressIndicator()),
-          error: (_, __) => Center(
+          error: (_, _) => Center(
             child: Text(
               'Erreur de chargement',
               style: GoogleFonts.outfit(color: AppColors.error),
             ),
           ),
           data: (children) {
-            if (children.isEmpty)
+            if (children.isEmpty) {
               return _buildNoChildren(primary, textColor, secondaryText);
+            }
 
             // Auto-select first child
             _selectedChild ??= children.first;

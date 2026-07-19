@@ -3,7 +3,11 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 
+import '../../../core/services/analytics_service.dart';
 import '../../../core/theme/app_colors.dart';
+import '../../ads/models/house_ad.dart';
+import '../../ads/providers/ads_providers.dart';
+import '../../ads/widgets/reel_ad_item.dart';
 import '../models/reel_item.dart';
 import '../providers/reels_provider.dart';
 import '../widgets/reel_player.dart';
@@ -11,7 +15,19 @@ import '../widgets/reel_overlay.dart';
 
 /// Full-screen TikTok-style vertical swipe reels screen with category filter.
 class ReelsScreen extends ConsumerStatefulWidget {
-  const ReelsScreen({super.key});
+  /// When set, opens the feed pre-filtered to reels tagged with any of
+  /// these vaccine codes (deep link from a vaccine's fiche).
+  final List<String>? initialVaccineCodes;
+
+  /// Display label for the active vaccine filter badge (e.g. "ROR" or
+  /// "Vaccins — 2 mois").
+  final String? initialVaccineLabel;
+
+  const ReelsScreen({
+    super.key,
+    this.initialVaccineCodes,
+    this.initialVaccineLabel,
+  });
 
   @override
   ConsumerState<ReelsScreen> createState() => _ReelsScreenState();
@@ -19,15 +35,35 @@ class ReelsScreen extends ConsumerStatefulWidget {
 
 class _ReelsScreenState extends ConsumerState<ReelsScreen> {
   late PageController _pageController;
+  bool _appliedVaccineFilter = false;
+  String? _lastLoggedReelId;
 
   @override
   void initState() {
     super.initState();
     _pageController = PageController();
+
+    final vaccineCodes = widget.initialVaccineCodes;
+    if (vaccineCodes != null && vaccineCodes.isNotEmpty) {
+      _appliedVaccineFilter = true;
+      ref.read(selectedReelCategoryProvider.notifier).state =
+          ReelCategory.vaccins;
+      ref.read(selectedVaccineTagsProvider.notifier).state = vaccineCodes;
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        final reels = ref.read(filteredReelsProvider);
+        if (reels.isNotEmpty) _logReelViewFromVax(reels.first);
+      });
+    }
   }
 
   @override
   void dispose() {
+    // Don't let a vaccine-scoped filter leak into the next time the reels
+    // feed is opened from elsewhere (e.g. the home shortcut).
+    if (_appliedVaccineFilter) {
+      ref.read(selectedVaccineTagsProvider.notifier).state = null;
+      ref.read(selectedReelCategoryProvider.notifier).state = null;
+    }
     _pageController.dispose();
     super.dispose();
   }
@@ -35,10 +71,32 @@ class _ReelsScreenState extends ConsumerState<ReelsScreen> {
   /// Jump to page 0 when category changes
   void _onCategoryChanged(ReelCategory? cat) {
     ref.read(selectedReelCategoryProvider.notifier).state = cat;
+    // A manual category pick escapes the vaccine-scoped filter.
+    ref.read(selectedVaccineTagsProvider.notifier).state = null;
     ref.read(currentReelIndexProvider.notifier).state = 0;
     if (_pageController.hasClients) {
       _pageController.jumpToPage(0);
     }
+  }
+
+  void _clearVaccineFilter() {
+    ref.read(selectedVaccineTagsProvider.notifier).state = null;
+    ref.read(currentReelIndexProvider.notifier).state = 0;
+    if (_pageController.hasClients) {
+      _pageController.jumpToPage(0);
+    }
+  }
+
+  void _logReelViewFromVax(ReelItem reel) {
+    final vaccineTags = ref.read(selectedVaccineTagsProvider);
+    if (vaccineTags == null || vaccineTags.isEmpty) return;
+    if (_lastLoggedReelId == reel.id) return;
+    _lastLoggedReelId = reel.id;
+
+    AnalyticsService().logEvent(
+      'reel_view_from_vax',
+      parameters: {'reel_id': reel.id, 'vaccine_codes': vaccineTags},
+    );
   }
 
   @override
@@ -46,6 +104,22 @@ class _ReelsScreenState extends ConsumerState<ReelsScreen> {
     final reels = ref.watch(filteredReelsProvider);
     final currentIndex = ref.watch(currentReelIndexProvider);
     final selectedCategory = ref.watch(selectedReelCategoryProvider);
+    final vaccineFilterActive = ref.watch(selectedVaccineTagsProvider) != null;
+
+    // Interleave one sponsored item after every [adReelInterval] reels
+    // (plan-gated: VIP gets an empty ad list, i.e. a pure feed).
+    ref.watch(adsEnabledProvider);
+    final reelAds = ref.read(adGateProvider).reelAds();
+    final displayItems = <Object>[];
+    var adCursor = 0;
+    for (var i = 0; i < reels.length; i++) {
+      displayItems.add(reels[i]);
+      final isLast = i == reels.length - 1;
+      if (reelAds.isNotEmpty && !isLast && (i + 1) % adReelInterval == 0) {
+        displayItems.add(reelAds[adCursor % reelAds.length]);
+        adCursor++;
+      }
+    }
 
     return AnnotatedRegion<SystemUiOverlayStyle>(
       value: SystemUiOverlayStyle.light,
@@ -55,17 +129,26 @@ class _ReelsScreenState extends ConsumerState<ReelsScreen> {
         body: Stack(
           children: [
             // ── Vertical page view ────────────────────────────────────
-            reels.isEmpty
+            displayItems.isEmpty
                 ? _buildEmptyState()
                 : PageView.builder(
                     controller: _pageController,
                     scrollDirection: Axis.vertical,
-                    itemCount: reels.length,
+                    itemCount: displayItems.length,
                     onPageChanged: (index) {
                       ref.read(currentReelIndexProvider.notifier).state = index;
+                      final item = displayItems[index];
+                      if (item is ReelItem) _logReelViewFromVax(item);
                     },
                     itemBuilder: (context, index) {
-                      final reel = reels[index];
+                      final item = displayItems[index];
+                      if (item is HouseAd) {
+                        return ReelAdItem(
+                          ad: item,
+                          isActive: currentIndex == index,
+                        );
+                      }
+                      final reel = item as ReelItem;
                       return Stack(
                         fit: StackFit.expand,
                         children: [
@@ -122,7 +205,7 @@ class _ReelsScreenState extends ConsumerState<ReelsScreen> {
                         ),
                         const Spacer(),
                         // Reel counter badge
-                        if (reels.isNotEmpty)
+                        if (displayItems.isNotEmpty)
                           Container(
                             padding: const EdgeInsets.symmetric(
                               horizontal: 12,
@@ -135,7 +218,7 @@ class _ReelsScreenState extends ConsumerState<ReelsScreen> {
                               borderRadius: BorderRadius.circular(16),
                             ),
                             child: Text(
-                              '${currentIndex + 1}/${reels.length}',
+                              '${currentIndex + 1}/${displayItems.length}',
                               style: GoogleFonts.outfit(
                                 fontSize: 12,
                                 fontWeight: FontWeight.w600,
@@ -152,6 +235,55 @@ class _ReelsScreenState extends ConsumerState<ReelsScreen> {
                     selected: selectedCategory,
                     onSelected: _onCategoryChanged,
                   ),
+
+                  // ── Vaccine filter badge (deep-link from a vaccine's fiche) ──
+                  if (vaccineFilterActive && widget.initialVaccineLabel != null)
+                    Padding(
+                      padding: const EdgeInsets.fromLTRB(8, 8, 8, 0),
+                      child: Align(
+                        alignment: Alignment.centerLeft,
+                        child: GestureDetector(
+                          onTap: _clearVaccineFilter,
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 12,
+                              vertical: 6,
+                            ),
+                            decoration: BoxDecoration(
+                              color: AppColors.magentaPink.withValues(
+                                alpha: 0.85,
+                              ),
+                              borderRadius: BorderRadius.circular(16),
+                            ),
+                            child: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                const Icon(
+                                  Icons.vaccines_rounded,
+                                  size: 14,
+                                  color: Colors.white,
+                                ),
+                                const SizedBox(width: 6),
+                                Text(
+                                  'Filtré : ${widget.initialVaccineLabel}',
+                                  style: GoogleFonts.outfit(
+                                    fontSize: 12,
+                                    fontWeight: FontWeight.w600,
+                                    color: Colors.white,
+                                  ),
+                                ),
+                                const SizedBox(width: 6),
+                                const Icon(
+                                  Icons.close_rounded,
+                                  size: 14,
+                                  color: Colors.white,
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
                 ],
               ),
             ),

@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../shared/widgets/navigation/app_bottom_nav.dart';
+import '../ads/providers/ads_providers.dart';
+import '../ads/screens/interstitial_ad_screen.dart';
 import 'tabs/dashboard_tab.dart';
 import 'tabs/timeline_tab.dart';
 import 'tabs/capsules_tab.dart';
@@ -7,15 +10,24 @@ import 'tabs/vaccinations_tab.dart';
 import 'tabs/profile_tab.dart';
 
 /// Main home screen with bottom navigation and tab switching.
-class HomeScreen extends StatefulWidget {
+class HomeScreen extends ConsumerStatefulWidget {
   const HomeScreen({super.key});
 
   @override
-  State<HomeScreen> createState() => _HomeScreenState();
+  ConsumerState<HomeScreen> createState() => _HomeScreenState();
 }
 
-class _HomeScreenState extends State<HomeScreen> {
+class _HomeScreenState extends ConsumerState<HomeScreen> {
   int _currentIndex = 0;
+
+  /// Interstitial ad slot on tab transitions — every Nth switch, with a
+  /// global cooldown, plan-gated (VIP: never). Fire-and-forget so the tab
+  /// switch itself is never delayed.
+  Future<void> _maybeShowInterstitial() async {
+    final ad = await ref.read(adGateProvider).requestTabInterstitial();
+    if (ad == null || !mounted) return;
+    InterstitialAdScreen.show(context, ad);
+  }
 
   // Tab screens
   final List<Widget> _tabs = const [
@@ -62,7 +74,10 @@ class _HomeScreenState extends State<HomeScreen> {
       extendBody: true,
       bottomNavigationBar: AppBottomNav(
         currentIndex: _currentIndex,
-        onTap: (index) => setState(() => _currentIndex = index),
+        onTap: (index) {
+          if (index != _currentIndex) _maybeShowInterstitial();
+          setState(() => _currentIndex = index);
+        },
         items: _navItems,
       ),
     );

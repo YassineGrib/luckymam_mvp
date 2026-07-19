@@ -19,12 +19,18 @@ import '../widgets/emotion_picker.dart';
 class CreateCapsuleScreen extends ConsumerStatefulWidget {
   final String? milestoneId;
   final String? vaccineGroupId;
+  final String? albumId;
+  final String? albumSlotId;
+  final String? albumType;
   final String? preselectedChildId;
 
   const CreateCapsuleScreen({
     super.key,
     this.milestoneId,
     this.vaccineGroupId,
+    this.albumId,
+    this.albumSlotId,
+    this.albumType,
     this.preselectedChildId,
   });
 
@@ -137,7 +143,7 @@ class _CreateCapsuleScreenState extends ConsumerState<CreateCapsuleScreen> {
             // Child selector
             childrenAsync.when(
               loading: () => const SizedBox.shrink(),
-              error: (_, __) => const SizedBox.shrink(),
+              error: (_, _) => const SizedBox.shrink(),
               data: (children) => _buildChildSelector(
                 children,
                 isDark,
@@ -790,6 +796,9 @@ class _CreateCapsuleScreenState extends ConsumerState<CreateCapsuleScreen> {
           emotion: _selectedEmotion!,
           milestoneId: widget.milestoneId,
           vaccineGroupId: widget.vaccineGroupId,
+          albumId: widget.albumId,
+          albumSlotId: widget.albumSlotId,
+          albumType: widget.albumType,
           tags: _tags,
           capturedAt: _capturedAt,
           category: _selectedCategory,

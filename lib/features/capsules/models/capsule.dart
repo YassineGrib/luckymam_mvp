@@ -53,6 +53,11 @@ class Capsule {
   final String childId;
   final String? milestoneId;
   final String? vaccineGroupId;
+  final String? albumId;
+  final String? albumSlotId;
+
+  /// 'predefined' | 'standard' — which album collection [albumId] refers to.
+  final String? albumType;
   final String photoUrl;
   final String? audioUrl;
   final int? audioDuration; // seconds
@@ -74,6 +79,9 @@ class Capsule {
     required this.childId,
     this.milestoneId,
     this.vaccineGroupId,
+    this.albumId,
+    this.albumSlotId,
+    this.albumType,
     required this.photoUrl,
     this.audioUrl,
     this.audioDuration,
@@ -95,6 +103,9 @@ class Capsule {
       childId: data['childId'] ?? '',
       milestoneId: data['milestoneId'],
       vaccineGroupId: data['vaccineGroupId'],
+      albumId: data['albumId'],
+      albumSlotId: data['albumSlotId'],
+      albumType: data['albumType'],
       photoUrl: data['photoUrl'] ?? '',
       audioUrl: data['audioUrl'],
       audioDuration: data['audioDuration'],
@@ -121,6 +132,9 @@ class Capsule {
       'childId': childId,
       'milestoneId': milestoneId,
       'vaccineGroupId': vaccineGroupId,
+      'albumId': albumId,
+      'albumSlotId': albumSlotId,
+      'albumType': albumType,
       'photoUrl': photoUrl,
       'audioUrl': audioUrl,
       'audioDuration': audioDuration,
@@ -151,6 +165,9 @@ class Capsule {
     String? childId,
     String? milestoneId,
     String? vaccineGroupId,
+    String? albumId,
+    String? albumSlotId,
+    String? albumType,
     String? photoUrl,
     String? audioUrl,
     int? audioDuration,
@@ -170,6 +187,9 @@ class Capsule {
       childId: childId ?? this.childId,
       milestoneId: milestoneId ?? this.milestoneId,
       vaccineGroupId: vaccineGroupId ?? this.vaccineGroupId,
+      albumId: albumId ?? this.albumId,
+      albumSlotId: albumSlotId ?? this.albumSlotId,
+      albumType: albumType ?? this.albumType,
       photoUrl: photoUrl ?? this.photoUrl,
       audioUrl: audioUrl ?? this.audioUrl,
       audioDuration: audioDuration ?? this.audioDuration,

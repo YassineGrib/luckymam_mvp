@@ -113,7 +113,7 @@ class _Law1807ConsentScreenState extends State<Law1807ConsentScreen> {
                   Container(
                     padding: const EdgeInsets.all(10),
                     decoration: BoxDecoration(
-                      color: AppColors.magentaPink.withOpacity(0.12),
+                      color: AppColors.magentaPink.withValues(alpha: 0.12),
                       borderRadius: BorderRadius.circular(12),
                     ),
                     child: Icon(
@@ -151,7 +151,7 @@ class _Law1807ConsentScreenState extends State<Law1807ConsentScreen> {
                     ),
                     boxShadow: [
                       BoxShadow(
-                        color: Colors.black.withOpacity(isDark ? 0.2 : 0.05),
+                        color: Colors.black.withValues(alpha: isDark ? 0.2 : 0.05),
                         blurRadius: 10,
                         offset: const Offset(0, 4),
                       ),

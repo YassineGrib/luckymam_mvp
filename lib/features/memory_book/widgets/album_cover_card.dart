@@ -35,7 +35,7 @@ class AlbumCoverCard extends StatelessWidget {
                 Image.network(
                   album.coverUrl!,
                   fit: BoxFit.cover,
-                  errorBuilder: (_, __, ___) => _buildGradientPlaceholder(),
+                  errorBuilder: (_, _, _) => _buildGradientPlaceholder(),
                 )
               else
                 _buildGradientPlaceholder(),

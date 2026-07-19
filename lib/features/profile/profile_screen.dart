@@ -93,7 +93,7 @@ class ProfileScreen extends ConsumerWidget {
                 textColor: textColor,
                 secondaryColor: secondaryColor,
               ),
-              error: (_, __) => _ProfileHeader(
+              error: (_, _) => _ProfileHeader(
                 name: user?.displayName ?? 'Erreur',
                 email: user?.email ?? '',
                 photoUrl: user?.photoURL,
@@ -129,7 +129,7 @@ class ProfileScreen extends ConsumerWidget {
                   loading: () => const _LoadingSectionCard(
                     title: 'Informations Personnelles',
                   ),
-                  error: (_, __) => const _ErrorSectionCard(
+                  error: (_, _) => const _ErrorSectionCard(
                     title: 'Informations Personnelles',
                   ),
                 ),
@@ -148,7 +148,7 @@ class ProfileScreen extends ConsumerWidget {
                   ),
                   loading: () =>
                       const _LoadingSectionCard(title: 'Statut Actuel'),
-                  error: (_, __) =>
+                  error: (_, _) =>
                       const _ErrorSectionCard(title: 'Statut Actuel'),
                 ),
 
@@ -164,7 +164,7 @@ class ProfileScreen extends ConsumerWidget {
                   ),
                   loading: () =>
                       const _LoadingSectionCard(title: 'Mes Enfants'),
-                  error: (_, __) => _EmptyChildrenSection(
+                  error: (_, _) => _EmptyChildrenSection(
                     primaryColor: primaryColor,
                     onAddChild: () => _showAddChildDialog(context, ref),
                   ),
@@ -186,7 +186,7 @@ class ProfileScreen extends ConsumerWidget {
                   loading: () => const _LoadingSectionCard(
                     title: 'Informations Médicales',
                   ),
-                  error: (_, __) =>
+                  error: (_, _) =>
                       const _ErrorSectionCard(title: 'Informations Médicales'),
                 ),
 
@@ -1315,7 +1315,7 @@ class _SettingsSection extends ConsumerWidget {
             onChanged: (value) {
               ref.read(themeModeProvider.notifier).toggle();
             },
-            activeColor: primaryColor,
+            activeThumbColor: primaryColor,
           ),
         ),
         _SettingsTile(

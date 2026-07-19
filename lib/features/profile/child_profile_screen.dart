@@ -183,7 +183,7 @@ class ChildProfileScreen extends ConsumerWidget {
 
           capsulesAsync.when(
             loading: () => SliverToBoxAdapter(child: _shimmerGrid(isDark)),
-            error: (_, __) =>
+            error: (_, _) =>
                 const SliverToBoxAdapter(child: SizedBox.shrink()),
             data: (capsules) {
               if (capsules.isEmpty) {
@@ -305,7 +305,7 @@ class ChildProfileScreen extends ConsumerWidget {
           vaccinesAsync.when(
             loading: () =>
                 const SliverToBoxAdapter(child: SizedBox(height: 60)),
-            error: (_, __) =>
+            error: (_, _) =>
                 const SliverToBoxAdapter(child: SizedBox.shrink()),
             data: (vaccines) {
               final done = vaccines.where((v) => v.isCompleted).toList();
@@ -432,7 +432,7 @@ class ChildProfileScreen extends ConsumerWidget {
         crossAxisSpacing: 8,
       ),
       itemCount: 6,
-      itemBuilder: (_, __) => Container(
+      itemBuilder: (_, _) => Container(
         decoration: BoxDecoration(
           color: isDark ? Colors.white10 : Colors.black12,
           borderRadius: BorderRadius.circular(12),

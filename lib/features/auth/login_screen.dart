@@ -78,6 +78,8 @@ class _LoginScreenState extends State<LoginScreen> {
     // Save or clear email based on Remember Me
     await _saveOrClearEmail();
 
+    if (!mounted) return;
+
     if (result.isSuccess) {
       String destination = '/law-consent';
       try {

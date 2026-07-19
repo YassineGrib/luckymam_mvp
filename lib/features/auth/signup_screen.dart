@@ -385,12 +385,12 @@ class _ConsentMention extends StatelessWidget {
       decoration: BoxDecoration(
         color: isDark
             ? AppColors.surfaceDark
-            : AppColors.magentaPink.withOpacity(0.05),
+            : AppColors.magentaPink.withValues(alpha: 0.05),
         borderRadius: BorderRadius.circular(10),
         border: Border.all(
           color: isDark
               ? AppColors.dividerDark
-              : AppColors.magentaPink.withOpacity(0.2),
+              : AppColors.magentaPink.withValues(alpha: 0.2),
         ),
       ),
       child: RichText(

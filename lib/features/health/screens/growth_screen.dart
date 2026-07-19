@@ -7,6 +7,7 @@ import '../../../core/services/analytics_service.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_spacing.dart';
 import '../../profile/models/profile_models.dart';
+import '../models/growth_entry.dart';
 import '../providers/health_providers.dart';
 import '../widgets/growth_chart_widget.dart';
 import '../widgets/growth_entry_card.dart';
@@ -235,7 +236,7 @@ class _GrowthScreenState extends ConsumerState<GrowthScreen> {
     ),
   );
 
-  void _confirmDelete(entry) {
+  void _confirmDelete(GrowthEntry entry) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final textColor = isDark ? Colors.white : AppColors.onSurfaceLight;
     showDialog(
@@ -440,7 +441,7 @@ class _GrowthScreenState extends ConsumerState<GrowthScreen> {
                                 ? notesCtrl.text
                                 : null,
                           );
-                      if (mounted) {
+                      if (context.mounted) {
                         ScaffoldMessenger.of(context).showSnackBar(
                           SnackBar(
                             content: Text(

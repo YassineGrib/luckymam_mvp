@@ -45,7 +45,7 @@ class CapsulesGallery extends ConsumerWidget {
             // Header and Child filter using shared component
             childrenAsync.when(
               loading: () => const SizedBox(height: 50),
-              error: (_, __) => const SizedBox.shrink(),
+              error: (_, _) => const SizedBox.shrink(),
               data: (children) {
                 final rem = remaining.valueOrNull ?? freemiumCapsuleLimit;
                 final canMake = canCreate.valueOrNull ?? true;

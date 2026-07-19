@@ -50,7 +50,7 @@ class MotherHealthCard extends ConsumerWidget {
           ),
           child: profileAsync.when(
             loading: () => const Center(child: CircularProgressIndicator()),
-            error: (_, __) => const SizedBox.shrink(),
+            error: (_, _) => const SizedBox.shrink(),
             data: (profile) {
               if (profile == null) return const SizedBox.shrink();
 

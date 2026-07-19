@@ -8,6 +8,7 @@ import '../widgets/children_overview.dart';
 import '../widgets/cycle_tracking_section.dart';
 import '../widgets/daily_tip_card.dart';
 import '../widgets/health_shortcut_card.dart';
+import '../widgets/marketplace_shortcut_card.dart';
 import '../widgets/personal_header.dart';
 import '../widgets/quick_actions_grid.dart';
 import '../widgets/recent_capsules.dart';
@@ -94,6 +95,15 @@ class DashboardTab extends ConsumerWidget {
               ),
             ),
             const SliverToBoxAdapter(child: RecentCapsules()),
+
+            // ─── Boutique Partenaires ────────────────────────────────
+            const SliverToBoxAdapter(
+              child: SectionHeader(
+                title: 'Boutique Partenaires',
+                icon: Icons.storefront_rounded,
+              ),
+            ),
+            const SliverToBoxAdapter(child: MarketplaceShortcutCard()),
 
             // ─── Daily Tip ───────────────────────────────────────────
             const SliverToBoxAdapter(child: DailyTipCard()),

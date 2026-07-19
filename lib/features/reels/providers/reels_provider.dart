@@ -42,6 +42,17 @@ final _initialReels = <ReelItem>[
     author: 'Dr. Youcef',
     likeCount: 421,
     category: ReelCategory.vaccins,
+    // General calendar overview — relevant to every vaccine in the national calendar.
+    vaccineTags: [
+      'BCG',
+      'HBV',
+      'DTCaVPI-Hib-HBV',
+      'VPOb',
+      'VPC',
+      'ROR',
+      'DTCa-VPI',
+      'dT',
+    ],
   ),
   const ReelItem(
     id: 'reel_5',
@@ -98,10 +109,26 @@ final selectedReelCategoryProvider = StateProvider<ReelCategory?>(
   (ref) => null,
 );
 
-/// Filtered reels based on selected category
+/// Vaccine codes to filter by when the reels screen is opened from a
+/// vaccine's fiche (null = no vaccine filter applied).
+final selectedVaccineTagsProvider = StateProvider<List<String>?>(
+  (ref) => null,
+);
+
+/// Filtered reels based on selected category and, optionally, vaccine tags.
 final filteredReelsProvider = Provider<List<ReelItem>>((ref) {
   final all = ref.watch(reelsProvider);
   final category = ref.watch(selectedReelCategoryProvider);
-  if (category == null) return all;
-  return all.where((r) => r.category == category).toList();
+  final vaccineTags = ref.watch(selectedVaccineTagsProvider);
+
+  var result = all;
+  if (category != null) {
+    result = result.where((r) => r.category == category).toList();
+  }
+  if (vaccineTags != null && vaccineTags.isNotEmpty) {
+    result = result
+        .where((r) => r.vaccineTags.any(vaccineTags.contains))
+        .toList();
+  }
+  return result;
 });

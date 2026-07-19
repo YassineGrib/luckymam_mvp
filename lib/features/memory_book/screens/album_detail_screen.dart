@@ -65,7 +65,7 @@ class AlbumDetailScreen extends StatelessWidget {
                     Image.network(
                       album.coverUrl!,
                       fit: BoxFit.cover,
-                      errorBuilder: (_, __, ___) => _buildHeroGradient(),
+                      errorBuilder: (_, _, _) => _buildHeroGradient(),
                     )
                   else
                     _buildHeroGradient(),
@@ -251,7 +251,7 @@ class AlbumDetailScreen extends StatelessWidget {
                 ? Image.network(
                     capsule.photoUrl,
                     fit: BoxFit.cover,
-                    errorBuilder: (_, __, ___) => Container(
+                    errorBuilder: (_, _, _) => Container(
                       color: isDark
                           ? AppColors.surfaceDark
                           : AppColors.surfaceContainerLight,

@@ -13,6 +13,7 @@ import '../../capsules/models/capsule.dart';
 import '../../capsules/providers/capsule_providers.dart';
 import '../../capsules/screens/capsule_detail_screen.dart';
 import '../../capsules/screens/create_capsule_screen.dart';
+import '../../reels/screens/reels_screen.dart';
 import '../../vaccines/models/vaccine_status.dart';
 import '../../vaccines/providers/vaccine_providers.dart';
 import '../../vaccines/screens/vaccine_detail_screen.dart';
@@ -335,6 +336,51 @@ class _VaccineCardState extends ConsumerState<VaccineCard>
           const Divider(height: 1),
           const SizedBox(height: AppSpacing.sm),
           _buildCapsuleSection(isDark, textColor, secondaryText, primary),
+
+          // Reels CTA
+          const SizedBox(height: AppSpacing.sm),
+          SizedBox(
+            width: double.infinity,
+            child: OutlinedButton.icon(
+              onPressed: () {
+                final codes = widget.vaccineGroup.group.vaccines
+                    .map((v) => v.code)
+                    .toList();
+                AnalyticsService().logEvent(
+                  'vax_reels_opened',
+                  parameters: {
+                    'childId': widget.childId,
+                    'vaccineGroupId': widget.vaccineGroup.group.id,
+                  },
+                );
+                Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (_) => ReelsScreen(
+                      initialVaccineCodes: codes,
+                      initialVaccineLabel: widget.vaccineGroup.group.ageFr,
+                    ),
+                  ),
+                );
+              },
+              icon: Icon(
+                Icons.play_circle_fill_rounded,
+                size: 18,
+                color: primary,
+              ),
+              label: Text(
+                'Reels',
+                style: GoogleFonts.outfit(fontWeight: FontWeight.w600),
+              ),
+              style: OutlinedButton.styleFrom(
+                foregroundColor: primary,
+                side: BorderSide(color: primary, width: 1.5),
+                padding: const EdgeInsets.symmetric(vertical: 10),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+              ),
+            ),
+          ),
         ],
       ),
     );
@@ -360,7 +406,7 @@ class _VaccineCardState extends ConsumerState<VaccineCard>
           child: CircularProgressIndicator(strokeWidth: 2, color: primary),
         ),
       ),
-      error: (_, __) => _buildCapsuleCTA(primary),
+      error: (_, _) => _buildCapsuleCTA(primary),
       data: (list) {
         final capsule = list.where((c) => c.id == capsuleId).firstOrNull;
         if (capsule == null) {

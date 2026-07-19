@@ -135,7 +135,7 @@ class RecentCapsules extends ConsumerWidget {
                   ? Image.network(
                       capsule.photoUrl!,
                       fit: BoxFit.cover,
-                      errorBuilder: (_, __, ___) => _buildPlaceholder(isDark),
+                      errorBuilder: (_, _, _) => _buildPlaceholder(isDark),
                     )
                   : _buildPlaceholder(isDark),
               // Child name overlay (Top-Left)

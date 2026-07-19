@@ -232,7 +232,7 @@ class _EditPersonalInfoDialogState extends State<EditPersonalInfoDialog> {
 
               // Wilaya dropdown
               DropdownButtonFormField<String>(
-                value: _selectedWilaya,
+                initialValue: _selectedWilaya,
                 decoration: InputDecoration(
                   labelText: 'Wilaya',
                   prefixIcon: const Icon(Icons.location_on_outlined),
@@ -417,7 +417,7 @@ class _EditMedicalInfoDialogState extends State<EditMedicalInfoDialog> {
 
               // Blood type
               DropdownButtonFormField<String>(
-                value: _bloodType,
+                initialValue: _bloodType,
                 decoration: InputDecoration(
                   labelText: 'Groupe sanguin',
                   prefixIcon: const Icon(Icons.water_drop_outlined),
@@ -1008,7 +1008,7 @@ class _EditCycleSettingsDialogState extends State<EditCycleSettingsDialog> {
               title: const Text('Activer le suivi'),
               value: _isTracking,
               onChanged: (value) => setState(() => _isTracking = value),
-              activeColor: primaryColor,
+              activeThumbColor: primaryColor,
             ),
             const Divider(),
 

@@ -248,7 +248,7 @@ class _AppointmentsScreenState extends ConsumerState<AppointmentsScreen> {
 
                 // Type dropdown
                 DropdownButtonFormField<AppointmentType>(
-                  value: selectedType,
+                  initialValue: selectedType,
                   style: GoogleFonts.outfit(color: textColor),
                   dropdownColor: isDark
                       ? AppColors.surfaceDark
@@ -427,7 +427,7 @@ class _AppointmentsScreenState extends ConsumerState<AppointmentsScreen> {
                     child: ListView.separated(
                       scrollDirection: Axis.horizontal,
                       itemCount: attachedFiles.length,
-                      separatorBuilder: (_, __) => const SizedBox(width: 8),
+                      separatorBuilder: (_, _) => const SizedBox(width: 8),
                       itemBuilder: (_, i) => Stack(
                         children: [
                           ClipRRect(
@@ -437,7 +437,7 @@ class _AppointmentsScreenState extends ConsumerState<AppointmentsScreen> {
                               width: 64,
                               height: 64,
                               fit: BoxFit.cover,
-                              errorBuilder: (_, __, ___) => Container(
+                              errorBuilder: (_, _, _) => Container(
                                 width: 64,
                                 height: 64,
                                 color: AppColors.error.withValues(alpha: 0.1),
@@ -522,22 +522,21 @@ class _AppointmentsScreenState extends ConsumerState<AppointmentsScreen> {
                               files: attachedFiles,
                             );
 
+                        if (!context.mounted) return;
                         ScaffoldMessenger.of(context).clearSnackBars();
-                        if (mounted) {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(
-                              content: Text(
-                                ok
-                                    ? 'Rendez-vous enregistré ✓'
-                                    : 'Erreur lors de l\'enregistrement',
-                                style: GoogleFonts.outfit(),
-                              ),
-                              backgroundColor: ok
-                                  ? AppColors.success
-                                  : AppColors.error,
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: Text(
+                              ok
+                                  ? 'Rendez-vous enregistré ✓'
+                                  : 'Erreur lors de l\'enregistrement',
+                              style: GoogleFonts.outfit(),
                             ),
-                          );
-                        }
+                            backgroundColor: ok
+                                ? AppColors.success
+                                : AppColors.error,
+                          ),
+                        );
                       },
                       child: Text(
                         'Enregistrer',

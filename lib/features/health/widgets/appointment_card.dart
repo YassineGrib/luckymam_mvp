@@ -189,7 +189,7 @@ class AppointmentCard extends StatelessWidget {
                   child: ListView.separated(
                     scrollDirection: Axis.horizontal,
                     itemCount: appointment.fileUrls.length,
-                    separatorBuilder: (_, __) => const SizedBox(width: 8),
+                    separatorBuilder: (_, _) => const SizedBox(width: 8),
                     itemBuilder: (context, i) {
                       final url = appointment.fileUrls[i];
                       final isPdf = url.toLowerCase().contains('.pdf');
@@ -211,14 +211,14 @@ class AppointmentCard extends StatelessWidget {
                                 width: 64,
                                 height: 64,
                                 fit: BoxFit.cover,
-                                placeholder: (_, __) => Container(
+                                placeholder: (_, _) => Container(
                                   width: 64,
                                   height: 64,
                                   color: isDark
                                       ? AppColors.surfaceContainerDark
                                       : AppColors.surfaceContainerLight,
                                 ),
-                                errorWidget: (_, __, ___) => const Icon(
+                                errorWidget: (_, _, _) => const Icon(
                                   Icons.broken_image_outlined,
                                   size: 28,
                                 ),

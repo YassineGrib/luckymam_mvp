@@ -72,6 +72,9 @@ class CapsuleService {
     required Emotion emotion,
     String? milestoneId,
     String? vaccineGroupId,
+    String? albumId,
+    String? albumSlotId,
+    String? albumType,
     List<String> tags = const [],
     DateTime? capturedAt,
     CapsuleCategory? category,
@@ -105,6 +108,9 @@ class CapsuleService {
       childId: childId,
       milestoneId: milestoneId,
       vaccineGroupId: vaccineGroupId,
+      albumId: albumId,
+      albumSlotId: albumSlotId,
+      albumType: albumType,
       photoUrl: photoUrl,
       audioUrl: audioUrl,
       audioDuration: audioDuration,
@@ -163,6 +169,55 @@ class CapsuleService {
           'capsuleId': capsuleId,
         },
       );
+    }
+
+    // If tied to a predefined-album event slot, attach it
+    if (albumId != null && albumSlotId != null && albumType == 'predefined') {
+      try {
+        await _firestore
+            .collection('users')
+            .doc(_userId)
+            .collection('predefinedAlbums')
+            .doc(albumId)
+            .update({'slotCapsules.$albumSlotId': capsuleId});
+
+        await _analytics.logEvent(
+          'album_event_slot_filled',
+          parameters: {
+            'albumId': albumId,
+            'slotId': albumSlotId,
+            'method': 'new',
+          },
+        );
+      } catch (e) {
+        debugPrint('Error attaching capsule to album slot: $e');
+      }
+    }
+
+    // If tied to a standard-album page, attach it
+    if (albumId != null && albumSlotId != null && albumType == 'standard') {
+      try {
+        await _firestore
+            .collection('users')
+            .doc(_userId)
+            .collection('standardAlbums')
+            .doc(albumId)
+            .update({
+              'pageCapsules.$albumSlotId': capsuleId,
+              'updatedAt': Timestamp.fromDate(now),
+            });
+
+        await _analytics.logEvent(
+          'album_slot_added',
+          parameters: {
+            'albumId': albumId,
+            'pageIndex': albumSlotId,
+            'method': 'new',
+          },
+        );
+      } catch (e) {
+        debugPrint('Error attaching capsule to album page: $e');
+      }
     }
 
     return capsule;
