@@ -1,4 +1,9 @@
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Fira+Code:wght@400;500&display=swap');
 @import "tailwindcss";
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+
 
 @theme {
   /* Brand colors matching lib/core/theme/app_colors.dart */
@@ -12,10 +17,47 @@
   --color-error: #E53935;
   --color-info: #4F8289;
 
-  --font-sans: "Inter", system-ui, sans-serif;
+  /* Dynamic theme colors configured by SettingsProvider */
+  --color-theme-bg: var(--color-theme-bg);
+  --color-theme-card: var(--color-theme-card);
+  --color-theme-border: var(--color-theme-border);
+  --color-theme-text: var(--color-theme-text);
+  --color-theme-muted: var(--color-theme-muted);
+
+  /* Dynamic accent colors configured by SettingsProvider */
+  --color-brand-accent: var(--color-brand-accent);
+  --color-brand-accent-hover: var(--color-brand-accent-hover);
+  --color-brand-accent-light: var(--color-brand-accent-light);
+
+  --font-sans: "Plus Jakarta Sans", "Inter", system-ui, sans-serif;
+  --font-mono: "Fira Code", monospace;
 }
 
 body {
   font-family: var(--font-sans);
-  background-color: #F5F5F5;
+  background-color: var(--color-theme-bg);
+  color: var(--color-theme-text);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  transition: background-color 0.2s ease, color 0.2s ease;
 }
+
+/* Custom Scrollbar Styles for elegant UI */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #E2E8F0;
+  border-radius: 9999px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #CBD5E1;
+}
+

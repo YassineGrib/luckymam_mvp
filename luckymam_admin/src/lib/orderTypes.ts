@@ -10,6 +10,8 @@ export interface BaseOrder {
   address: string
   status: string
   createdAt: string // ISO 8601
+  statusUpdatedAt?: { seconds: number; nanoseconds: number } | null
+  statusUpdatedBy?: string | null
 }
 
 /** users/{uid}/... no — top-level `print_orders`. Source: lib/features/print_album/models/print_order.dart */
