@@ -60,14 +60,14 @@ La commande in-app est le périmètre de LM2-139 (21 SP, ticket suivant). En att
 
 ## Fichiers créés / modifiés
 
-| Fichier | Changement |
-|---------|-----------|
-| `lib/features/marketplace/models/marketplace_product.dart` | Nouveau — `ProductCategory`, `MarketplacePartner`, `MarketplaceProduct` + validation https |
-| `lib/features/marketplace/data/marketplace_data.dart` | Nouveau — 4 partenaires + 12 produits statiques V1 |
-| `lib/features/marketplace/providers/marketplace_providers.dart` | Nouveau — catalogue, filtre catégorie, lookup partenaire |
-| `lib/features/marketplace/screens/marketplace_screen.dart` | Nouveau — listing grille + chips + analytics |
-| `lib/features/marketplace/screens/product_detail_screen.dart` | Nouveau — fiche produit + carte partenaire + CTA « Commander » |
-| `lib/features/home/widgets/marketplace_shortcut_card.dart` | Nouveau — carte raccourci dashboard |
+| Fichier | Changement / Rôle |
+|---------|------------------|
+| `lib/features/marketplace/models/marketplace_product.dart` | `ProductCategory`, `MarketplacePartner`, `MarketplaceProduct` · ajout du support de localisation getLabel(locale) pour toutes les catégories |
+| `lib/features/marketplace/screens/marketplace_screen.dart` | Listing grille + chips + analytics · traduction dynamique du bandeau de bienvenue, des boutons de commandes et panier, des filtres de catégories et des états vides |
+| `lib/features/marketplace/screens/product_detail_screen.dart` | Fiche produit + carte partenaire + CTA « Commander » · traduction complète des sections (Points clés, Partenaire), de la feuille de sélection des quantités, des alertes de panier et des boutons |
+| `lib/features/marketplace/data/marketplace_data.dart` | 4 partenaires + 12 produits statiques V1 |
+| `lib/features/marketplace/providers/marketplace_providers.dart` | Catalogue, filtre catégorie, lookup partenaire |
+| `lib/features/home/widgets/marketplace_shortcut_card.dart` | Carte raccourci dashboard |
 | `lib/features/home/tabs/dashboard_tab.dart` | Section "Boutique Partenaires" |
 | `lib/core/router/app_router.dart` | Route nommée `/marketplace` |
 
@@ -79,6 +79,9 @@ La commande in-app est le périmètre de LM2-139 (21 SP, ticket suivant). En att
 |---------|--------|
 | Page Marketplace avec listing produits | ✅ |
 | Chaque produit : image/visuel, titre, prix, partenaire | ✅ |
+| Traduction dynamique complète des en-têtes et boutons (AR / FR / EN) | ✅ |
+| Traduction dynamique de toutes les catégories et chips de filtrage | ✅ |
+| Traduction dynamique de la feuille de quantité et des alertes de panier | ✅ |
 | Filtrage par catégorie | ✅ |
 | Fiche produit détaillée | ✅ |
 | CTA « Commander » présent (pont vers LM2-139) | ✅ |
@@ -89,7 +92,7 @@ La commande in-app est le périmètre de LM2-139 (21 SP, ticket suivant). En att
 | Analytics `marketplace_opened` | ✅ |
 | Analytics `product_viewed` | ✅ |
 | Mode sombre/clair supporté | ✅ |
-| `flutter analyze` clean (0 nouveaux problèmes) | ✅ |
+| `flutter analyze` clean | ✅ |
 
 ---
 

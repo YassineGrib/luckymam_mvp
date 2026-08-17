@@ -43,9 +43,10 @@ Un bouton équivalent a été ajouté dans la section dépliée de `VaccineCard`
 |---------|-----------|
 | `lib/features/reels/models/reel_item.dart` | Champ `vaccineTags` |
 | `lib/features/reels/providers/reels_provider.dart` | Tag du reel calendrier vaccinal ; `selectedVaccineTagsProvider` ; filtre combiné |
-| `lib/features/reels/screens/reels_screen.dart` | Paramètres `initialVaccineCodes`/`initialVaccineLabel`, badge de filtre dismissible, analytics `reel_view_from_vax`, reset du filtre à la fermeture |
-| `lib/features/vaccines/screens/vaccine_detail_screen.dart` | Section "Reels éducatifs" + analytics `vax_reels_opened` |
-| `lib/features/vaccines/widgets/vaccine_card.dart` | Bouton "Reels" (groupe entier) + analytics `vax_reels_opened` |
+| `lib/features/reels/screens/reels_screen.dart` | Paramètres `initialVaccineCodes`/`initialVaccineLabel`, badge de filtre dismissible, analytics `reel_view_from_vax`, reset du filtre à la fermeture · traduction dynamique du titre de flux et de la شارة الفلترة |
+| `lib/features/vaccines/screens/vaccine_detail_screen.dart` | Section "Reels éducatifs" + analytics `vax_reels_opened` · traduction dynamique du titre de section et du bouton Reels |
+| `lib/features/vaccines/widgets/vaccine_card.dart` | Bouton "Reels" (groupe entier) + analytics `vax_reels_opened` · traduction du libellé d'âge cible transmis et bouton Reels |
+| `lib/features/vaccines/models/vaccine.dart` | Extension de la méthode `getAgeLabel` pour le support complet de la langue anglaise ('Birth', 'months', 'years') |
 
 ---
 
@@ -55,6 +56,9 @@ Un bouton équivalent a été ajouté dans la section dépliée de `VaccineCard`
 |---------|--------|
 | Bouton "Reels" sur la fiche vaccin (détail) | ✅ |
 | Bouton "Reels" sur la carte vaccin (liste) | ✅ |
+| Traduction dynamique de l'interface Reels et boutons (AR / FR / EN) | ✅ |
+| Traduction dynamique de la شارة الفلترة (Filtered / Filtré / تصفية) | ✅ |
+| Traduction dynamique de l'âge cible du vaccin (2 months / 2 mois / ٢ أشهر) | ✅ |
 | Flux filtré sur le vaccin consulté | ✅ |
 | Filtre visible et dismissible dans le flux | ✅ |
 | Filtre réinitialisé proprement à la sortie | ✅ |

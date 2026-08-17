@@ -68,7 +68,9 @@ class _PrintOrderScreenState extends ConsumerState<PrintOrderScreen> {
     final isVip = ref.watch(isVipProvider);
     final actionsState = ref.watch(printOrderActionsProvider);
 
-    if (_submitted) return _buildSubmittedView(context, textColor);
+    final lang = Localizations.localeOf(context).languageCode;
+
+    if (_submitted) return _buildSubmittedView(context, textColor, lang);
 
     return Scaffold(
       backgroundColor: bgColor,
@@ -80,7 +82,11 @@ class _PrintOrderScreenState extends ConsumerState<PrintOrderScreen> {
           onPressed: () => Navigator.pop(context),
         ),
         title: Text(
-          'Finaliser la commande',
+          lang == 'ar'
+              ? 'إتمام الطلب'
+              : lang == 'en'
+                  ? 'Finalize Order'
+                  : 'Finaliser la commande',
           style: GoogleFonts.outfit(
             fontSize: 17,
             fontWeight: FontWeight.w600,
@@ -137,7 +143,11 @@ class _PrintOrderScreenState extends ConsumerState<PrintOrderScreen> {
                                     overflow: TextOverflow.ellipsis,
                                   ),
                                   Text(
-                                    '${widget.pageCount} pages · ${widget.childName}',
+                                    lang == 'ar'
+                                        ? '${widget.pageCount} صفحات · ${widget.childName}'
+                                        : lang == 'en'
+                                            ? '${widget.pageCount} pages · ${widget.childName}'
+                                            : '${widget.pageCount} pages · ${widget.childName}',
                                     style: GoogleFonts.outfit(
                                       fontSize: 12,
                                       color: Colors.white.withValues(
@@ -175,8 +185,16 @@ class _PrintOrderScreenState extends ConsumerState<PrintOrderScreen> {
                             Expanded(
                               child: Text(
                                 isVip
-                                    ? 'Offert avec votre abonnement VIP 🎁'
-                                    : 'Nos équipes vous contacteront pour confirmer le tarif d\'impression.',
+                                    ? (lang == 'ar'
+                                        ? 'مجانًا مع اشتراك VIP الخاص بك 🎁'
+                                        : lang == 'en'
+                                            ? 'Free with your VIP subscription 🎁'
+                                            : 'Offert avec votre abonnement VIP 🎁')
+                                    : (lang == 'ar'
+                                        ? 'سيتواصل معك فريقنا لتأكيد تكلفة الطباعة والتسليم.'
+                                        : lang == 'en'
+                                            ? 'Our team will contact you to confirm printing and shipping fees.'
+                                            : 'Nos équipes vous contacteront pour confirmer le tarif d\'impression.'),
                                 style: GoogleFonts.outfit(
                                   fontSize: 13,
                                   color: textColor,
@@ -189,7 +207,11 @@ class _PrintOrderScreenState extends ConsumerState<PrintOrderScreen> {
 
                       const SizedBox(height: 24),
                       Text(
-                        'Informations de livraison',
+                        lang == 'ar'
+                            ? 'معلومات التسليم'
+                            : lang == 'en'
+                                ? 'Shipping Information'
+                                : 'Informations de livraison',
                         style: GoogleFonts.outfit(
                           fontSize: 16,
                           fontWeight: FontWeight.bold,
@@ -199,20 +221,37 @@ class _PrintOrderScreenState extends ConsumerState<PrintOrderScreen> {
                       const SizedBox(height: 12),
 
                       _buildFormField(
-                        label: 'Nom complet',
-                        hint: 'Votre nom et prénom',
+                        label: lang == 'ar'
+                            ? 'الاسم الكامل'
+                            : lang == 'en'
+                                ? 'Full Name'
+                                : 'Nom complet',
+                        hint: lang == 'ar'
+                            ? 'الاسم واللقب'
+                            : lang == 'en'
+                                ? 'Your full name'
+                                : 'Votre nom et prénom',
                         controller: _nameCtrl,
                         icon: Icons.person_outline_rounded,
                         inputBg: inputBg,
                         textColor: textColor,
                         subTextColor: subTextColor,
-                        validator: (v) =>
-                            v == null || v.isEmpty ? 'Champ requis' : null,
+                        validator: (v) => v == null || v.isEmpty
+                            ? (lang == 'ar'
+                                ? 'حقل مطلوب'
+                                : lang == 'en'
+                                    ? 'Field required'
+                                    : 'Champ requis')
+                            : null,
                       ),
                       const SizedBox(height: 12),
 
                       _buildFormField(
-                        label: 'Téléphone',
+                        label: lang == 'ar'
+                            ? 'رقم الهاتف'
+                            : lang == 'en'
+                                ? 'Phone Number'
+                                : 'Téléphone',
                         hint: '0550 00 00 00',
                         controller: _phoneCtrl,
                         icon: Icons.phone_outlined,
@@ -220,35 +259,66 @@ class _PrintOrderScreenState extends ConsumerState<PrintOrderScreen> {
                         textColor: textColor,
                         subTextColor: subTextColor,
                         keyboardType: TextInputType.phone,
-                        validator: (v) =>
-                            v == null || v.isEmpty ? 'Champ requis' : null,
+                        validator: (v) => v == null || v.isEmpty
+                            ? (lang == 'ar'
+                                ? 'حقل مطلوب'
+                                : lang == 'en'
+                                    ? 'Field required'
+                                    : 'Champ requis')
+                            : null,
                       ),
                       const SizedBox(height: 12),
 
                       _buildFormField(
-                        label: 'Wilaya',
-                        hint: 'Votre wilaya',
+                        label: lang == 'ar'
+                            ? 'الولاية'
+                            : lang == 'en'
+                                ? 'Wilaya'
+                                : 'Wilaya',
+                        hint: lang == 'ar'
+                            ? 'الولاية الخاصة بك'
+                            : lang == 'en'
+                                ? 'Your province'
+                                : 'Votre wilaya',
                         controller: _wilayaCtrl,
                         icon: Icons.location_city_rounded,
                         inputBg: inputBg,
                         textColor: textColor,
                         subTextColor: subTextColor,
-                        validator: (v) =>
-                            v == null || v.isEmpty ? 'Champ requis' : null,
+                        validator: (v) => v == null || v.isEmpty
+                            ? (lang == 'ar'
+                                ? 'حقل مطلوب'
+                                : lang == 'en'
+                                    ? 'Field required'
+                                    : 'Champ requis')
+                            : null,
                       ),
                       const SizedBox(height: 12),
 
                       _buildFormField(
-                        label: 'Adresse complète',
-                        hint: 'Rue, numéro, quartier...',
+                        label: lang == 'ar'
+                            ? 'العنوان الكامل'
+                            : lang == 'en'
+                                ? 'Full Address'
+                                : 'Adresse complète',
+                        hint: lang == 'ar'
+                            ? 'الشارع، رقم الباب، الحي...'
+                            : lang == 'en'
+                                ? 'Street, number, neighborhood...'
+                                : 'Rue, numéro, quartier...',
                         controller: _addressCtrl,
                         icon: Icons.home_outlined,
                         inputBg: inputBg,
                         textColor: textColor,
                         subTextColor: subTextColor,
                         maxLines: 2,
-                        validator: (v) =>
-                            v == null || v.isEmpty ? 'Champ requis' : null,
+                        validator: (v) => v == null || v.isEmpty
+                            ? (lang == 'ar'
+                                ? 'حقل مطلوب'
+                                : lang == 'en'
+                                    ? 'Field required'
+                                    : 'Champ requis')
+                            : null,
                       ),
 
                       const SizedBox(height: 28),
@@ -269,7 +339,11 @@ class _PrintOrderScreenState extends ConsumerState<PrintOrderScreen> {
                               color: Colors.white,
                             ),
                             label: Text(
-                              'Confirmer la commande',
+                              lang == 'ar'
+                                  ? 'تأكيد الطلب'
+                                  : lang == 'en'
+                                      ? 'Confirm Order'
+                                      : 'Confirmer la commande',
                               style: GoogleFonts.outfit(
                                 fontSize: 16,
                                 fontWeight: FontWeight.bold,
@@ -352,6 +426,7 @@ class _PrintOrderScreenState extends ConsumerState<PrintOrderScreen> {
     final uid = FirebaseAuth.instance.currentUser?.uid;
     if (uid == null) return;
 
+    final lang = Localizations.localeOf(context).languageCode;
     final isVip = ref.read(isVipProvider);
 
     final order = PrintOrder(
@@ -383,7 +458,14 @@ class _PrintOrderScreenState extends ConsumerState<PrintOrderScreen> {
       final error = ref.read(printOrderActionsProvider).error;
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text(error ?? 'Erreur lors de la commande'),
+          content: Text(
+            error ??
+                (lang == 'ar'
+                    ? 'حدث خطأ أثناء إرسال الطلب'
+                    : lang == 'en'
+                        ? 'An error occurred while placing the order'
+                        : 'Erreur lors de la commande'),
+          ),
           backgroundColor: AppColors.error,
         ),
       );
@@ -391,7 +473,7 @@ class _PrintOrderScreenState extends ConsumerState<PrintOrderScreen> {
     }
   }
 
-  Widget _buildSubmittedView(BuildContext context, Color textColor) {
+  Widget _buildSubmittedView(BuildContext context, Color textColor, String lang) {
     return Scaffold(
       backgroundColor: Theme.of(context).brightness == Brightness.dark
           ? AppColors.backgroundDark
@@ -418,7 +500,11 @@ class _PrintOrderScreenState extends ConsumerState<PrintOrderScreen> {
                 ),
                 const SizedBox(height: 28),
                 Text(
-                  'Commande envoyée !',
+                  lang == 'ar'
+                      ? 'تم إرسال الطلب!'
+                      : lang == 'en'
+                          ? 'Order sent!'
+                          : 'Commande envoyée !',
                   style: GoogleFonts.outfit(
                     fontSize: 26,
                     fontWeight: FontWeight.bold,
@@ -427,7 +513,11 @@ class _PrintOrderScreenState extends ConsumerState<PrintOrderScreen> {
                 ),
                 const SizedBox(height: 12),
                 Text(
-                  '« ${widget.albumTitle} » sera imprimé et expédié à l\'adresse indiquée. Nous vous contacterons par téléphone pour confirmer.',
+                  lang == 'ar'
+                      ? 'سيتم طباعة ألبوم « ${widget.albumTitle} » وشحنه إلى العنوان المحدد. سنتصل بك هاتفياً للتأكيد.'
+                      : lang == 'en'
+                          ? '“${widget.albumTitle}” will be printed and shipped to the address provided. We will contact you by phone to confirm.'
+                          : '« ${widget.albumTitle} » sera imprimé et expédié à l\'adresse indiquée. Nous vous contacterons par téléphone pour confirmer.',
                   style: GoogleFonts.outfit(
                     fontSize: 15,
                     color: textColor.withValues(alpha: 0.7),
@@ -450,7 +540,11 @@ class _PrintOrderScreenState extends ConsumerState<PrintOrderScreen> {
                       ),
                       const SizedBox(width: 10),
                       Text(
-                        'Délai estimé : 7-14 jours',
+                        lang == 'ar'
+                            ? 'الوقت المتوقع: 7-14 يوم'
+                            : lang == 'en'
+                                ? 'Estimated delay: 7-14 days'
+                                : 'Délai estimé : 7-14 jours',
                         style: GoogleFonts.outfit(
                           fontSize: 14,
                           fontWeight: FontWeight.w600,
@@ -486,7 +580,11 @@ class _PrintOrderScreenState extends ConsumerState<PrintOrderScreen> {
                         ),
                       ),
                       child: Text(
-                        'Retour à l\'album',
+                        lang == 'ar'
+                            ? 'العودة إلى الألبوم'
+                            : lang == 'en'
+                                ? 'Back to album'
+                                : 'Retour à l\'album',
                         style: GoogleFonts.outfit(
                           fontSize: 16,
                           fontWeight: FontWeight.bold,

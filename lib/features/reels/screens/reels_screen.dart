@@ -46,24 +46,26 @@ class _ReelsScreenState extends ConsumerState<ReelsScreen> {
     final vaccineCodes = widget.initialVaccineCodes;
     if (vaccineCodes != null && vaccineCodes.isNotEmpty) {
       _appliedVaccineFilter = true;
-      ref.read(selectedReelCategoryProvider.notifier).state =
-          ReelCategory.vaccins;
-      ref.read(selectedVaccineTagsProvider.notifier).state = vaccineCodes;
       WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (!mounted) return;
+        ref.read(selectedReelCategoryProvider.notifier).state =
+            ReelCategory.vaccins;
+        ref.read(selectedVaccineTagsProvider.notifier).state = vaccineCodes;
         final reels = ref.read(filteredReelsProvider);
         if (reels.isNotEmpty) _logReelViewFromVax(reels.first);
       });
     }
   }
 
+  void _restoreReelsFilters() {
+    if (!_appliedVaccineFilter) return;
+    _appliedVaccineFilter = false;
+    ref.read(selectedVaccineTagsProvider.notifier).state = null;
+    ref.read(selectedReelCategoryProvider.notifier).state = null;
+  }
+
   @override
   void dispose() {
-    // Don't let a vaccine-scoped filter leak into the next time the reels
-    // feed is opened from elsewhere (e.g. the home shortcut).
-    if (_appliedVaccineFilter) {
-      ref.read(selectedVaccineTagsProvider.notifier).state = null;
-      ref.read(selectedReelCategoryProvider.notifier).state = null;
-    }
     _pageController.dispose();
     super.dispose();
   }
@@ -121,13 +123,17 @@ class _ReelsScreenState extends ConsumerState<ReelsScreen> {
       }
     }
 
-    return AnnotatedRegion<SystemUiOverlayStyle>(
-      value: SystemUiOverlayStyle.light,
-      child: Scaffold(
-        backgroundColor: Colors.black,
-        extendBodyBehindAppBar: true,
-        body: Stack(
-          children: [
+    return PopScope(
+      onPopInvokedWithResult: (didPop, result) {
+        if (didPop) _restoreReelsFilters();
+      },
+      child: AnnotatedRegion<SystemUiOverlayStyle>(
+        value: SystemUiOverlayStyle.light,
+        child: Scaffold(
+          backgroundColor: Colors.black,
+          extendBodyBehindAppBar: true,
+          body: Stack(
+            children: [
             // ── Vertical page view ────────────────────────────────────
             displayItems.isEmpty
                 ? _buildEmptyState()
@@ -196,7 +202,11 @@ class _ReelsScreenState extends ConsumerState<ReelsScreen> {
                         ),
                         const SizedBox(width: 12),
                         Text(
-                          'Reels Éducatifs',
+                          Localizations.localeOf(context).languageCode == 'ar'
+                              ? 'مقاطع توعوية'
+                              : Localizations.localeOf(context).languageCode == 'en'
+                                  ? 'Educational Reels'
+                                  : 'Reels Éducatifs',
                           style: GoogleFonts.outfit(
                             fontSize: 18,
                             fontWeight: FontWeight.w600,
@@ -265,7 +275,11 @@ class _ReelsScreenState extends ConsumerState<ReelsScreen> {
                                 ),
                                 const SizedBox(width: 6),
                                 Text(
-                                  'Filtré : ${widget.initialVaccineLabel}',
+                                  Localizations.localeOf(context).languageCode == 'ar'
+                                      ? 'تصفية: ${widget.initialVaccineLabel}'
+                                      : Localizations.localeOf(context).languageCode == 'en'
+                                          ? 'Filtered: ${widget.initialVaccineLabel}'
+                                          : 'Filtré : ${widget.initialVaccineLabel}',
                                   style: GoogleFonts.outfit(
                                     fontSize: 12,
                                     fontWeight: FontWeight.w600,
@@ -290,6 +304,7 @@ class _ReelsScreenState extends ConsumerState<ReelsScreen> {
           ],
         ),
       ),
+    ),
     );
   }
 

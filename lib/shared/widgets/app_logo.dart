@@ -81,7 +81,12 @@ class AppLogo extends StatelessWidget {
     if (variant == LogoVariant.horizontal) {
       return LuckymamLogo(size: _iconSize, showText: true);
     }
-    return LuckymamLogo(size: _iconSize);
+    return Image.asset(
+      'assets/logo/vertical_logo.png',
+      width: _iconSize * 1.5,
+      height: _iconSize * 1.5,
+      fit: BoxFit.contain,
+    );
   }
 }
 

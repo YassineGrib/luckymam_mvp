@@ -58,6 +58,7 @@ L'événement `status_selected` est enregistré à chaque changement de statut, 
 | Bloc grossesse masqué si HOPE | ✅ Vérifié |
 | Libellé « En espoir » affiché dans le header | ✅ Vérifié |
 | Icône distincte pour HOPE | ✅ Violet — différenciée de Enceinte (rose) et Maman (vert) |
+| Bannière contextuelle multilingue | ✅ Traduction dynamique (AR / FR / EN) |
 | `status_selected` analytics | ✅ Vérifié |
 
 ---

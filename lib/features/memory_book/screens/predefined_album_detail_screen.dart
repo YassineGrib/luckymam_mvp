@@ -37,19 +37,44 @@ class PredefinedAlbumDetailScreen extends ConsumerWidget {
         : AppColors.backgroundLight;
 
     final albumAsync = ref.watch(predefinedAlbumProvider(albumId));
+    final lang = Localizations.localeOf(context).languageCode;
 
     return Scaffold(
       backgroundColor: bgColor,
       body: albumAsync.when(
         loading: () => const Center(child: CircularProgressIndicator()),
-        error: (e, _) => Center(child: Text('Erreur : $e')),
+        error: (e, _) => Center(
+          child: Text(
+            lang == 'ar'
+                ? 'خطأ: $e'
+                : lang == 'en'
+                    ? 'Error: $e'
+                    : 'Erreur : $e',
+          ),
+        ),
         data: (album) {
           if (album == null) {
-            return const Center(child: Text('Album introuvable'));
+            return Center(
+              child: Text(
+                lang == 'ar'
+                    ? 'الألبوم غير موجود'
+                    : lang == 'en'
+                        ? 'Album not found'
+                        : 'Album introuvable',
+              ),
+            );
           }
           final template = findAlbumTemplate(album.templateId);
           if (template == null) {
-            return const Center(child: Text('Modèle introuvable'));
+            return Center(
+              child: Text(
+                lang == 'ar'
+                    ? 'النموذج غير موجود'
+                    : lang == 'en'
+                        ? 'Template not found'
+                        : 'Modèle introuvable',
+              ),
+            );
           }
           return _AlbumBody(album: album, template: template);
         },
@@ -66,6 +91,7 @@ class _AlbumBody extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final lang = Localizations.localeOf(context).languageCode;
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final textColor = isDark ? Colors.white : AppColors.onSurfaceLight;
     final secondaryText = isDark
@@ -91,7 +117,7 @@ class _AlbumBody extends ConsumerWidget {
         final capsule = capsuleList.where((c) => c.id == capsuleId).firstOrNull;
         if (capsule == null) continue;
         printPages.add(
-          AlbumPdfPage(imageUrl: capsule.photoUrl, caption: slot.titleFr),
+          AlbumPdfPage(imageUrl: capsule.photoUrl, caption: slot.getTitle(lang)),
         );
       }
     }
@@ -125,7 +151,7 @@ class _AlbumBody extends ConsumerWidget {
                       Icon(template.icon, color: Colors.white, size: 36),
                       const SizedBox(height: 8),
                       Text(
-                        template.titleFr,
+                        template.getTitle(lang),
                         style: GoogleFonts.outfit(
                           fontSize: 22,
                           fontWeight: FontWeight.bold,
@@ -133,7 +159,11 @@ class _AlbumBody extends ConsumerWidget {
                         ),
                       ),
                       Text(
-                        '${album.filledCount}/${template.slotCount} évènements remplis',
+                        lang == 'ar'
+                            ? 'تم ملء ${album.filledCount}/${template.slotCount} مناسبة'
+                            : lang == 'en'
+                                ? '${album.filledCount}/${template.slotCount} events completed'
+                                : '${album.filledCount}/${template.slotCount} évènements remplis',
                         style: GoogleFonts.outfit(
                           fontSize: 13,
                           color: Colors.white.withValues(alpha: 0.85),
@@ -176,6 +206,7 @@ class _AlbumBody extends ConsumerWidget {
                         textColor: textColor,
                         secondaryText: secondaryText,
                         isDark: isDark,
+                        lang: lang,
                       )
                     : _EmptySlotCard(
                         slot: slot,
@@ -185,6 +216,7 @@ class _AlbumBody extends ConsumerWidget {
                         textColor: textColor,
                         secondaryText: secondaryText,
                         isDark: isDark,
+                        lang: lang,
                       ),
               );
             }, childCount: sortedSlots.length),
@@ -203,7 +235,7 @@ class _AlbumBody extends ConsumerWidget {
               childName: childName ?? '',
               albumId: album.id,
               albumType: 'predefined',
-              albumTitle: template.titleFr,
+              albumTitle: template.getTitle(lang),
               pages: printPages,
               accentColor: template.gradientColors.first,
               isDark: isDark,
@@ -223,6 +255,7 @@ class _FilledSlotCard extends StatelessWidget {
     required this.textColor,
     required this.secondaryText,
     required this.isDark,
+    required this.lang,
   });
 
   final AlbumEventSlot slot;
@@ -231,6 +264,7 @@ class _FilledSlotCard extends StatelessWidget {
   final Color textColor;
   final Color secondaryText;
   final bool isDark;
+  final String lang;
 
   @override
   Widget build(BuildContext context) {
@@ -277,7 +311,7 @@ class _FilledSlotCard extends StatelessWidget {
                       const SizedBox(width: 4),
                       Expanded(
                         child: Text(
-                          slot.titleFr,
+                          slot.getTitle(lang),
                           style: GoogleFonts.outfit(
                             fontSize: 14,
                             fontWeight: FontWeight.w600,
@@ -291,7 +325,11 @@ class _FilledSlotCard extends StatelessWidget {
                   ),
                   const SizedBox(height: 2),
                   Text(
-                    'Souvenir attaché',
+                    lang == 'ar'
+                        ? 'ذكرى مرفقة'
+                        : lang == 'en'
+                            ? 'Memory attached'
+                            : 'Souvenir attaché',
                     style: GoogleFonts.outfit(
                       fontSize: 12,
                       color: AppColors.success,
@@ -317,6 +355,7 @@ class _EmptySlotCard extends ConsumerWidget {
     required this.textColor,
     required this.secondaryText,
     required this.isDark,
+    required this.lang,
   });
 
   final AlbumEventSlot slot;
@@ -326,6 +365,7 @@ class _EmptySlotCard extends ConsumerWidget {
   final Color textColor;
   final Color secondaryText;
   final bool isDark;
+  final String lang;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -358,7 +398,7 @@ class _EmptySlotCard extends ConsumerWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      slot.titleFr,
+                      slot.getTitle(lang),
                       style: GoogleFonts.outfit(
                         fontSize: 14,
                         fontWeight: FontWeight.w600,
@@ -366,7 +406,7 @@ class _EmptySlotCard extends ConsumerWidget {
                       ),
                     ),
                     Text(
-                      slot.descriptionFr,
+                      slot.getDescription(lang),
                       style: GoogleFonts.outfit(
                         fontSize: 12,
                         color: secondaryText,
@@ -391,7 +431,11 @@ class _EmptySlotCard extends ConsumerWidget {
                     color: accentColor,
                   ),
                   label: Text(
-                    'Existante',
+                    lang == 'ar'
+                        ? 'موجودة'
+                        : lang == 'en'
+                            ? 'Existing'
+                            : 'Existante',
                     style: GoogleFonts.outfit(fontSize: 12, fontWeight: FontWeight.w600),
                   ),
                   style: OutlinedButton.styleFrom(
@@ -414,7 +458,11 @@ class _EmptySlotCard extends ConsumerWidget {
                     color: Colors.white,
                   ),
                   label: Text(
-                    'Nouvelle',
+                    lang == 'ar'
+                        ? 'جديدة'
+                        : lang == 'en'
+                            ? 'New'
+                            : 'Nouvelle',
                     style: GoogleFonts.outfit(
                       fontSize: 12,
                       fontWeight: FontWeight.w600,

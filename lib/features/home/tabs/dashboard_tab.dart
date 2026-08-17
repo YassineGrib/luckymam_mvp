@@ -140,12 +140,27 @@ class _StatusContextBanner extends StatelessWidget {
     final isHope = status == UserStatus.hope;
     final color = isHope ? Colors.purple : Colors.pink;
     final icon = isHope ? Icons.favorite_border_rounded : Icons.pregnant_woman_rounded;
-    final title = isHope
-        ? 'Votre parcours commence ici 💜'
-        : 'Votre bébé grandit 🩷';
-    final subtitle = isHope
-        ? 'Suivez votre cycle et prenez soin de vous.\nVos enfants apparaîtront ici dès l\'arrivée de bébé.'
-        : 'La section Mes Enfants sera disponible\naprès la naissance de votre bébé.';
+
+    final lang = Localizations.localeOf(context).languageCode;
+    String title;
+    String subtitle;
+
+    if (lang == 'ar') {
+      title = isHope ? 'رحلتك تبدأ من هنا 💜' : 'طفلك ينمو 🩷';
+      subtitle = isHope
+          ? 'تابعي دورتك واعتني بنفسك.\nستظهر أقسام أطفالك هنا بمجرد وصول طفلك.'
+          : 'سيكون قسم أطفالي متاحًا\nبعد ولادة طفلكِ.';
+    } else if (lang == 'en') {
+      title = isHope ? 'Your journey starts here 💜' : 'Your baby is growing 🩷';
+      subtitle = isHope
+          ? 'Track your cycle and take care of yourself.\nYour children section will appear here once baby arrives.'
+          : 'The My Children section will be available\nafter your baby is born.';
+    } else {
+      title = isHope ? 'Votre parcours commence ici 💜' : 'Votre bébé grandit 🩷';
+      subtitle = isHope
+          ? 'Suivez votre cycle et prenez soin de vous.\nVos enfants apparaîtront ici dès l\'arrivée de bébé.'
+          : 'La section Mes Enfants sera disponible\naprès la naissance de votre bébé.';
+    }
 
     return Padding(
       padding: const EdgeInsets.fromLTRB(20, 8, 20, 4),

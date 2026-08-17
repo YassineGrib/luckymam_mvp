@@ -147,7 +147,7 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
             );
           },
           child: const AppLogo(
-            variant: LogoVariant.horizontal,
+            variant: LogoVariant.vertical,
             size: LogoSize.large,
           ),
         ),

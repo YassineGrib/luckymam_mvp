@@ -99,6 +99,32 @@ enum Emotion {
     }
   }
 
+  /// Get localized label for this emotion.
+  String getLabel(String locale) {
+    if (locale == 'ar') return labelAr;
+    if (locale == 'en') {
+      switch (this) {
+        case Emotion.happy:
+          return 'Happy';
+        case Emotion.love:
+          return 'Love';
+        case Emotion.tender:
+          return 'Tender';
+        case Emotion.sad:
+          return 'Sad';
+        case Emotion.surprised:
+          return 'Surprised';
+        case Emotion.sleepy:
+          return 'Sleepy';
+        case Emotion.proud:
+          return 'Proud';
+        case Emotion.worried:
+          return 'Worried';
+      }
+    }
+    return labelFr;
+  }
+
   /// Parse from string with fallback.
   static Emotion fromString(String? value) {
     if (value == null) return Emotion.happy;

@@ -338,11 +338,12 @@ class TimelineService {
     String? capsuleId,
     String? notes,
   }) async {
+    final docId = '${childId}_$milestoneId';
     final docRef = _firestore
         .collection('users')
         .doc(userId)
         .collection('milestoneProgress')
-        .doc();
+        .doc(docId);
 
     final progress = MilestoneProgress(
       id: docRef.id,
@@ -365,11 +366,12 @@ class TimelineService {
     required String milestoneId,
     String? notes,
   }) async {
+    final docId = '${childId}_$milestoneId';
     final docRef = _firestore
         .collection('users')
         .doc(userId)
         .collection('milestoneProgress')
-        .doc();
+        .doc(docId);
 
     final progress = MilestoneProgress(
       id: docRef.id,

@@ -15,6 +15,7 @@ class CartScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final lang = Localizations.localeOf(context).languageCode;
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final bgColor = isDark
         ? AppColors.backgroundDark
@@ -37,7 +38,11 @@ class CartScreen extends ConsumerWidget {
           onPressed: () => Navigator.pop(context),
         ),
         title: Text(
-          'Mon Panier',
+          lang == 'ar'
+              ? 'سلتي'
+              : lang == 'en'
+                  ? 'My Cart'
+                  : 'Mon Panier',
           style: GoogleFonts.outfit(
             fontSize: 18,
             fontWeight: FontWeight.w600,
@@ -49,7 +54,11 @@ class CartScreen extends ConsumerWidget {
             TextButton(
               onPressed: () => ref.read(cartProvider.notifier).clear(),
               child: Text(
-                'Vider',
+                lang == 'ar'
+                    ? 'تفريغ'
+                    : lang == 'en'
+                        ? 'Clear'
+                        : 'Vider',
                 style: GoogleFonts.outfit(
                   fontSize: 13,
                   color: AppColors.error,
@@ -60,7 +69,7 @@ class CartScreen extends ConsumerWidget {
         ],
       ),
       body: cart.isEmpty
-          ? _buildEmptyCart(textColor, secondaryText)
+          ? _buildEmptyCart(textColor, secondaryText, lang)
           : ListView.separated(
               padding: const EdgeInsets.fromLTRB(
                 AppSpacing.screenPaddingH,
@@ -107,7 +116,11 @@ class CartScreen extends ConsumerWidget {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Text(
-                          'Total',
+                          lang == 'ar'
+                              ? 'المجموع'
+                              : lang == 'en'
+                                  ? 'Total'
+                                  : 'Total',
                           style: GoogleFonts.outfit(
                             fontSize: 15,
                             color: secondaryText,
@@ -151,7 +164,11 @@ class CartScreen extends ConsumerWidget {
                             color: Colors.white,
                           ),
                           label: Text(
-                            'Passer la commande',
+                            lang == 'ar'
+                                ? 'إتمام الطلب'
+                                : lang == 'en'
+                                    ? 'Proceed to checkout'
+                                    : 'Passer la commande',
                             style: GoogleFonts.outfit(
                               fontSize: 16,
                               fontWeight: FontWeight.bold,
@@ -176,7 +193,7 @@ class CartScreen extends ConsumerWidget {
     );
   }
 
-  Widget _buildEmptyCart(Color textColor, Color secondaryText) {
+  Widget _buildEmptyCart(Color textColor, Color secondaryText, String lang) {
     return Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -188,7 +205,11 @@ class CartScreen extends ConsumerWidget {
           ),
           const SizedBox(height: AppSpacing.md),
           Text(
-            'Votre panier est vide',
+            lang == 'ar'
+                ? 'سلتك فارغة'
+                : lang == 'en'
+                    ? 'Your cart is empty'
+                    : 'Votre panier est vide',
             style: GoogleFonts.outfit(
               fontSize: 17,
               fontWeight: FontWeight.w600,
@@ -197,7 +218,11 @@ class CartScreen extends ConsumerWidget {
           ),
           const SizedBox(height: 6),
           Text(
-            'Parcourez le marketplace pour découvrir\nles produits de nos partenaires',
+            lang == 'ar'
+                ? 'تصفحي المتجر لاكتشاف\nمنتجات شركائنا الموثوقين'
+                : lang == 'en'
+                    ? 'Browse the marketplace to discover\nproducts from our partners'
+                    : 'Parcourez le marketplace pour découvrir\nles produits de nos partenaires',
             textAlign: TextAlign.center,
             style: GoogleFonts.outfit(fontSize: 13, color: secondaryText),
           ),
@@ -254,9 +279,10 @@ class _CartLineCard extends ConsumerWidget {
               borderRadius: BorderRadius.circular(12),
             ),
             child: Center(
-              child: Text(
-                item.product.emoji,
-                style: const TextStyle(fontSize: 24),
+              child: Icon(
+                item.product.icon,
+                size: 24,
+                color: categoryColor,
               ),
             ),
           ),

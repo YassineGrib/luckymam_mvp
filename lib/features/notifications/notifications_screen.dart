@@ -92,6 +92,7 @@ class NotificationsScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final lang = Localizations.localeOf(context).languageCode;
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final prefs = ref.watch(notificationPrefsProvider);
     final notifier = ref.read(notificationPrefsProvider.notifier);
@@ -115,7 +116,7 @@ class NotificationsScreen extends ConsumerWidget {
           onPressed: () => Navigator.of(context).pop(),
         ),
         title: Text(
-          'Notifications',
+          lang == 'ar' ? 'التنبيهات' : 'Notifications',
           style: GoogleFonts.outfit(
             fontSize: 20,
             fontWeight: FontWeight.bold,
@@ -165,7 +166,11 @@ class NotificationsScreen extends ConsumerWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        'Rappels intelligents',
+                        lang == 'ar'
+                            ? 'التذكيرات الذكية'
+                            : lang == 'en'
+                                ? 'Smart Reminders'
+                                : 'Rappels intelligents',
                         style: GoogleFonts.outfit(
                           fontSize: 16,
                           fontWeight: FontWeight.bold,
@@ -174,7 +179,11 @@ class NotificationsScreen extends ConsumerWidget {
                       ),
                       const SizedBox(height: 4),
                       Text(
-                        'Gérez vos rappels personnalisés',
+                        lang == 'ar'
+                            ? 'إدارة التنبيهات المخصصة لكِ'
+                            : lang == 'en'
+                                ? 'Manage your personalized reminders'
+                                : 'Gérez vos rappels personnalisés',
                         style: GoogleFonts.outfit(
                           fontSize: 13,
                           color: Colors.white.withValues(alpha: 0.85),
@@ -185,7 +194,11 @@ class NotificationsScreen extends ConsumerWidget {
                 ),
                 // ── Raccourci: paramètres système ──────────────
                 Tooltip(
-                  message: 'Paramètres système',
+                  message: lang == 'ar'
+                      ? 'إعدادات النظام'
+                      : lang == 'en'
+                          ? 'System settings'
+                          : 'Paramètres système',
                   child: GestureDetector(
                     onTap: () async {
                       AnalyticsService().logEvent('notif_shortcut_opened');
@@ -222,8 +235,16 @@ class NotificationsScreen extends ConsumerWidget {
             icon: Icons.vaccines_rounded,
             iconBg: const Color(0xFFE8F5E9),
             iconColor: Colors.green,
-            title: 'Rappels Vaccination',
-            subtitle: '2 jours avant la date du vaccin, à 09h00',
+            title: lang == 'ar'
+                ? 'تذكيرات اللقاحات'
+                : lang == 'en'
+                    ? 'Vaccination Reminders'
+                    : 'Rappels Vaccination',
+            subtitle: lang == 'ar'
+                ? 'قبل يومين من موعد اللقاح، عند الساعة 09:00 صباحاً'
+                : lang == 'en'
+                    ? '2 days before vaccine date, at 09:00 AM'
+                    : '2 jours avant la date du vaccin, à 09h00',
             value: prefs.vaccine,
             onChanged: (v) async {
               await notifier.setVaccine(v);
@@ -240,8 +261,16 @@ class NotificationsScreen extends ConsumerWidget {
             icon: Icons.star_rounded,
             iconBg: const Color(0xFFFFF3E0),
             iconColor: Colors.orange,
-            title: 'Jalons de Développement',
-            subtitle: '7 jours avant chaque étape clé, à 09h00',
+            title: lang == 'ar'
+                ? 'مراحل التطور والنمو'
+                : lang == 'en'
+                    ? 'Developmental Milestones'
+                    : 'Jalons de Développement',
+            subtitle: lang == 'ar'
+                ? 'قبل 7 أيام من كل مرحلة رئيسية، عند الساعة 09:00 صباحاً'
+                : lang == 'en'
+                    ? '7 days before each milestone, at 09:00 AM'
+                    : '7 jours avant chaque étape clé, à 09h00',
             value: prefs.milestone,
             onChanged: (v) async {
               await notifier.setMilestone(v);
@@ -258,8 +287,16 @@ class NotificationsScreen extends ConsumerWidget {
             icon: Icons.favorite_rounded,
             iconBg: const Color(0xFFF8E8FF),
             iconColor: Colors.deepPurpleAccent,
-            title: 'Cycle Féminin',
-            subtitle: 'Règles dans 2 jours • Phase ovulatoire — à 08h00',
+            title: lang == 'ar'
+                ? 'الدورة النسائية'
+                : lang == 'en'
+                    ? 'Female Cycle'
+                    : 'Cycle Féminin',
+            subtitle: lang == 'ar'
+                ? 'الحيض خلال يومين • فترة التبويض — عند الساعة 08:00 صباحاً'
+                : lang == 'en'
+                    ? 'Period in 2 days • Ovulation phase — at 08:00 AM'
+                    : 'Règles dans 2 jours • Phase ovulatoire — à 08h00',
             value: prefs.cycle,
             onChanged: (v) async {
               await notifier.setCycle(v);
@@ -286,8 +323,11 @@ class NotificationsScreen extends ConsumerWidget {
                 const SizedBox(width: 10),
                 Expanded(
                   child: Text(
-                    'Les rappels sont planifiés automatiquement. '
-                    'Ils s\'adaptent à vos données personnelles et celles de votre enfant.',
+                    lang == 'ar'
+                        ? 'تتم جدولة التذكيرات تلقائياً وتتكيف مع بياناتكِ الشخصية وبيانات طفلكِ.'
+                        : lang == 'en'
+                            ? 'Reminders are scheduled automatically and adapt to your personal data and your child\'s.'
+                            : 'Les rappels sont planifiés automatiquement. Ils s\'adaptent à vos données personnelles et celles de votre enfant.',
                     style: GoogleFonts.outfit(
                       fontSize: 13,
                       color: secondaryColor,

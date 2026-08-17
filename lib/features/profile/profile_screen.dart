@@ -1426,6 +1426,8 @@ class _DisplaySettingsTile extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final mode = ref.watch(timelineViewModeProvider);
     final isHorizontal = mode == TimelineViewMode.horizontal;
+    final activeLocale = ref.watch(localeProvider);
+    final lang = activeLocale.languageCode;
 
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 4),
@@ -1438,7 +1440,11 @@ class _DisplaySettingsTile extends ConsumerWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  'Affichage Timeline',
+                  lang == 'ar'
+                      ? 'عرض الخط الزمني'
+                      : lang == 'en'
+                          ? 'Timeline Display'
+                          : 'Affichage Timeline',
                   style: GoogleFonts.outfit(
                     fontSize: 14,
                     fontWeight: FontWeight.w500,
@@ -1446,7 +1452,17 @@ class _DisplaySettingsTile extends ConsumerWidget {
                   ),
                 ),
                 Text(
-                  isHorizontal ? 'Vue horizontale' : 'Vue verticale',
+                  isHorizontal
+                      ? (lang == 'ar'
+                          ? 'عرض أفقي'
+                          : lang == 'en'
+                              ? 'Horizontal view'
+                              : 'Vue horizontale')
+                      : (lang == 'ar'
+                          ? 'عرض عمودي'
+                          : lang == 'en'
+                              ? 'Vertical view'
+                              : 'Vue verticale'),
                   style: GoogleFonts.outfit(
                     fontSize: 12,
                     color: secondaryColor,
@@ -1467,7 +1483,11 @@ class _DisplaySettingsTile extends ConsumerWidget {
                 _ViewModeButton(
                   icon: Icons.view_column_rounded,
                   selected: isHorizontal,
-                  tooltip: 'Horizontale',
+                  tooltip: lang == 'ar'
+                      ? 'أفقي'
+                      : lang == 'en'
+                          ? 'Horizontal'
+                          : 'Horizontale',
                   onTap: () => ref
                       .read(timelineViewModeProvider.notifier)
                       .setMode(TimelineViewMode.horizontal),
@@ -1475,7 +1495,11 @@ class _DisplaySettingsTile extends ConsumerWidget {
                 _ViewModeButton(
                   icon: Icons.view_stream_rounded,
                   selected: !isHorizontal,
-                  tooltip: 'Verticale',
+                  tooltip: lang == 'ar'
+                      ? 'عمودي'
+                      : lang == 'en'
+                          ? 'Vertical'
+                          : 'Verticale',
                   onTap: () => ref
                       .read(timelineViewModeProvider.notifier)
                       .setMode(TimelineViewMode.vertical),

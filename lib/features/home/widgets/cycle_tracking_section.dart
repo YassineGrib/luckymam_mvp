@@ -104,23 +104,72 @@ class _CycleTrackingSectionState extends ConsumerState<CycleTrackingSection> {
     bool isPregnant,
     CycleInfo cycleInfo,
   ) {
+    final lang = Localizations.localeOf(context).languageCode;
     IconData icon = Icons.water_drop_rounded;
-    String title = 'Suivi du Cycle';
-    String subtitle = 'Activer le suivi';
+    
+    String title = lang == 'ar'
+        ? 'متابعة الدورة'
+        : lang == 'en'
+            ? 'Cycle Tracking'
+            : 'Suivi du Cycle';
+
+    String subtitle = lang == 'ar'
+        ? 'تفعيل المتابعة'
+        : lang == 'en'
+            ? 'Activate tracking'
+            : 'Activer le suivi';
 
     if (isPregnant) {
       icon = Icons.pregnant_woman_rounded;
-      title = 'Ma Grossesse';
+      title = lang == 'ar'
+          ? 'حملي'
+          : lang == 'en'
+              ? 'My Pregnancy'
+              : 'Ma Grossesse';
       final lmp = cycleInfo.lastPeriodDate;
       if (lmp != null) {
         final week = _pregnancyWeek(lmp);
         final daysLeft = _daysUntilDpa(lmp);
-        subtitle = 'Semaine $week · DPA dans $daysLeft j';
+        subtitle = lang == 'ar'
+            ? 'الأسبوع $week · الولادة المتوقعة خلال $daysLeft يوم'
+            : lang == 'en'
+                ? 'Week $week · Due in $daysLeft days'
+                : 'Semaine $week · DPA dans $daysLeft j';
       } else {
-        subtitle = 'Renseigner ma date de début';
+        subtitle = lang == 'ar'
+            ? 'تحديد تاريخ بداية الحمل'
+            : lang == 'en'
+                ? 'Enter my start date'
+                : 'Renseigner ma date de début';
       }
     } else if (cycleInfo.isTracking && cycleInfo.lastPeriodDate != null) {
-      subtitle = 'Jour ${cycleInfo.currentDay} · ${cycleInfo.currentPhase}';
+      final phase = cycleInfo.currentPhase;
+      final phaseTranslated = lang == 'ar'
+          ? (phase == 'Menstruation'
+              ? 'الحيض'
+              : phase == 'Folliculaire'
+                  ? 'الطور الجريبي'
+                  : phase == 'Ovulation'
+                      ? 'التبويض'
+                      : phase == 'Lutéale'
+                          ? 'الطور الأصفري'
+                          : phase)
+          : lang == 'en'
+              ? (phase == 'Menstruation'
+                  ? 'Menstruation'
+                  : phase == 'Folliculaire'
+                      ? 'Follicular'
+                      : phase == 'Ovulation'
+                          ? 'Ovulation'
+                          : phase == 'Lutéale'
+                              ? 'Luteal'
+                              : phase)
+              : phase;
+      subtitle = lang == 'ar'
+          ? 'اليوم ${cycleInfo.currentDay} · $phaseTranslated'
+          : lang == 'en'
+              ? 'Day ${cycleInfo.currentDay} · $phaseTranslated'
+              : 'Jour ${cycleInfo.currentDay} · $phaseTranslated';
     }
 
     return Padding(
@@ -253,7 +302,11 @@ class _CycleTrackingSectionState extends ConsumerState<CycleTrackingSection> {
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       Text(
-                        'Jour',
+                        Localizations.localeOf(context).languageCode == 'ar'
+                            ? 'يوم'
+                            : Localizations.localeOf(context).languageCode == 'en'
+                                ? 'Day'
+                                : 'Jour',
                         style: GoogleFonts.outfit(
                           fontSize: 10,
                           color: Colors.white70,
@@ -277,7 +330,7 @@ class _CycleTrackingSectionState extends ConsumerState<CycleTrackingSection> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      _getPhaseDescription(cycleInfo.currentPhase),
+                      _getPhaseDescription(cycleInfo.currentPhase, Localizations.localeOf(context).languageCode),
                       style: GoogleFonts.outfit(
                         fontSize: 13,
                         color: Colors.white.withValues(alpha: 0.9),
@@ -296,7 +349,11 @@ class _CycleTrackingSectionState extends ConsumerState<CycleTrackingSection> {
                           borderRadius: BorderRadius.circular(8),
                         ),
                         child: Text(
-                          'Règles dans ${nextPeriod.difference(DateTime.now()).inDays} j',
+                          Localizations.localeOf(context).languageCode == 'ar'
+                              ? 'الحيض خلال ${nextPeriod.difference(DateTime.now()).inDays} يوم'
+                              : Localizations.localeOf(context).languageCode == 'en'
+                                  ? 'Period in ${nextPeriod.difference(DateTime.now()).inDays} days'
+                                  : 'Règles dans ${nextPeriod.difference(DateTime.now()).inDays} j',
                           style: GoogleFonts.outfit(
                             fontSize: 11,
                             fontWeight: FontWeight.w600,
@@ -323,7 +380,11 @@ class _CycleTrackingSectionState extends ConsumerState<CycleTrackingSection> {
               padding: const EdgeInsets.symmetric(vertical: 12),
             ),
             child: Text(
-              'Enregistrer mes règles',
+              Localizations.localeOf(context).languageCode == 'ar'
+                  ? 'تسجيل دورتي الشهرية'
+                  : Localizations.localeOf(context).languageCode == 'en'
+                      ? 'Log my period'
+                      : 'Enregistrer mes règles',
               style: GoogleFonts.outfit(
                 fontWeight: FontWeight.bold,
                 fontSize: 13,
@@ -337,6 +398,7 @@ class _CycleTrackingSectionState extends ConsumerState<CycleTrackingSection> {
 
   Widget _buildPregnancyContent(BuildContext context, CycleInfo cycleInfo) {
     final lmp = cycleInfo.lastPeriodDate;
+    final lang = Localizations.localeOf(context).languageCode;
 
     if (lmp == null) {
       // No DDR set — prompt user
@@ -348,7 +410,11 @@ class _CycleTrackingSectionState extends ConsumerState<CycleTrackingSection> {
             Container(color: Colors.white.withValues(alpha: 0.2), height: 1),
             const SizedBox(height: 16),
             Text(
-              'Renseignez votre date de dernières règles (DDR)\npour suivre votre grossesse semaine par semaine.',
+              lang == 'ar'
+                  ? 'سجّلي تاريخ آخر دورة شهرية (DDR)\nلمتابعة حملك أسبوعًا بأسبوع.'
+                  : lang == 'en'
+                      ? 'Enter your last menstrual period (LMP) date\nto track your pregnancy week by week.'
+                      : 'Renseignez votre date de dernières règles (DDR)\npour suivre votre grossesse semaine par semaine.',
               style: GoogleFonts.outfit(
                 color: Colors.white.withValues(alpha: 0.9),
                 fontSize: 13,
@@ -360,7 +426,11 @@ class _CycleTrackingSectionState extends ConsumerState<CycleTrackingSection> {
               onPressed: () => _enterLmp(context),
               icon: const Icon(Icons.calendar_today_rounded, size: 16),
               label: Text(
-                'Entrer ma DDR',
+                lang == 'ar'
+                    ? 'إدخال تاريخ آخر دورة'
+                    : lang == 'en'
+                        ? 'Enter my LMP'
+                        : 'Entrer ma DDR',
                 style: GoogleFonts.outfit(fontWeight: FontWeight.bold),
               ),
               style: ElevatedButton.styleFrom(
@@ -413,7 +483,11 @@ class _CycleTrackingSectionState extends ConsumerState<CycleTrackingSection> {
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       Text(
-                        'SA',
+                        lang == 'ar'
+                            ? 'أسبوع'
+                            : lang == 'en'
+                                ? 'Weeks'
+                                : 'SA',
                         style: GoogleFonts.outfit(
                           fontSize: 10,
                           color: Colors.white70,
@@ -437,7 +511,11 @@ class _CycleTrackingSectionState extends ConsumerState<CycleTrackingSection> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'Semaine $week / 40',
+                      lang == 'ar'
+                          ? 'الأسبوع $week / 40'
+                          : lang == 'en'
+                              ? 'Week $week / 40'
+                              : 'Semaine $week / 40',
                       style: GoogleFonts.outfit(
                         fontSize: 14,
                         fontWeight: FontWeight.bold,
@@ -455,7 +533,11 @@ class _CycleTrackingSectionState extends ConsumerState<CycleTrackingSection> {
                         borderRadius: BorderRadius.circular(8),
                       ),
                       child: Text(
-                        'DPA : $dpaLabel',
+                        lang == 'ar'
+                            ? 'تاريخ الولادة المتوقع: $dpaLabel'
+                            : lang == 'en'
+                                ? 'Due Date: $dpaLabel'
+                                : 'DPA : $dpaLabel',
                         style: GoogleFonts.outfit(
                           fontSize: 11,
                           fontWeight: FontWeight.w600,
@@ -474,7 +556,11 @@ class _CycleTrackingSectionState extends ConsumerState<CycleTrackingSection> {
                         borderRadius: BorderRadius.circular(8),
                       ),
                       child: Text(
-                        'J−$daysLeft avant l\'accouchement',
+                        lang == 'ar'
+                            ? 'باقي $daysLeft يوم على الولادة'
+                            : lang == 'en'
+                                ? '$daysLeft days left until delivery'
+                                : 'J−$daysLeft avant l\'accouchement',
                         style: GoogleFonts.outfit(
                           fontSize: 11,
                           fontWeight: FontWeight.w600,
@@ -499,7 +585,11 @@ class _CycleTrackingSectionState extends ConsumerState<CycleTrackingSection> {
               padding: const EdgeInsets.symmetric(vertical: 10),
             ),
             child: Text(
-              'Modifier ma DDR',
+              lang == 'ar'
+                  ? 'تعديل تاريخ آخر دورة'
+                  : lang == 'en'
+                      ? 'Modify my LMP'
+                      : 'Modifier ma DDR',
               style: GoogleFonts.outfit(fontSize: 12),
             ),
           ),
@@ -510,12 +600,17 @@ class _CycleTrackingSectionState extends ConsumerState<CycleTrackingSection> {
 
   void _enterLmp(BuildContext context) async {
     final now = DateTime.now();
+    final lang = Localizations.localeOf(context).languageCode;
     final date = await showDatePicker(
       context: context,
       initialDate: now.subtract(const Duration(days: 70)),
       firstDate: now.subtract(const Duration(days: 280)),
       lastDate: now,
-      helpText: 'Date de dernières règles (DDR)',
+      helpText: lang == 'ar'
+          ? 'تاريخ آخر دورة شهرية (DDR)'
+          : lang == 'en'
+              ? 'Last menstrual period date (LMP)'
+              : 'Date de dernières règles (DDR)',
       builder: (context, child) {
         return Theme(
           data: Theme.of(context).copyWith(
@@ -541,18 +636,58 @@ class _CycleTrackingSectionState extends ConsumerState<CycleTrackingSection> {
     }
   }
 
-  String _getPhaseDescription(String phase) {
-    switch (phase) {
-      case 'Règles':
-        return 'Votre cycle commence. Prenez soin de vous.';
-      case 'Phase Folliculaire':
-        return 'Votre corps se prépare. Vous vous sentez plus énergique.';
-      case 'Phase Ovulatoire':
-        return 'Période de fertilité maximale.';
-      case 'Phase Lutéale':
-        return 'Préparation pour le prochain cycle.';
-      default:
-        return 'Évolution de votre cycle féminin.';
+  String _getPhaseDescription(String phase, String lang) {
+    if (lang == 'ar') {
+      switch (phase) {
+        case 'Règles':
+        case 'Menstruation':
+          return 'تبدأ دورتكِ الآن. اعتني بنفسكِ.';
+        case 'Phase Folliculaire':
+        case 'Folliculaire':
+          return 'يستعد جسمكِ الآن. تشعرين بنشاط أكبر.';
+        case 'Phase Ovulatoire':
+        case 'Ovulation':
+          return 'فترة الخصوبة القصوى.';
+        case 'Phase Lutéale':
+        case 'Lutéale':
+          return 'الاستعداد للدورة القادمة.';
+        default:
+          return 'تطور دورتكِ النسائية.';
+      }
+    } else if (lang == 'en') {
+      switch (phase) {
+        case 'Règles':
+        case 'Menstruation':
+          return 'Your cycle begins. Take care of yourself.';
+        case 'Phase Folliculaire':
+        case 'Folliculaire':
+          return 'Your body is preparing. You feel more energetic.';
+        case 'Phase Ovulatoire':
+        case 'Ovulation':
+          return 'Peak fertility period.';
+        case 'Phase Lutéale':
+        case 'Lutéale':
+          return 'Preparation for the next cycle.';
+        default:
+          return 'Evolution of your cycle.';
+      }
+    } else {
+      switch (phase) {
+        case 'Règles':
+        case 'Menstruation':
+          return 'Votre cycle commence. Prenez soin de vous.';
+        case 'Phase Folliculaire':
+        case 'Folliculaire':
+          return 'Votre corps se prépare. Vous vous sentez plus énergique.';
+        case 'Phase Ovulatoire':
+        case 'Ovulation':
+          return 'Période de fertilité maximale.';
+        case 'Phase Lutéale':
+        case 'Lutéale':
+          return 'Préparation pour le prochain cycle.';
+        default:
+          return 'Évolution de votre cycle féminin.';
+      }
     }
   }
 

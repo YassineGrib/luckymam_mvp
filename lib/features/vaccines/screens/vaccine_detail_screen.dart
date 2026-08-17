@@ -25,7 +25,7 @@ const _vaccineInfo = <String, _VaccineDetail>{
         'Le vaccin stimule le système immunitaire à produire des lymphocytes T spécifiques qui reconnaissent et combattent la bactérie Mycobacterium tuberculosis.',
     sideEffects:
         'Réaction locale au site d\'injection (rougeur, petite plaie), ganglion sous-axillaire bénin. Réactions sévères rares.',
-    icon: '🩺',
+    icon: Icons.medical_services_rounded,
     color: Color(0xFF4CAF50),
   ),
   'HBV': _VaccineDetail(
@@ -35,7 +35,7 @@ const _vaccineInfo = <String, _VaccineDetail>{
         'Contient des protéines de surface du virus (Ag HBs). L\'organisme développe des anticorps protecteurs (anti-HBs) sans contact avec le virus vivant.',
     sideEffects:
         'Douleur légère au site d\'injection, légère fièvre possible. Effets graves très rares.',
-    icon: '🦠',
+    icon: Icons.biotech_rounded,
     color: Color(0xFF2196F3),
   ),
   'DTCaVPI-Hib-HBV': _VaccineDetail(
@@ -45,7 +45,7 @@ const _vaccineInfo = <String, _VaccineDetail>{
         'Combine plusieurs antigènes et toxoïdes pour générer une immunité simultanée contre 6 agents pathogènes, réduisant le nombre total d\'injections requises.',
     sideEffects:
         'Fièvre (fréquente), rougeur et gonflement au site d\'injection. Compresses froides et paracétamol pour soulager.',
-    icon: '💉',
+    icon: Icons.vaccines_rounded,
     color: Color(0xFFE91E63),
   ),
   'VPOb': _VaccineDetail(
@@ -55,7 +55,7 @@ const _vaccineInfo = <String, _VaccineDetail>{
         'Virus atténués administrés oralement. Ils se répliquent dans l\'intestin, induisant une immunité mucosale et systémique.',
     sideEffects:
         'Excellente tolérance. Très rarement, poliomyélite associée au vaccin (PVDAV) chez les immunodéprimés.',
-    icon: '💊',
+    icon: Icons.medication_liquid_rounded,
     color: Color(0xFF9C27B0),
   ),
   'VPC': _VaccineDetail(
@@ -65,7 +65,7 @@ const _vaccineInfo = <String, _VaccineDetail>{
         'Les antigènes polysaccharidiques sont conjugués à une protéine porteuse pour induire une réponse immunologique robuste chez le nourrisson.',
     sideEffects:
         'Irritabilité, somnolence, perte d\'appétit, fièvre légère. Symptômes transitoires resolving en 1-2 jours.',
-    icon: '🫁',
+    icon: Icons.air_rounded,
     color: Color(0xFF00BCD4),
   ),
   'ROR': _VaccineDetail(
@@ -75,7 +75,7 @@ const _vaccineInfo = <String, _VaccineDetail>{
         'Contient des virus vivants atténués des trois maladies. Induit une immunité durable en un minimum de 2 doses.',
     sideEffects:
         'Légère éruption cutanée, fièvre, gonflement des glandes 5-12 jours après. Réactions allergiques sévères très rares.',
-    icon: '🤧',
+    icon: Icons.coronavirus_rounded,
     color: Color(0xFFFF5722),
   ),
   'DTCa-VPI': _VaccineDetail(
@@ -85,7 +85,7 @@ const _vaccineInfo = <String, _VaccineDetail>{
         'Dose de rappel qui booste les anticorps existants. Particulièrement important car l\'immunité de la petite enfance peut diminuer avec le temps.',
     sideEffects:
         'Réaction locale au site d\'injection, légère fatigue. Très bien toléré.',
-    icon: '🏫',
+    icon: Icons.school_rounded,
     color: Color(0xFF607D8B),
   ),
   'dT': _VaccineDetail(
@@ -95,7 +95,7 @@ const _vaccineInfo = <String, _VaccineDetail>{
         'Contient des toxoïdes tétanique et diphtérique — formes inactivées des toxines — qui stimulent la production d\'anticorps neutralisants.',
     sideEffects:
         'Rougeur et sensibilité au point d\'injection, légère fatigue. Effets systémiques rares.',
-    icon: '🛡️',
+    icon: Icons.shield_rounded,
     color: Color(0xFF795548),
   ),
 };
@@ -112,7 +112,7 @@ class _VaccineDetail {
   final String description;
   final String howItWorks;
   final String sideEffects;
-  final String icon;
+  final IconData icon;
   final Color color;
 }
 
@@ -143,80 +143,26 @@ class VaccineDetailScreen extends ConsumerWidget {
 
     final info = _vaccineInfo[vaccine.code];
     final accentColor = info?.color ?? AppColors.primaryLight;
-    final emoji = info?.icon ?? '💉';
+    final headerIcon = info?.icon ?? Icons.vaccines_rounded;
 
     return Scaffold(
       backgroundColor: bgColor,
-      body: CustomScrollView(
-        slivers: [
-          // Hero header
-          SliverAppBar(
-            expandedHeight: 220,
-            pinned: true,
-            backgroundColor: accentColor,
-            foregroundColor: Colors.white,
-            flexibleSpace: FlexibleSpaceBar(
-              background: Container(
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    colors: [accentColor, accentColor.withValues(alpha: 0.7)],
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
-                  ),
-                ),
-                child: Stack(
-                  children: [
-                    // Background pattern overlay
-                    Positioned.fill(
-                      child: Opacity(
-                        opacity: 0.06,
-                        child: Image.asset(
-                          'assets/images/heroPatern.png',
-                          fit: BoxFit.cover,
-                          repeat: ImageRepeat.repeat,
-                        ),
-                      ),
-                    ),
-                    // Content
-                    Padding(
-                      padding: const EdgeInsets.fromLTRB(24, 80, 24, 24),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        mainAxisAlignment: MainAxisAlignment.end,
-                        children: [
-                          Text(emoji, style: const TextStyle(fontSize: 40)),
-                          const SizedBox(height: 8),
-                          Text(
-                            vaccine.code,
-                            style: GoogleFonts.outfit(
-                              fontSize: 28,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.white,
-                            ),
-                          ),
-                          Text(
-                            vaccine.nameFr,
-                            style: GoogleFonts.outfit(
-                              fontSize: 14,
-                              color: Colors.white.withValues(alpha: 0.85),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
+      body: Column(
+        children: [
+          _VaccineDetailHeader(
+            vaccine: vaccine,
+            accentColor: accentColor,
+            icon: headerIcon,
           ),
-
-          // Body
-          SliverToBoxAdapter(
-            child: Padding(
-              padding: const EdgeInsets.all(AppSpacing.screenPaddingH),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
+          Expanded(
+            child: CustomScrollView(
+              slivers: [
+                SliverToBoxAdapter(
+                  child: Padding(
+                    padding: const EdgeInsets.all(AppSpacing.screenPaddingH),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
                   // Protects chip
                   Container(
                     padding: const EdgeInsets.symmetric(
@@ -353,8 +299,11 @@ class VaccineDetailScreen extends ConsumerWidget {
                     ),
                   ),
                   const SizedBox(height: 80),
-                ],
-              ),
+                      ],
+                    ),
+                  ),
+                ),
+              ],
             ),
           ),
         ],
@@ -410,6 +359,7 @@ class VaccineDetailScreen extends ConsumerWidget {
     Color secondaryText,
     Color accentColor,
   ) {
+    final lang = Localizations.localeOf(context).languageCode;
     return Container(
       padding: const EdgeInsets.all(AppSpacing.md),
       decoration: BoxDecoration(
@@ -435,7 +385,11 @@ class VaccineDetailScreen extends ConsumerWidget {
               ),
               const SizedBox(width: 10),
               Text(
-                'Souvenir lié 🌟',
+                lang == 'ar'
+                    ? 'ذكرى مرتبطة'
+                    : lang == 'en'
+                        ? 'Linked Memory'
+                        : 'Souvenir lié',
                 style: GoogleFonts.outfit(
                   fontSize: 15,
                   fontWeight: FontWeight.bold,
@@ -495,7 +449,11 @@ class VaccineDetailScreen extends ConsumerWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'Capsule de vaccination',
+                      lang == 'ar'
+                          ? 'كبسولة اللقاح'
+                          : lang == 'en'
+                              ? 'Vaccination Capsule'
+                              : 'Capsule de vaccination',
                       style: GoogleFonts.outfit(
                         fontSize: 14,
                         fontWeight: FontWeight.w600,
@@ -504,7 +462,7 @@ class VaccineDetailScreen extends ConsumerWidget {
                     ),
                     const SizedBox(height: 4),
                     Text(
-                      '${capsule.emotion.emoji} ${capsule.emotion.labelFr}',
+                      '${capsule.emotion.emoji} ${capsule.emotion.getLabel(lang)}',
                       style: GoogleFonts.outfit(
                         fontSize: 13,
                         color: secondaryText,
@@ -548,6 +506,7 @@ class VaccineDetailScreen extends ConsumerWidget {
     Color secondaryText,
     bool isDark,
   ) {
+    final lang = Localizations.localeOf(context).languageCode;
     final l10n = AppLocalizations.of(context)!;
     return Container(
       padding: const EdgeInsets.all(AppSpacing.md),
@@ -574,7 +533,11 @@ class VaccineDetailScreen extends ConsumerWidget {
               ),
               const SizedBox(width: 10),
               Text(
-                'Souvenir 📸',
+                lang == 'ar'
+                    ? 'الذكرى'
+                    : lang == 'en'
+                        ? 'Memory'
+                        : 'Souvenir',
                 style: GoogleFonts.outfit(
                   fontSize: 15,
                   fontWeight: FontWeight.bold,
@@ -585,7 +548,11 @@ class VaccineDetailScreen extends ConsumerWidget {
           ),
           const SizedBox(height: 12),
           Text(
-            'Ajoutez une photo ou un enregistrement pour garder en mémoire ce moment.',
+            lang == 'ar'
+                ? 'أضيفي صورة أو تسجيلاً صوتياً للاحتفاظ بذكرى هذه اللحظة.'
+                : lang == 'en'
+                    ? 'Add a photo or a voice recording to keep this moment in memory.'
+                    : 'Ajoutez une photo ou un enregistrement pour garder en mémoire ce moment.',
             style: GoogleFonts.outfit(
               fontSize: 13,
               color: secondaryText,
@@ -633,6 +600,7 @@ class VaccineDetailScreen extends ConsumerWidget {
     Color secondaryText,
     Color accentColor,
   ) {
+    final lang = Localizations.localeOf(context).languageCode;
     final isDark = Theme.of(context).brightness == Brightness.dark;
     return Container(
       padding: const EdgeInsets.all(AppSpacing.md),
@@ -663,7 +631,7 @@ class VaccineDetailScreen extends ConsumerWidget {
               ),
               const SizedBox(width: 10),
               Text(
-                'Reels éducatifs 🎬',
+                'Reels éducatifs',
                 style: GoogleFonts.outfit(
                   fontSize: 15,
                   fontWeight: FontWeight.bold,
@@ -708,7 +676,7 @@ class VaccineDetailScreen extends ConsumerWidget {
                 color: accentColor,
               ),
               label: Text(
-                'Reels',
+                lang == 'ar' ? 'فيديوهات' : 'Reels',
                 style: GoogleFonts.outfit(fontWeight: FontWeight.w600),
               ),
               style: OutlinedButton.styleFrom(
@@ -722,6 +690,115 @@ class VaccineDetailScreen extends ConsumerWidget {
             ),
           ),
         ],
+      ),
+    );
+  }
+}
+
+class _VaccineDetailHeader extends StatelessWidget {
+  const _VaccineDetailHeader({
+    required this.vaccine,
+    required this.accentColor,
+    required this.icon,
+  });
+
+  final Vaccine vaccine;
+  final Color accentColor;
+  final IconData icon;
+
+  @override
+  Widget build(BuildContext context) {
+    return Material(
+      color: accentColor,
+      child: SafeArea(
+        bottom: false,
+        child: Container(
+          width: double.infinity,
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              colors: [accentColor, accentColor.withValues(alpha: 0.82)],
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+            ),
+          ),
+          child: Stack(
+            children: [
+              Positioned.fill(
+                child: Opacity(
+                  opacity: 0.06,
+                  child: Image.asset(
+                    'assets/images/heroPatern.png',
+                    fit: BoxFit.cover,
+                    repeat: ImageRepeat.repeat,
+                  ),
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.fromLTRB(8, 8, 20, 20),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    IconButton(
+                      onPressed: () => Navigator.of(context).maybePop(),
+                      icon: const Icon(
+                        Icons.arrow_back_rounded,
+                        color: Colors.white,
+                      ),
+                      tooltip: MaterialLocalizations.of(context).backButtonTooltip,
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 8),
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          Container(
+                            width: 56,
+                            height: 56,
+                            decoration: BoxDecoration(
+                              color: Colors.white.withValues(alpha: 0.18),
+                              borderRadius: BorderRadius.circular(16),
+                              border: Border.all(
+                                color: Colors.white.withValues(alpha: 0.28),
+                              ),
+                            ),
+                            child: Icon(icon, color: Colors.white, size: 28),
+                          ),
+                          const SizedBox(width: 16),
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  vaccine.code,
+                                  style: GoogleFonts.outfit(
+                                    fontSize: 26,
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.white,
+                                    height: 1.1,
+                                  ),
+                                ),
+                                const SizedBox(height: 4),
+                                Text(
+                                  vaccine.nameFr,
+                                  style: GoogleFonts.outfit(
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.w500,
+                                    color: Colors.white.withValues(alpha: 0.88),
+                                    height: 1.3,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
       ),
     );
   }

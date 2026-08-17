@@ -24,17 +24,19 @@ La fonctionnalité de collecte de consentement conforme à la **Loi Algérienne 
 Un écran `Law1807ConsentScreen` affiche le texte légal complet de la Loi 18-07 dans la langue active de l'utilisatrice (FR / AR / EN), avec :
 
 - Texte scrollable dans un conteneur dédié
-- Référence légale officielle en bas du texte
-- Case à cocher obligatoire « J'accepte la Loi 18/07 »
-- Bouton « Continuer » activé seulement après acceptation
-- Support RTL complet pour l'arabe
+- **Contrôle de défilement obligatoire (Scroll-to-bottom)** : La case à cocher « J'accepte la Loi 18/07 » reste grisée, verrouillée et désactivée tant que l'utilisatrice n'a pas fait défiler le texte légal jusqu'au bas du conteneur.
+- Référence légale officielle en bas du texte, localisée dynamiquement en 3 langues.
+- Case à cocher obligatoire « J'accepte la Loi 18/07 » (activée après défilement).
+- Bouton « Continuer » activé seulement après acceptation.
+- Support RTL complet pour l'arabe.
 
-### 2. Blocage de navigation
+### 2. Blocage de navigation & Enforcements
 
-Si l'utilisatrice tente de continuer **sans cocher** la case :
-- La progression est bloquée
-- Un message d'erreur localisé s'affiche : *« L'acceptation de la Loi 18/07 est obligatoire pour continuer. »*
-- L'événement analytics `law1807_blocked` est enregistré
+Si l'utilisatrice tente de cocher ou de continuer sans respecter les conditions :
+- La progression est bloquée.
+- Si elle essaie de cliquer sur la case verrouillée avant d'avoir fait défiler jusqu'au bas, un message d'avertissement localisé (SnackBar) s'affiche : *« Veuillez faire défiler le texte légal jusqu'en bas pour pouvoir accepter. »*
+- Un message d'erreur localisé s'affiche si elle tente de valider sans cocher : *« L'acceptation de la Loi 18/07 est obligatoire pour continuer. »*
+- L'événement analytics `law1807_blocked` est enregistré.
 
 ### 3. Enregistrement du consentement
 
@@ -89,6 +91,8 @@ Tous les points d'entrée vérifient le consentement avant redirection vers `/ho
 | Hash d'intégrité présent | ✅ Vérifié |
 | Support RTL (arabe) | ✅ Vérifié |
 | 3 langues (FR / AR / EN) | ✅ Vérifié |
+| Défilement obligatoire (Scroll-to-bottom) | ✅ Activé (case verrouillée tant que le scroll n'est pas au bas) |
+| Message d'avertissement de défilement | ✅ Activé (SnackBar localisée en 3 langues) |
 | Analytics 3 événements | ✅ Vérifié |
 
 ---

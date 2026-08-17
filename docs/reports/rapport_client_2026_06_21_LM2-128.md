@@ -21,32 +21,35 @@ Le bouton d'action rapide est positionné dans le slot `trailing` du `PageHeader
 
 Le `FloatingActionButton` a été supprimé car il s'affichait sous la barre de navigation inférieure.
 
-### 2. Bottom sheet — 2 actions rapides
+### 2. Bottom sheet — 2 actions rapides localisées
 
-**Option 1 — Créer une capsule**
-- Icône caméra rose
-- Ouvre directement `CreateCapsuleScreen` avec l'enfant pré-rempli (`preselectedChildId`)
-- Analytics : `timeline_quickadd_selected` avec `action: 'create_capsule'`
-
-**Option 2 — Marquer un jalon**
-- Icône étoile orange
-- Ouvre un second bottom sheet (`DraggableScrollableSheet`) listant les jalons de la phase courante **sans capsule** (max 6)
-- Chaque jalon ouvre directement `MilestoneDetailScreen`
-- Analytics : `timeline_quickadd_selected` avec `action: 'mark_milestone'`
-- Si tous les jalons ont déjà un souvenir → message "Tous les jalons ont déjà un souvenir ✓"
+Tous les textes, boutons et avertissements du menu et du sélecteur s'adaptent dynamiquement (FR / AR / EN) :
+- **Titre & sous-titre** : `Ajouter rapidement` / `Quick Add` / `إضافة سريعة` ; `Que souhaitez-vous faire ?` / `What would you like to do?` / `ماذا ترغبين في فعله؟`.
+- **Option 1 — Créer une capsule** :
+  - Ouvre `CreateCapsuleScreen` avec l'enfant pré-rempli.
+  - Libellés traduits (ex: `Créer une capsule` / `Create a capsule` / `إنشاء كبسولة`).
+  - Analytics : `timeline_quickadd_selected` (`action: 'create_capsule'`).
+- **Option 2 — Marquer un jalon** :
+  - Libellés traduits (ex: `Marquer un jalon` / `Mark a milestone` / `تحديد جلون`).
+  - Ouvre un second bottom sheet (`DraggableScrollableSheet`) listant les jalons (max 6).
+  - Titre du sélecteur localisé : `Jalons à venir` / `Upcoming Milestones` / `الجالونات القادمة`.
+  - Nom de la phase traduit dynamiquement (ex: `Gestation` / `Pregnancy` / `الحمل`).
+  - Si tous les jalons sont complétés, le message d'avertissement s'affiche traduit (ex: `Tous les jalons de cette phase ont déjà un souvenir ✓` / `All milestones in this phase already have a memory ✓` / `كل جالونات هذه المرحلة لديها ذكرى بالفعل ✓`).
+  - Analytics : `timeline_quickadd_selected` (`action: 'mark_milestone'`).
 
 ### 3. Widget `_QuickAddTile`
 
 Widget réutilisable pour chaque option du menu : icône colorée, titre, sous-titre, chevron. Style cohérent avec le reste de l'app (border radius 16, couleurs dark/light).
 
-### 4. Réglage d'affichage déplacé dans le Profil
+### 4. Réglage d'affichage déplacé dans le Profil (traduit dynamiquement)
 
-Le toggle Vue horizontale / verticale a été retiré de l'écran Timeline et intégré dans **Profil → Paramètres → Affichage Timeline** :
+Le toggle Vue horizontale / verticale a été retiré de l'écran Timeline et intégré dans **Profil → Paramètres** :
 
-- Contrôle segmenté 2 boutons (icône colonne / icône flux)
-- Le mode actif est mis en évidence en rose (`AppColors.magentaPink`)
-- Le sous-titre indique la vue courante en temps réel
-- Persisté via `SharedPreferences` (clé `timeline_view_mode`) — survit aux redémarrages
+- Le titre s'adapte dynamiquement : `Affichage Timeline` / `Timeline Display` / `عرض الخط الزمني`.
+- Le sous-titre dynamique indique la vue courante en temps réel : `Vue horizontale` / `Horizontal view` / `عرض أفقي` ou `Vue verticale` / `Vertical view` / `عرض عمودي`.
+- Les bulles d'aide (tooltips) des deux boutons s'adaptent dynamiquement (ex: `Horizontale` / `Horizontal` / `أفقي`).
+- Contrôle segmenté 2 boutons (icône colonne / icône flux) avec mise en évidence du mode actif en rose (`AppColors.magentaPink`).
+- Persisté via `SharedPreferences` (clé `timeline_view_mode`) — survit aux redémarrages.
 
 Nouveau provider : `lib/core/providers/display_provider.dart` — `TimelineViewModeNotifier` (StateNotifier + SharedPreferences).
 
@@ -61,9 +64,9 @@ Nouveau provider : `lib/core/providers/display_provider.dart` — `TimelineViewM
 
 | Fichier | Changement |
 |---------|-----------|
-| `lib/features/timeline/screens/timeline_screen.dart` | FAB supprimé → bouton en en-tête ; toggle vue retiré ; viewMode lu depuis provider |
+| `lib/features/timeline/screens/timeline_screen.dart` | FAB supprimé → bouton en en-tête ; toggle vue retiré ; viewMode lu depuis provider ; traduction dynamique du bouton Ajouter et des options |
 | `lib/core/providers/display_provider.dart` | Nouveau — `timelineViewModeProvider` persisté via SharedPreferences |
-| `lib/features/profile/profile_screen.dart` | Ajout `_DisplaySettingsTile` + `_ViewModeButton` dans la section Paramètres |
+| `lib/features/profile/profile_screen.dart` | Ajout `_DisplaySettingsTile` + `_ViewModeButton` dans la section Paramètres (traduit dynamiquement en AR / EN / FR) |
 
 ---
 
@@ -76,6 +79,7 @@ Nouveau provider : `lib/core/providers/display_provider.dart` — `TimelineViewM
 | Action « Créer capsule » disponible | ✅ |
 | Action « Marquer un jalon » disponible | ✅ |
 | Jalons déjà liés filtrés (non affichés) | ✅ |
+| Traduction dynamique du menu et des sélecteurs (AR / FR / EN) | ✅ |
 | Réglage vue déplacé dans Profil → Paramètres | ✅ |
 | Préférence persistée entre les sessions | ✅ |
 | Analytics `timeline_quickadd_opened` | ✅ |

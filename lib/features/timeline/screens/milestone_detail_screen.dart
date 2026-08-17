@@ -31,6 +31,7 @@ class MilestoneDetailScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final lang = Localizations.localeOf(context).languageCode;
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final textColor = isDark
         ? AppColors.onBackgroundDark
@@ -85,7 +86,7 @@ class MilestoneDetailScreen extends ConsumerWidget {
                             borderRadius: BorderRadius.circular(20),
                           ),
                           child: Text(
-                            category.labelFr,
+                            category.getLabel(lang),
                             style: GoogleFonts.outfit(
                               fontSize: 14,
                               fontWeight: FontWeight.w600,
@@ -110,7 +111,7 @@ class MilestoneDetailScreen extends ConsumerWidget {
                 children: [
                   // Title
                   Text(
-                    m.titleFr,
+                    m.getTitle(lang),
                     style: GoogleFonts.outfit(
                       fontSize: 24,
                       fontWeight: FontWeight.bold,
@@ -121,7 +122,7 @@ class MilestoneDetailScreen extends ConsumerWidget {
 
                   // Description
                   Text(
-                    m.descriptionFr,
+                    m.getDescription(lang),
                     style: GoogleFonts.outfit(
                       fontSize: 16,
                       color: secondaryText,
@@ -136,8 +137,8 @@ class MilestoneDetailScreen extends ConsumerWidget {
                       Expanded(
                         child: _buildInfoCard(
                           icon: phase.icon,
-                          label: 'Phase',
-                          value: phase.labelFr,
+                          label: lang == 'ar' ? 'المرحلة' : lang == 'en' ? 'Phase' : 'Phase',
+                          value: phase.getLabel(lang),
                           color: phase.color,
                           isDark: isDark,
                         ),
@@ -146,7 +147,7 @@ class MilestoneDetailScreen extends ConsumerWidget {
                       Expanded(
                         child: _buildInfoCard(
                           icon: Icons.calendar_today_rounded,
-                          label: 'Suggéré',
+                          label: lang == 'ar' ? 'مقترح' : lang == 'en' ? 'Suggested' : 'Suggéré',
                           value: m.ageRange,
                           color: AppColors.info,
                           isDark: isDark,
@@ -167,7 +168,11 @@ class MilestoneDetailScreen extends ConsumerWidget {
                         ),
                         const SizedBox(width: 6),
                         Text(
-                          'Capsule réalisée',
+                          lang == 'ar'
+                              ? 'الكبسولة جاهزة'
+                              : lang == 'en'
+                                  ? 'Capsule created'
+                                  : 'Capsule réalisée',
                           style: GoogleFonts.outfit(
                             fontSize: 16,
                             fontWeight: FontWeight.w600,
@@ -179,7 +184,7 @@ class MilestoneDetailScreen extends ConsumerWidget {
                           Text(
                             DateFormat(
                               'd MMM yyyy',
-                              'fr_FR',
+                              lang,
                             ).format(milestone.completedAt!),
                             style: GoogleFonts.outfit(
                               fontSize: 12,
@@ -225,7 +230,11 @@ class MilestoneDetailScreen extends ConsumerWidget {
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   Text(
-                                    'Voir la capsule',
+                                    lang == 'ar'
+                                        ? 'عرض الكبسولة'
+                                        : lang == 'en'
+                                            ? 'View Capsule'
+                                            : 'Voir la capsule',
                                     style: GoogleFonts.outfit(
                                       color: AppColors.success,
                                       fontWeight: FontWeight.w700,
@@ -233,7 +242,11 @@ class MilestoneDetailScreen extends ConsumerWidget {
                                     ),
                                   ),
                                   Text(
-                                    'Appuyez pour ouvrir le souvenir',
+                                    lang == 'ar'
+                                        ? 'اضغطي لفتح الذكرى'
+                                        : lang == 'en'
+                                            ? 'Tap to open the memory'
+                                            : 'Appuyez pour ouvrir le souvenir',
                                     style: GoogleFonts.outfit(
                                       color: AppColors.success.withValues(
                                         alpha: 0.7,
@@ -279,7 +292,11 @@ class MilestoneDetailScreen extends ConsumerWidget {
                           context,
                           ref,
                           icon: Icons.check_rounded,
-                          label: 'Marquer terminé',
+                           label: lang == 'ar'
+                              ? 'تحديد كمكتمل'
+                              : lang == 'en'
+                                  ? 'Mark complete'
+                                  : 'Marquer terminé',
                           onTap: () => _markComplete(context, ref),
                         ),
                       ),
@@ -289,7 +306,7 @@ class MilestoneDetailScreen extends ConsumerWidget {
                           context,
                           ref,
                           icon: Icons.close_rounded,
-                          label: 'Fermer',
+                          label: lang == 'ar' ? 'إغلاق' : lang == 'en' ? 'Close' : 'Fermer',
                           onTap: () => Navigator.pop(context),
                         ),
                       ),
@@ -353,6 +370,7 @@ class MilestoneDetailScreen extends ConsumerWidget {
   }
 
   Widget _buildCaptureButton(BuildContext context) {
+    final lang = Localizations.localeOf(context).languageCode;
     // Fire once when the CTA is displayed
     WidgetsBinding.instance.addPostFrameCallback((_) {
       AnalyticsService().logEvent('milestone_capsule_cta_shown', parameters: {
@@ -382,7 +400,11 @@ class MilestoneDetailScreen extends ConsumerWidget {
             const Icon(Icons.camera_alt_rounded, color: Colors.white, size: 24),
             const SizedBox(width: AppSpacing.sm),
             Text(
-              'Capturer ce moment',
+              lang == 'ar'
+                  ? 'توثيق هذه اللحظة'
+                  : lang == 'en'
+                      ? 'Capture this moment'
+                      : 'Capturer ce moment',
               style: GoogleFonts.outfit(
                 fontSize: 16,
                 fontWeight: FontWeight.bold,
@@ -458,9 +480,16 @@ class MilestoneDetailScreen extends ConsumerWidget {
         .where((c) => c.id == milestone.capsuleId)
         .firstOrNull;
     if (capsule == null) {
+      final lang = Localizations.localeOf(context).languageCode;
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Capsule introuvable'),
+        SnackBar(
+          content: Text(
+            lang == 'ar'
+                ? 'الكبسولة غير موجودة'
+                : lang == 'en'
+                    ? 'Capsule not found'
+                    : 'Capsule introuvable',
+          ),
           behavior: SnackBarBehavior.floating,
         ),
       );
@@ -495,7 +524,11 @@ class MilestoneDetailScreen extends ConsumerWidget {
             ),
             const SizedBox(width: AppSpacing.sm),
             Text(
-              'Conseils & idées photo',
+              Localizations.localeOf(context).languageCode == 'ar'
+                  ? 'نصائح وأفكار للصور'
+                  : Localizations.localeOf(context).languageCode == 'en'
+                      ? 'Tips & photo ideas'
+                      : 'Conseils & idées photo',
               style: GoogleFonts.outfit(
                 fontSize: 15,
                 fontWeight: FontWeight.w600,
@@ -531,6 +564,7 @@ class MilestoneDetailScreen extends ConsumerWidget {
   }
 
   Widget _buildReminderButton(BuildContext context, WidgetRef ref) {
+    final lang = Localizations.localeOf(context).languageCode;
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final reminderAsync = ref.watch(
       milestoneReminderProvider((
@@ -572,8 +606,16 @@ class MilestoneDetailScreen extends ConsumerWidget {
                 Flexible(
                   child: Text(
                     isSet
-                        ? 'Rappel le ${DateFormat('d MMM à HH:mm', 'fr_FR').format(reminderDate)}'
-                        : 'Programmer un rappel',
+                        ? (lang == 'ar'
+                            ? 'تذكير في ${DateFormat('d MMM في HH:mm', 'ar').format(reminderDate)}'
+                            : lang == 'en'
+                                ? 'Reminder on ${DateFormat('d MMM at HH:mm', 'en').format(reminderDate)}'
+                                : 'Rappel le ${DateFormat('d MMM à HH:mm', 'fr_FR').format(reminderDate)}')
+                        : (lang == 'ar'
+                            ? 'برمجة تذكير'
+                            : lang == 'en'
+                                ? 'Schedule a reminder'
+                                : 'Programmer un rappel'),
                     style: GoogleFonts.outfit(
                       fontSize: 15,
                       fontWeight: FontWeight.w600,
@@ -619,9 +661,16 @@ class MilestoneDetailScreen extends ConsumerWidget {
         milestoneId: milestone.milestone.id,
       );
       if (context.mounted) {
+        final lang = Localizations.localeOf(context).languageCode;
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Jalon marqué comme terminé ✓'),
+          SnackBar(
+            content: Text(
+              lang == 'ar'
+                  ? 'تم تحديد الجالون كمكتمل ✓'
+                  : lang == 'en'
+                      ? 'Milestone marked as complete ✓'
+                      : 'Jalon marqué comme terminé ✓',
+            ),
             behavior: SnackBarBehavior.floating,
             backgroundColor: AppColors.success,
           ),
@@ -630,9 +679,16 @@ class MilestoneDetailScreen extends ConsumerWidget {
       }
     } catch (e) {
       if (context.mounted) {
+        final lang = Localizations.localeOf(context).languageCode;
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Erreur : $e'),
+            content: Text(
+              lang == 'ar'
+                  ? 'خطأ: $e'
+                  : lang == 'en'
+                      ? 'Error: $e'
+                      : 'Erreur : $e',
+            ),
             behavior: SnackBarBehavior.floating,
             backgroundColor: AppColors.error,
           ),
@@ -654,6 +710,7 @@ class _ConseilSheet extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final lang = Localizations.localeOf(context).languageCode;
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final bgColor = isDark ? AppColors.surfaceDark : Colors.white;
     final textColor = isDark ? AppColors.onSurfaceDark : AppColors.onSurfaceLight;
@@ -704,7 +761,11 @@ class _ConseilSheet extends StatelessWidget {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            'Conseils',
+                            lang == 'ar'
+                                ? 'نصائح'
+                                : lang == 'en'
+                                    ? 'Tips'
+                                    : 'Conseils',
                             style: GoogleFonts.outfit(
                               fontSize: 18,
                               fontWeight: FontWeight.bold,
@@ -712,7 +773,7 @@ class _ConseilSheet extends StatelessWidget {
                             ),
                           ),
                           Text(
-                            milestone.milestone.titleFr,
+                            milestone.milestone.getTitle(lang),
                             style: GoogleFonts.outfit(
                               fontSize: 13,
                               color: secondaryColor,
@@ -740,7 +801,11 @@ class _ConseilSheet extends StatelessWidget {
                     // Explanation section
                     _SectionTitle(
                       icon: Icons.info_outline_rounded,
-                      label: 'Comprendre ce jalon',
+                      label: lang == 'ar'
+                          ? 'فهم هذا الجالون'
+                          : lang == 'en'
+                              ? 'Understand this milestone'
+                              : 'Comprendre ce jalon',
                       color: categoryColor,
                     ),
                     const SizedBox(height: 10),
@@ -764,7 +829,11 @@ class _ConseilSheet extends StatelessWidget {
                       const SizedBox(height: 24),
                       _SectionTitle(
                         icon: Icons.check_circle_outline_rounded,
-                        label: 'À retenir',
+                        label: lang == 'ar'
+                            ? 'نقاط هامة'
+                            : lang == 'en'
+                                ? 'Key Points'
+                                : 'À retenir',
                         color: AppColors.info,
                       ),
                       const SizedBox(height: 10),
@@ -779,7 +848,11 @@ class _ConseilSheet extends StatelessWidget {
                     // Photo tips section
                     _SectionTitle(
                       icon: Icons.camera_alt_rounded,
-                      label: 'Idées pour la photo',
+                      label: lang == 'ar'
+                          ? 'أفكار للصور'
+                          : lang == 'en'
+                              ? 'Photo Ideas'
+                              : 'Idées pour la photo',
                       color: AppColors.magentaPink,
                     ),
                     const SizedBox(height: 10),
@@ -952,6 +1025,7 @@ class _ReminderSheetState extends ConsumerState<_ReminderSheet> {
 
   @override
   Widget build(BuildContext context) {
+    final lang = Localizations.localeOf(context).languageCode;
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final bgColor = isDark ? AppColors.surfaceDark : Colors.white;
     final textColor = isDark
@@ -964,36 +1038,68 @@ class _ReminderSheetState extends ConsumerState<_ReminderSheet> {
 
     final presets = <_ReminderPreset>[
       _ReminderPreset(
-        label: 'Demain',
+        label: lang == 'ar'
+            ? 'غداً'
+            : lang == 'en'
+                ? 'Tomorrow'
+                : 'Demain',
         subtitle: DateFormat(
-          'd MMM à 09:00',
-          'fr_FR',
+          lang == 'ar'
+              ? 'd MMM في 09:00'
+              : lang == 'en'
+                  ? 'd MMM at 09:00'
+                  : 'd MMM à 09:00',
+          lang,
         ).format(DateTime(now.year, now.month, now.day + 1, 9)),
         dateTime: DateTime(now.year, now.month, now.day + 1, 9),
       ),
       _ReminderPreset(
-        label: 'Dans 3 jours',
+        label: lang == 'ar'
+            ? 'خلال 3 أيام'
+            : lang == 'en'
+                ? 'In 3 days'
+                : 'Dans 3 jours',
         subtitle: DateFormat(
-          'd MMM à 09:00',
-          'fr_FR',
+          lang == 'ar'
+              ? 'd MMM في 09:00'
+              : lang == 'en'
+                  ? 'd MMM at 09:00'
+                  : 'd MMM à 09:00',
+          lang,
         ).format(DateTime(now.year, now.month, now.day + 3, 9)),
         dateTime: DateTime(now.year, now.month, now.day + 3, 9),
       ),
       _ReminderPreset(
-        label: 'Dans 1 semaine',
+        label: lang == 'ar'
+            ? 'خلال أسبوع'
+            : lang == 'en'
+                ? 'In 1 week'
+                : 'Dans 1 semaine',
         subtitle: DateFormat(
-          'd MMM à 09:00',
-          'fr_FR',
+          lang == 'ar'
+              ? 'd MMM في 09:00'
+              : lang == 'en'
+                  ? 'd MMM at 09:00'
+                  : 'd MMM à 09:00',
+          lang,
         ).format(DateTime(now.year, now.month, now.day + 7, 9)),
         dateTime: DateTime(now.year, now.month, now.day + 7, 9),
       ),
       if (widget.milestone.dueDate != null &&
           widget.milestone.dueDate!.isAfter(now))
         _ReminderPreset(
-          label: 'Le jour du jalon',
+          label: lang == 'ar'
+              ? 'يوم الجالون'
+              : lang == 'en'
+                  ? 'On milestone day'
+                  : 'Le jour du jalon',
           subtitle: DateFormat(
-            'd MMM à 09:00',
-            'fr_FR',
+            lang == 'ar'
+                ? 'd MMM في 09:00'
+                : lang == 'en'
+                    ? 'd MMM at 09:00'
+                    : 'd MMM à 09:00',
+            lang,
           ).format(widget.milestone.dueDate!),
           dateTime: DateTime(
             widget.milestone.dueDate!.year,
@@ -1047,7 +1153,11 @@ class _ReminderSheetState extends ConsumerState<_ReminderSheet> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'Programmer un rappel',
+                      lang == 'ar'
+                          ? 'برمجة تذكير'
+                          : lang == 'en'
+                              ? 'Schedule a reminder'
+                              : 'Programmer un rappel',
                       style: GoogleFonts.outfit(
                         fontSize: 18,
                         fontWeight: FontWeight.bold,
@@ -1055,7 +1165,7 @@ class _ReminderSheetState extends ConsumerState<_ReminderSheet> {
                       ),
                     ),
                     Text(
-                      widget.milestone.milestone.titleFr,
+                      widget.milestone.milestone.getTitle(lang),
                       style: GoogleFonts.outfit(
                         fontSize: 13,
                         color: secondaryColor,
@@ -1083,8 +1193,16 @@ class _ReminderSheetState extends ConsumerState<_ReminderSheet> {
             ),
           ),
           _ReminderTile(
-            label: 'Choisir une date et heure',
-            subtitle: 'Sélection manuelle',
+            label: lang == 'ar'
+                ? 'اختيار تاريخ ووقت'
+                : lang == 'en'
+                    ? 'Choose date & time'
+                    : 'Choisir une date et heure',
+            subtitle: lang == 'ar'
+                ? 'تحديد يدوي'
+                : lang == 'en'
+                    ? 'Manual selection'
+                    : 'Sélection manuelle',
             icon: Icons.edit_calendar_rounded,
             isDark: isDark,
             onTap: _busy ? null : _pickCustomDateTime,
@@ -1092,8 +1210,16 @@ class _ReminderSheetState extends ConsumerState<_ReminderSheet> {
           if (widget.currentReminder != null) ...[
             const SizedBox(height: 8),
             _ReminderTile(
-              label: 'Annuler le rappel',
-              subtitle: 'Supprimer le rappel programmé',
+              label: lang == 'ar'
+                  ? 'إلغاء التذكير'
+                  : lang == 'en'
+                      ? 'Cancel reminder'
+                      : 'Annuler le rappel',
+              subtitle: lang == 'ar'
+                  ? 'حذف التذكير المبرمج'
+                  : lang == 'en'
+                      ? 'Delete the scheduled reminder'
+                      : 'Supprimer le rappel programmé',
               icon: Icons.notifications_off_rounded,
               isDark: isDark,
               destructive: true,
@@ -1133,9 +1259,16 @@ class _ReminderSheetState extends ConsumerState<_ReminderSheet> {
 
   Future<void> _schedule(DateTime scheduledFor) async {
     if (scheduledFor.isBefore(DateTime.now())) {
+      final lang = Localizations.localeOf(context).languageCode;
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Choisissez une date dans le futur'),
+        SnackBar(
+          content: Text(
+            lang == 'ar'
+                ? 'يرجى اختيار تاريخ في المستقبل'
+                : lang == 'en'
+                    ? 'Choose a date in the future'
+                    : 'Choisissez une date dans le futur',
+          ),
           behavior: SnackBarBehavior.floating,
           backgroundColor: AppColors.error,
         ),
@@ -1145,10 +1278,15 @@ class _ReminderSheetState extends ConsumerState<_ReminderSheet> {
 
     final prefsEnabled = ref.read(notificationPrefsProvider).milestone;
     if (!prefsEnabled) {
+      final lang = Localizations.localeOf(context).languageCode;
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
+        SnackBar(
           content: Text(
-            'Activez les notifications de jalons dans Paramètres > Notifications',
+            lang == 'ar'
+                ? 'يرجى تفعيل تنبيهات الجالونات في الإعدادات > الإشعارات'
+                : lang == 'en'
+                    ? 'Enable milestone notifications in Settings > Notifications'
+                    : 'Activez les notifications de jalons dans Paramètres > Notifications',
           ),
           behavior: SnackBarBehavior.floating,
           backgroundColor: AppColors.error,
@@ -1187,10 +1325,15 @@ class _ReminderSheetState extends ConsumerState<_ReminderSheet> {
 
       if (mounted) {
         Navigator.pop(context);
+        final lang = Localizations.localeOf(context).languageCode;
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(
-              'Rappel programmé le ${DateFormat('d MMM à HH:mm', 'fr_FR').format(scheduledFor)} ✓',
+              lang == 'ar'
+                  ? 'تمت برمجة التذكير في ${DateFormat('d MMM في HH:mm', 'ar').format(scheduledFor)} ✓'
+                  : lang == 'en'
+                      ? 'Reminder scheduled for ${DateFormat('d MMM at HH:mm', 'en').format(scheduledFor)} ✓'
+                      : 'Rappel programmé le ${DateFormat('d MMM à HH:mm', 'fr_FR').format(scheduledFor)} ✓',
             ),
             behavior: SnackBarBehavior.floating,
             backgroundColor: AppColors.success,
@@ -1220,9 +1363,16 @@ class _ReminderSheetState extends ConsumerState<_ReminderSheet> {
 
       if (mounted) {
         Navigator.pop(context);
+        final lang = Localizations.localeOf(context).languageCode;
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Rappel annulé'),
+          SnackBar(
+            content: Text(
+              lang == 'ar'
+                  ? 'تم إلغاء التذكير'
+                  : lang == 'en'
+                      ? 'Reminder cancelled'
+                      : 'Rappel annulé',
+            ),
             behavior: SnackBarBehavior.floating,
           ),
         );

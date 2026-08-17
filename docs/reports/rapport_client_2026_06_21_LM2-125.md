@@ -9,17 +9,17 @@
 
 ## Ce qui a été fait
 
-### 1. Axe Y dynamique
+### 1. Axe Y dynamique adaptatif pour enfant
 
-L'axe vertical du graphique de poids était figé à `maxY: 25 kg`. Il est maintenant calculé dynamiquement :
+L'axe vertical du graphique de poids était figé à `maxY: 25 kg`. Il a été repensé pour s'adapter intelligemment :
 
-- **Plancher minimum garanti : 80 kg** (couvre tous les cas adultes)
-- Si les données de l'enfant dépassent 80 kg → le plafond monte à `max_poids × 1,15`, arrondi au 10 kg supérieur
-- Intervalle de graduation adaptatif :
-  - ≤ 30 kg → graduation tous les **5 kg**
-  - ≤ 60 kg → graduation tous les **10 kg**
-  - > 60 kg → graduation tous les **20 kg**
-- Le label du plafond est masqué pour éviter le chevauchement avec le bord supérieur
+- **Plancher minimum garanti : 25 kg** (couvre de façon optimale la croissance d'un enfant de 0 à 5 ans sans aplatir visuellement la courbe en bas de l'écran).
+- Si les données réelles saisies pour l'enfant dépassent 25 kg → le plafond s'élève dynamiquement à `poids_maximal × 1.15`, arrondi au multiple de 5 kg supérieur.
+- **Graduation verticale précise** : l'intervalle s'ajuste pour rester lisible et aéré :
+  - ≤ 30 kg → graduations tous les **5 kg**
+  - ≤ 60 kg → graduations tous les **10 kg**
+  - > 60 kg → graduations tous les **20 kg**
+- Le label supérieur (plafond) est masqué automatiquement pour éviter les chevauchements visuels.
 
 ### 2. Axe X dynamique
 
@@ -54,8 +54,8 @@ La courbe de référence OMS p50 (garçon/fille, 0–60 mois) reste affichée co
 
 | Critère | Statut |
 |---------|--------|
-| Axe Y minimum 80 kg garanti | ✅ |
-| Axe Y s'adapte au-delà de 80 kg | ✅ |
+| Axe Y minimum 25 kg garanti (évite l'écrasement de la courbe) | ✅ |
+| Axe Y s'adapte dynamiquement au-delà de 25 kg | ✅ |
 | Graduation Y adaptative (5 / 10 / 20 kg) | ✅ |
 | Axe X s'adapte à l'âge de l'enfant | ✅ |
 | Courbe OMS toujours visible (0–60 mois) | ✅ |

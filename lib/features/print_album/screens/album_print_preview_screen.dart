@@ -50,6 +50,7 @@ class _AlbumPrintPreviewScreenState
 
   @override
   Widget build(BuildContext context) {
+    final lang = Localizations.localeOf(context).languageCode;
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final bgColor = isDark
         ? AppColors.backgroundDark
@@ -66,7 +67,11 @@ class _AlbumPrintPreviewScreenState
           onPressed: () => Navigator.pop(context),
         ),
         title: Text(
-          'Aperçu de l\'album',
+          lang == 'ar'
+              ? 'معاينة الألبوم'
+              : lang == 'en'
+                  ? 'Album Preview'
+                  : 'Aperçu de l\'album',
           style: GoogleFonts.outfit(
             fontSize: 17,
             fontWeight: FontWeight.w600,
@@ -110,7 +115,11 @@ class _AlbumPrintPreviewScreenState
                     ),
                     const SizedBox(height: AppSpacing.md),
                     Text(
-                      'Préparation de votre album...',
+                      lang == 'ar'
+                          ? 'جاري تجهيز ألبومك...'
+                          : lang == 'en'
+                              ? 'Preparing your album...'
+                              : 'Préparation de votre album...',
                       style: GoogleFonts.outfit(color: textColor),
                     ),
                   ],
@@ -154,7 +163,11 @@ class _AlbumPrintPreviewScreenState
                       color: Colors.white,
                     ),
                     label: Text(
-                      'Commander l\'impression',
+                      lang == 'ar'
+                          ? 'طلب الطباعة'
+                          : lang == 'en'
+                              ? 'Order printing'
+                              : 'Commander l\'impression',
                       style: GoogleFonts.outfit(
                         fontSize: 16,
                         fontWeight: FontWeight.bold,

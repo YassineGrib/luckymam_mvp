@@ -48,6 +48,7 @@ class _StandardAlbumDetailScreenState
 
   @override
   Widget build(BuildContext context) {
+    final lang = Localizations.localeOf(context).languageCode;
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final bgColor = isDark
         ? AppColors.backgroundDark
@@ -63,10 +64,26 @@ class _StandardAlbumDetailScreenState
       backgroundColor: bgColor,
       body: albumAsync.when(
         loading: () => const Center(child: CircularProgressIndicator()),
-        error: (e, _) => Center(child: Text('Erreur : $e')),
+        error: (e, _) => Center(
+          child: Text(
+            lang == 'ar'
+                ? 'خطأ: $e'
+                : lang == 'en'
+                    ? 'Error: $e'
+                    : 'Erreur : $e',
+          ),
+        ),
         data: (album) {
           if (album == null) {
-            return const Center(child: Text('Album introuvable'));
+            return Center(
+              child: Text(
+                lang == 'ar'
+                    ? 'الألبوم غير موجود'
+                    : lang == 'en'
+                        ? 'Album not found'
+                        : 'Album introuvable',
+              ),
+            );
           }
           return _StandardAlbumBody(
             album: album,
@@ -98,6 +115,7 @@ class _StandardAlbumBody extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final capsulesAsync = ref.watch(capsulesByChildProvider(album.childId));
+    final lang = Localizations.localeOf(context).languageCode;
     final childrenAsync = ref.watch(childrenProvider);
     final childName = childrenAsync
         .whenOrNull(
@@ -116,7 +134,7 @@ class _StandardAlbumBody extends ConsumerWidget {
         printPages.add(
           AlbumPdfPage(
             imageUrl: capsule.photoUrl,
-            caption: 'Page ${i + 1}',
+            caption: lang == 'ar' ? 'الصفحة ${i + 1}' : 'Page ${i + 1}',
           ),
         );
       }
@@ -129,7 +147,7 @@ class _StandardAlbumBody extends ConsumerWidget {
           backgroundColor: isDark ? AppColors.surfaceDark : Colors.white,
           foregroundColor: textColor,
           title: GestureDetector(
-            onTap: () => _renameAlbum(context, ref),
+            onTap: () => _renameAlbum(context, ref, lang),
             child: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
@@ -159,7 +177,11 @@ class _StandardAlbumBody extends ConsumerWidget {
           ),
           sliver: SliverToBoxAdapter(
             child: Text(
-              '${album.filledCount}/${album.pageCount} pages remplies · Brouillon',
+              lang == 'ar'
+                  ? 'تم ملء ${album.filledCount}/${album.pageCount} صفحة · مسودة'
+                  : lang == 'en'
+                      ? '${album.filledCount}/${album.pageCount} pages filled · Draft'
+                      : '${album.filledCount}/${album.pageCount} pages remplies · Brouillon',
               style: GoogleFonts.outfit(fontSize: 12, color: secondaryText),
             ),
           ),
@@ -225,21 +247,39 @@ class _StandardAlbumBody extends ConsumerWidget {
     );
   }
 
-  void _renameAlbum(BuildContext context, WidgetRef ref) {
+  void _renameAlbum(BuildContext context, WidgetRef ref, String lang) {
     final controller = TextEditingController(text: album.title);
     showDialog(
       context: context,
       builder: (ctx) => AlertDialog(
-        title: const Text('Renommer l\'album'),
+        title: Text(
+          lang == 'ar'
+              ? 'إعادة تسمية الألبوم'
+              : lang == 'en'
+                  ? 'Rename Album'
+                  : 'Renommer l\'album',
+        ),
         content: TextField(
           controller: controller,
           autofocus: true,
-          decoration: const InputDecoration(hintText: 'Titre de l\'album'),
+          decoration: InputDecoration(
+            hintText: lang == 'ar'
+                ? 'عنوان الألبوم'
+                : lang == 'en'
+                    ? 'Album title'
+                    : 'Titre de l\'album',
+          ),
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(ctx),
-            child: const Text('Annuler'),
+            child: Text(
+              lang == 'ar'
+                  ? 'إلغاء'
+                  : lang == 'en'
+                      ? 'Cancel'
+                      : 'Annuler',
+            ),
           ),
           FilledButton(
             onPressed: () {
@@ -251,7 +291,13 @@ class _StandardAlbumBody extends ConsumerWidget {
               }
               Navigator.pop(ctx);
             },
-            child: const Text('Enregistrer'),
+            child: Text(
+              lang == 'ar'
+                  ? 'حفظ'
+                  : lang == 'en'
+                      ? 'Save'
+                      : 'Enregistrer',
+            ),
           ),
         ],
       ),
@@ -316,6 +362,7 @@ class _EmptyPageTile extends ConsumerWidget {
   }
 
   void _showAddOptions(BuildContext context, WidgetRef ref) {
+    final lang = Localizations.localeOf(context).languageCode;
     showModalBottomSheet(
       context: context,
       backgroundColor: Colors.transparent,
@@ -332,7 +379,13 @@ class _EmptyPageTile extends ConsumerWidget {
               const SizedBox(height: 8),
               ListTile(
                 leading: Icon(Icons.photo_library_outlined, color: accent),
-                title: const Text('Choisir une capsule existante'),
+                title: Text(
+                  lang == 'ar'
+                      ? 'اختيار كبسولة موجودة'
+                      : lang == 'en'
+                          ? 'Choose an existing capsule'
+                          : 'Choisir une capsule existante',
+                ),
                 onTap: () {
                   Navigator.pop(ctx);
                   showModalBottomSheet(
@@ -357,7 +410,13 @@ class _EmptyPageTile extends ConsumerWidget {
               ),
               ListTile(
                 leading: Icon(Icons.add_a_photo_rounded, color: accent),
-                title: const Text('Créer une nouvelle capsule'),
+                title: Text(
+                  lang == 'ar'
+                      ? 'إنشاء كبسولة جديدة'
+                      : lang == 'en'
+                          ? 'Create a new capsule'
+                          : 'Créer une nouvelle capsule',
+                ),
                 onTap: () {
                   Navigator.pop(ctx);
                   Navigator.of(context).push(

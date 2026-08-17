@@ -1,3 +1,5 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+
 import 'phase.dart';
 
 /// Represents a milestone/event in the child's life journey
@@ -38,7 +40,7 @@ class Milestone {
 
   /// Get localized description
   String getDescription(String locale) =>
-      locale == 'ar' ? descriptionAr : titleFr;
+      locale == 'ar' ? descriptionAr : descriptionFr;
 
   /// Check if this milestone is medical-related
   bool get isMedical => category == MilestoneCategory.sante;
@@ -79,9 +81,7 @@ class MilestoneProgress {
         (s) => s.name == json['status'],
         orElse: () => MilestoneStatus.pending,
       ),
-      completedAt: json['completedAt'] != null
-          ? DateTime.parse(json['completedAt'] as String)
-          : null,
+      completedAt: _parseDateTime(json['completedAt']),
       capsuleId: json['capsuleId'] as String?,
       notes: json['notes'] as String?,
     );
@@ -92,10 +92,20 @@ class MilestoneProgress {
     'userId': userId,
     'childId': childId,
     'status': status.name,
-    'completedAt': completedAt?.toIso8601String(),
+    'completedAt': completedAt != null
+        ? Timestamp.fromDate(completedAt!)
+        : null,
     'capsuleId': capsuleId,
     'notes': notes,
   };
+}
+
+DateTime? _parseDateTime(dynamic value) {
+  if (value == null) return null;
+  if (value is Timestamp) return value.toDate();
+  if (value is DateTime) return value;
+  if (value is String) return DateTime.tryParse(value);
+  return null;
 }
 
 /// Status of a milestone for a user

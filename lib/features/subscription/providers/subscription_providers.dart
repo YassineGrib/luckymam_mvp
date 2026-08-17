@@ -21,6 +21,27 @@ final currentTierProvider = StreamProvider<SubscriptionTier>((ref) {
       .map((doc) {
         final data = doc.data();
         if (data == null) return SubscriptionTier.free;
+
+        final endRaw = data['subscriptionEndDate'];
+        if (endRaw != null) {
+          final endDate = endRaw is Timestamp
+              ? endRaw.toDate()
+              : DateTime.tryParse(endRaw.toString());
+          if (endDate != null) {
+            final expiresAt = DateTime(
+              endDate.year,
+              endDate.month,
+              endDate.day,
+              23,
+              59,
+              59,
+            );
+            if (DateTime.now().isAfter(expiresAt)) {
+              return SubscriptionTier.free;
+            }
+          }
+        }
+
         final tierStr = data['subscriptionTier'] as String?;
         if (tierStr == null) return SubscriptionTier.free;
         return SubscriptionTier.values.firstWhere(

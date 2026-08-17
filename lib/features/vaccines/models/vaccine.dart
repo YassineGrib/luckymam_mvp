@@ -75,7 +75,34 @@ class VaccineGroup {
   }
 
   /// Get localized age label based on locale
-  String getAgeLabel(String locale) => locale == 'ar' ? ageAr : ageFr;
+  String getAgeLabel(String locale) {
+    if (locale == 'ar') return ageAr;
+    if (locale == 'en') {
+      switch (ageMonths) {
+        case 0:
+          return 'Birth';
+        case 2:
+          return '2 months';
+        case 4:
+          return '4 months';
+        case 11:
+          return '11 months';
+        case 12:
+          return '12 months';
+        case 18:
+          return '18 months';
+        case 72: // 6 years
+          return '6 years';
+        case 132: // 11 years
+          return '11-13 years';
+        case 192: // 16 years
+          return '16-18 years';
+        default:
+          return ageFr.replaceAll('mois', 'months').replaceAll('ans', 'years');
+      }
+    }
+    return ageFr;
+  }
 
   /// Get combined vaccine codes as a short label
   String get vaccineCodesLabel => vaccines.map((v) => v.code).join(' + ');

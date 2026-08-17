@@ -61,7 +61,7 @@ Le payload de la notification transporte `childId` + `milestoneId` (JSON). Au ta
 | `lib/features/timeline/services/milestone_notification_service.dart` | `scheduleCustomReminder()`, `getCustomReminder()`, `cancelCustomReminder()`, provider `milestoneReminderProvider` |
 | `lib/core/router/app_router.dart` | `navigatorKey` global pour navigation hors contexte (deep link) |
 | `lib/main.dart` | `LuckymamApp` converti en `ConsumerStatefulWidget` ; gestion du deep link (tap direct + cold start), validation, navigation, analytics |
-| `lib/features/timeline/screens/milestone_detail_screen.dart` | Bouton "Rappel", bottom sheet `_ReminderSheet` (raccourcis + sélection manuelle + annulation), widgets `_ReminderTile`, `_ReminderPreset` |
+| `lib/features/timeline/screens/milestone_detail_screen.dart` | Bouton "Rappel", bottom sheet `_ReminderSheet` (raccourcis + sélection manuelle + annulation), widgets `_ReminderTile`, `_ReminderPreset` · traduction dynamique des boutons/presets/dialogues |
 
 ---
 
@@ -71,6 +71,9 @@ Le payload de la notification transporte `childId` + `milestoneId` (JSON). Au ta
 |---------|--------|
 | Bouton "Rappel" visible sur chaque jalon | ✅ |
 | Programmation à date/heure précise | ✅ |
+| Traduction dynamique des boutons, raccourcis et dialogues (AR / FR / EN) | ✅ |
+| Date de rappel formatée dynamiquement selon la langue choisie | ✅ |
+| SnackBars d'avertissement et de succès traduites | ✅ |
 | Raccourcis rapides (demain, 3j, 1 semaine, jour du jalon) | ✅ |
 | Sélecteur manuel date + heure | ✅ |
 | Annulation d'un rappel programmé | ✅ |

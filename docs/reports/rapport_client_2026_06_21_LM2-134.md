@@ -70,17 +70,17 @@ Un bandeau dégradé « 🎁 Album prédéfini » a été ajouté en haut de l'�
 
 ## Fichiers créés / modifiés
 
-| Fichier | Changement |
-|---------|-----------|
-| `lib/features/memory_book/models/album_template.dart` | Nouveau — `AlbumTemplate`, `AlbumEventSlot` |
-| `lib/features/memory_book/data/album_templates_data.dart` | Nouveau — 3 modèles, 14 évènements au total |
-| `lib/features/memory_book/models/predefined_album.dart` | Nouveau — modèle Firestore `PredefinedAlbum` |
-| `lib/features/memory_book/services/predefined_album_service.dart` | Nouveau — CRUD Firestore |
-| `lib/features/memory_book/providers/predefined_album_providers.dart` | Nouveau — providers + notifier d'actions + analytics |
-| `lib/features/memory_book/screens/album_template_picker_screen.dart` | Nouveau — sélection de modèle |
-| `lib/features/memory_book/screens/predefined_album_detail_screen.dart` | Nouveau — remplissage des évènements |
-| `lib/features/memory_book/widgets/capsule_picker_sheet.dart` | Nouveau — sélecteur de capsule existante |
-| `lib/features/memory_book/screens/memory_book_screen.dart` | Bandeau d'entrée + sélection d'enfant |
+| Fichier | Changement / Rôle |
+|---------|------------------|
+| `lib/features/memory_book/models/album_template.dart` | `AlbumTemplate`, `AlbumEventSlot` · ajout du support de la langue anglaise et de fonctions de traduction dynamique |
+| `lib/features/memory_book/data/album_templates_data.dart` | Base de données locale de 3 modèles · ajout des traductions anglaises pour tous les modèles et événements |
+| `lib/features/memory_book/screens/album_template_picker_screen.dart` | Sélection de modèle · traduction dynamique de l'interface, des dialogues et des compteurs |
+| `lib/features/memory_book/screens/predefined_album_detail_screen.dart` | Remplissage des évènements · traduction dynamique des titres d'événements, descriptions, états d'erreur et boutons |
+| `lib/features/memory_book/widgets/capsule_picker_sheet.dart` | Sélecteur de capsule existante · traduction dynamique de l'interface et des états vides |
+| `lib/features/memory_book/screens/memory_book_screen.dart` | Bandeau d'entrée + sélection d'enfant · traduction dynamique des boutons, bannières et boîtes de dialogue |
+| `lib/features/memory_book/models/predefined_album.dart` | Modèle Firestore `PredefinedAlbum` |
+| `lib/features/memory_book/services/predefined_album_service.dart` | CRUD Firestore |
+| `lib/features/memory_book/providers/predefined_album_providers.dart` | Providers + notifier d'actions + analytics |
 | `lib/features/capsules/models/capsule.dart` | Champs `albumId` / `albumSlotId` |
 | `lib/features/capsules/services/capsule_service.dart` | Auto-attachement à l'évènement + analytics |
 | `lib/features/capsules/providers/capsule_providers.dart` | Passage des nouveaux paramètres |
@@ -95,6 +95,8 @@ Un bandeau dégradé « 🎁 Album prédéfini » a été ajouté en haut de l'�
 |---------|--------|
 | Sélection d'un modèle d'album prédéfini | ✅ |
 | Chaque modèle a une liste d'évènements réelle | ✅ |
+| Traduction dynamique complète des 3 modèles et de leurs événements (AR / FR / EN) | ✅ |
+| Traduction de l'interface utilisateur, des boutons et des dialogues | ✅ |
 | Attacher une capsule existante à un évènement | ✅ |
 | Créer une nouvelle capsule liée à l'évènement | ✅ |
 | Mise à jour temps réel (Firestore streams) | ✅ |
@@ -103,7 +105,7 @@ Un bandeau dégradé « 🎁 Album prédéfini » a été ajouté en haut de l'�
 | Contrôle d'accès Firestore par utilisateur | ✅ |
 | Analytics `album_template_selected` | ✅ |
 | Analytics `album_event_slot_filled` | ✅ |
-| `flutter analyze` clean (0 nouveaux problèmes) | ✅ |
+| `flutter analyze` clean | ✅ |
 
 ---
 

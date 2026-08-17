@@ -31,6 +31,7 @@ class CapsulePickerSheet extends ConsumerWidget {
 
     final capsulesAsync = ref.watch(capsulesByChildProvider(childId));
 
+    final lang = Localizations.localeOf(context).languageCode;
     return DraggableScrollableSheet(
       initialChildSize: 0.7,
       minChildSize: 0.4,
@@ -65,7 +66,11 @@ class CapsulePickerSheet extends ConsumerWidget {
                   children: [
                     Expanded(
                       child: Text(
-                        'Choisir une capsule',
+                        lang == 'ar'
+                            ? 'اختر كبسولة ذكريات'
+                            : lang == 'en'
+                                ? 'Choose a Capsule'
+                                : 'Choisir une capsule',
                         style: GoogleFonts.outfit(
                           fontSize: 18,
                           fontWeight: FontWeight.bold,
@@ -87,7 +92,11 @@ class CapsulePickerSheet extends ConsumerWidget {
                       const Center(child: CircularProgressIndicator()),
                   error: (e, _) => Center(
                     child: Text(
-                      'Erreur de chargement',
+                      lang == 'ar'
+                          ? 'خطأ في التحميل'
+                          : lang == 'en'
+                              ? 'Loading error'
+                              : 'Erreur de chargement',
                       style: GoogleFonts.outfit(color: secondaryColor),
                     ),
                   ),
@@ -97,7 +106,11 @@ class CapsulePickerSheet extends ConsumerWidget {
                         child: Padding(
                           padding: const EdgeInsets.all(AppSpacing.xl),
                           child: Text(
-                            'Aucune capsule pour cet enfant.\nCréez-en une nouvelle pour ce moment.',
+                            lang == 'ar'
+                                ? 'لا توجد كبسولات لهذا الطفل.\nقومي بإنشاء كبسولة جديدة لهذه المناسبة.'
+                                : lang == 'en'
+                                    ? 'No capsules for this child.\nCreate a new one for this event.'
+                                    : 'Aucune capsule pour cet enfant.\nCréez-en une nouvelle pour ce moment.',
                             textAlign: TextAlign.center,
                             style: GoogleFonts.outfit(
                               color: secondaryColor,

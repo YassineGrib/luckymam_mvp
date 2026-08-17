@@ -13,8 +13,12 @@ import {
   ArrowRight,
   ShieldCheck,
   Smile,
-  ChevronRight
+  ChevronRight,
+  Menu,
+  X
 } from 'lucide-react';
+import { DownloadLink } from './components/DownloadLink';
+import { CONTACT_EMAIL } from './constants/contact';
 import logo from './assets/logo.png';
 import illustrationHero from './assets/illustration_hero.png';
 import illustrationBaby from './assets/illustration_baby.png';
@@ -184,34 +188,80 @@ function App() {
 
   // --- State for Phone Walkthrough ---
   const [activeTab, setActiveTab] = useState<'dash' | 'timeline' | 'reels' | 'health'>('dash');
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+
+  const closeMobileMenu = () => setMobileMenuOpen(false);
+
+  const navLinks = [
+    { href: '#capsules', label: 'Fonctionnalités' },
+    { href: '#capsules', label: 'Souvenirs' },
+    { href: '#calculator', label: 'Vaccins' },
+    { href: '#demo', label: 'Aperçu App' },
+  ];
 
   return (
-    <div className="min-h-screen bg-clay-bg text-charcoal-dark font-sansSelection selection:bg-sunshine-gold selection:text-charcoal-dark">
+    <div className="min-h-screen bg-clay-bg text-charcoal-dark font-sans selection:bg-sunshine-gold selection:text-charcoal-dark pb-20 md:pb-0">
 
       {/* 1. Header / Navigation */}
-      <header className="sticky top-0 z-50 bg-clay-bg border-b-[2.5px] border-charcoal-dark px-6 py-4">
-        <div className="max-w-7xl mx-auto flex justify-between items-center">
-          <div className="flex items-center gap-3">
-            <img src={logo} alt="Luckymam Logo" className="w-10 h-10 neo-border neo-shadow-sm bg-white rounded-lg object-contain p-1" />
-            <span className="font-display text-2xl font-bold tracking-tight">Luckymam</span>
-          </div>
+      <header className="sticky top-0 z-50 bg-clay-bg/95 backdrop-blur-sm border-b-[2.5px] border-charcoal-dark px-4 sm:px-6 py-3 sm:py-4">
+        <div className="max-w-7xl mx-auto flex justify-between items-center gap-3">
+          <a href="#" className="flex items-center gap-2 sm:gap-3 min-w-0">
+            <img src={logo} alt="Luckymam Logo" className="w-9 h-9 sm:w-10 sm:h-10 shrink-0 neo-border neo-shadow-sm bg-white rounded-lg object-contain p-1" />
+            <span className="font-display text-xl sm:text-2xl font-bold tracking-tight truncate">Luckymam</span>
+          </a>
 
-          <nav className="hidden md:flex items-center gap-8 font-display font-bold">
-            <a href="#features" className="hover:text-coral-primary transition-colors">Fonctionnalités</a>
-            <a href="#capsules" className="hover:text-coral-primary transition-colors">Souvenirs</a>
-            <a href="#calculator" className="hover:text-coral-primary transition-colors">Vaccins</a>
-            <a href="#demo" className="hover:text-coral-primary transition-colors">Aperçu App</a>
+          <nav className="hidden lg:flex items-center gap-6 xl:gap-8 font-display font-bold text-sm">
+            {navLinks.map((link) => (
+              <a key={link.label} href={link.href} className="hover:text-coral-primary transition-colors whitespace-nowrap">
+                {link.label}
+              </a>
+            ))}
           </nav>
 
-          <a href="#download" className="neo-btn neo-btn-gold px-5 py-2 text-sm tracking-wide">
-            Télécharger <ArrowRight className="inline ml-1.5 w-4 h-4" />
-          </a>
+          <div className="flex items-center gap-2 sm:gap-3 shrink-0">
+            <DownloadLink className="neo-btn neo-btn-gold px-3 sm:px-5 py-2 text-xs sm:text-sm tracking-wide whitespace-nowrap">
+              <span className="hidden min-[400px]:inline">Télécharger</span>
+              <span className="min-[400px]:hidden">APK</span>
+              <ArrowRight className="inline ml-1 sm:ml-1.5 w-4 h-4" />
+            </DownloadLink>
+
+            <button
+              type="button"
+              aria-label={mobileMenuOpen ? 'Fermer le menu' : 'Ouvrir le menu'}
+              aria-expanded={mobileMenuOpen}
+              onClick={() => setMobileMenuOpen((open) => !open)}
+              className="lg:hidden w-10 h-10 neo-border neo-shadow-sm bg-white flex items-center justify-center"
+            >
+              {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+            </button>
+          </div>
         </div>
+
+        {mobileMenuOpen && (
+          <nav className="lg:hidden mt-3 pt-3 border-t-[2.5px] border-charcoal-dark/20 grid gap-2 font-display font-bold">
+            {navLinks.map((link) => (
+              <a
+                key={link.label}
+                href={link.href}
+                onClick={closeMobileMenu}
+                className="px-3 py-3 neo-border bg-white hover:bg-sunshine-gold/30 transition-colors"
+              >
+                {link.label}
+              </a>
+            ))}
+            <DownloadLink
+              className="neo-btn w-full py-3 text-sm"
+              onClick={closeMobileMenu}
+            >
+              Télécharger l'APK
+            </DownloadLink>
+          </nav>
+        )}
       </header>
 
       {/* Marquee Ticker */}
-      <div className="bg-charcoal-dark text-white py-2.5 overflow-hidden border-b-[2.5px] border-charcoal-dark">
-        <div className="animate-marquee whitespace-nowrap flex gap-16 font-display font-bold text-sm uppercase tracking-widest">
+      <div className="bg-charcoal-dark text-white py-2 overflow-hidden border-b-[2.5px] border-charcoal-dark">
+        <div className="animate-marquee whitespace-nowrap flex gap-8 sm:gap-16 font-display font-bold text-xs sm:text-sm uppercase tracking-widest">
           <span>👶 Suivi Santé et Vaccins Algérie</span>
           <span>💖 100% Conforme à la Loi 18-07</span>
           <span>🎙️ Capsules Souvenirs Audio & Photo</span>
@@ -224,55 +274,55 @@ function App() {
       </div>
 
       {/* 2. Hero Section */}
-      <section className="max-w-7xl mx-auto px-6 py-12 md:py-20">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+      <section className="max-w-7xl mx-auto px-4 sm:px-6 py-8 sm:py-12 md:py-16 lg:py-20">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center">
 
           {/* Hero Left (Text) */}
-          <div className="lg:col-span-7 space-y-6 text-left">
-            <div className="inline-flex items-center gap-2 px-3 py-1 bg-sunshine-gold neo-border neo-shadow-sm font-display font-bold text-xs uppercase">
-              <ShieldCheck className="w-4 h-4 text-charcoal-dark" />
+          <div className="lg:col-span-7 space-y-5 sm:space-y-6 text-left order-2 lg:order-1">
+            <div className="inline-flex items-center gap-2 px-3 py-1 bg-sunshine-gold neo-border neo-shadow-sm font-display font-bold text-[10px] sm:text-xs uppercase">
+              <ShieldCheck className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-charcoal-dark shrink-0" />
               Loi Algérienne 18-07 Conforme
             </div>
 
-            <h1 className="font-display text-4xl sm:text-6xl font-black leading-[1.05] tracking-tight">
-              L'enfance de votre bébé, <br />
+            <h1 className="font-display text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-black leading-[1.08] tracking-tight">
+              L'enfance de votre bébé,{' '}
               <span className="text-coral-primary underline decoration-charcoal-dark decoration-wavy">gravée à jamais.</span>
             </h1>
 
-            <p className="text-lg text-charcoal-dark/80 max-w-xl font-medium leading-relaxed">
+            <p className="text-base sm:text-lg text-charcoal-dark/80 max-w-xl font-medium leading-relaxed">
               Luckymam est le coffre-fort émotionnel et médical des mamans. Enregistrez les rires de votre bébé, suivez son calendrier de vaccins algérien officiel et apprenez des pédiatres à travers de courtes vidéos.
             </p>
 
-            <div className="flex flex-wrap gap-4 pt-2">
-              <a href="#download" className="neo-btn text-base px-8 py-3.5 bg-coral-primary">
+            <div className="flex flex-col min-[400px]:flex-row flex-wrap gap-3 sm:gap-4 pt-1 sm:pt-2">
+              <DownloadLink className="neo-btn text-sm sm:text-base px-6 sm:px-8 py-3 sm:py-3.5 bg-coral-primary w-full sm:w-auto">
                 Installer Gratuitement
-              </a>
-              <a href="#calculator" className="neo-btn neo-btn-white text-base px-8 py-3.5">
+              </DownloadLink>
+              <a href="#calculator" className="neo-btn neo-btn-white text-sm sm:text-base px-6 sm:px-8 py-3 sm:py-3.5 w-full sm:w-auto text-center">
                 Calculer les Vaccins
               </a>
             </div>
 
-            <div className="flex items-center gap-6 pt-4 text-xs font-display font-bold uppercase text-charcoal-dark/70">
+            <div className="flex flex-col sm:flex-row sm:flex-wrap gap-3 sm:gap-6 pt-2 sm:pt-4 text-[11px] sm:text-xs font-display font-bold uppercase text-charcoal-dark/70">
               <div className="flex items-center gap-1.5">
-                <CheckCircle2 className="w-4 h-4 text-green-600" /> Stockage Cloud Sécurisé
+                <CheckCircle2 className="w-4 h-4 text-green-600 shrink-0" /> Stockage Cloud Sécurisé
               </div>
               <div className="flex items-center gap-1.5">
-                <CheckCircle2 className="w-4 h-4 text-green-600" /> Export PDF Automatique
+                <CheckCircle2 className="w-4 h-4 text-green-600 shrink-0" /> Export PDF Automatique
               </div>
             </div>
           </div>
 
           {/* Hero Right (Asymmetric Visual Frame) */}
-          <div className="lg:col-span-5 flex justify-center">
-            <div className="relative p-3 bg-white neo-border neo-shadow-lg rotate-[-1.5deg] max-w-[420px] w-full">
+          <div className="lg:col-span-5 flex justify-center order-1 lg:order-2">
+            <div className="relative p-2 sm:p-3 bg-white neo-border neo-shadow-lg lg:rotate-[-1.5deg] max-w-[360px] sm:max-w-[420px] w-full mx-auto">
               <img
                 src={illustrationHero}
                 alt="Illustration Mère et Bébé"
                 className="w-full h-auto bg-clay-bg object-cover neo-border"
               />
-              <div className="absolute -bottom-6 -right-6 bg-sunshine-gold p-4 neo-border neo-shadow font-display font-bold text-center rotate-[4deg] max-w-[150px]">
-                <Smile className="w-6 h-6 mx-auto mb-1" />
-                <span className="text-xs">Fait par et pour les mamans</span>
+              <div className="absolute -bottom-4 sm:-bottom-6 -right-2 sm:-right-6 bg-sunshine-gold p-3 sm:p-4 neo-border neo-shadow font-display font-bold text-center lg:rotate-[4deg] max-w-[130px] sm:max-w-[150px]">
+                <Smile className="w-5 h-5 sm:w-6 sm:h-6 mx-auto mb-1" />
+                <span className="text-[10px] sm:text-xs leading-tight block">Fait pour les mamans</span>
               </div>
             </div>
           </div>
@@ -281,10 +331,10 @@ function App() {
       </section>
 
       {/* 3. Wow Feature 1: Interactive Memory Capsules */}
-      <section id="capsules" className="bg-white border-y-[2.5px] border-charcoal-dark py-16 md:py-24">
-        <div className="max-w-7xl mx-auto px-6">
-          <div className="max-w-2xl mx-auto text-center space-y-4 mb-16">
-            <h2 className="text-3xl md:text-5xl font-black tracking-tight">
+      <section id="capsules" className="bg-white border-y-[2.5px] border-charcoal-dark py-12 sm:py-16 md:py-24">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6">
+          <div className="max-w-2xl mx-auto text-center space-y-3 sm:space-y-4 mb-10 sm:mb-16">
+            <h2 className="text-2xl sm:text-3xl md:text-5xl font-black tracking-tight">
               Créer des Capsules Temporelles
             </h2>
             <p className="text-lg text-charcoal-dark/80 font-medium">
@@ -295,14 +345,14 @@ function App() {
             </span>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6 sm:gap-8">
 
             {/* Capsule 1 */}
             <div
               className="group p-4 bg-clay-bg neo-border neo-shadow-hover relative flex flex-col justify-between cursor-pointer"
               onClick={() => handlePlaySound('capsule-1', 'laugh')}
             >
-              <div className="bg-white p-3 neo-border relative overflow-hidden h-[240px]">
+              <div className="bg-white p-3 neo-border relative overflow-hidden h-[200px] sm:h-[240px]">
                 <div className="absolute top-3 right-3 z-10 bg-sunshine-gold font-display font-black text-xs px-2.5 py-1 rounded neo-border">
                   😄 JOIE
                 </div>
@@ -345,7 +395,7 @@ function App() {
               className="group p-4 bg-clay-bg neo-border neo-shadow-hover relative flex flex-col justify-between cursor-pointer"
               onClick={() => handlePlaySound('capsule-2', 'coo')}
             >
-              <div className="bg-white p-3 neo-border relative overflow-hidden h-[240px]">
+              <div className="bg-white p-3 neo-border relative overflow-hidden h-[200px] sm:h-[240px]">
                 <div className="absolute top-3 right-3 z-10 bg-sunshine-gold font-display font-black text-xs px-2.5 py-1 rounded neo-border">
                   🍼 PREMIÈRE FOIS
                 </div>
@@ -388,7 +438,7 @@ function App() {
               className="group p-4 bg-clay-bg neo-border neo-shadow-hover relative flex flex-col justify-between cursor-pointer"
               onClick={() => handlePlaySound('capsule-3', 'heartbeat')}
             >
-              <div className="bg-white p-3 neo-border relative overflow-hidden h-[240px]">
+              <div className="bg-white p-3 neo-border relative overflow-hidden h-[200px] sm:h-[240px]">
                 <div className="absolute top-3 right-3 z-10 bg-sunshine-gold font-display font-black text-xs px-2.5 py-1 rounded neo-border">
                   💉 VACCIN
                 </div>
@@ -431,8 +481,8 @@ function App() {
       </section>
 
       {/* 4. Wow Feature 2: Interactive Algerian Vaccination Planner */}
-      <section id="calculator" className="py-16 md:py-24 max-w-7xl mx-auto px-6">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-start">
+      <section id="calculator" className="py-12 sm:py-16 md:py-24 max-w-7xl mx-auto px-4 sm:px-6">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-start">
 
           {/* Calculator Left (Inputs) */}
           <div className="lg:col-span-5 p-6 md:p-8 bg-white neo-border neo-shadow space-y-6">
@@ -470,11 +520,11 @@ function App() {
               Calendrier Vaccinal Officiel (Algérie)
             </h3>
 
-            <div className="relative border-l-[3px] border-charcoal-dark pl-6 ml-3 space-y-8 text-left">
+            <div className="relative border-l-[3px] border-charcoal-dark pl-4 sm:pl-6 ml-1 sm:ml-3 space-y-6 sm:space-y-8 text-left">
               {calculatedSchedule.map((item, idx) => (
                 <div key={idx} className="relative">
                   {/* Point on timeline */}
-                  <span className="absolute -left-[35px] top-1 w-6 h-6 rounded-full bg-sunshine-gold neo-border flex items-center justify-center font-display text-xs font-bold">
+                  <span className="absolute -left-[22px] sm:-left-[35px] top-1 w-5 h-5 sm:w-6 sm:h-6 rounded-full bg-sunshine-gold neo-border flex items-center justify-center font-display text-[10px] sm:text-xs font-bold">
                     {idx + 1}
                   </span>
 
@@ -510,17 +560,17 @@ function App() {
       </section>
 
       {/* 5. Interactive Phone Walkthrough */}
-      <section id="demo" className="bg-charcoal-dark text-white py-20 border-y-[2.5px] border-charcoal-dark">
-        <div className="max-w-7xl mx-auto px-6">
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+      <section id="demo" className="bg-charcoal-dark text-white py-12 sm:py-16 md:py-20 border-y-[2.5px] border-charcoal-dark">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center">
 
             {/* Phone Walkthrough Left (Interactive Tabs) */}
-            <div className="lg:col-span-6 space-y-6 text-left">
+            <div className="lg:col-span-6 space-y-5 sm:space-y-6 text-left order-2 lg:order-1">
               <div className="space-y-2">
                 <span className="text-xs font-display font-bold tracking-widest text-sunshine-gold uppercase">
                   Découvrir l'Application
                 </span>
-                <h2 className="text-3xl md:text-5xl font-black tracking-tight">
+                <h2 className="text-2xl sm:text-3xl md:text-5xl font-black tracking-tight">
                   Une interface simple pour un quotidien serein
                 </h2>
               </div>
@@ -529,76 +579,80 @@ function App() {
                 Basculez entre les écrans clés de notre prototype pour découvrir les fonctionnalités conçues spécifiquement pour le confort des mamans.
               </p>
 
-              <div className="space-y-4 pt-4">
+              <div className="space-y-3 sm:space-y-4 pt-2 sm:pt-4">
 
                 {/* Tab 1 */}
                 <button
                   onClick={() => setActiveTab('dash')}
-                  className={`w-full p-4 text-left border-[2.5px] flex items-center justify-between transition-all ${activeTab === 'dash' ? 'bg-coral-primary border-white translate-x-2' : 'bg-charcoal-dark/50 border-white/20 hover:border-white/50'}`}
+                  className={`w-full p-3 sm:p-4 text-left border-[2.5px] flex items-center justify-between gap-3 transition-all ${activeTab === 'dash' ? 'bg-coral-primary border-white lg:translate-x-2' : 'bg-charcoal-dark/50 border-white/20 hover:border-white/50'}`}
                 >
-                  <div className="flex items-center gap-3">
-                    <Smartphone className="w-5 h-5" />
-                    <div>
-                      <h4 className="font-display font-bold text-base">Tableau de Bord Central</h4>
-                      <p className="text-xs text-white/70">Toutes vos priorités de maman en un coup d'œil.</p>
+                  <div className="flex items-center gap-3 min-w-0">
+                    <Smartphone className="w-5 h-5 shrink-0" />
+                    <div className="min-w-0">
+                      <h4 className="font-display font-bold text-sm sm:text-base">Tableau de Bord Central</h4>
+                      <p className="text-xs text-white/70 truncate sm:whitespace-normal">Toutes vos priorités de maman en un coup d'œil.</p>
                     </div>
                   </div>
-                  <ChevronRight className="w-5 h-5" />
+                  <ChevronRight className="w-5 h-5 shrink-0" />
                 </button>
 
                 {/* Tab 2 */}
                 <button
                   onClick={() => setActiveTab('timeline')}
-                  className={`w-full p-4 text-left border-[2.5px] flex items-center justify-between transition-all ${activeTab === 'timeline' ? 'bg-coral-primary border-white translate-x-2' : 'bg-charcoal-dark/50 border-white/20 hover:border-white/50'}`}
+                  className={`w-full p-3 sm:p-4 text-left border-[2.5px] flex items-center justify-between gap-3 transition-all ${activeTab === 'timeline' ? 'bg-coral-primary border-white lg:translate-x-2' : 'bg-charcoal-dark/50 border-white/20 hover:border-white/50'}`}
                 >
-                  <div className="flex items-center gap-3">
-                    <Layers className="w-5 h-5" />
-                    <div>
-                      <h4 className="font-display font-bold text-base">Journal Chronologique (Timeline)</h4>
-                      <p className="text-xs text-white/70">Revivez les plus belles capsules et photos souvenirs.</p>
+                  <div className="flex items-center gap-3 min-w-0">
+                    <Layers className="w-5 h-5 shrink-0" />
+                    <div className="min-w-0">
+                      <h4 className="font-display font-bold text-sm sm:text-base">Journal Chronologique</h4>
+                      <p className="text-xs text-white/70 truncate sm:whitespace-normal">Revivez les plus belles capsules et photos souvenirs.</p>
                     </div>
                   </div>
-                  <ChevronRight className="w-5 h-5" />
+                  <ChevronRight className="w-5 h-5 shrink-0" />
                 </button>
 
                 {/* Tab 3 */}
                 <button
                   onClick={() => setActiveTab('reels')}
-                  className={`w-full p-4 text-left border-[2.5px] flex items-center justify-between transition-all ${activeTab === 'reels' ? 'bg-coral-primary border-white translate-x-2' : 'bg-charcoal-dark/50 border-white/20 hover:border-white/50'}`}
+                  className={`w-full p-3 sm:p-4 text-left border-[2.5px] flex items-center justify-between gap-3 transition-all ${activeTab === 'reels' ? 'bg-coral-primary border-white lg:translate-x-2' : 'bg-charcoal-dark/50 border-white/20 hover:border-white/50'}`}
                 >
-                  <div className="flex items-center gap-3">
-                    <Video className="w-5 h-5" />
-                    <div>
-                      <h4 className="font-display font-bold text-base">Reels Éducatifs de Pédiatres</h4>
-                      <p className="text-xs text-white/70">Vidéos courtes de conseils médicaux et d'éveil.</p>
+                  <div className="flex items-center gap-3 min-w-0">
+                    <Video className="w-5 h-5 shrink-0" />
+                    <div className="min-w-0">
+                      <h4 className="font-display font-bold text-sm sm:text-base">Reels Éducatifs</h4>
+                      <p className="text-xs text-white/70 truncate sm:whitespace-normal">Vidéos courtes de conseils médicaux et d'éveil.</p>
                     </div>
                   </div>
-                  <ChevronRight className="w-5 h-5" />
+                  <ChevronRight className="w-5 h-5 shrink-0" />
                 </button>
 
                 {/* Tab 4 */}
                 <button
                   onClick={() => setActiveTab('health')}
-                  className={`w-full p-4 text-left border-[2.5px] flex items-center justify-between transition-all ${activeTab === 'health' ? 'bg-coral-primary border-white translate-x-2' : 'bg-charcoal-dark/50 border-white/20 hover:border-white/50'}`}
+                  className={`w-full p-3 sm:p-4 text-left border-[2.5px] flex items-center justify-between gap-3 transition-all ${activeTab === 'health' ? 'bg-coral-primary border-white lg:translate-x-2' : 'bg-charcoal-dark/50 border-white/20 hover:border-white/50'}`}
                 >
-                  <div className="flex items-center gap-3">
-                    <Calendar className="w-5 h-5" />
-                    <div>
-                      <h4 className="font-display font-bold text-base">Suivi de Santé & Grossesse</h4>
-                      <p className="text-xs text-white/70">Gestion du cycle, grossesse et fiche des enfants.</p>
+                  <div className="flex items-center gap-3 min-w-0">
+                    <Calendar className="w-5 h-5 shrink-0" />
+                    <div className="min-w-0">
+                      <h4 className="font-display font-bold text-sm sm:text-base">Suivi Santé & Grossesse</h4>
+                      <p className="text-xs text-white/70 truncate sm:whitespace-normal">Gestion du cycle, grossesse et fiche des enfants.</p>
                     </div>
                   </div>
-                  <ChevronRight className="w-5 h-5" />
+                  <ChevronRight className="w-5 h-5 shrink-0" />
                 </button>
 
               </div>
+
+              <DownloadLink className="neo-btn neo-btn-gold w-full sm:w-auto mt-2 text-sm">
+                Télécharger l'application
+              </DownloadLink>
             </div>
 
             {/* Phone Walkthrough Right (Simulated Device Screen) */}
-            <div className="hidden lg:flex lg:col-span-6 justify-center">
+            <div className="flex lg:col-span-6 justify-center order-1 lg:order-2">
 
               {/* External Phone frame */}
-              <div className="w-[300px] h-[600px] bg-black rounded-[40px] border-[5px] border-zinc-800 shadow-2xl relative overflow-hidden flex flex-col justify-between">
+              <div className="w-[260px] sm:w-[300px] h-[520px] sm:h-[600px] bg-black rounded-[32px] sm:rounded-[40px] border-[4px] sm:border-[5px] border-zinc-800 shadow-2xl relative overflow-hidden flex flex-col justify-between mx-auto">
 
                 {/* Speaker/Camera Notch */}
                 <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[120px] h-[24px] bg-black rounded-b-2xl z-30"></div>
@@ -771,9 +825,9 @@ function App() {
       </section>
 
       {/* 6. Pricing & Freemium Presentation */}
-      <section className="max-w-7xl mx-auto px-6 py-20 space-y-16">
-        <div className="max-w-2xl mx-auto text-center space-y-4">
-          <h2 className="text-3xl md:text-5xl font-black tracking-tight">
+      <section className="max-w-7xl mx-auto px-4 sm:px-6 py-12 sm:py-16 md:py-20 space-y-10 sm:space-y-16">
+        <div className="max-w-2xl mx-auto text-center space-y-3 sm:space-y-4">
+          <h2 className="text-2xl sm:text-3xl md:text-5xl font-black tracking-tight">
             Des formules adaptées à chaque maman
           </h2>
           <p className="text-lg text-charcoal-dark/80 font-medium">
@@ -817,9 +871,9 @@ function App() {
               </ul>
             </div>
 
-            <a href="#download" className="neo-btn neo-btn-white w-full py-3.5 text-center font-bold">
+            <DownloadLink className="neo-btn neo-btn-white w-full py-3.5 text-center font-bold">
               Commencer
-            </a>
+            </DownloadLink>
           </div>
 
           {/* Premium Tier */}
@@ -836,7 +890,7 @@ function App() {
               <p className="text-sm text-charcoal-dark/70 font-medium">
                 L'expérience complète sans aucune limite pour sauvegarder chaque précieux souvenir d'enfance.
               </p>
-              <div className="text-3xl font-black">500 DZD <span className="text-xs font-medium text-charcoal-dark/50">/ mois (facturé annuellement)</span></div>
+              <div className="text-3xl font-black">2 490 DZD <span className="text-xs font-medium text-charcoal-dark/50">/ mois (facturé annuellement)</span></div>
 
               <ul className="space-y-3 pt-4 border-t border-charcoal-dark/10">
                 <li className="flex items-center gap-2.5 text-xs font-semibold">
@@ -862,80 +916,58 @@ function App() {
               </ul>
             </div>
 
-            <a href="#download" className="neo-btn w-full py-3.5 text-center font-bold">
+            <DownloadLink className="neo-btn w-full py-3.5 text-center font-bold">
               Devenir Premium
-            </a>
+            </DownloadLink>
           </div>
 
         </div>
       </section>
 
       {/* 7. Call To Action / Download Section */}
-      <section id="download" className="bg-sunshine-gold border-t-[2.5px] border-charcoal-dark py-20 text-center">
-        <div className="max-w-4xl mx-auto px-6 space-y-8">
-          <h2 className="font-display text-4xl sm:text-6xl font-black tracking-tight leading-[1.05]">
-            Rejoignez +50,000 mamans algériennes
+      <section id="download" className="bg-sunshine-gold border-t-[2.5px] border-charcoal-dark py-12 sm:py-16 md:py-20 text-center scroll-mt-20">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 space-y-6 sm:space-y-8">
+          <h2 className="font-display text-2xl sm:text-4xl md:text-5xl lg:text-6xl font-black tracking-tight leading-[1.1] px-2">
+            Rejoignez la communauté luckymam des mamans ou futurs mamans DZ
           </h2>
-          <p className="text-lg text-charcoal-dark max-w-xl mx-auto font-medium">
+          <p className="text-base sm:text-lg text-charcoal-dark max-w-xl mx-auto font-medium px-2">
             N'attendez plus pour sécuriser le suivi médical de vos enfants et capturer les plus beaux moments de leur croissance.
           </p>
 
-          <div className="flex flex-wrap justify-center gap-6 pt-4">
-
-            {/* Play Store */}
-            <a 
-              href="#" 
-              onClick={(e) => { e.preventDefault(); alert("Bientôt disponible sur Google Play Store ! En attendant, vous pouvez télécharger et installer l'APK directement."); }}
-              className="neo-btn neo-btn-white flex items-center gap-3 px-6 py-3 opacity-80 cursor-pointer"
-            >
-              <Smartphone className="w-6 h-6 text-charcoal-dark" />
-              <div className="text-left">
-                <span className="text-[10px] block font-bold uppercase text-charcoal-dark/50">Bientôt sur</span>
-                <span className="font-display font-black text-sm">Google Play</span>
-              </div>
-            </a>
-
-            {/* App Store */}
-            <a 
-              href="#" 
-              onClick={(e) => { e.preventDefault(); alert("Bientôt disponible sur l'App Store ! En attendant, vous pouvez télécharger et installer l'APK directement sur les appareils compatibles."); }}
-              className="neo-btn neo-btn-white flex items-center gap-3 px-6 py-3 opacity-80 cursor-pointer"
-            >
-              <Smartphone className="w-6 h-6 text-charcoal-dark" />
-              <div className="text-left">
-                <span className="text-[10px] block font-bold uppercase text-charcoal-dark/50">Bientôt sur</span>
-                <span className="font-display font-black text-sm">App Store</span>
-              </div>
-            </a>
-
-            {/* Direct APK */}
-            <a 
-              href="/luckymam-v1.0.0.apk" 
-              download="luckymam-v1.0.0.apk"
-              className="neo-btn flex items-center gap-3 px-6 py-3 bg-charcoal-dark text-white border-white hover:scale-105 transition-transform"
-            >
-              <Download className="w-6 h-6 text-white" />
+          <div className="flex justify-center pt-2 sm:pt-4">
+            <DownloadLink className="neo-btn flex items-center justify-center gap-3 px-6 py-3 bg-charcoal-dark text-white border-white hover:scale-[1.02] active:scale-[0.98] transition-transform w-full sm:w-auto max-w-sm">
+              <Download className="w-6 h-6 text-white shrink-0" />
               <div className="text-left">
                 <span className="text-[10px] block font-bold uppercase text-white/50">Installation directe</span>
                 <span className="font-display font-black text-sm">Fichier APK (v1.0.0)</span>
               </div>
-            </a>
-
+            </DownloadLink>
           </div>
         </div>
       </section>
 
-      {/* 8. Footer */}
-      <footer className="bg-charcoal-dark text-white py-12 border-t-[2.5px] border-charcoal-dark text-left">
-        <div className="max-w-7xl mx-auto px-6 grid grid-cols-1 md:grid-cols-4 gap-8">
+      {/* Sticky mobile download bar */}
+      <div className="md:hidden fixed bottom-0 inset-x-0 z-50 p-3 bg-clay-bg/95 backdrop-blur-sm border-t-[2.5px] border-charcoal-dark safe-area-pb">
+        <DownloadLink className="neo-btn w-full py-3.5 text-sm bg-coral-primary">
+          <Download className="w-5 h-5 mr-2" />
+          Télécharger Luckymam
+        </DownloadLink>
+      </div>
 
-          <div className="space-y-4">
+      {/* 8. Footer */}
+      <footer className="bg-charcoal-dark text-white py-10 sm:py-12 border-t-[2.5px] border-charcoal-dark text-left">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-8">
+
+          <div className="space-y-3 sm:col-span-2 md:col-span-1">
             <div className="flex items-center gap-3">
               <span className="font-display text-2xl font-bold tracking-tight">Luckymam</span>
             </div>
-            <p className="text-xs text-white/60 leading-relaxed font-medium">
+            <p className="text-xs text-white/60 leading-relaxed font-medium max-w-sm">
               L'application d'accompagnement parental et de souvenirs conçue pour les familles modernes en Algérie.
             </p>
+            <DownloadLink className="neo-btn neo-btn-gold inline-flex text-xs py-2 px-4 mt-2">
+              Télécharger l'APK
+            </DownloadLink>
           </div>
 
           <div className="space-y-3">
@@ -972,13 +1004,13 @@ function App() {
             <h5 className="font-display font-bold text-sm text-sunshine-gold uppercase">Contact</h5>
             <p className="text-xs font-semibold text-white/70 leading-relaxed">
               Des questions ? Contactez-nous à <br />
-              <a href="mailto:support@luckymam.site" className="text-coral-primary hover:underline">support@luckymam.site</a>
+              <a href={`mailto:${CONTACT_EMAIL}`} className="text-coral-primary hover:underline">{CONTACT_EMAIL}</a>
             </p>
           </div>
 
         </div>
 
-        <div className="max-w-7xl mx-auto px-6 mt-12 pt-6 border-t border-white/10 text-center text-xs text-white/40 font-semibold">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 mt-10 sm:mt-12 pt-6 border-t border-white/10 text-center text-xs text-white/40 font-semibold">
           <p>© {new Date().getFullYear()} Luckymam. Tous droits réservés. Aligné sur la protection des données Loi 18-07 Algérie.</p>
         </div>
       </footer>

@@ -95,7 +95,7 @@ class _ReelAdItemState extends State<ReelAdItem> {
               borderRadius: BorderRadius.circular(12),
             ),
             child: Text(
-              'Sponsorisé · ${ad.sponsorName}',
+              '${Localizations.localeOf(context).languageCode == 'ar' ? 'برعاية' : Localizations.localeOf(context).languageCode == 'fr' ? 'Sponsorisé' : 'Sponsored'} · ${ad.sponsorName}',
               style: GoogleFonts.outfit(
                 fontSize: 12,
                 fontWeight: FontWeight.w600,

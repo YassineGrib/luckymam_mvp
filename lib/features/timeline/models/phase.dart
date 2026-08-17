@@ -36,6 +36,25 @@ extension PhaseExtension on Phase {
     }
   }
 
+  String getLabel(String locale) {
+    if (locale == 'ar') return labelAr;
+    if (locale == 'en') {
+      switch (this) {
+        case Phase.preGestation:
+          return 'Pre-Pregnancy';
+        case Phase.gestation:
+          return 'Pregnancy';
+        case Phase.postPartum:
+          return 'Postpartum';
+        case Phase.enfance:
+          return 'Childhood';
+        case Phase.adulte:
+          return 'Adulthood';
+      }
+    }
+    return labelFr;
+  }
+
   IconData get icon {
     switch (this) {
       case Phase.preGestation:
@@ -111,6 +130,23 @@ extension MilestoneCategoryExtension on MilestoneCategory {
       case MilestoneCategory.religion:
         return 'دين';
     }
+  }
+
+  String getLabel(String locale) {
+    if (locale == 'ar') return labelAr;
+    if (locale == 'en') {
+      switch (this) {
+        case MilestoneCategory.emotion:
+          return 'Emotion';
+        case MilestoneCategory.sante:
+          return 'Health';
+        case MilestoneCategory.culture:
+          return 'Culture';
+        case MilestoneCategory.religion:
+          return 'Religion';
+      }
+    }
+    return labelFr;
   }
 
   IconData get icon {

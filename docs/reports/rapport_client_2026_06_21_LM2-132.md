@@ -47,12 +47,13 @@ Plutôt que de recoder une fonctionnalité existante, le travail d'aujourd'hui a
 
 ---
 
-## Fichiers vérifiés (non modifiés — déjà conformes)
+## Fichiers modifiés et vérifiés
 
-| Fichier | Rôle |
-|---------|-----|
-| `lib/features/vaccines/widgets/vaccine_card.dart` | CTA + vignette (vue liste) |
-| `lib/features/vaccines/screens/vaccine_detail_screen.dart` | CTA + vignette (vue détail) |
+| Fichier | Changement / Rôle |
+|---------|------------------|
+| `lib/features/vaccines/widgets/vaccine_card.dart` | CTA + vignette (vue liste) · traduction dynamique de "Souvenir lié" et formatage de la date attendue |
+| `lib/features/vaccines/screens/vaccine_detail_screen.dart` | CTA + vignette (vue détail) · traduction dynamique des titres de section (Souvenir, Souvenir lié, etc.) et texte d'aide |
+| `lib/features/capsules/models/emotion.dart` | Ajout d'une méthode de traduction dynamique `getLabel(locale)` pour les émotions afin d'éviter le français forcé (`labelFr`) |
 | `lib/features/capsules/services/capsule_service.dart` | Liaison capsule ↔ vaccin, auto-complétion, analytics `vax_capsule_created` |
 | `lib/features/capsules/screens/create_capsule_screen.dart` | Support `vaccineGroupId` en paramètre |
 | `firestore.rules` / `storage.rules` | Contrôle d'accès vérifié par utilisateur |
@@ -67,8 +68,10 @@ Plutôt que de recoder une fonctionnalité existante, le travail d'aujourd'hui a
 | CTA "Capsule" sur le détail du vaccin | ✅ |
 | Capsule associée au vaccin en Firestore | ✅ |
 | Vaccin auto-marqué complété si capsule créée | ✅ |
+| Traduction dynamique de l'interface capsule dans les vaccins (AR / FR / EN) | ✅ |
+| Traduction dynamique des émotions associées aux capsules | ✅ |
 | Vignette photo affichée (liste + détail) | ✅ |
 | Analytics `vax_capsule_created` | ✅ |
 | Analytics `vax_capsule_viewed` | ✅ |
 | Contrôle d'accès Firestore/Storage vérifié | ✅ |
-| `flutter analyze` clean (aucun fichier modifié) | ✅ |
+| `flutter analyze` clean | ✅ |

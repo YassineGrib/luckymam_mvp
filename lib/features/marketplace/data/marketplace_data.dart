@@ -11,7 +11,7 @@ const List<MarketplacePartner> marketplacePartners = [
     name: 'BébéConfort DZ',
     tagline: 'Puériculture & équipement bébé',
     phone: '0550 12 34 56',
-    emoji: '🍼',
+    icon: Icons.baby_changing_station_rounded,
     color: Color(0xFF4F8289),
   ),
   MarketplacePartner(
@@ -19,7 +19,7 @@ const List<MarketplacePartner> marketplacePartners = [
     name: 'NaturaLait',
     tagline: 'Nutrition infantile & bio',
     phone: '0551 22 33 44',
-    emoji: '🥣',
+    icon: Icons.restaurant_rounded,
     color: Color(0xFFF9AD4A),
   ),
   MarketplacePartner(
@@ -27,7 +27,7 @@ const List<MarketplacePartner> marketplacePartners = [
     name: 'Douceur Maman',
     tagline: 'Soins & bien-être pour maman',
     phone: '0552 55 66 77',
-    emoji: '🌸',
+    icon: Icons.spa_rounded,
     color: Color(0xFFA7316E),
   ),
   MarketplacePartner(
@@ -35,7 +35,7 @@ const List<MarketplacePartner> marketplacePartners = [
     name: 'Éveil & Jeux',
     tagline: 'Jouets éducatifs 0-6 ans',
     phone: '0553 88 99 00',
-    emoji: '🧸',
+    icon: Icons.toys_rounded,
     color: Color(0xFFE85A71),
   ),
 ];
@@ -51,7 +51,7 @@ const List<MarketplaceProduct> marketplaceProducts = [
     priceDZD: 1850,
     partnerId: 'partner_bebeconfort_dz',
     category: ProductCategory.puericulture,
-    emoji: '🍼',
+    icon: Icons.local_drink_rounded,
     highlights: [
       'Sans BPA, stérilisable',
       'Valve anti-colique brevetée',
@@ -67,7 +67,7 @@ const List<MarketplaceProduct> marketplaceProducts = [
     priceDZD: 8900,
     partnerId: 'partner_bebeconfort_dz',
     category: ProductCategory.puericulture,
-    emoji: '🧺',
+    icon: Icons.shopping_basket_rounded,
     highlights: [
       'Osier naturel tressé main',
       'Matelas + parure inclus',
@@ -83,7 +83,7 @@ const List<MarketplaceProduct> marketplaceProducts = [
     priceDZD: 6500,
     partnerId: 'partner_bebeconfort_dz',
     category: ProductCategory.puericulture,
-    emoji: '♨️',
+    icon: Icons.local_fire_department_rounded,
     highlights: [
       'Chauffe en 3 minutes',
       'Arrêt automatique',
@@ -101,7 +101,7 @@ const List<MarketplaceProduct> marketplaceProducts = [
     priceDZD: 950,
     partnerId: 'partner_naturalait',
     category: ProductCategory.alimentation,
-    emoji: '🥣',
+    icon: Icons.breakfast_dining_rounded,
     highlights: [
       'Certifié bio',
       'Enrichi en fer + vitamine D',
@@ -117,7 +117,7 @@ const List<MarketplaceProduct> marketplaceProducts = [
     priceDZD: 1400,
     partnerId: 'partner_naturalait',
     category: ProductCategory.alimentation,
-    emoji: '🥕',
+    icon: Icons.eco_rounded,
     highlights: [
       'Cuisson vapeur douce',
       'Sans sel ni sucre ajouté',
@@ -133,7 +133,7 @@ const List<MarketplaceProduct> marketplaceProducts = [
     priceDZD: 1200,
     partnerId: 'partner_naturalait',
     category: ProductCategory.alimentation,
-    emoji: '🍎',
+    icon: Icons.water_drop_rounded,
     highlights: [
       'Réutilisables et économiques',
       'Zip anti-fuite',
@@ -151,7 +151,7 @@ const List<MarketplaceProduct> marketplaceProducts = [
     priceDZD: 1100,
     partnerId: 'partner_douceur_maman',
     category: ProductCategory.hygiene,
-    emoji: '🧴',
+    icon: Icons.sanitizer_rounded,
     highlights: [
       'Huile d\'olive naturelle',
       'Sans parfum ni paraben',
@@ -167,7 +167,7 @@ const List<MarketplaceProduct> marketplaceProducts = [
     priceDZD: 3400,
     partnerId: 'partner_douceur_maman',
     category: ProductCategory.hygiene,
-    emoji: '🛁',
+    icon: Icons.bathtub_rounded,
     highlights: [
       '4 produits testés dermatologiquement',
       'pH neutre',
@@ -185,7 +185,7 @@ const List<MarketplaceProduct> marketplaceProducts = [
     priceDZD: 7200,
     partnerId: 'partner_eveil_jeux',
     category: ProductCategory.eveil,
-    emoji: '🎪',
+    icon: Icons.toys_rounded,
     highlights: [
       '5 jouets d\'activité amovibles',
       'Module musical 15 mélodies',
@@ -201,7 +201,7 @@ const List<MarketplaceProduct> marketplaceProducts = [
     priceDZD: 2800,
     partnerId: 'partner_eveil_jeux',
     category: ProductCategory.eveil,
-    emoji: '🔤',
+    icon: Icons.abc_rounded,
     highlights: [
       'Bois massif, peintures non toxiques',
       'Bilingue arabe / français',
@@ -219,7 +219,7 @@ const List<MarketplaceProduct> marketplaceProducts = [
     priceDZD: 4500,
     partnerId: 'partner_douceur_maman',
     category: ProductCategory.maman,
-    emoji: '🌙',
+    icon: Icons.bedtime_rounded,
     highlights: [
       'Microbilles thermorégulantes',
       'Housse coton lavable',
@@ -235,7 +235,7 @@ const List<MarketplaceProduct> marketplaceProducts = [
     priceDZD: 2200,
     partnerId: 'partner_douceur_maman',
     category: ProductCategory.maman,
-    emoji: '✨',
+    icon: Icons.auto_awesome_rounded,
     highlights: [
       'Argan et amande douce naturels',
       '100 % d\'origine végétale',

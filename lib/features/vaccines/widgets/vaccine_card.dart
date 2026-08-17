@@ -353,11 +353,12 @@ class _VaccineCardState extends ConsumerState<VaccineCard>
                     'vaccineGroupId': widget.vaccineGroup.group.id,
                   },
                 );
+                final lang = Localizations.localeOf(context).languageCode;
                 Navigator.of(context).push(
                   MaterialPageRoute(
                     builder: (_) => ReelsScreen(
                       initialVaccineCodes: codes,
-                      initialVaccineLabel: widget.vaccineGroup.group.ageFr,
+                      initialVaccineLabel: widget.vaccineGroup.group.getAgeLabel(lang),
                     ),
                   ),
                 );
@@ -368,7 +369,9 @@ class _VaccineCardState extends ConsumerState<VaccineCard>
                 color: primary,
               ),
               label: Text(
-                'Reels',
+                Localizations.localeOf(context).languageCode == 'ar'
+                    ? 'فيديوهات'
+                    : 'Reels',
                 style: GoogleFonts.outfit(fontWeight: FontWeight.w600),
               ),
               style: OutlinedButton.styleFrom(
@@ -473,7 +476,11 @@ class _VaccineCardState extends ConsumerState<VaccineCard>
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                'Souvenir lié 🌟',
+                Localizations.localeOf(context).languageCode == 'ar'
+                    ? 'ذكرى مرتبطة 🌟'
+                    : Localizations.localeOf(context).languageCode == 'en'
+                        ? 'Linked Memory 🌟'
+                        : 'Souvenir lié 🌟',
                 style: GoogleFonts.outfit(
                   fontSize: 14,
                   fontWeight: FontWeight.w600,
@@ -482,7 +489,7 @@ class _VaccineCardState extends ConsumerState<VaccineCard>
               ),
               const SizedBox(height: 2),
               Text(
-                '${capsule.emotion.emoji} ${capsule.emotion.labelFr}',
+                '${capsule.emotion.emoji} ${capsule.emotion.getLabel(Localizations.localeOf(context).languageCode)}',
                 style: GoogleFonts.outfit(
                   fontSize: 12,
                   color: secondaryText,
@@ -625,7 +632,7 @@ class _VaccineCardState extends ConsumerState<VaccineCard>
       case VaccineStatusType.upcoming:
         text = DateFormat(
           'd MMM yyyy',
-          'fr',
+          Localizations.localeOf(context).languageCode,
         ).format(widget.vaccineGroup.expectedDate);
         break;
     }

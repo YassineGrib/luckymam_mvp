@@ -38,6 +38,7 @@ class _ProductDetailScreenState extends ConsumerState<ProductDetailScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final lang = Localizations.localeOf(context).languageCode;
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final bgColor = isDark
         ? AppColors.backgroundDark
@@ -71,9 +72,9 @@ class _ProductDetailScreenState extends ConsumerState<ProductDetailScreen> {
                       imageUrl,
                       fit: BoxFit.cover,
                       errorBuilder: (context, error, stackTrace) =>
-                          _heroPlaceholder(categoryColor, product.emoji),
+                          _heroPlaceholder(categoryColor, product.icon),
                     )
-                  : _heroPlaceholder(categoryColor, product.emoji),
+                  : _heroPlaceholder(categoryColor, product.icon),
             ),
           ),
 
@@ -106,7 +107,7 @@ class _ProductDetailScreenState extends ConsumerState<ProductDetailScreen> {
                             ),
                             const SizedBox(width: 5),
                             Text(
-                              product.category.labelFr,
+                              product.category.getLabel(lang),
                               style: GoogleFonts.outfit(
                                 fontSize: 12,
                                 fontWeight: FontWeight.w600,
@@ -155,7 +156,11 @@ class _ProductDetailScreenState extends ConsumerState<ProductDetailScreen> {
                   if (product.highlights.isNotEmpty) ...[
                     const SizedBox(height: AppSpacing.lg),
                     Text(
-                      'Points clés',
+                      lang == 'ar'
+                          ? 'النقاط الرئيسية'
+                          : lang == 'en'
+                              ? 'Highlights'
+                              : 'Points clés',
                       style: GoogleFonts.outfit(
                         fontSize: 16,
                         fontWeight: FontWeight.bold,
@@ -216,9 +221,10 @@ class _ProductDetailScreenState extends ConsumerState<ProductDetailScreen> {
                               borderRadius: BorderRadius.circular(12),
                             ),
                             child: Center(
-                              child: Text(
-                                partner.emoji,
-                                style: const TextStyle(fontSize: 22),
+                              child: Icon(
+                                partner.icon,
+                                size: 22,
+                                color: partner.color,
                               ),
                             ),
                           ),
@@ -255,7 +261,11 @@ class _ProductDetailScreenState extends ConsumerState<ProductDetailScreen> {
                               borderRadius: BorderRadius.circular(8),
                             ),
                             child: Text(
-                              'Partenaire',
+                              lang == 'ar'
+                                  ? 'شريك'
+                                  : lang == 'en'
+                                      ? 'Partner'
+                                      : 'Partenaire',
                               style: GoogleFonts.outfit(
                                 fontSize: 11,
                                 fontWeight: FontWeight.w600,
@@ -300,7 +310,11 @@ class _ProductDetailScreenState extends ConsumerState<ProductDetailScreen> {
                 color: Colors.white,
               ),
               label: Text(
-                'Commander',
+                lang == 'ar'
+                    ? 'طلب'
+                    : lang == 'en'
+                        ? 'Order'
+                        : 'Commander',
                 style: GoogleFonts.outfit(
                   fontSize: 16,
                   fontWeight: FontWeight.bold,
@@ -322,7 +336,7 @@ class _ProductDetailScreenState extends ConsumerState<ProductDetailScreen> {
     );
   }
 
-  Widget _heroPlaceholder(Color color, String emoji) {
+  Widget _heroPlaceholder(Color color, IconData icon) {
     return Container(
       decoration: BoxDecoration(
         gradient: LinearGradient(
@@ -332,7 +346,11 @@ class _ProductDetailScreenState extends ConsumerState<ProductDetailScreen> {
         ),
       ),
       child: Center(
-        child: Text(emoji, style: const TextStyle(fontSize: 72)),
+        child: Icon(
+          icon,
+          size: 72,
+          color: Colors.white.withValues(alpha: 0.9),
+        ),
       ),
     );
   }
@@ -340,6 +358,7 @@ class _ProductDetailScreenState extends ConsumerState<ProductDetailScreen> {
   /// Opens the add-to-cart sheet: quantity picker + running total, then
   /// adds the line to the session cart (LM2-139 order flow).
   void _onCommander(BuildContext context, MarketplacePartner? partner) {
+    final lang = Localizations.localeOf(context).languageCode;
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final textColor = isDark ? Colors.white : AppColors.onSurfaceLight;
     final secondaryText = isDark
@@ -374,9 +393,10 @@ class _ProductDetailScreenState extends ConsumerState<ProductDetailScreen> {
                       borderRadius: BorderRadius.circular(12),
                     ),
                     child: Center(
-                      child: Text(
-                        product.emoji,
-                        style: const TextStyle(fontSize: 24),
+                      child: Icon(
+                        product.icon,
+                        size: 24,
+                        color: categoryColor,
                       ),
                     ),
                   ),
@@ -415,7 +435,11 @@ class _ProductDetailScreenState extends ConsumerState<ProductDetailScreen> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text(
-                    'Quantité',
+                    lang == 'ar'
+                        ? 'الكمية'
+                        : lang == 'en'
+                            ? 'Quantity'
+                            : 'Quantité',
                     style: GoogleFonts.outfit(
                       fontSize: 14,
                       color: secondaryText,
@@ -468,9 +492,13 @@ class _ProductDetailScreenState extends ConsumerState<ProductDetailScreen> {
                       Navigator.pop(ctx);
                       if (!added) {
                         ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(
+                          SnackBar(
                             content: Text(
-                              'Quantité maximale atteinte pour ce produit',
+                              lang == 'ar'
+                                  ? 'تم الوصول إلى الحد الأقصى للكمية لهذا المنتج'
+                                  : lang == 'en'
+                                      ? 'Maximum quantity reached for this product'
+                                      : 'Quantité maximale atteinte pour ce produit',
                             ),
                             behavior: SnackBarBehavior.floating,
                             backgroundColor: AppColors.warning,
@@ -487,11 +515,21 @@ class _ProductDetailScreenState extends ConsumerState<ProductDetailScreen> {
                       );
                       ScaffoldMessenger.of(context).showSnackBar(
                         SnackBar(
-                          content: Text('${product.name} ajouté au panier ✓'),
+                          content: Text(
+                            lang == 'ar'
+                                ? 'تمت إضافة ${product.name} إلى السلة'
+                                : lang == 'en'
+                                    ? '${product.name} added to cart'
+                                    : '${product.name} ajouté au panier',
+                          ),
                           behavior: SnackBarBehavior.floating,
                           backgroundColor: AppColors.success,
                           action: SnackBarAction(
-                            label: 'Voir le panier',
+                            label: lang == 'ar'
+                                ? 'عرض السلة'
+                                : lang == 'en'
+                                    ? 'View Cart'
+                                    : 'Voir le panier',
                             textColor: Colors.white,
                             onPressed: () => Navigator.of(context).push(
                               MaterialPageRoute(
@@ -507,7 +545,11 @@ class _ProductDetailScreenState extends ConsumerState<ProductDetailScreen> {
                       color: Colors.white,
                     ),
                     label: Text(
-                      'Ajouter au panier',
+                      lang == 'ar'
+                          ? 'إضافة إلى السلة'
+                          : lang == 'en'
+                              ? 'Add to Cart'
+                              : 'Ajouter au panier',
                       style: GoogleFonts.outfit(
                         fontSize: 15,
                         fontWeight: FontWeight.bold,

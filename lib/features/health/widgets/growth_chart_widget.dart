@@ -154,14 +154,14 @@ class GrowthChartWidget extends StatelessWidget {
   /// Round [v] up to the next multiple of [step].
   double _ceilTo(double v, double step) => (v / step).ceil() * step;
 
-  /// Compute smart Y-axis ceiling: at least 80 kg, above any real data point.
+  /// Compute smart Y-axis ceiling: at least 25 kg, above any real data point.
   double _computeMaxY(List<FlSpot> userSpots) {
-    const minCeiling = 80.0;
+    const minCeiling = 25.0;
     if (userSpots.isEmpty) return minCeiling;
     final maxData = userSpots.map((s) => s.y).reduce((a, b) => a > b ? a : b);
     final padded = maxData * 1.15;
     final ceiling = padded > minCeiling ? padded : minCeiling;
-    return _ceilTo(ceiling, 10);
+    return _ceilTo(ceiling, 5);
   }
 
   /// Pick a Y label interval that keeps the axis readable.

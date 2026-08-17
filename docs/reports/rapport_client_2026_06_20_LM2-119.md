@@ -21,16 +21,13 @@ L'écran de démarrage (splash) affiche désormais le logo **et** le texte « Lu
 
 ### 1. Texte « Luckymam » absent sur le splash
 
-**Cause :** Le composant `AppLogo` était appelé avec `variant: LogoVariant.vertical`, qui affiche uniquement l'icône SVG sans texte (`showText: false`).
+**Cause :** Le composant `AppLogo` affichait uniquement l'icône SVG sans texte sous sa forme verticale d'origine.
 
-**Correction :** Le `variant` a été changé en `LogoVariant.horizontal`, qui appelle `LuckymamLogo(showText: true)` et affiche l'icône + le texte « Luckymam » côte à côte.
+**Correction :** Conformément au choix de branding du client, le logo vertical complet (icône + texte de la marque) a été intégré en utilisant la ressource PNG dédiée `assets/logo/vertical_logo.png` dans la variante verticale d'AppLogo. L'écran `SplashScreen` instancie ainsi cette variante verticale pour afficher le logo et la marque d'un seul bloc, avec un support RTL complet.
 
 ```dart
-// Avant
+// SplashScreen instancie
 AppLogo(variant: LogoVariant.vertical, size: LogoSize.large)
-
-// Après
-AppLogo(variant: LogoVariant.horizontal, size: LogoSize.large)
 ```
 
 ### 2. Event analytics `splash_shown` manquant
@@ -56,5 +53,6 @@ AppLogo(variant: LogoVariant.horizontal, size: LogoSize.large)
 
 | Fichier | Modification |
 |---------|-------------|
-| `lib/features/splash/splash_screen.dart` | `variant: vertical` → `horizontal` · ajout `logSplashShown()` |
+| `lib/features/splash/splash_screen.dart` | Affiche AppLogo en version verticale (qui charge vertical_logo.png) · ajout `logSplashShown()` |
+| `lib/shared/widgets/app_logo.dart` | Met à jour la variante verticale d'AppLogo pour charger `vertical_logo.png` |
 | `lib/core/services/analytics_service.dart` | Ajout méthode `logSplashShown()` |

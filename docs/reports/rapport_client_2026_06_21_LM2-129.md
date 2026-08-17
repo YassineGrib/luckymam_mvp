@@ -27,9 +27,10 @@ Seules les capsules effectivement liées à un jalon sont chargées — pas de s
 
 Nouveau `StatefulWidget` affiché à la place du badge "Souvenir ✓" sur la carte complète (full card) :
 
-- **Si `thumbnailUrl` disponible** → `Image.network` en 56×56 px, `ClipRRect` (border radius 10), `fit: BoxFit.cover`
-- **En cas d'erreur réseau / URL invalide** → fallback automatique vers le badge "Souvenir ✓" existant
-- **Refresh immédiat** : la `thumbnailUrl` est chargée dans le même provider que les jalons — elle est disponible dès que la liste se reconstruit après création d'une capsule
+- **Si `thumbnailUrl` disponible** → `Image.network` en 56×56 px, `ClipRRect` (border radius 10), `fit: BoxFit.cover`.
+  - **Indicateur de chargement dynamique** : Un `loadingBuilder` affiche un indicateur de chargement circulaire (`CircularProgressIndicator`) rose et minimaliste sur un fond clair/sombre adapté (`AppColors.surfaceDark` ou `Colors.grey.shade100`) pendant le téléchargement de l'image.
+- **En cas d'erreur réseau / URL invalide** → fallback automatique vers le badge "Souvenir" existant (traduit dynamiquement).
+- **Refresh immédiat** : la `thumbnailUrl` est chargée dans le même provider que les jalons — elle est disponible dès que la liste se reconstruit après création d'une capsule.
 
 ### 4. Analytics `milestone_thumbnail_rendered`
 
@@ -46,7 +47,7 @@ La carte compacte conserve l'icône `check_circle_rounded` verte (pas de thumbna
 | Fichier | Changement |
 |---------|-----------|
 | `lib/features/timeline/services/timeline_service.dart` | Ajout champ `thumbnailUrl` dans `MilestoneWithDueDate` ; fetch batch dans `childMilestonesProvider` |
-| `lib/features/timeline/widgets/milestone_card.dart` | Remplacement badge "Souvenir" par `_MilestoneThumbnail` ; ajout widget + fallback badge |
+| `lib/features/timeline/widgets/milestone_card.dart` | Remplacement badge "Souvenir" par `_MilestoneThumbnail` ; ajout widget + fallback badge + indicateur de chargement dynamique |
 
 ---
 
@@ -56,7 +57,8 @@ La carte compacte conserve l'icône `check_circle_rounded` verte (pas de thumbna
 |---------|--------|
 | Thumbnail affiché sur la carte jalon après création capsule | ✅ |
 | Refresh immédiat (même provider que les jalons) | ✅ |
-| Fallback badge "Souvenir ✓" si URL manquante ou erreur réseau | ✅ |
+| Indicateur de chargement dynamique (loading placeholder) | ✅ |
+| Fallback badge "Souvenir" (traduit) si URL manquante ou erreur | ✅ |
 | Fetch limité aux jalons avec capsule liée (pas de sur-fetch) | ✅ |
 | Analytics `milestone_thumbnail_rendered` | ✅ |
 | `flutter analyze` clean | ✅ |

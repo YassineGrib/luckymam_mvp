@@ -12,18 +12,38 @@ enum OrderStatus {
   delivered,
   cancelled;
 
-  String get labelFr {
+  String getLabel(String locale) {
     switch (this) {
       case OrderStatus.pending:
-        return 'En attente';
+        return locale == 'ar'
+            ? 'قيد الانتظار'
+            : locale == 'en'
+                ? 'Pending'
+                : 'En attente';
       case OrderStatus.confirmed:
-        return 'Confirmée';
+        return locale == 'ar'
+            ? 'مؤكدة'
+            : locale == 'en'
+                ? 'Confirmed'
+                : 'Confirmée';
       case OrderStatus.shipped:
-        return 'Expédiée';
+        return locale == 'ar'
+            ? 'تم الشحن'
+            : locale == 'en'
+                ? 'Shipped'
+                : 'Expédiée';
       case OrderStatus.delivered:
-        return 'Livrée';
+        return locale == 'ar'
+            ? 'تم التسليم'
+            : locale == 'en'
+                ? 'Delivered'
+                : 'Livrée';
       case OrderStatus.cancelled:
-        return 'Annulée';
+        return locale == 'ar'
+            ? 'ملغاة'
+            : locale == 'en'
+                ? 'Cancelled'
+                : 'Annulée';
     }
   }
 

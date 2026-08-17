@@ -56,12 +56,12 @@ Le bandeau unique de LM2-134 a été transformé en **deux bandeaux côte à cô
 
 ## Fichiers créés / modifiés
 
-| Fichier | Changement |
-|---------|-----------|
-| `lib/features/memory_book/models/standard_album.dart` | Nouveau — modèle Firestore `StandardAlbum` |
-| `lib/features/memory_book/services/standard_album_service.dart` | Nouveau — CRUD Firestore + gestion des pages |
-| `lib/features/memory_book/providers/standard_album_providers.dart` | Nouveau — providers + notifier d'actions + analytics |
-| `lib/features/memory_book/screens/standard_album_detail_screen.dart` | Nouveau — grille de pages extensible, renommage, brouillon |
+| Fichier | Changement / Rôle |
+|---------|------------------|
+| `lib/features/memory_book/screens/standard_album_detail_screen.dart` | Grille de pages extensible, renommage, brouillon · traduction dynamique des dialogues de renommage, des boutons, de la شارة الـ Brouillon et du formatage PDF |
+| `lib/features/memory_book/models/standard_album.dart` | Modèle Firestore `StandardAlbum` |
+| `lib/features/memory_book/services/standard_album_service.dart` | CRUD Firestore + gestion des pages |
+| `lib/features/memory_book/providers/standard_album_providers.dart` | Providers + notifier d'actions + analytics |
 | `lib/features/memory_book/screens/memory_book_screen.dart` | Bandeaux côte à côte, dialogue de création, résolution d'enfant partagée |
 | `lib/features/memory_book/screens/predefined_album_detail_screen.dart` | Ajout `albumType: 'predefined'` (corrige la liaison suite à l'introduction du champ) |
 | `lib/features/capsules/models/capsule.dart` | Champ `albumType` |
@@ -78,6 +78,9 @@ Le bandeau unique de LM2-134 a été transformé en **deux bandeaux côte à cô
 |---------|--------|
 | Créer un album standard vide | ✅ |
 | Ajouter une capsule dans un slot | ✅ |
+| Traduction dynamique de l'interface et du statut (AR / FR / EN) | ✅ |
+| Traduction dynamique du dialogue de renommage d'album | ✅ |
+| Traduction dynamique des options d'ajout de capsule (Existante / Nouvelle) | ✅ |
 | Le slot affiche la capsule après ajout | ✅ |
 | L'album conserve son état si on quitte (brouillon) | ✅ |
 | Pages extensibles (pas de limite fixe) | ✅ |
@@ -87,7 +90,7 @@ Le bandeau unique de LM2-134 a été transformé en **deux bandeaux côte à cô
 | Analytics `album_standard_created` | ✅ |
 | Analytics `album_slot_added` | ✅ |
 | Analytics `album_draft_saved` | ✅ |
-| `flutter analyze` clean (0 nouveaux problèmes sur l'ensemble du projet) | ✅ |
+| `flutter analyze` clean | ✅ |
 
 ---
 

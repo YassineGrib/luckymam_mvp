@@ -11,7 +11,7 @@
   "hosting": [
     {
       "target": "admin",
-      "public": "luckymam_admin/dist",
+      "public": "luckymam_admin/.output/public",
       "ignore": ["firebase.json", "**/.*", "**/node_modules/**"],
       "rewrites": [
         {

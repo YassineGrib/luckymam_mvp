@@ -71,7 +71,7 @@ Une `DraggableScrollableSheet` (65 % → 92 % de hauteur) s'ouvre au tap :
 | Fichier | Changement |
 |---------|-----------|
 | `lib/features/timeline/data/milestone_advice_data.dart` | Nouveau — contenu statique : 70 entrées dédiées (1 par jalon) + 4 fallbacks catégorie ; vaccins basés sur la base officielle |
-| `lib/features/timeline/screens/milestone_detail_screen.dart` | Bouton "Conseils", méthodes `_buildConseilButton` + `_showConseilSheet`, widgets `_ConseilSheet`, `_SectionTitle`, `_PhotoTipTile`, `_KeyPointTile` |
+| `lib/features/timeline/screens/milestone_detail_screen.dart` | Bouton "Conseils", méthodes `_buildConseilButton` + `_showConseilSheet`, widgets `_ConseilSheet`, `_SectionTitle`, `_PhotoTipTile`, `_KeyPointTile` · traduction dynamique de l'interface de la fiche conseils |
 
 ---
 
@@ -81,6 +81,8 @@ Une `DraggableScrollableSheet` (65 % → 92 % de hauteur) s'ouvre au tap :
 |---------|--------|
 | Bouton "Conseils" visible sur chaque jalon | ✅ |
 | Explication du jalon affichée | ✅ |
+| Traduction dynamique de l'interface de la fiche conseils (AR / FR / EN) | ✅ |
+| Titre du jalon traduit dynamiquement dans la fiche conseils | ✅ |
 | Conseil dédié pour les 70 jalons (couverture 100 %) | ✅ |
 | Vaccins personnalisés par âge (base officielle) | ✅ |
 | Section "À retenir" (points médicaux / pratiques) | ✅ |

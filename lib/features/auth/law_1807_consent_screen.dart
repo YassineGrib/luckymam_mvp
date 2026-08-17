@@ -19,14 +19,48 @@ class Law1807ConsentScreen extends StatefulWidget {
 class _Law1807ConsentScreenState extends State<Law1807ConsentScreen> {
   final _complianceService = ComplianceService();
   final _analyticsService = AnalyticsService();
+  final ScrollController _scrollController = ScrollController();
   bool _isAccepted = false;
   bool _isLoading = false;
+  bool _hasScrolledToBottom = false;
 
   @override
   void initState() {
     super.initState();
     // Log analytical event when user views the consent screen
     _analyticsService.logLaw1807Viewed();
+    _scrollController.addListener(_scrollListener);
+    
+    // Check if the content is short enough that it doesn't need scrolling
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (_scrollController.hasClients) {
+        if (_scrollController.position.maxScrollExtent <= 0) {
+          setState(() {
+            _hasScrolledToBottom = true;
+          });
+        }
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    _scrollController.removeListener(_scrollListener);
+    _scrollController.dispose();
+    super.dispose();
+  }
+
+  void _scrollListener() {
+    if (_scrollController.hasClients) {
+      final position = _scrollController.position;
+      if (position.maxScrollExtent <= 0 || position.pixels >= position.maxScrollExtent - 20) {
+        if (!_hasScrolledToBottom) {
+          setState(() {
+            _hasScrolledToBottom = true;
+          });
+        }
+      }
+    }
   }
 
   Future<void> _handleContinue() async {
@@ -92,7 +126,6 @@ class _Law1807ConsentScreenState extends State<Law1807ConsentScreen> {
     final bodyColor = isDark ? Colors.white70 : Colors.black87;
     final cardBgColor = isDark ? AppColors.surfaceDark : Colors.white;
     final secondaryTextColor = isDark ? AppColors.textSecondaryDark : AppColors.textSecondaryLight;
-    final isRtl = Directionality.of(context) == TextDirection.rtl;
 
     return Scaffold(
       backgroundColor: isDark ? AppColors.backgroundDark : AppColors.backgroundLight,
@@ -160,6 +193,7 @@ class _Law1807ConsentScreenState extends State<Law1807ConsentScreen> {
                   child: Scrollbar(
                     thumbVisibility: true,
                     child: SingleChildScrollView(
+                      controller: _scrollController,
                       padding: const EdgeInsets.only(right: 8),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
@@ -177,9 +211,11 @@ class _Law1807ConsentScreenState extends State<Law1807ConsentScreen> {
                           Divider(color: isDark ? AppColors.dividerDark : AppColors.dividerLight),
                           const SizedBox(height: AppSpacing.sm),
                           Text(
-                            isRtl 
+                            Localizations.localeOf(context).languageCode == 'ar'
                               ? 'مرجع الامتثال القانوني: القانون الجزائري رقم 18-07 المتعلق بحماية الأشخاص الطبيعيين في مجال معالجة المعطيات ذات الطابع الشخصي.'
-                              : 'Référence d\'alignement légal : Loi Algérienne n° 18-07 relative à la protection des personnes physiques dans le traitement des données à caractère personnel.',
+                              : Localizations.localeOf(context).languageCode == 'fr'
+                                  ? 'Référence d\'alignement légal : Loi Algérienne n° 18-07 relative à la protection des personnes physiques dans le traitement des données à caractère personnel.'
+                                  : 'Legal compliance reference: Algerian Law n° 18-07 relative to the protection of physical persons in the treatment of personal data.',
                             style: GoogleFonts.outfit(
                               fontSize: 11,
                               color: secondaryTextColor,
@@ -198,6 +234,28 @@ class _Law1807ConsentScreenState extends State<Law1807ConsentScreen> {
               // Checkbox row (Target at least 48px high for accessibility)
               GestureDetector(
                 onTap: () {
+                  final scrollWarning = Localizations.localeOf(context).languageCode == 'ar'
+                      ? 'يرجى قراءة النص بالكامل وتمريره إلى الأسفل لتفعيل زر القبول.'
+                      : Localizations.localeOf(context).languageCode == 'fr'
+                          ? 'Veuillez faire défiler tout le texte vers le bas pour activer l\'acceptation.'
+                          : 'Please scroll down the entire text to enable acceptance.';
+
+                  if (!_hasScrolledToBottom) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text(
+                          scrollWarning,
+                          style: GoogleFonts.outfit(fontWeight: FontWeight.w500),
+                        ),
+                        backgroundColor: AppColors.magentaPink,
+                        behavior: SnackBarBehavior.floating,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                      ),
+                    );
+                    return;
+                  }
                   setState(() {
                     _isAccepted = !_isAccepted;
                   });
@@ -211,17 +269,21 @@ class _Law1807ConsentScreenState extends State<Law1807ConsentScreen> {
                     children: [
                       Checkbox(
                         value: _isAccepted,
-                        onChanged: (value) {
-                          setState(() {
-                            _isAccepted = value ?? false;
-                          });
-                        },
+                        onChanged: !_hasScrolledToBottom
+                            ? null
+                            : (value) {
+                                setState(() {
+                                  _isAccepted = value ?? false;
+                                });
+                              },
                         activeColor: AppColors.magentaPink,
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(4),
                         ),
                         side: BorderSide(
-                          color: isDark ? AppColors.textSecondaryDark : AppColors.textSecondaryLight,
+                          color: _hasScrolledToBottom
+                              ? (isDark ? AppColors.textSecondaryDark : AppColors.textSecondaryLight)
+                              : Colors.grey.withValues(alpha: 0.5),
                           width: 1.5,
                         ),
                       ),
@@ -232,7 +294,9 @@ class _Law1807ConsentScreenState extends State<Law1807ConsentScreen> {
                           style: GoogleFonts.outfit(
                             fontSize: 15,
                             fontWeight: FontWeight.w600,
-                            color: titleColor,
+                            color: _hasScrolledToBottom
+                                ? titleColor
+                                : (isDark ? Colors.white38 : Colors.black38),
                           ),
                         ),
                       ),

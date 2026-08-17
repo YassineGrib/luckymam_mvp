@@ -2,6 +2,14 @@
   "projects": {
     "default": "luckymam-app-dv"
   },
-  "targets": {},
+  "targets": {
+    "luckymam-app-dv": {
+      "hosting": {
+        "admin": [
+          "luckymam-app-dv"
+        ]
+      }
+    }
+  },
   "etags": {}
 }

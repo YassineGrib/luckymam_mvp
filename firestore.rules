@@ -117,7 +117,7 @@ service cloud.firestore {
       );
       allow update: if isAdmin()
         && request.resource.data.diff(resource.data).affectedKeys()
-             .hasOnly(['status', 'statusUpdatedAt', 'statusUpdatedBy'])
+             .hasOnly(['status', 'statusUpdatedAt', 'statusUpdatedBy', 'payment'])
         && request.resource.data.status in ['pending', 'confirmed', 'shipped', 'delivered', 'cancelled'];
       allow delete: if false;
     }
@@ -145,6 +145,17 @@ service cloud.firestore {
     // Reels catalogue - same pattern, backs lib/features/reels once its
     // provider is swapped from the static initial list in reels_provider.dart.
     match /reels/{reelId} {
+      allow read: if request.auth != null;
+      allow write: if isAdmin();
+    }
+
+    // Notifications (Broadcast Center) - admin read/write only
+    match /notifications/{notificationId} {
+      allow read, write: if isAdmin();
+    }
+
+    // Global settings - read by authenticated users, write by admin
+    match /settings/{settingId} {
       allow read: if request.auth != null;
       allow write: if isAdmin();
     }

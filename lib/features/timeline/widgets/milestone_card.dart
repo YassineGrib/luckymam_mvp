@@ -43,6 +43,7 @@ class MilestoneCard extends StatelessWidget {
     Milestone m,
     MilestoneCategory category,
   ) {
+    final lang = Localizations.localeOf(context).languageCode;
     return GestureDetector(
       onTap: onTap,
       child: Container(
@@ -89,7 +90,7 @@ class MilestoneCard extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    m.titleFr,
+                    m.getTitle(lang),
                     style: GoogleFonts.outfit(
                       fontSize: 15,
                       fontWeight: FontWeight.w600,
@@ -102,7 +103,7 @@ class MilestoneCard extends StatelessWidget {
                   ),
                   const SizedBox(height: 2),
                   Text(
-                    m.descriptionFr,
+                    m.getDescription(lang),
                     style: GoogleFonts.outfit(
                       fontSize: 13,
                       color: isDark
@@ -139,7 +140,7 @@ class MilestoneCard extends StatelessWidget {
                     ),
                     const SizedBox(width: 4),
                     Text(
-                      'Capturer',
+                      lang == 'ar' ? 'توثيق' : lang == 'en' ? 'Capture' : 'Capturer',
                       style: GoogleFonts.outfit(
                         fontSize: 12,
                         fontWeight: FontWeight.w600,
@@ -168,7 +169,8 @@ class MilestoneCard extends StatelessWidget {
     Milestone m,
     MilestoneCategory category,
   ) {
-    final dateFormat = DateFormat('d MMM', 'fr_FR');
+    final lang = Localizations.localeOf(context).languageCode;
+    final dateFormat = DateFormat('d MMM', lang);
     final dueText = milestone.dueDate != null
         ? dateFormat.format(milestone.dueDate!)
         : m.ageRange;
@@ -205,7 +207,7 @@ class MilestoneCard extends StatelessWidget {
             // Title
             Expanded(
               child: Text(
-                m.titleFr,
+                m.getTitle(lang),
                 style: GoogleFonts.outfit(
                   fontSize: 14,
                   fontWeight: FontWeight.w500,
@@ -281,6 +283,7 @@ class _MilestoneThumbnailState extends State<_MilestoneThumbnail> {
         });
       }
 
+      final isDark = Theme.of(context).brightness == Brightness.dark;
       return ClipRRect(
         borderRadius: BorderRadius.circular(10),
         child: Image.network(
@@ -288,6 +291,26 @@ class _MilestoneThumbnailState extends State<_MilestoneThumbnail> {
           width: 56,
           height: 56,
           fit: BoxFit.cover,
+          loadingBuilder: (context, child, loadingProgress) {
+            if (loadingProgress == null) return child;
+            return Container(
+              width: 56,
+              height: 56,
+              color: isDark ? AppColors.surfaceDark : Colors.grey.shade100,
+              child: const Center(
+                child: SizedBox(
+                  width: 16,
+                  height: 16,
+                  child: CircularProgressIndicator(
+                    strokeWidth: 2,
+                    valueColor: AlwaysStoppedAnimation<Color>(
+                      AppColors.magentaPink,
+                    ),
+                  ),
+                ),
+              ),
+            );
+          },
           errorBuilder: (context, error, stackTrace) =>
               _souveniurBadge(),
         ),
@@ -312,7 +335,11 @@ class _MilestoneThumbnailState extends State<_MilestoneThumbnail> {
               color: AppColors.success, size: 15),
           const SizedBox(width: 4),
           Text(
-            'Souvenir',
+            Localizations.localeOf(context).languageCode == 'ar'
+                ? 'ذكرى'
+                : Localizations.localeOf(context).languageCode == 'en'
+                    ? 'Memory'
+                    : 'Souvenir',
             style: GoogleFonts.outfit(
               fontSize: 12,
               fontWeight: FontWeight.w600,

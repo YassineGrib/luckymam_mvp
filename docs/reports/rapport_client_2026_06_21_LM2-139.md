@@ -49,13 +49,13 @@ Parcours de commande complet dans la continuité directe de LM2-138 : **panier �
 
 ## Fichiers créés / modifiés
 
-| Fichier | Changement |
-|---------|-----------|
-| `lib/features/marketplace/models/marketplace_order.dart` | Nouveau — `OrderStatus` (5 statuts), `CartItem`, `MarketplaceOrder`, `OrderLine` dénormalisée |
-| `lib/features/marketplace/providers/order_providers.dart` | Nouveau — panier (`CartNotifier` + plafonds), total/badge, historique stream, soumission avec anti-fraude |
-| `lib/features/marketplace/screens/cart_screen.dart` | Nouveau — panier avec steppers et barre totale |
-| `lib/features/marketplace/screens/checkout_screen.dart` | Nouveau — récap + formulaire livraison + confirmation |
-| `lib/features/marketplace/screens/my_orders_screen.dart` | Nouveau — historique avec chips de statut temps réel |
+| Fichier | Changement / Rôle |
+|---------|------------------|
+| `lib/features/marketplace/models/marketplace_order.dart` | `OrderStatus` (5 statuts), `CartItem`, `MarketplaceOrder`, `OrderLine` · ajout du support de localisation getLabel(locale) pour les 5 statuts |
+| `lib/features/marketplace/screens/cart_screen.dart` | Panier avec steppers et barre totale · traduction complète du panier, des en-têtes, des boutons de vidage et de validation, et des états vides |
+| `lib/features/marketplace/screens/checkout_screen.dart` | Récap + formulaire livraison + confirmation · traduction complète de tous les formulaires (Wilaya, Adresse), de la validation du téléphone algérien, des erreurs Firestore et des messages de succès |
+| `lib/features/marketplace/screens/my_orders_screen.dart` | Historique avec chips de statut temps réel · traduction dynamique des statuts, de la date et de l'heure selon la langue active, et des compteurs d'articles |
+| `lib/features/marketplace/providers/order_providers.dart` | Panier (`CartNotifier` + plafonds), total/badge, historique stream, soumission avec anti-fraude |
 | `lib/features/marketplace/screens/product_detail_screen.dart` | CTA « Commander » → feuille d'ajout au panier avec quantité (remplace le stub contact) |
 | `lib/features/marketplace/screens/marketplace_screen.dart` | Icônes panier (badge live) + « Mes commandes » dans l'en-tête |
 | `firestore.rules` | Règle `marketplace_orders` (create/read own, immuable) |
@@ -68,10 +68,14 @@ Parcours de commande complet dans la continuité directe de LM2-138 : **panier �
 |---------|--------|
 | Ajout au panier depuis la fiche produit | ✅ |
 | Panier : quantités, suppression, total | ✅ |
+| Traduction dynamique complète du panier (AR / FR / EN) | ✅ |
 | Checkout : adresse + récapitulatif | ✅ |
+| Traduction dynamique complète du formulaire de livraison et de la validation du téléphone | ✅ |
+| Traduction dynamique complète de l'écran de succès de commande | ✅ |
 | Commande créée en Firestore | ✅ |
 | Écran de confirmation | ✅ |
 | « Mes commandes » avec statuts | ✅ |
+| Traduction dynamique complète de l'historique et formatage local de la date et de l'heure | ✅ |
 | 5 statuts de commande prévus (back-office) | ✅ |
 | Paiement V1 « à confirmer » (à la livraison) | ✅ |
 | Anti-fraude basique (plafonds, anti double-soumission, validation téléphone) | ✅ |
@@ -79,7 +83,7 @@ Parcours de commande complet dans la continuité directe de LM2-138 : **panier �
 | Analytics `product_added_to_cart` | ✅ |
 | Analytics `checkout_started` | ✅ |
 | Analytics `purchase_completed` | ✅ |
-| `flutter analyze` clean (0 nouveaux problèmes) | ✅ |
+| `flutter analyze` clean | ✅ |
 
 ---
 

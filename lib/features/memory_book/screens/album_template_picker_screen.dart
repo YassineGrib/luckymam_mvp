@@ -32,6 +32,7 @@ class AlbumTemplatePickerScreen extends ConsumerWidget {
         ? AppColors.textSecondaryDark
         : AppColors.textSecondaryLight;
 
+    final lang = Localizations.localeOf(context).languageCode;
     return Scaffold(
       backgroundColor: bgColor,
       appBar: AppBar(
@@ -42,7 +43,11 @@ class AlbumTemplatePickerScreen extends ConsumerWidget {
           onPressed: () => Navigator.pop(context),
         ),
         title: Text(
-          'Album prédéfini',
+          lang == 'ar'
+              ? 'ألبوم مسبق الصنع'
+              : lang == 'en'
+                  ? 'Predefined Album'
+                  : 'Album prédéfini',
           style: GoogleFonts.outfit(
             fontSize: 18,
             fontWeight: FontWeight.w600,
@@ -59,7 +64,11 @@ class AlbumTemplatePickerScreen extends ConsumerWidget {
         ),
         children: [
           Text(
-            'Choisissez un modèle pour $childName',
+            lang == 'ar'
+                ? 'اختر نموذجاً لـ $childName'
+                : lang == 'en'
+                    ? 'Choose a template for $childName'
+                    : 'Choisissez un modèle pour $childName',
             style: GoogleFonts.outfit(fontSize: 14, color: secondaryText),
           ),
           const SizedBox(height: AppSpacing.md),
@@ -68,7 +77,8 @@ class AlbumTemplatePickerScreen extends ConsumerWidget {
               padding: const EdgeInsets.only(bottom: AppSpacing.md),
               child: _TemplateCard(
                 template: template,
-                onTap: () => _selectTemplate(context, ref, template),
+                lang: lang,
+                onTap: () => _selectTemplate(context, ref, template, lang),
               ),
             ),
           ),
@@ -81,26 +91,47 @@ class AlbumTemplatePickerScreen extends ConsumerWidget {
     BuildContext context,
     WidgetRef ref,
     AlbumTemplate template,
+    String lang,
   ) async {
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (ctx) => AlertDialog(
         title: Text(
-          'Créer « ${template.titleFr} » ?',
+          lang == 'ar'
+              ? 'إنشاء « ${template.getTitle(lang)} » ؟'
+              : lang == 'en'
+                  ? 'Create "${template.getTitle(lang)}"? '
+                  : 'Créer « ${template.getTitle(lang)} » ?',
           style: GoogleFonts.outfit(fontWeight: FontWeight.bold),
         ),
         content: Text(
-          'Cet album sera créé pour $childName avec ${template.slotCount} évènements à remplir.',
+          lang == 'ar'
+              ? 'سيتم إنشاء هذا الألبوم لـ $childName مع ${template.slotCount} مناسبة لملئها.'
+              : lang == 'en'
+                  ? 'This album will be created for $childName with ${template.slotCount} events to fill.'
+                  : 'Cet album sera créé pour $childName avec ${template.slotCount} évènements à remplir.',
           style: GoogleFonts.outfit(),
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(ctx, false),
-            child: const Text('Annuler'),
+            child: Text(
+              lang == 'ar'
+                  ? 'إلغاء'
+                  : lang == 'en'
+                      ? 'Cancel'
+                      : 'Annuler',
+            ),
           ),
           FilledButton(
             onPressed: () => Navigator.pop(ctx, true),
-            child: const Text('Créer'),
+            child: Text(
+              lang == 'ar'
+                  ? 'إنشاء'
+                  : lang == 'en'
+                      ? 'Create'
+                      : 'Créer',
+            ),
           ),
         ],
       ),
@@ -116,8 +147,14 @@ class AlbumTemplatePickerScreen extends ConsumerWidget {
 
     if (album == null) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Erreur lors de la création de l\'album'),
+        SnackBar(
+          content: Text(
+            lang == 'ar'
+                ? 'خطأ أثناء إنشاء الألبوم'
+                : lang == 'en'
+                    ? 'Error creating the album'
+                    : 'Erreur lors de la création de l\'album',
+          ),
           backgroundColor: AppColors.error,
         ),
       );
@@ -134,9 +171,14 @@ class AlbumTemplatePickerScreen extends ConsumerWidget {
 }
 
 class _TemplateCard extends StatelessWidget {
-  const _TemplateCard({required this.template, required this.onTap});
+  const _TemplateCard({
+    required this.template,
+    required this.lang,
+    required this.onTap,
+  });
 
   final AlbumTemplate template;
+  final String lang;
   final VoidCallback onTap;
 
   @override
@@ -177,7 +219,7 @@ class _TemplateCard extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    template.titleFr,
+                    template.getTitle(lang),
                     style: GoogleFonts.outfit(
                       fontSize: 17,
                       fontWeight: FontWeight.bold,
@@ -186,7 +228,7 @@ class _TemplateCard extends StatelessWidget {
                   ),
                   const SizedBox(height: 2),
                   Text(
-                    template.subtitleFr,
+                    template.getSubtitle(lang),
                     style: GoogleFonts.outfit(
                       fontSize: 12,
                       color: Colors.white.withValues(alpha: 0.85),
@@ -203,7 +245,11 @@ class _TemplateCard extends StatelessWidget {
                       borderRadius: BorderRadius.circular(12),
                     ),
                     child: Text(
-                      '${template.slotCount} évènements',
+                      lang == 'ar'
+                          ? '${template.slotCount} مناسبات'
+                          : lang == 'en'
+                              ? '${template.slotCount} events'
+                              : '${template.slotCount} évènements',
                       style: GoogleFonts.outfit(
                         fontSize: 11,
                         fontWeight: FontWeight.w600,

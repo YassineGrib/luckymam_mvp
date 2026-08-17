@@ -29,6 +29,7 @@ class _MarketplaceScreenState extends ConsumerState<MarketplaceScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final lang = Localizations.localeOf(context).languageCode;
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final bgColor = isDark
         ? AppColors.backgroundDark
@@ -60,7 +61,7 @@ class _MarketplaceScreenState extends ConsumerState<MarketplaceScreen> {
                   ),
                   const SizedBox(width: 4),
                   Container(
-                    width: 42,
+                     width: 42,
                     height: 42,
                     decoration: BoxDecoration(
                       gradient: AppColors.primaryGradient,
@@ -86,7 +87,11 @@ class _MarketplaceScreenState extends ConsumerState<MarketplaceScreen> {
                           ),
                         ),
                         Text(
-                          'Produits de nos partenaires',
+                          lang == 'ar'
+                              ? 'منتجات شركائنا الموثوقين'
+                              : lang == 'en'
+                                  ? 'Products from our partners'
+                                  : 'Produits de nos partenaires',
                           style: GoogleFonts.outfit(
                             fontSize: 13,
                             color: secondaryText,
@@ -96,7 +101,11 @@ class _MarketplaceScreenState extends ConsumerState<MarketplaceScreen> {
                     ),
                   ),
                   IconButton(
-                    tooltip: 'Mes commandes',
+                    tooltip: lang == 'ar'
+                        ? 'طلباتي'
+                        : lang == 'en'
+                            ? 'My orders'
+                            : 'Mes commandes',
                     onPressed: () => Navigator.of(context).push(
                       MaterialPageRoute(
                         builder: (_) => const MyOrdersScreen(),
@@ -107,7 +116,7 @@ class _MarketplaceScreenState extends ConsumerState<MarketplaceScreen> {
                       color: secondaryText,
                     ),
                   ),
-                  _CartButton(textColor: textColor),
+                  _CartButton(textColor: textColor, lang: lang),
                 ],
               ),
             ),
@@ -122,8 +131,8 @@ class _MarketplaceScreenState extends ConsumerState<MarketplaceScreen> {
                 ),
                 children: [
                   _CategoryChip(
-                    label: 'Tous',
-                    emoji: '✨',
+                    label: lang == 'ar' ? 'الكل' : lang == 'en' ? 'All' : 'Tous',
+                    icon: Icons.apps_rounded,
                     color: AppColors.magentaPink,
                     isSelected: selectedCategory == null,
                     isDark: isDark,
@@ -133,8 +142,8 @@ class _MarketplaceScreenState extends ConsumerState<MarketplaceScreen> {
                   ),
                   ...ProductCategory.values.map(
                     (cat) => _CategoryChip(
-                      label: cat.labelFr,
-                      emoji: cat.emoji,
+                      label: cat.getLabel(lang),
+                      icon: cat.icon,
                       color: cat.color,
                       isSelected: selectedCategory == cat,
                       isDark: isDark,
@@ -152,7 +161,7 @@ class _MarketplaceScreenState extends ConsumerState<MarketplaceScreen> {
             // ── Product grid ──────────────────────────────────────────
             Expanded(
               child: products.isEmpty
-                  ? _buildEmptyState(textColor, secondaryText)
+                  ? _buildEmptyState(textColor, secondaryText, lang)
                   : GridView.builder(
                       padding: const EdgeInsets.fromLTRB(
                         AppSpacing.screenPaddingH,
@@ -191,7 +200,7 @@ class _MarketplaceScreenState extends ConsumerState<MarketplaceScreen> {
     );
   }
 
-  Widget _buildEmptyState(Color textColor, Color secondaryText) {
+  Widget _buildEmptyState(Color textColor, Color secondaryText, String lang) {
     return Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -203,7 +212,11 @@ class _MarketplaceScreenState extends ConsumerState<MarketplaceScreen> {
           ),
           const SizedBox(height: AppSpacing.md),
           Text(
-            'Aucun produit dans cette catégorie',
+            lang == 'ar'
+                ? 'لا توجد منتجات في هذه الفئة'
+                : lang == 'en'
+                    ? 'No products in this category'
+                    : 'Aucun produit dans cette catégorie',
             style: GoogleFonts.outfit(fontSize: 15, color: secondaryText),
           ),
         ],
@@ -214,9 +227,10 @@ class _MarketplaceScreenState extends ConsumerState<MarketplaceScreen> {
 
 /// Cart icon with a live item-count badge.
 class _CartButton extends ConsumerWidget {
-  const _CartButton({required this.textColor});
+  const _CartButton({required this.textColor, required this.lang});
 
   final Color textColor;
+  final String lang;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -226,7 +240,11 @@ class _CartButton extends ConsumerWidget {
       clipBehavior: Clip.none,
       children: [
         IconButton(
-          tooltip: 'Mon panier',
+          tooltip: lang == 'ar'
+              ? 'سلتي'
+              : lang == 'en'
+                  ? 'My cart'
+                  : 'Mon panier',
           onPressed: () => Navigator.of(
             context,
           ).push(MaterialPageRoute(builder: (_) => const CartScreen())),
@@ -263,7 +281,7 @@ class _CartButton extends ConsumerWidget {
 class _CategoryChip extends StatelessWidget {
   const _CategoryChip({
     required this.label,
-    required this.emoji,
+    required this.icon,
     required this.color,
     required this.isSelected,
     required this.isDark,
@@ -271,7 +289,7 @@ class _CategoryChip extends StatelessWidget {
   });
 
   final String label;
-  final String emoji;
+  final IconData icon;
   final Color color;
   final bool isSelected;
   final bool isDark;
@@ -308,7 +326,13 @@ class _CategoryChip extends StatelessWidget {
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Text(emoji, style: const TextStyle(fontSize: 13)),
+            Icon(
+              icon,
+              size: 14,
+              color: isSelected
+                  ? Colors.white
+                  : (isDark ? Colors.white70 : AppColors.onSurfaceLight),
+            ),
             const SizedBox(width: 5),
             Text(
               label,
@@ -455,7 +479,11 @@ class _ProductCard extends ConsumerWidget {
         ),
       ),
       child: Center(
-        child: Text(product.emoji, style: const TextStyle(fontSize: 44)),
+        child: Icon(
+          product.icon,
+          size: 44,
+          color: color,
+        ),
       ),
     );
   }

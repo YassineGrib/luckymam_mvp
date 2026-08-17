@@ -60,14 +60,14 @@ Le composant `AlbumPrintCta` est **partagé entre les deux types d'album** (pré
 
 ## Fichiers créés / modifiés
 
-| Fichier | Changement |
-|---------|-----------|
-| `lib/features/print_album/models/print_order.dart` | Nouveau — modèle de commande |
-| `lib/features/print_album/services/album_pdf_service.dart` | Nouveau — génération du livre photo PDF (couverture, pages, clôture) |
-| `lib/features/print_album/providers/print_order_providers.dart` | Nouveau — soumission de commande + analytics |
-| `lib/features/print_album/screens/album_print_preview_screen.dart` | Nouveau — aperçu PDF natif (`PdfPreview`) |
-| `lib/features/print_album/screens/print_order_screen.dart` | Nouveau — formulaire de livraison, bandeau VIP, confirmation |
-| `lib/features/memory_book/widgets/album_print_cta.dart` | Nouveau — bouton "Commander" partagé, avec état désactivé si album vide |
+| Fichier | Changement / Rôle |
+|---------|------------------|
+| `lib/features/memory_book/widgets/album_print_cta.dart` | Bouton "Commander" partagé, avec état désactivé si album vide · traduction dynamique des messages d'avertissement et du libellé du bouton |
+| `lib/features/print_album/screens/album_print_preview_screen.dart` | Aperçu PDF natif · traduction dynamique du titre de la barre d'applications, du message de préparation et des boutons de commande |
+| `lib/features/print_album/screens/print_order_screen.dart` | Formulaire de livraison, bandeau VIP, confirmation · traduction complète de tous les champs (Nom, Téléphone, Wilaya, Adresse), des messages d'erreurs/validation, des offres VIP et de la vue de succès finalisée |
+| `lib/features/print_album/models/print_order.dart` | Modèle de commande |
+| `lib/features/print_album/services/album_pdf_service.dart` | Génération du livre photo PDF (couverture, pages, clôture) |
+| `lib/features/print_album/providers/print_order_providers.dart` | Soumission de commande + analytics |
 | `lib/features/memory_book/screens/predefined_album_detail_screen.dart` | Construction des pages PDF + intégration du bouton |
 | `lib/features/memory_book/screens/standard_album_detail_screen.dart` | Construction des pages PDF + intégration du bouton |
 | `firestore.rules` | Règle `print_orders` (create/read own, immuable) |
@@ -81,7 +81,11 @@ Le composant `AlbumPrintCta` est **partagé entre les deux types d'album** (pré
 |---------|--------|
 | Accès « Commander » depuis un album prédéfini | ✅ |
 | Accès « Commander » depuis un album standard | ✅ |
-| Prévisualisation PDF avant commande | ✅ |
+| Traduction dynamique complète du bouton d'action et des avertissements (AR / FR / EN) | ✅ |
+| Prévisualisation PDF avant commande avec message de chargement traduit | ✅ |
+| Traduction dynamique de tous les champs de livraison et de leurs critères de validation | ✅ |
+| Traduction dynamique du statut VIP et des notifications de tarification | ✅ |
+| Traduction dynamique de l'écran de succès de la commande (délai de livraison et confirmation) | ✅ |
 | Livre photo réellement mis en page (pas une liste brute) | ✅ |
 | Finalisation d'une commande d'impression | ✅ |
 | Reconnaissance automatique du perk VIP | ✅ |
@@ -92,7 +96,7 @@ Le composant `AlbumPrintCta` est **partagé entre les deux types d'album** (pré
 | Analytics `album_print_cta_clicked` | ✅ |
 | Analytics `pdf_preview_opened` | ✅ |
 | Analytics `order_created` | ✅ |
-| `flutter analyze` clean (0 nouveaux problèmes) | ✅ |
+| `flutter analyze` clean | ✅ |
 
 ---
 

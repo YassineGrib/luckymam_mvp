@@ -34,7 +34,10 @@ annonceurs.
 | **Transitions d'onglets** | Interstitiel plein écran toutes les 4 transitions, avec un délai global minimum de 3 minutes entre deux pubs plein écran |
 | **Flux Reels** | 1 page sponsorisée native toutes les 4 vidéos — non bloquante, on la fait défiler comme un reel |
 
-Chaque publicité porte le badge **« Sponsorisé · {Nom} »**.
+Chaque publicité porte le badge de parrainage/sponsor, traduit dynamiquement selon la langue active de l'utilisateur :
+- **Arabe** : `برعاية · {Nom}`
+- **Français** : `Sponsorisé · {Nom}`
+- **Anglais** : `Sponsored · {Nom}`
 
 ### 2. Gating et timers par plan (cœur du ticket)
 

@@ -22,20 +22,20 @@ La base de calcul respecte la règle obstétricale standard (280 jours / 40 sema
 ### 2. Affichage en-tête adaptatif
 
 Quand le statut est **ENCEINTE** :
-- Le titre passe à **"Ma Grossesse"**
-- Le sous-titre affiche dynamiquement `"Semaine XX · DPA dans YY j"` si la DDR est connue, sinon `"Renseigner ma date de début"`
+- Le titre passe à **"Ma Grossesse"** (traduit en `My Pregnancy` en anglais / `حملي` en arabe).
+- Le sous-titre s'affiche dynamiquement selon la langue active (par exemple: `الأسبوع 12 · الولادة المتوقعة خلال 196 يوم` en arabe / `Week 12 · Due in 196 days` en anglais / `Semaine 12 · DPA dans 196 j` en français).
 
 ### 3. Panneau expansible grossesse (`_buildPregnancyContent`)
 
-**Si DDR non renseignée :**
-- Message explicatif invitant à saisir la DDR
-- Bouton `"Entrer ma DDR"` → ouvre un `DatePicker` limité aux 280 derniers jours
-
-**Si DDR connue :**
-- Anneau `CircularProgressIndicator` affichant la semaine courante (SA / 40)
-- Badge **DPA** : date formatée `JJ/MM/AAAA`
-- Badge **J−XX** : compte à rebours en jours
-- Bouton secondaire `"Modifier ma DDR"` pour corriger la date
+Tous les textes, descriptions, badges et boutons du panneau s'adaptent dynamiquement à la langue active (FR / AR / EN) :
+- **Si DDR non renseignée :**
+  - Message explicatif invitant à saisir la DDR (traduit)
+  - Bouton d'action `"Entrer ma DDR"` (traduit en `Enter my LMP` / `إدخال تاريخ آخر دورة`)
+- **Si DDR connue :**
+  - Anneau `CircularProgressIndicator` affichant la semaine courante avec label d'unité (`SA` / `Weeks` / `أسبوع`)
+  - Badge **DPA** : formaté selon le modèle `JJ/MM/AAAA`
+  - Badge **J−XX** : compte à rebours traduit (ex: `باقي 196 يوم على الولادة` / `196 days left until delivery`)
+  - Bouton secondaire de modification (traduit en `Modify my LMP` / `تعديل تاريخ آخر دورة`)
 
 Le style respecte la charte graphique existante : fond `AppColors.primaryGradient`, texte blanc, `GoogleFonts.outfit`, `BorderRadius.circular(18)`.
 

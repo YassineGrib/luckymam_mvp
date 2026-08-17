@@ -2,16 +2,30 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../data/marketplace_data.dart';
 import '../models/marketplace_product.dart';
+import '../services/marketplace_service.dart';
 
-/// All marketplace partners. Static in V1 — swap this provider's body for a
-/// Firestore stream when the backoffice lands; consumers won't change.
-final marketplacePartnersProvider = Provider<List<MarketplacePartner>>((ref) {
-  return marketplacePartners;
+final marketplaceServiceProvider = Provider<MarketplaceService>((ref) {
+  return MarketplaceService();
 });
 
-/// Full product catalogue. Static in V1 (see note above).
+/// Live catalogue from Firestore; falls back to static V1 data when empty or offline.
+final marketplaceProductsStreamProvider =
+    StreamProvider<List<MarketplaceProduct>>((ref) {
+  return ref.watch(marketplaceServiceProvider).watchActiveProducts();
+});
+
 final marketplaceProductsProvider = Provider<List<MarketplaceProduct>>((ref) {
-  return marketplaceProducts;
+  final remote = ref.watch(marketplaceProductsStreamProvider);
+  return remote.when(
+    data: (list) => list.isNotEmpty ? list : marketplaceProducts,
+    loading: () => marketplaceProducts,
+    error: (error, stackTrace) => marketplaceProducts,
+  );
+});
+
+/// All marketplace partners. Static in V1 — unknown Firestore partnerIds use [MarketplaceProduct.vendorName].
+final marketplacePartnersProvider = Provider<List<MarketplacePartner>>((ref) {
+  return marketplacePartners;
 });
 
 /// Currently selected category filter (null = all products).

@@ -1,0 +1,204 @@
+@import "tailwindcss" source(none);
+@source "../src";
+@import "tw-animate-css";
+
+@custom-variant dark (&:is(.dark *));
+
+@theme inline {
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+  --radius-2xl: calc(var(--radius) + 8px);
+  --radius-3xl: calc(var(--radius) + 12px);
+  --radius-4xl: calc(var(--radius) + 16px);
+
+  --font-sans: "IBM Plex Sans", "IBM Plex Sans Arabic", ui-sans-serif, system-ui, sans-serif;
+  --font-display: "IBM Plex Sans", "IBM Plex Sans Arabic", ui-sans-serif, system-ui, sans-serif;
+  --font-arabic: "IBM Plex Sans Arabic", "IBM Plex Sans", ui-sans-serif, system-ui, sans-serif;
+
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-ring-offset-background: var(--background);
+  --color-chart-1: var(--chart-1);
+  --color-chart-2: var(--chart-2);
+  --color-chart-3: var(--chart-3);
+  --color-chart-4: var(--chart-4);
+  --color-chart-5: var(--chart-5);
+  --color-sidebar: var(--sidebar);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-ring: var(--sidebar-ring);
+
+  --color-cherry-50: var(--cherry-50);
+  --color-cherry-100: var(--cherry-100);
+  --color-cherry-200: var(--cherry-200);
+  --color-cherry-400: var(--cherry-400);
+  --color-cherry-600: var(--cherry-600);
+  --color-ink: var(--ink);
+  --color-ink-muted: var(--ink-muted);
+}
+
+:root {
+  --radius: 0.875rem;
+
+  --cherry-50: #fffafb;
+  --cherry-100: #fef0f5;
+  --cherry-200: #f8c8d8;
+  --cherry-400: #e88aab;
+  --cherry-600: #c45c7c;
+  --ink: #1a1618;
+  --ink-muted: #6b5a62;
+
+  --background: #fffafb;
+  --foreground: #1a1618;
+  --card: #ffffff;
+  --card-foreground: #1a1618;
+  --popover: #ffffff;
+  --popover-foreground: #1a1618;
+  --primary: #c45c7c;
+  --primary-foreground: #ffffff;
+  --secondary: #fef0f5;
+  --secondary-foreground: #c45c7c;
+  --muted: #fef0f5;
+  --muted-foreground: #6b5a62;
+  --accent: #f8c8d8;
+  --accent-foreground: #1a1618;
+  --destructive: oklch(0.577 0.245 27.325);
+  --destructive-foreground: #ffffff;
+  --border: #f3dde5;
+  --input: #f3dde5;
+  --ring: #e88aab;
+  --chart-1: #c45c7c;
+  --chart-2: #e88aab;
+  --chart-3: #f8c8d8;
+  --chart-4: #fef0f5;
+  --chart-5: #86efac;
+  --sidebar: #fef0f5;
+  --sidebar-foreground: #1a1618;
+  --sidebar-primary: #c45c7c;
+  --sidebar-primary-foreground: #ffffff;
+  --sidebar-accent: rgba(255, 255, 255, 0.6);
+  --sidebar-accent-foreground: #c45c7c;
+  --sidebar-border: #f3dde5;
+  --sidebar-ring: #e88aab;
+}
+
+.dark {
+  --background: #150a10;
+  --foreground: #fef0f5;
+  --card: #1f1017;
+  --card-foreground: #fef0f5;
+  --popover: #1f1017;
+  --popover-foreground: #fef0f5;
+  --primary: #e88aab;
+  --primary-foreground: #150a10;
+  --secondary: #2a1620;
+  --secondary-foreground: #fef0f5;
+  --muted: #2a1620;
+  --muted-foreground: #c9a0af;
+  --accent: #3a1e2c;
+  --accent-foreground: #fef0f5;
+  --border: #3a1e2c;
+  --input: #3a1e2c;
+  --ring: #e88aab;
+  --sidebar: #1f1017;
+  --sidebar-foreground: #fef0f5;
+  --sidebar-primary: #e88aab;
+  --sidebar-primary-foreground: #150a10;
+  --sidebar-accent: #2a1620;
+  --sidebar-accent-foreground: #fef0f5;
+  --sidebar-border: #3a1e2c;
+  --sidebar-ring: #e88aab;
+}
+
+@layer base {
+  * {
+    border-color: var(--color-border);
+  }
+
+  html {
+    font-family: var(--font-sans);
+  }
+
+  html[dir="rtl"] {
+    font-family: var(--font-arabic);
+  }
+
+  body {
+    background-color: var(--color-background);
+    color: var(--color-foreground);
+    font-feature-settings: "ss01", "cv11";
+  }
+
+  h1, h2, h3, h4, h5 {
+    font-family: var(--font-display);
+    letter-spacing: -0.02em;
+  }
+}
+
+@utility font-display {
+  font-family: var(--font-display);
+}
+
+/* Sidebar decorative background — cherry dot grid + soft corner glows */
+@utility sidebar-pattern {
+  background-color: var(--sidebar);
+  background-image:
+    radial-gradient(
+      ellipse 120% 80% at 100% 0%,
+      color-mix(in srgb, var(--cherry-400) 18%, transparent),
+      transparent 55%
+    ),
+    radial-gradient(
+      ellipse 90% 70% at 0% 100%,
+      color-mix(in srgb, var(--cherry-600) 10%, transparent),
+      transparent 50%
+    ),
+    radial-gradient(
+      circle at 1px 1px,
+      color-mix(in srgb, var(--cherry-600) 11%, transparent) 1px,
+      transparent 0
+    );
+  background-size: 100% 100%, 100% 100%, 18px 18px;
+}
+
+.dark .sidebar-pattern {
+  background-image:
+    radial-gradient(
+      ellipse 120% 80% at 100% 0%,
+      color-mix(in srgb, var(--cherry-400) 12%, transparent),
+      transparent 55%
+    ),
+    radial-gradient(
+      ellipse 90% 70% at 0% 100%,
+      color-mix(in srgb, var(--cherry-600) 8%, transparent),
+      transparent 50%
+    ),
+    radial-gradient(
+      circle at 1px 1px,
+      color-mix(in srgb, var(--cherry-400) 9%, transparent) 1px,
+      transparent 0
+    );
+}

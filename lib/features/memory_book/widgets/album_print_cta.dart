@@ -34,6 +34,8 @@ class AlbumPrintCta extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final lang = Localizations.localeOf(context).languageCode;
+
     if (pages.isEmpty) {
       return Container(
         padding: const EdgeInsets.all(AppSpacing.md),
@@ -55,7 +57,11 @@ class AlbumPrintCta extends StatelessWidget {
             const SizedBox(width: AppSpacing.sm),
             Expanded(
               child: Text(
-                'Ajoutez au moins un souvenir pour pouvoir commander l\'impression.',
+                lang == 'ar'
+                    ? 'أضيفي ذكرى واحدة على الأقل لتتمكني من طلب الطباعة.'
+                    : lang == 'en'
+                        ? 'Add at least one memory to be able to order printing.'
+                        : 'Ajoutez au moins un souvenir pour pouvoir commander l\'impression.',
                 style: GoogleFonts.outfit(
                   fontSize: 12,
                   color: isDark
@@ -120,7 +126,11 @@ class AlbumPrintCta extends StatelessWidget {
             ),
             const SizedBox(width: AppSpacing.sm),
             Text(
-              'Commander l\'impression',
+              lang == 'ar'
+                  ? 'طلب الطباعة'
+                  : lang == 'en'
+                      ? 'Order printing'
+                      : 'Commander l\'impression',
               style: GoogleFonts.outfit(
                 fontSize: 15,
                 fontWeight: FontWeight.bold,

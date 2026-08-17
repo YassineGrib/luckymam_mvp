@@ -5,4 +5,14 @@ import tailwindcss from '@tailwindcss/vite'
 // https://vite.dev/config/
 export default defineConfig({
   plugins: [react(), tailwindcss()],
+  server: {
+    headers: {
+      'Accept-Ranges': 'bytes',
+    },
+  },
+  preview: {
+    headers: {
+      'Accept-Ranges': 'bytes',
+    },
+  },
 })

@@ -292,6 +292,7 @@ class _TimelineScreenState extends ConsumerState<TimelineScreen> {
   }
 
   void _openQuickAdd(BuildContext context, Child child) {
+    final lang = Localizations.localeOf(context).languageCode;
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final primary = isDark ? AppColors.primaryDark : AppColors.primaryLight;
     final surface = isDark ? AppColors.surfaceDark : Colors.white;
@@ -325,7 +326,11 @@ class _TimelineScreenState extends ConsumerState<TimelineScreen> {
             ),
             const SizedBox(height: 20),
             Text(
-              'Ajouter rapidement',
+              lang == 'ar'
+                  ? 'إضافة سريعة'
+                  : lang == 'en'
+                      ? 'Quick Add'
+                      : 'Ajouter rapidement',
               style: GoogleFonts.outfit(
                 fontSize: 18,
                 fontWeight: FontWeight.bold,
@@ -334,7 +339,11 @@ class _TimelineScreenState extends ConsumerState<TimelineScreen> {
             ),
             const SizedBox(height: 6),
             Text(
-              'Que souhaitez-vous faire ?',
+              lang == 'ar'
+                  ? 'ماذا ترغبين في فعله؟'
+                  : lang == 'en'
+                      ? 'What would you like to do?'
+                      : 'Que souhaitez-vous faire ?',
               style: GoogleFonts.outfit(fontSize: 13, color: secondary),
             ),
             const SizedBox(height: 20),
@@ -343,8 +352,16 @@ class _TimelineScreenState extends ConsumerState<TimelineScreen> {
             _QuickAddTile(
               icon: Icons.camera_alt_rounded,
               color: primary,
-              title: 'Créer une capsule',
-              subtitle: 'Capturez un souvenir maintenant',
+              title: lang == 'ar'
+                  ? 'إنشاء كبسولة'
+                  : lang == 'en'
+                      ? 'Create a capsule'
+                      : 'Créer une capsule',
+              subtitle: lang == 'ar'
+                  ? 'وثقي ذكرى الآن'
+                  : lang == 'en'
+                      ? 'Capture a memory now'
+                      : 'Capturez un souvenir maintenant',
               onTap: () {
                 Navigator.pop(context);
                 AnalyticsService().logEvent('timeline_quickadd_selected',
@@ -364,8 +381,16 @@ class _TimelineScreenState extends ConsumerState<TimelineScreen> {
             _QuickAddTile(
               icon: Icons.star_rounded,
               color: Colors.orange,
-              title: 'Marquer un jalon',
-              subtitle: 'Ouvrez un jalon de la phase actuelle',
+              title: lang == 'ar'
+                  ? 'تحديد جلون'
+                  : lang == 'en'
+                      ? 'Mark a milestone'
+                      : 'Marquer un jalon',
+              subtitle: lang == 'ar'
+                  ? 'افتحي جلوناً من المرحلة الحالية'
+                  : lang == 'en'
+                      ? 'Open a milestone from current phase'
+                      : 'Ouvrez un jalon de la phase actuelle',
               onTap: () {
                 Navigator.pop(context);
                 AnalyticsService().logEvent('timeline_quickadd_selected',
@@ -380,6 +405,7 @@ class _TimelineScreenState extends ConsumerState<TimelineScreen> {
   }
 
   void _openMilestonePickerSheet(BuildContext context, String childId) {
+    final lang = Localizations.localeOf(context).languageCode;
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final surface = isDark ? AppColors.surfaceDark : Colors.white;
     final textColor = isDark ? AppColors.onSurfaceDark : AppColors.onSurfaceLight;
@@ -421,7 +447,11 @@ class _TimelineScreenState extends ConsumerState<TimelineScreen> {
               ),
               const SizedBox(height: 20),
               Text(
-                'Jalons à venir',
+                lang == 'ar'
+                    ? 'الجالونات القادمة'
+                    : lang == 'en'
+                        ? 'Upcoming Milestones'
+                        : 'Jalons à venir',
                 style: GoogleFonts.outfit(
                   fontSize: 18,
                   fontWeight: FontWeight.bold,
@@ -429,7 +459,7 @@ class _TimelineScreenState extends ConsumerState<TimelineScreen> {
                 ),
               ),
               Text(
-                _selectedPhase.labelFr,
+                _selectedPhase.getLabel(lang),
                 style: GoogleFonts.outfit(fontSize: 13, color: secondary),
               ),
               const SizedBox(height: 16),
@@ -438,7 +468,11 @@ class _TimelineScreenState extends ConsumerState<TimelineScreen> {
                   padding: const EdgeInsets.symmetric(vertical: 24),
                   child: Center(
                     child: Text(
-                      'Tous les jalons de cette phase ont déjà un souvenir ✓',
+                      lang == 'ar'
+                          ? 'كل جالونات هذه المرحلة لديها ذكرى بالفعل ✓'
+                          : lang == 'en'
+                              ? 'All milestones in this phase already have a memory ✓'
+                              : 'Tous les jalons de cette phase ont déjà un souvenir ✓',
                       style: GoogleFonts.outfit(fontSize: 13, color: secondary),
                       textAlign: TextAlign.center,
                     ),
@@ -477,7 +511,7 @@ class _TimelineScreenState extends ConsumerState<TimelineScreen> {
                           ),
                         ),
                         title: Text(
-                          m.milestone.titleFr,
+                          m.milestone.getTitle(lang),
                           style: GoogleFonts.outfit(
                             fontSize: 14,
                             fontWeight: FontWeight.w600,
@@ -527,7 +561,11 @@ class _TimelineScreenState extends ConsumerState<TimelineScreen> {
             const Icon(Icons.add_rounded, color: Colors.white, size: 18),
             const SizedBox(width: 4),
             Text(
-              'Ajouter',
+              Localizations.localeOf(context).languageCode == 'ar'
+                  ? 'إضافة'
+                  : Localizations.localeOf(context).languageCode == 'en'
+                      ? 'Add'
+                      : 'Ajouter',
               style: GoogleFonts.outfit(
                 fontSize: 13,
                 fontWeight: FontWeight.w600,

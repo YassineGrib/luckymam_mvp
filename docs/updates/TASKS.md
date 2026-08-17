@@ -1,6 +1,6 @@
 # Luckymam — Backlog Addendum 27-04-2026 · Suivi des tâches
 
-> **22 tickets** · Mis à jour le : 2026-06-20  
+> **22 tickets** · Mis à jour le : 2026-07-20  
 > Rapports : [LM2-118](../reports/rapport_client_2026_06_20_LM2-118.md) · [LM2-119](../reports/rapport_client_2026_06_20_LM2-119.md) · [LM2-120](../reports/rapport_client_2026_06_20_LM2-120.md) · [LM2-121](../reports/rapport_client_2026_06_20_LM2-121.md) · [LM2-123](../reports/rapport_client_2026_06_20_LM2-123.md) · [LM2-123-v2](../reports/rapport_client_2026_06_20_LM2-123-v2.md) · [LM2-124](../reports/rapport_client_2026_06_20_LM2-124.md) · [LM2-125](../reports/rapport_client_2026_06_21_LM2-125.md) · [LM2-126](../reports/rapport_client_2026_06_21_LM2-126.md) · [LM2-127](../reports/rapport_client_2026_06_21_LM2-127.md) · [LM2-128](../reports/rapport_client_2026_06_21_LM2-128.md) · [LM2-129](../reports/rapport_client_2026_06_21_LM2-129.md) · [LM2-130](../reports/rapport_client_2026_06_21_LM2-130.md) · [LM2-131](../reports/rapport_client_2026_06_21_LM2-131.md) · [LM2-132](../reports/rapport_client_2026_06_21_LM2-132.md) · [LM2-133](../reports/rapport_client_2026_06_21_LM2-133.md) · [LM2-134](../reports/rapport_client_2026_06_21_LM2-134.md) · [LM2-135](../reports/rapport_client_2026_06_21_LM2-135.md) · [LM2-137](../reports/rapport_client_2026_06_21_LM2-137.md) · [LM2-138](../reports/rapport_client_2026_06_21_LM2-138.md) · [LM2-139](../reports/rapport_client_2026_06_21_LM2-139.md) · [LM2-122](../reports/rapport_client_2026_06_21_LM2-122.md)  
 > Légende : ⬜ À faire · 🔄 En cours · ✅ Terminé · 🚫 Bloqué
 

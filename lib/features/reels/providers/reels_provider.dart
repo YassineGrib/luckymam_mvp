@@ -4,85 +4,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter/foundation.dart';
 import '../models/reel_item.dart';
 
-/// Hardcoded local reels enriched with categories (will be replaced with Firestore later).
-final _initialReels = <ReelItem>[
-  const ReelItem(
-    id: 'reel_1',
-    title: 'Soins de bébé',
-    description:
-        'Les gestes essentiels pour prendre soin de votre nouveau-né au quotidien 👶',
-    assetPath: 'assets/videos/reels/reel_baby_care_tips.mp4',
-    author: 'Dr. Amina',
-    likeCount: 234,
-    category: ReelCategory.soinsQuotidiens,
-  ),
-  const ReelItem(
-    id: 'reel_2',
-    title: 'Guide Nutrition',
-    description:
-        "Alimentation équilibrée pour maman et bébé — conseils d'une nutritionniste 🥗",
-    assetPath: 'assets/videos/reels/reel_nutrition_guide.mp4',
-    author: 'Nadia K.',
-    likeCount: 189,
-    category: ReelCategory.nutrition,
-  ),
-  const ReelItem(
-    id: 'reel_3',
-    title: 'Premiers Pas',
-    description:
-        "Comment accompagner votre enfant dans l'apprentissage de la marche 🚶‍♂️",
-    assetPath: 'assets/videos/reels/reel_first_steps.mp4',
-    author: 'Meriem B.',
-    likeCount: 312,
-    category: ReelCategory.soutienEnfants,
-  ),
-  const ReelItem(
-    id: 'reel_4',
-    title: 'Vaccins : le calendrier',
-    description:
-        'Tout savoir sur le calendrier vaccinal de votre bébé — ne ratez aucun vaccin 🔬',
-    assetPath: 'assets/videos/reels/reel_baby_care_tips.mp4',
-    author: 'Dr. Youcef',
-    likeCount: 421,
-    category: ReelCategory.vaccins,
-    // General calendar overview — relevant to every vaccine in the national calendar.
-    vaccineTags: [
-      'BCG',
-      'HBV',
-      'DTCaVPI-Hib-HBV',
-      'VPOb',
-      'VPC',
-      'ROR',
-      'DTCa-VPI',
-      'dT',
-    ],
-  ),
-  const ReelItem(
-    id: 'reel_5',
-    title: 'Grossesse & HTA',
-    description:
-        "Comprendre et gerer l'hypertension arterielle pendant la grossesse",
-    assetPath: 'assets/videos/reels/reel_nutrition_guide.mp4',
-    author: 'Dr. Fatima',
-    likeCount: 198,
-    category: ReelCategory.grossessehta,
-  ),
-
-  const ReelItem(
-    id: 'reel_6',
-    title: 'Diabète gestationnel',
-    description:
-        'Conseils pratiques pour gérer le diabète pendant votre grossesse 🩸',
-    assetPath: 'assets/videos/reels/reel_first_steps.mp4',
-    author: 'Dr. Karima',
-    likeCount: 267,
-    category: ReelCategory.grossessediabete,
-  ),
-];
-
 /// Manages the list of reels and favorites state.
 class ReelsNotifier extends StateNotifier<List<ReelItem>> {
-  ReelsNotifier() : super(_initialReels) {
+  ReelsNotifier() : super(const []) {
     _listenToReels();
   }
 
@@ -94,34 +18,33 @@ class ReelsNotifier extends StateNotifier<List<ReelItem>> {
         .collection('reels')
         .snapshots()
         .listen((snap) {
-      if (snap.docs.isEmpty) {
-        // Fallback to local mock data if firestore is empty
-        state = _initialReels.map((r) {
-          return r.copyWith(isFavorite: _localFavorites.contains(r.id));
-        }).toList();
-        return;
-      }
-      state = snap.docs.map((doc) {
-        final data = doc.data();
-        final categoryStr = data['category'] as String?;
-        final category = ReelCategory.values.firstWhere(
-          (c) => c.name == categoryStr,
-          orElse: () => ReelCategory.vaccins,
-        );
-        final isFav = _localFavorites.contains(doc.id);
-        return ReelItem(
-          id: doc.id,
-          title: data['title'] ?? '',
-          description: data['description'] ?? '',
-          assetPath: data['assetPath'] ?? '',
-          author: data['author'] ?? 'Luckymam',
-          likeCount: data['likeCount'] ?? 0,
-          category: category,
-          isFavorite: isFav,
-          vaccineTags: List<String>.from(data['vaccineTags'] ?? []),
-        );
-      }).toList();
+      state = snap.docs.map((doc) => _reelFromFirestore(doc)).toList();
+    }, onError: (Object error, StackTrace stackTrace) {
+      debugPrint('Error loading reels from Firestore: $error');
     });
+  }
+
+  ReelItem _reelFromFirestore(QueryDocumentSnapshot<Map<String, dynamic>> doc) {
+    final data = doc.data();
+    final categoryStr = data['category'] as String?;
+    final category = ReelCategory.values.firstWhere(
+      (c) => c.name == categoryStr,
+      orElse: () => ReelCategory.vaccins,
+    );
+    final isFav = _localFavorites.contains(doc.id);
+    final rawLikes = data['likeCount'] ?? data['likes'] ?? 0;
+
+    return ReelItem(
+      id: doc.id,
+      title: data['title'] as String? ?? '',
+      description: data['description'] as String? ?? '',
+      assetPath: data['assetPath'] as String? ?? '',
+      author: data['author'] as String? ?? 'Luckymam',
+      likeCount: rawLikes is num ? rawLikes.toInt() : 0,
+      category: category,
+      isFavorite: isFav,
+      vaccineTags: List<String>.from(data['vaccineTags'] ?? []),
+    );
   }
 
   Future<void> toggleFavorite(String reelId) async {
@@ -140,7 +63,7 @@ class ReelsNotifier extends StateNotifier<List<ReelItem>> {
             likeCount: wasFavorite ? r.likeCount - 1 : r.likeCount + 1,
           )
         else
-          r
+          r,
     ];
 
     try {
@@ -149,6 +72,7 @@ class ReelsNotifier extends StateNotifier<List<ReelItem>> {
       if (docSnap.exists) {
         await docRef.update({
           'likeCount': FieldValue.increment(wasFavorite ? -1 : 1),
+          'likes': FieldValue.increment(wasFavorite ? -1 : 1),
         });
       }
     } catch (e) {
@@ -181,13 +105,16 @@ final selectedVaccineTagsProvider = StateProvider<List<String>?>(
   (ref) => null,
 );
 
+/// Firestore id for the Luckymam app intro reel — pinned first in the feed.
+const appReelId = 'reel_app';
+
 /// Filtered reels based on selected category and, optionally, vaccine tags.
 final filteredReelsProvider = Provider<List<ReelItem>>((ref) {
   final all = ref.watch(reelsProvider);
   final category = ref.watch(selectedReelCategoryProvider);
   final vaccineTags = ref.watch(selectedVaccineTagsProvider);
 
-  var result = all;
+  var result = all.where((r) => r.assetPath.isNotEmpty).toList();
   if (category != null) {
     result = result.where((r) => r.category == category).toList();
   }
@@ -196,5 +123,20 @@ final filteredReelsProvider = Provider<List<ReelItem>>((ref) {
         .where((r) => r.vaccineTags.any(vaccineTags.contains))
         .toList();
   }
+
+  // Pin the app intro reel first unless the user opened a vaccine-scoped feed.
+  final pinAppReel = vaccineTags == null || vaccineTags.isEmpty;
+  if (pinAppReel) {
+    result = _withAppReelFirst(result);
+  }
   return result;
 });
+
+List<ReelItem> _withAppReelFirst(List<ReelItem> reels) {
+  final appReel = reels.where((r) => r.id == appReelId);
+  if (appReel.isEmpty) return reels;
+  return [
+    ...appReel,
+    ...reels.where((r) => r.id != appReelId),
+  ];
+}

@@ -14,6 +14,7 @@ class MyOrdersScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final lang = Localizations.localeOf(context).languageCode;
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final bgColor = isDark
         ? AppColors.backgroundDark
@@ -35,7 +36,11 @@ class MyOrdersScreen extends ConsumerWidget {
           onPressed: () => Navigator.pop(context),
         ),
         title: Text(
-          'Mes Commandes',
+          lang == 'ar'
+              ? 'طلباتي'
+              : lang == 'en'
+                  ? 'My Orders'
+                  : 'Mes Commandes',
           style: GoogleFonts.outfit(
             fontSize: 18,
             fontWeight: FontWeight.w600,
@@ -47,7 +52,11 @@ class MyOrdersScreen extends ConsumerWidget {
         loading: () => const Center(child: CircularProgressIndicator()),
         error: (e, _) => Center(
           child: Text(
-            'Erreur de chargement',
+            lang == 'ar'
+                ? 'خطأ في التحميل'
+                : lang == 'en'
+                    ? 'Failed to load'
+                    : 'Erreur de chargement',
             style: GoogleFonts.outfit(color: secondaryText),
           ),
         ),
@@ -64,7 +73,11 @@ class MyOrdersScreen extends ConsumerWidget {
                   ),
                   const SizedBox(height: AppSpacing.md),
                   Text(
-                    'Aucune commande pour le moment',
+                    lang == 'ar'
+                        ? 'لا توجد طلبات حالياً'
+                        : lang == 'en'
+                            ? 'No orders yet'
+                            : 'Aucune commande pour le moment',
                     style: GoogleFonts.outfit(
                       fontSize: 16,
                       fontWeight: FontWeight.w600,
@@ -73,7 +86,11 @@ class MyOrdersScreen extends ConsumerWidget {
                   ),
                   const SizedBox(height: 6),
                   Text(
-                    'Vos commandes marketplace apparaîtront ici',
+                    lang == 'ar'
+                        ? 'ستظهر طلبات المتجر الخاصة بك هنا'
+                        : lang == 'en'
+                            ? 'Your marketplace orders will appear here'
+                            : 'Vos commandes marketplace apparaîtront ici',
                     style: GoogleFonts.outfit(
                       fontSize: 13,
                       color: secondaryText,
@@ -98,6 +115,7 @@ class MyOrdersScreen extends ConsumerWidget {
               isDark: isDark,
               textColor: textColor,
               secondaryText: secondaryText,
+              lang: lang,
             ),
           );
         },
@@ -112,19 +130,21 @@ class _OrderCard extends StatelessWidget {
     required this.isDark,
     required this.textColor,
     required this.secondaryText,
+    required this.lang,
   });
 
   final MarketplaceOrder order;
   final bool isDark;
   final Color textColor;
   final Color secondaryText;
+  final String lang;
 
   @override
   Widget build(BuildContext context) {
     final status = order.status;
     final dateLabel = DateFormat(
       'd MMM yyyy · HH:mm',
-      'fr_FR',
+      lang == 'ar' ? 'ar' : lang == 'en' ? 'en' : 'fr',
     ).format(order.createdAt);
 
     return Container(
@@ -164,7 +184,7 @@ class _OrderCard extends StatelessWidget {
                     Icon(status.icon, size: 13, color: status.color),
                     const SizedBox(width: 4),
                     Text(
-                      status.labelFr,
+                      status.getLabel(lang),
                       style: GoogleFonts.outfit(
                         fontSize: 12,
                         fontWeight: FontWeight.w600,
@@ -213,7 +233,11 @@ class _OrderCard extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
-                '${order.itemCount} article${order.itemCount > 1 ? 's' : ''}',
+                lang == 'ar'
+                    ? '${order.itemCount} منتج'
+                    : lang == 'en'
+                        ? '${order.itemCount} item${order.itemCount > 1 ? 's' : ''}'
+                        : '${order.itemCount} article${order.itemCount > 1 ? 's' : ''}',
                 style: GoogleFonts.outfit(fontSize: 12, color: secondaryText),
               ),
               Text(

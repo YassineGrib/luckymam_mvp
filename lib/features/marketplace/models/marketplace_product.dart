@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
 import '../../../core/theme/app_colors.dart';
@@ -10,33 +11,38 @@ enum ProductCategory {
   eveil,
   maman;
 
-  String get labelFr {
+  String getLabel(String locale) {
     switch (this) {
       case ProductCategory.puericulture:
-        return 'Puériculture';
+        return locale == 'ar'
+            ? 'رعاية الأطفال'
+            : locale == 'en'
+                ? 'Baby Care'
+                : 'Puériculture';
       case ProductCategory.alimentation:
-        return 'Alimentation';
+        return locale == 'ar'
+            ? 'التغذية'
+            : locale == 'en'
+                ? 'Nutrition'
+                : 'Alimentation';
       case ProductCategory.hygiene:
-        return 'Hygiène';
+        return locale == 'ar'
+            ? 'النظافة والجمال'
+            : locale == 'en'
+                ? 'Hygiene'
+                : 'Hygiène';
       case ProductCategory.eveil:
-        return 'Éveil & Jouets';
+        return locale == 'ar'
+            ? 'الألعاب والتعليم'
+            : locale == 'en'
+                ? 'Learning & Toys'
+                : 'Éveil & Jouets';
       case ProductCategory.maman:
-        return 'Espace Maman';
-    }
-  }
-
-  String get emoji {
-    switch (this) {
-      case ProductCategory.puericulture:
-        return '🍼';
-      case ProductCategory.alimentation:
-        return '🥣';
-      case ProductCategory.hygiene:
-        return '🧴';
-      case ProductCategory.eveil:
-        return '🧸';
-      case ProductCategory.maman:
-        return '🌸';
+        return locale == 'ar'
+            ? 'مساحة الأم'
+            : locale == 'en'
+                ? 'Mother Care'
+                : 'Espace Maman';
     }
   }
 
@@ -77,7 +83,7 @@ class MarketplacePartner {
   final String name;
   final String tagline;
   final String phone;
-  final String emoji;
+  final IconData icon;
   final Color color;
 
   const MarketplacePartner({
@@ -85,7 +91,7 @@ class MarketplacePartner {
     required this.name,
     required this.tagline,
     required this.phone,
-    required this.emoji,
+    required this.icon,
     required this.color,
   });
 }
@@ -98,7 +104,7 @@ class MarketplaceProduct {
   final int priceDZD;
   final String partnerId;
   final ProductCategory category;
-  final String emoji;
+  final IconData icon;
 
   /// Optional remote image. Only rendered when it passes [safeImageUrl] —
   /// https-only, so an eventual backoffice can't inject arbitrary schemes.
@@ -107,6 +113,9 @@ class MarketplaceProduct {
   /// Bullet points shown on the detail page (composition, sizes, etc.).
   final List<String> highlights;
 
+  /// Partner display name from admin backoffice (when not in static partners list).
+  final String? vendorName;
+
   const MarketplaceProduct({
     required this.id,
     required this.name,
@@ -114,9 +123,10 @@ class MarketplaceProduct {
     required this.priceDZD,
     required this.partnerId,
     required this.category,
-    required this.emoji,
+    required this.icon,
     this.imageUrl,
     this.highlights = const [],
+    this.vendorName,
   });
 
   /// Returns the image URL only if it is a well-formed https URL;
@@ -138,5 +148,50 @@ class MarketplaceProduct {
       buffer.write(digits[i]);
     }
     return '$buffer DZD';
+  }
+
+  /// Maps a Firestore `marketplace_products` document to a product, or null if hidden.
+  static MarketplaceProduct? fromFirestoreDoc(
+    DocumentSnapshot<Map<String, dynamic>> doc,
+  ) {
+    final data = doc.data();
+    if (data == null) return null;
+
+    final status = data['status'] as String? ?? 'active';
+    if (status == 'archived' || status == 'draft') return null;
+
+    final category = _categoryFromString(data['category'] as String?);
+    if (category == null) return null;
+
+    final priceRaw = data['priceDZD'] ?? data['price'];
+    final price = priceRaw is num
+        ? priceRaw.toInt()
+        : int.tryParse('$priceRaw') ?? 0;
+
+    final highlightsRaw = data['highlights'];
+    final highlights = highlightsRaw is List
+        ? highlightsRaw.map((e) => e.toString()).toList()
+        : const <String>[];
+
+    return MarketplaceProduct(
+      id: doc.id,
+      name: (data['name'] ?? data['title'] ?? '').toString(),
+      description: (data['description'] ?? '').toString(),
+      priceDZD: price,
+      partnerId: (data['partnerId'] ?? 'unknown').toString(),
+      category: category,
+      icon: category.icon,
+      imageUrl: data['imageUrl'] as String?,
+      highlights: highlights,
+      vendorName: data['vendor'] as String?,
+    );
+  }
+
+  static ProductCategory? _categoryFromString(String? raw) {
+    if (raw == null || raw.isEmpty) return null;
+    for (final c in ProductCategory.values) {
+      if (c.name == raw) return c;
+    }
+    return null;
   }
 }

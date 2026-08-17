@@ -37,9 +37,15 @@ La section **« Mes Enfants »** est masquée pour les statuts HOPE et ENCEINTE 
 
 ### 2. Bannière contextuelle (HOPE / ENCEINTE)
 
-À la place de « Mes Enfants », une bannière adaptée s'affiche :
-- **HOPE** : *« Votre parcours commence ici 💜 »* — explique que la section enfants apparaîtra à l'arrivée de bébé
-- **ENCEINTE** : *« Votre bébé grandit 🩷 »* — même message adapté à la grossesse
+À la place de « Mes Enfants », une bannière adaptée s'affiche, localisée dynamiquement en 3 langues (français, arabe, anglais) :
+- **HOPE** :
+  - *Français* : « Votre parcours commence ici 💜 »
+  - *Arabe* : « رحلتك تبدأ من هنا 💜 »
+  - *Anglais* : « Your journey starts here 💜 »
+- **ENCEINTE** :
+  - *Français* : « Votre bébé grandit 🩷 »
+  - *Arabe* : « طفلك ينمو 🩷 »
+  - *Anglais* : « Your baby is growing 🩷 »
 
 ### 3. Titre de section « Ma Santé » adapté
 
