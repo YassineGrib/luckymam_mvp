@@ -8,6 +8,7 @@ import '../../core/theme/app_spacing.dart';
 import '../../shared/widgets/buttons/primary_button.dart';
 import '../../shared/widgets/buttons/social_button.dart';
 import '../../shared/widgets/inputs/app_text_field.dart';
+import '../../shared/widgets/auth_logo_background.dart';
 import '../profile/services/profile_service.dart';
 
 /// Sign Up screen matching the reference dark UI design.
@@ -144,21 +145,25 @@ class _SignUpScreenState extends State<SignUpScreen> {
         ),
         title: Text(l10n.appName),
       ),
-      body: SafeArea(
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.all(AppSpacing.screenPaddingH),
-          child: Form(
-            key: _formKey,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const SizedBox(height: AppSpacing.lg),
+      body: Stack(
+        fit: StackFit.expand,
+        children: [
+          const AuthLogoBackground(),
+          SafeArea(
+            child: SingleChildScrollView(
+              padding: const EdgeInsets.all(AppSpacing.screenPaddingH),
+              child: Form(
+                key: _formKey,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const SizedBox(height: AppSpacing.lg),
 
-                // Title
-                Text(
-                  l10n.signUpTitle,
-                  style: Theme.of(context).textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.bold, color: textColor),
-                ),
+                    // Title
+                    Text(
+                      l10n.signUpTitle,
+                      style: Theme.of(context).textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.bold, color: textColor),
+                    ),
 
                 const SizedBox(height: AppSpacing.xl),
 
@@ -332,6 +337,8 @@ class _SignUpScreenState extends State<SignUpScreen> {
             ),
           ),
         ),
+          ),
+        ],
       ),
     );
   }

@@ -3,7 +3,7 @@ import 'package:lukymam_mvp/l10n/app_localizations.dart';
 import 'package:go_router/go_router.dart';
 import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_spacing.dart';
-import '../../shared/widgets/app_logo.dart';
+import '../../shared/widgets/auth_logo_background.dart';
 import '../../core/theme/app_typography.dart';
 
 /// Onboarding screen with hero image, brand text, and swipe-to-start.
@@ -39,6 +39,9 @@ class OnboardingScreen extends StatelessWidget {
             ),
           ),
 
+          // Logo corner pattern
+          const AuthLogoBackground(opacity: 0.20),
+
           // Content
           SafeArea(
             child: Padding(
@@ -48,10 +51,12 @@ class OnboardingScreen extends StatelessWidget {
                 children: [
                   const Spacer(flex: 3),
 
-                  // Logo
-                  const AppLogo(
-                    variant: LogoVariant.horizontal,
-                    size: LogoSize.small,
+                  // Logo (PNG includes wordmark)
+                  Image.asset(
+                    'assets/logo/herizontal_logo.png',
+                    height: 44,
+                    fit: BoxFit.contain,
+                    alignment: AlignmentDirectional.centerStart,
                   ),
 
                   const SizedBox(height: AppSpacing.md),
