@@ -1,11 +1,32 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:google_fonts/google_fonts.dart';
 
+import '../../../core/extensions/l10n_extension.dart';
 import '../../../core/theme/app_colors.dart';
+import '../../../l10n/app_localizations.dart';
 import '../../profile/models/profile_models.dart';
 import '../../profile/providers/profile_providers.dart';
 import '../../profile/profile_screen.dart';
+import '../../../core/theme/app_typography.dart';
+
+String _phaseLabel(AppLocalizations l10n, String phase) {
+  switch (phase) {
+    case 'Menstruation':
+    case 'Règles':
+      return l10n.cyclePhaseMenstruation;
+    case 'Folliculaire':
+    case 'Phase Folliculaire':
+      return l10n.cyclePhaseFollicular;
+    case 'Ovulation':
+    case 'Phase Ovulatoire':
+      return l10n.cyclePhaseOvulation;
+    case 'Lutéale':
+    case 'Phase Lutéale':
+      return l10n.cyclePhaseLuteal;
+    default:
+      return phase;
+  }
+}
 
 /// Card displaying mother's health summary (Cycle, Medical).
 class MotherHealthCard extends ConsumerWidget {
@@ -13,6 +34,7 @@ class MotherHealthCard extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = context.l10n;
     final profileAsync = ref.watch(profileProvider);
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final cardColor = isDark ? AppColors.surfaceDark : Colors.white;
@@ -80,46 +102,36 @@ class MotherHealthCard extends ConsumerWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          'Santé Maman',
-                          style: GoogleFonts.outfit(
-                            fontSize: 16,
-                            fontWeight: FontWeight.bold,
-                            color: isDark
+                          l10n.healthMotherTitle,
+                          style: Theme.of(context).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold, color: isDark
                                 ? Colors.white
-                                : AppColors.onSurfaceLight,
-                          ),
+                                : AppColors.onSurfaceLight),
                         ),
                         const SizedBox(height: 4),
                         if (isPregnant)
                           Text(
-                            'Suivi de grossesse',
-                            style: GoogleFonts.outfit(
-                              fontSize: 13,
-                              color: isDark
+                            l10n.healthMotherPregnancyTracking,
+                            style: AppTypography.fromContext(context, fontSize: 13, color: isDark
                                   ? Colors.white70
-                                  : AppColors.textSecondaryLight,
-                            ),
+                                  : AppColors.textSecondaryLight),
                           )
                         else if (cycleInfo.isTracking &&
                             cycleInfo.lastPeriodDate != null)
                           Text(
-                            'Cycle: ${cycleInfo.currentPhase} (J${cycleInfo.currentDay})',
-                            style: GoogleFonts.outfit(
-                              fontSize: 13,
-                              color: isDark
-                                  ? Colors.white70
-                                  : AppColors.textSecondaryLight,
+                            l10n.cycleDayPhase(
+                              cycleInfo.currentDay,
+                              _phaseLabel(l10n, cycleInfo.currentPhase),
                             ),
+                            style: AppTypography.fromContext(context, fontSize: 13, color: isDark
+                                  ? Colors.white70
+                                  : AppColors.textSecondaryLight),
                           )
                         else
                           Text(
-                            'Consultez vos infos médicales',
-                            style: GoogleFonts.outfit(
-                              fontSize: 13,
-                              color: isDark
+                            l10n.healthMotherViewMedicalInfo,
+                            style: AppTypography.fromContext(context, fontSize: 13, color: isDark
                                   ? Colors.white70
-                                  : AppColors.textSecondaryLight,
-                            ),
+                                  : AppColors.textSecondaryLight),
                           ),
                       ],
                     ),

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
+import '../../core/theme/app_typography.dart';
 
 import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_spacing.dart';
@@ -74,7 +74,7 @@ class PageHeaderWithFilter extends StatelessWidget {
       children: [
         // 1. Titre Bar Harmonieuse
         Padding(
-          padding: const EdgeInsets.fromLTRB(
+          padding: const EdgeInsetsDirectional.fromSTEB(
             AppSpacing.screenPaddingH,
             AppSpacing.md,
             AppSpacing.screenPaddingH,
@@ -93,7 +93,7 @@ class PageHeaderWithFilter extends StatelessWidget {
                       borderRadius: BorderRadius.circular(12),
                     ),
                     child: Icon(
-                      Icons.arrow_back_ios_new_rounded,
+                      Icons.arrow_back,
                       color: primary,
                       size: 18,
                     ),
@@ -124,7 +124,7 @@ class PageHeaderWithFilter extends StatelessWidget {
                   children: [
                     Text(
                       title,
-                      style: GoogleFonts.outfit(
+                      style: AppTypography.fromContext(context, 
                         fontSize: 21,
                         fontWeight: FontWeight.bold,
                         color: textColor,
@@ -135,7 +135,7 @@ class PageHeaderWithFilter extends StatelessWidget {
                     else if (subtitle != null)
                       Text(
                         subtitle!,
-                        style: GoogleFonts.outfit(
+                        style: AppTypography.fromContext(context, 
                           fontSize: 13,
                           color: secondaryText,
                         ),
@@ -258,7 +258,7 @@ class PageHeaderWithFilter extends StatelessWidget {
                 child: Center(
                   child: Text(
                     label.isNotEmpty ? label[0].toUpperCase() : '?',
-                    style: GoogleFonts.outfit(
+                    style: AppTypography.fromContext(context, 
                       fontSize: 10,
                       fontWeight: FontWeight.bold,
                       color: isSelected ? Colors.white : textColor,
@@ -270,7 +270,7 @@ class PageHeaderWithFilter extends StatelessWidget {
             ],
             Text(
               label,
-              style: GoogleFonts.outfit(
+              style: AppTypography.fromContext(context, 
                 fontSize: 13,
                 fontWeight: FontWeight.w600,
                 color: isSelected ? primary : textColor,

@@ -5,14 +5,17 @@
   "type": "module",
   "scripts": {
     "dev": "vite dev",
-    "build": "vite build",
+    "build": "vite build && node ../functions/prepare.mjs",
     "build:dev": "vite build --mode development",
     "preview": "vite preview",
     "lint": "eslint .",
     "format": "prettier --write .",
     "upload-reels": "node scripts/uploadReelsToFirebase.mjs",
     "sync-reels": "node scripts/syncReelsFirestore.mjs",
-    "set-admin-claim": "node scripts/setAdminClaim.mjs"
+    "set-admin-claim": "node scripts/setAdminClaim.mjs",
+    "list-auth-users": "node scripts/listAuthUsers.mjs",
+    "upload-product-images": "node scripts/uploadProductImages.mjs",
+    "localize-products": "node scripts/localizeProducts.mjs"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.2.2",

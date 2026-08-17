@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:lukymam_mvp/l10n/app_localizations.dart';
 import 'package:go_router/go_router.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import '../../core/extensions/l10n_extension.dart';
 import '../../core/services/auth_service.dart';
 import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_spacing.dart';
@@ -80,6 +80,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
     if (!mounted) return;
 
+    final l10n = context.l10n;
     if (result.isSuccess) {
       String destination = '/law-consent';
       try {
@@ -96,7 +97,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text('Bienvenue ${result.user?.displayName ?? ""}!'),
+          content: Text(l10n.authWelcome(result.user?.displayName ?? '')),
           backgroundColor: Colors.green,
         ),
       );
@@ -105,7 +106,7 @@ class _LoginScreenState extends State<LoginScreen> {
       setState(() => _isLoading = false);
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text(result.errorMessage ?? 'Erreur inconnue'),
+          content: Text(result.errorMessage ?? l10n.authErrorUnknown),
           backgroundColor: Colors.red,
         ),
       );
@@ -120,6 +121,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
     if (!mounted) return;
 
+    final l10n = context.l10n;
     if (result.isSuccess) {
       String destination = '/law-consent';
       try {
@@ -136,7 +138,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text('Bienvenue ${result.user?.displayName ?? ""}!'),
+          content: Text(l10n.authWelcome(result.user?.displayName ?? '')),
           backgroundColor: Colors.green,
         ),
       );
@@ -145,7 +147,7 @@ class _LoginScreenState extends State<LoginScreen> {
       setState(() => _isGoogleLoading = false);
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text(result.errorMessage ?? 'Erreur inconnue'),
+          content: Text(result.errorMessage ?? l10n.authErrorUnknown),
           backgroundColor: Colors.red,
         ),
       );
@@ -182,11 +184,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 // Title
                 Text(
                   l10n.loginTitle,
-                  style: GoogleFonts.outfit(
-                    fontSize: 24,
-                    fontWeight: FontWeight.bold,
-                    color: textColor,
-                  ),
+                  style: Theme.of(context).textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.bold, color: textColor),
                 ),
 
                 const SizedBox(height: AppSpacing.xs),
@@ -194,11 +192,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 // Subtitle
                 Text(
                   l10n.loginSubtitle,
-                  style: GoogleFonts.outfit(
-                    fontSize: 14,
-                    color: secondaryColor,
-                    height: 1.4,
-                  ),
+                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: secondaryColor, height: 1.4),
                 ),
 
                 const SizedBox(height: AppSpacing.xl),

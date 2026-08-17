@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:google_fonts/google_fonts.dart';
 
+import '../../../core/extensions/l10n_extension.dart';
 import '../../../core/theme/app_colors.dart';
 import '../providers/home_providers.dart';
 
@@ -20,7 +20,7 @@ class DailyTipCard extends ConsumerWidget {
     final tip = ref.watch(dailyTipProvider);
 
     return Padding(
-      padding: const EdgeInsets.fromLTRB(20, 20, 20, 32),
+      padding: const EdgeInsetsDirectional.fromSTEB(20, 20, 20, 32),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -30,12 +30,10 @@ class DailyTipCard extends ConsumerWidget {
               Icon(Icons.lightbulb_rounded, color: secondaryColor, size: 20),
               const SizedBox(width: 8),
               Text(
-                'CONSEIL DU JOUR',
-                style: GoogleFonts.outfit(
-                  fontSize: 14,
-                  fontWeight: FontWeight.bold,
-                  color: secondaryColor,
+                context.l10n.dailyTipSectionTitle,
+                style: Theme.of(context).textTheme.labelLarge?.copyWith(
                   letterSpacing: 1.2,
+                  color: secondaryColor,
                 ),
               ),
             ],
@@ -69,8 +67,7 @@ class DailyTipCard extends ConsumerWidget {
                 // Quote icon
                 Text(
                   '"',
-                  style: GoogleFonts.outfit(
-                    fontSize: 40,
+                  style: Theme.of(context).textTheme.displaySmall?.copyWith(
                     fontWeight: FontWeight.bold,
                     color: isDark
                         ? AppColors.goldenrod.withValues(alpha: 0.6)
@@ -82,8 +79,7 @@ class DailyTipCard extends ConsumerWidget {
                 // Tip text
                 Text(
                   tip,
-                  style: GoogleFonts.outfit(
-                    fontSize: 16,
+                  style: Theme.of(context).textTheme.bodyLarge?.copyWith(
                     fontWeight: FontWeight.w500,
                     color: textColor,
                     fontStyle: FontStyle.italic,
@@ -96,9 +92,8 @@ class DailyTipCard extends ConsumerWidget {
                   children: [
                     const Spacer(),
                     Text(
-                      '— Luckymam Team 💕',
-                      style: GoogleFonts.outfit(
-                        fontSize: 12,
+                      context.l10n.dailyTipFooter,
+                      style: Theme.of(context).textTheme.bodySmall?.copyWith(
                         color: secondaryColor,
                       ),
                     ),

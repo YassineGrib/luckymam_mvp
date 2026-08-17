@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../../core/theme/app_colors.dart';
+import '../../../l10n/app_localizations.dart';
 import 'marketplace_product.dart';
 
 /// Lifecycle of a marketplace order. The client only ever creates orders
@@ -12,38 +13,18 @@ enum OrderStatus {
   delivered,
   cancelled;
 
-  String getLabel(String locale) {
+  String label(AppLocalizations l10n) {
     switch (this) {
       case OrderStatus.pending:
-        return locale == 'ar'
-            ? 'قيد الانتظار'
-            : locale == 'en'
-                ? 'Pending'
-                : 'En attente';
+        return l10n.orderStatusPending;
       case OrderStatus.confirmed:
-        return locale == 'ar'
-            ? 'مؤكدة'
-            : locale == 'en'
-                ? 'Confirmed'
-                : 'Confirmée';
+        return l10n.orderStatusConfirmed;
       case OrderStatus.shipped:
-        return locale == 'ar'
-            ? 'تم الشحن'
-            : locale == 'en'
-                ? 'Shipped'
-                : 'Expédiée';
+        return l10n.orderStatusShipped;
       case OrderStatus.delivered:
-        return locale == 'ar'
-            ? 'تم التسليم'
-            : locale == 'en'
-                ? 'Delivered'
-                : 'Livrée';
+        return l10n.orderStatusDelivered;
       case OrderStatus.cancelled:
-        return locale == 'ar'
-            ? 'ملغاة'
-            : locale == 'en'
-                ? 'Cancelled'
-                : 'Annulée';
+        return l10n.orderStatusCancelled;
     }
   }
 
@@ -100,13 +81,27 @@ class CartItem {
   CartItem copyWith({int? quantity}) =>
       CartItem(product: product, quantity: quantity ?? this.quantity);
 
-  Map<String, dynamic> toFirestore() => {
+  Map<String, dynamic> toFirestore({required String locale}) => {
     'productId': product.id,
-    'productName': product.name,
+    'productName': product.displayName(locale),
     'partnerId': product.partnerId,
     'unitPriceDZD': product.priceDZD,
     'quantity': quantity,
     'lineTotalDZD': lineTotalDZD,
+  };
+
+  /// Admin back-office order line shape (`marketplace_orders.items`).
+  Map<String, dynamic> toAdminItem({
+    required String vendorLabel,
+    required String locale,
+  }) => {
+    'sku': product.effectiveSku,
+    'title': product.displayName(locale),
+    'qty': quantity,
+    'unitPrice': product.priceDZD,
+    'imageUrl': product.safeImageUrl ?? '',
+    'image': product.emoji ?? '📦',
+    'vendor': vendorLabel,
   };
 }
 
@@ -143,22 +138,47 @@ class MarketplaceOrder {
     Map<String, dynamic> data,
     String id,
   ) {
+    final customer = data['customer'] as Map<String, dynamic>?;
+    final itemsRaw = data['items'] as List<dynamic>?;
+    final linesRaw = data['lines'] as List<dynamic>?;
+
+    List<OrderLine> lines;
+    if (itemsRaw != null && itemsRaw.isNotEmpty) {
+      lines = itemsRaw
+          .map((item) => OrderLine.fromAdminItem(item as Map<String, dynamic>))
+          .toList();
+    } else {
+      lines = (linesRaw ?? [])
+          .map((l) => OrderLine.fromMap(l as Map<String, dynamic>))
+          .toList();
+    }
+
+    final subtotal = _readInt(data['subtotal']);
+    final shipping = _readInt(data['shipping']);
+    final totalFromFields = subtotal + shipping;
+    final totalDZD = _readInt(data['totalDZD'] ?? data['total']) != 0
+        ? _readInt(data['totalDZD'] ?? data['total'])
+        : (totalFromFields != 0 ? totalFromFields : lines.fold(0, (a, l) => a + l.lineTotalDZD));
+
     return MarketplaceOrder(
       id: id,
       userId: data['userId'] ?? '',
-      lines: (data['lines'] as List<dynamic>? ?? [])
-          .map((l) => OrderLine.fromMap(l as Map<String, dynamic>))
-          .toList(),
-      totalDZD: data['totalDZD'] ?? 0,
-      fullName: data['fullName'] ?? '',
-      phone: data['phone'] ?? '',
-      wilaya: data['wilaya'] ?? '',
-      address: data['address'] ?? '',
+      lines: lines,
+      totalDZD: totalDZD,
+      fullName: customer?['name'] ?? data['fullName'] ?? '',
+      phone: customer?['phone'] ?? data['phone'] ?? '',
+      wilaya: customer?['wilaya'] ?? data['wilaya'] ?? '',
+      address: customer?['address'] ?? data['address'] ?? '',
       status: OrderStatus.fromString(data['status'] as String?),
       createdAt:
           DateTime.tryParse(data['createdAt'] as String? ?? '') ??
           DateTime.now(),
     );
+  }
+
+  static int _readInt(Object? value) {
+    if (value is num) return value.toInt();
+    return int.tryParse('$value') ?? 0;
   }
 
   /// Formatted total, e.g. "12 550 DZD".
@@ -177,6 +197,7 @@ class MarketplaceOrder {
 /// readable in history even if the catalogue changes later.
 class OrderLine {
   final String productId;
+  final String sku;
   final String productName;
   final String partnerId;
   final int unitPriceDZD;
@@ -185,6 +206,7 @@ class OrderLine {
 
   const OrderLine({
     required this.productId,
+    this.sku = '',
     required this.productName,
     required this.partnerId,
     required this.unitPriceDZD,
@@ -192,12 +214,44 @@ class OrderLine {
     required this.lineTotalDZD,
   });
 
+  /// Resolves the line title for the active locale — re-localizes from the
+  /// live catalogue when possible (orders may store Arabic titles from admin).
+  String displayName(String locale, List<MarketplaceProduct> catalog) {
+    for (final product in catalog) {
+      final matchesSku =
+          sku.isNotEmpty && product.effectiveSku == sku;
+      final matchesId = productId.isNotEmpty && product.id == productId;
+      if (matchesSku || matchesId) {
+        return product.displayName(locale);
+      }
+    }
+    return productName;
+  }
+
   factory OrderLine.fromMap(Map<String, dynamic> map) => OrderLine(
     productId: map['productId'] ?? '',
+    sku: map['sku']?.toString() ?? '',
     productName: map['productName'] ?? '',
     partnerId: map['partnerId'] ?? '',
     unitPriceDZD: map['unitPriceDZD'] ?? 0,
     quantity: map['quantity'] ?? 0,
     lineTotalDZD: map['lineTotalDZD'] ?? 0,
   );
+
+  factory OrderLine.fromAdminItem(Map<String, dynamic> map) {
+    final qty = map['qty'] ?? map['quantity'] ?? 0;
+    final unit = map['unitPrice'] ?? map['unitPriceDZD'] ?? 0;
+    final quantity = qty is num ? qty.toInt() : int.tryParse('$qty') ?? 0;
+    final unitPrice = unit is num ? unit.toInt() : int.tryParse('$unit') ?? 0;
+    final sku = map['sku']?.toString() ?? '';
+    return OrderLine(
+      productId: map['productId']?.toString() ?? sku,
+      sku: sku,
+      productName: map['title'] ?? map['productName'] ?? '',
+      partnerId: map['partnerId']?.toString() ?? '',
+      unitPriceDZD: unitPrice,
+      quantity: quantity,
+      lineTotalDZD: unitPrice * quantity,
+    );
+  }
 }

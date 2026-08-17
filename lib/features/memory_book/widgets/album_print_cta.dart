@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 
+import '../../../core/extensions/l10n_extension.dart';
 import '../../../core/services/analytics_service.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_spacing.dart';
@@ -34,7 +34,7 @@ class AlbumPrintCta extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final lang = Localizations.localeOf(context).languageCode;
+    final l10n = context.l10n;
 
     if (pages.isEmpty) {
       return Container(
@@ -57,13 +57,8 @@ class AlbumPrintCta extends StatelessWidget {
             const SizedBox(width: AppSpacing.sm),
             Expanded(
               child: Text(
-                lang == 'ar'
-                    ? 'أضيفي ذكرى واحدة على الأقل لتتمكني من طلب الطباعة.'
-                    : lang == 'en'
-                        ? 'Add at least one memory to be able to order printing.'
-                        : 'Ajoutez au moins un souvenir pour pouvoir commander l\'impression.',
-                style: GoogleFonts.outfit(
-                  fontSize: 12,
+                l10n.albumPrintNeedMemory,
+                style: Theme.of(context).textTheme.labelMedium?.copyWith(
                   color: isDark
                       ? AppColors.textSecondaryDark
                       : AppColors.textSecondaryLight,
@@ -126,13 +121,8 @@ class AlbumPrintCta extends StatelessWidget {
             ),
             const SizedBox(width: AppSpacing.sm),
             Text(
-              lang == 'ar'
-                  ? 'طلب الطباعة'
-                  : lang == 'en'
-                      ? 'Order printing'
-                      : 'Commander l\'impression',
-              style: GoogleFonts.outfit(
-                fontSize: 15,
+              l10n.printOrderPrinting,
+              style: Theme.of(context).textTheme.titleSmall?.copyWith(
                 fontWeight: FontWeight.bold,
                 color: Colors.white,
               ),

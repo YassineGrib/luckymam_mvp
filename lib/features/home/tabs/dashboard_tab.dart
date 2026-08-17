@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../../core/extensions/l10n_extension.dart';
 import '../../../core/theme/app_colors.dart';
+import '../../../l10n/app_localizations.dart';
 import '../../profile/models/profile_models.dart';
 import '../../profile/providers/profile_providers.dart';
 import '../widgets/children_overview.dart';
@@ -21,6 +23,7 @@ class DashboardTab extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = context.l10n;
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final backgroundColor = isDark
         ? AppColors.backgroundDark
@@ -45,9 +48,9 @@ class DashboardTab extends ConsumerWidget {
             const SliverToBoxAdapter(child: UpgradePromptBanner()),
 
             // ─── Quick Actions ───────────────────────────────────────
-            const SliverToBoxAdapter(
+            SliverToBoxAdapter(
               child: SectionHeader(
-                title: 'Accès Rapide',
+                title: l10n.dashboardQuickAccess,
                 icon: Icons.bolt_rounded,
               ),
             ),
@@ -56,7 +59,7 @@ class DashboardTab extends ConsumerWidget {
             // ─── Ma Santé ────────────────────────────────────────────
             SliverToBoxAdapter(
               child: SectionHeader(
-                title: _healthSectionTitle(status),
+                title: _healthSectionTitle(l10n, status),
                 icon: Icons.monitor_heart_rounded,
               ),
             ),
@@ -65,9 +68,9 @@ class DashboardTab extends ConsumerWidget {
 
             // ─── Mes Enfants (MAMAN uniquement) ──────────────────────
             if (status == UserStatus.mom) ...[
-              const SliverToBoxAdapter(
+              SliverToBoxAdapter(
                 child: SectionHeader(
-                  title: 'Mes Enfants',
+                  title: l10n.dashboardMyChildren,
                   icon: Icons.child_friendly_rounded,
                 ),
               ),
@@ -81,14 +84,14 @@ class DashboardTab extends ConsumerWidget {
             // ─── Mes Souvenirs ───────────────────────────────────────
             SliverToBoxAdapter(
               child: SectionHeader(
-                title: 'Mes Souvenirs',
+                title: l10n.dashboardMyMemories,
                 icon: Icons.photo_library_rounded,
-                trailing: 'Voir tout',
+                trailing: l10n.dashboardSeeAll,
                 onTrailingTap: () {
                   ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(
-                      content: Text('Voir toutes les capsules'),
-                      duration: Duration(seconds: 1),
+                    SnackBar(
+                      content: Text(l10n.dashboardSeeAllCapsules),
+                      duration: const Duration(seconds: 1),
                     ),
                   );
                 },
@@ -97,9 +100,9 @@ class DashboardTab extends ConsumerWidget {
             const SliverToBoxAdapter(child: RecentCapsules()),
 
             // ─── Boutique Partenaires ────────────────────────────────
-            const SliverToBoxAdapter(
+            SliverToBoxAdapter(
               child: SectionHeader(
-                title: 'Boutique Partenaires',
+                title: l10n.dashboardPartnerShop,
                 icon: Icons.storefront_rounded,
               ),
             ),
@@ -116,14 +119,14 @@ class DashboardTab extends ConsumerWidget {
     );
   }
 
-  String _healthSectionTitle(UserStatus? status) {
+  String _healthSectionTitle(AppLocalizations l10n, UserStatus? status) {
     switch (status) {
       case UserStatus.hope:
-        return 'Mon Bien-être';
+        return l10n.dashboardHealthWellbeing;
       case UserStatus.pregnant:
-        return 'Ma Grossesse';
+        return l10n.dashboardHealthPregnancy;
       default:
-        return 'Ma Santé';
+        return l10n.dashboardHealthDefault;
     }
   }
 }
@@ -135,35 +138,22 @@ class _StatusContextBanner extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = context.l10n;
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
     final isHope = status == UserStatus.hope;
     final color = isHope ? Colors.purple : Colors.pink;
     final icon = isHope ? Icons.favorite_border_rounded : Icons.pregnant_woman_rounded;
 
-    final lang = Localizations.localeOf(context).languageCode;
-    String title;
-    String subtitle;
-
-    if (lang == 'ar') {
-      title = isHope ? 'رحلتك تبدأ من هنا 💜' : 'طفلك ينمو 🩷';
-      subtitle = isHope
-          ? 'تابعي دورتك واعتني بنفسك.\nستظهر أقسام أطفالك هنا بمجرد وصول طفلك.'
-          : 'سيكون قسم أطفالي متاحًا\nبعد ولادة طفلكِ.';
-    } else if (lang == 'en') {
-      title = isHope ? 'Your journey starts here 💜' : 'Your baby is growing 🩷';
-      subtitle = isHope
-          ? 'Track your cycle and take care of yourself.\nYour children section will appear here once baby arrives.'
-          : 'The My Children section will be available\nafter your baby is born.';
-    } else {
-      title = isHope ? 'Votre parcours commence ici 💜' : 'Votre bébé grandit 🩷';
-      subtitle = isHope
-          ? 'Suivez votre cycle et prenez soin de vous.\nVos enfants apparaîtront ici dès l\'arrivée de bébé.'
-          : 'La section Mes Enfants sera disponible\naprès la naissance de votre bébé.';
-    }
+    final title = isHope
+        ? l10n.dashboardHopeBannerTitle
+        : l10n.dashboardPregnantBannerTitle;
+    final subtitle = isHope
+        ? l10n.dashboardHopeBannerSubtitle
+        : l10n.dashboardPregnantBannerSubtitle;
 
     return Padding(
-      padding: const EdgeInsets.fromLTRB(20, 8, 20, 4),
+      padding: const EdgeInsetsDirectional.fromSTEB(20, 8, 20, 4),
       child: Container(
         padding: const EdgeInsets.all(18),
         decoration: BoxDecoration(
@@ -190,19 +180,13 @@ class _StatusContextBanner extends StatelessWidget {
                 children: [
                   Text(
                     title,
-                    style: TextStyle(
-                      fontSize: 14,
-                      fontWeight: FontWeight.w700,
-                      color: isDark ? Colors.white : Colors.black87,
-                    ),
+                    style: Theme.of(context).textTheme.titleSmall,
                   ),
                   const SizedBox(height: 4),
                   Text(
                     subtitle,
-                    style: TextStyle(
-                      fontSize: 12,
+                    style: Theme.of(context).textTheme.bodySmall?.copyWith(
                       height: 1.5,
-                      color: isDark ? Colors.white60 : Colors.black54,
                     ),
                   ),
                 ],

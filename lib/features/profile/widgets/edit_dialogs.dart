@@ -1,11 +1,12 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
+import '../../../core/extensions/l10n_extension.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_spacing.dart';
 import '../models/profile_models.dart';
+import '../../../core/theme/app_typography.dart';
 
 /// Wilayas d'Algérie pour le dropdown.
 const List<String> algerianWilayas = [
@@ -144,7 +145,7 @@ class _EditPersonalInfoDialogState extends State<EditPersonalInfoDialog> {
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Erreur: $e'), backgroundColor: Colors.red),
+          SnackBar(content: Text(context.l10n.errorWithMessage('$e')), backgroundColor: Colors.red),
         );
       }
     } finally {
@@ -154,6 +155,7 @@ class _EditPersonalInfoDialogState extends State<EditPersonalInfoDialog> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = context.l10n;
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final primaryColor = isDark
         ? AppColors.primaryDark
@@ -170,18 +172,15 @@ class _EditPersonalInfoDialogState extends State<EditPersonalInfoDialog> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                'Modifier mes informations',
-                style: GoogleFonts.outfit(
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold,
-                ),
+                l10n.profileEditPersonalInfo,
+                style: AppTypography.fromContext(context, fontSize: 20, fontWeight: FontWeight.bold),
               ),
               const SizedBox(height: AppSpacing.lg),
 
               // Name
               _buildTextField(
                 controller: _nameController,
-                label: 'Nom complet',
+                label: l10n.name,
                 icon: Icons.person_outline,
               ),
               const SizedBox(height: AppSpacing.md),
@@ -189,7 +188,7 @@ class _EditPersonalInfoDialogState extends State<EditPersonalInfoDialog> {
               // Phone
               _buildTextField(
                 controller: _phoneController,
-                label: 'Téléphone',
+                label: l10n.profilePhone,
                 icon: Icons.phone_outlined,
                 keyboardType: TextInputType.phone,
               ),
@@ -215,12 +214,10 @@ class _EditPersonalInfoDialogState extends State<EditPersonalInfoDialog> {
                         child: Text(
                           _birthDate != null
                               ? dateFormat.format(_birthDate!)
-                              : 'Date de naissance',
-                          style: GoogleFonts.outfit(
-                            color: _birthDate != null
+                              : l10n.profileBirthDate,
+                          style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: _birthDate != null
                                 ? null
-                                : Colors.grey.shade600,
-                          ),
+                                : Colors.grey.shade600),
                         ),
                       ),
                       Icon(Icons.calendar_today, size: 18, color: primaryColor),
@@ -234,7 +231,7 @@ class _EditPersonalInfoDialogState extends State<EditPersonalInfoDialog> {
               DropdownButtonFormField<String>(
                 initialValue: _selectedWilaya,
                 decoration: InputDecoration(
-                  labelText: 'Wilaya',
+                  labelText: l10n.profileWilaya,
                   prefixIcon: const Icon(Icons.location_on_outlined),
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(12),
@@ -255,7 +252,7 @@ class _EditPersonalInfoDialogState extends State<EditPersonalInfoDialog> {
                       onPressed: _isLoading
                           ? null
                           : () => Navigator.pop(context),
-                      child: const Text('Annuler'),
+                      child: Text(l10n.profileCancel),
                     ),
                   ),
                   const SizedBox(width: AppSpacing.sm),
@@ -275,7 +272,7 @@ class _EditPersonalInfoDialogState extends State<EditPersonalInfoDialog> {
                                 color: Colors.white,
                               ),
                             )
-                          : const Text('Enregistrer'),
+                          : Text(l10n.profileSave),
                     ),
                   ),
                 ],
@@ -382,7 +379,7 @@ class _EditMedicalInfoDialogState extends State<EditMedicalInfoDialog> {
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Erreur: $e'), backgroundColor: Colors.red),
+          SnackBar(content: Text(context.l10n.errorWithMessage('$e')), backgroundColor: Colors.red),
         );
       }
     } finally {
@@ -392,6 +389,7 @@ class _EditMedicalInfoDialogState extends State<EditMedicalInfoDialog> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = context.l10n;
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final primaryColor = isDark
         ? AppColors.primaryDark
@@ -407,11 +405,8 @@ class _EditMedicalInfoDialogState extends State<EditMedicalInfoDialog> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                'Informations médicales',
-                style: GoogleFonts.outfit(
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold,
-                ),
+                l10n.profileEditMedicalInfoTitle,
+                style: AppTypography.fromContext(context, fontSize: 20, fontWeight: FontWeight.bold),
               ),
               const SizedBox(height: AppSpacing.lg),
 
@@ -419,7 +414,7 @@ class _EditMedicalInfoDialogState extends State<EditMedicalInfoDialog> {
               DropdownButtonFormField<String>(
                 initialValue: _bloodType,
                 decoration: InputDecoration(
-                  labelText: 'Groupe sanguin',
+                  labelText: l10n.profileBloodType,
                   prefixIcon: const Icon(Icons.water_drop_outlined),
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(12),
@@ -436,7 +431,7 @@ class _EditMedicalInfoDialogState extends State<EditMedicalInfoDialog> {
               TextField(
                 controller: _allergiesController,
                 decoration: InputDecoration(
-                  labelText: 'Allergies (séparées par virgule)',
+                  labelText: l10n.profileAllergiesHint,
                   prefixIcon: const Icon(Icons.warning_amber_outlined),
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(12),
@@ -449,7 +444,7 @@ class _EditMedicalInfoDialogState extends State<EditMedicalInfoDialog> {
               TextField(
                 controller: _conditionsController,
                 decoration: InputDecoration(
-                  labelText: 'Conditions médicales (séparées par virgule)',
+                  labelText: l10n.profileConditionsHint,
                   prefixIcon: const Icon(Icons.health_and_safety_outlined),
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(12),
@@ -462,7 +457,7 @@ class _EditMedicalInfoDialogState extends State<EditMedicalInfoDialog> {
               TextField(
                 controller: _doctorNameController,
                 decoration: InputDecoration(
-                  labelText: 'Nom du médecin',
+                  labelText: l10n.profileDoctorName,
                   prefixIcon: const Icon(Icons.person_outline),
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(12),
@@ -476,7 +471,7 @@ class _EditMedicalInfoDialogState extends State<EditMedicalInfoDialog> {
                 controller: _doctorPhoneController,
                 keyboardType: TextInputType.phone,
                 decoration: InputDecoration(
-                  labelText: 'Téléphone du médecin',
+                  labelText: l10n.profileDoctorPhone,
                   prefixIcon: const Icon(Icons.phone_outlined),
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(12),
@@ -493,7 +488,7 @@ class _EditMedicalInfoDialogState extends State<EditMedicalInfoDialog> {
                       onPressed: _isLoading
                           ? null
                           : () => Navigator.pop(context),
-                      child: const Text('Annuler'),
+                      child: Text(l10n.profileCancel),
                     ),
                   ),
                   const SizedBox(width: AppSpacing.sm),
@@ -513,7 +508,7 @@ class _EditMedicalInfoDialogState extends State<EditMedicalInfoDialog> {
                                 color: Colors.white,
                               ),
                             )
-                          : const Text('Enregistrer'),
+                          : Text(l10n.profileSave),
                     ),
                   ),
                 ],
@@ -595,12 +590,12 @@ class _AddEditChildDialogState extends State<AddEditChildDialog> {
     if (_nameController.text.isEmpty) {
       ScaffoldMessenger.of(
         context,
-      ).showSnackBar(const SnackBar(content: Text('Le nom est obligatoire')));
+      ).showSnackBar(SnackBar(content: Text(context.l10n.errorRequired)));
       return;
     }
     if (_birthDate == null) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('La date de naissance est obligatoire')),
+        SnackBar(content: Text(context.l10n.profileBirthDateRequired)),
       );
       return;
     }
@@ -619,7 +614,7 @@ class _AddEditChildDialogState extends State<AddEditChildDialog> {
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Erreur: $e'), backgroundColor: Colors.red),
+          SnackBar(content: Text(context.l10n.errorWithMessage('$e')), backgroundColor: Colors.red),
         );
       }
     } finally {
@@ -631,17 +626,17 @@ class _AddEditChildDialogState extends State<AddEditChildDialog> {
     final confirm = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Supprimer cet enfant ?'),
-        content: const Text('Cette action est irréversible.'),
+        title: Text(context.l10n.profileDeleteChildTitle),
+        content: Text(context.l10n.profileIrreversibleAction),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context, false),
-            child: const Text('Annuler'),
+            child: Text(context.l10n.profileCancel),
           ),
           TextButton(
             onPressed: () => Navigator.pop(context, true),
             style: TextButton.styleFrom(foregroundColor: Colors.red),
-            child: const Text('Supprimer'),
+            child: Text(context.l10n.delete),
           ),
         ],
       ),
@@ -655,7 +650,7 @@ class _AddEditChildDialogState extends State<AddEditChildDialog> {
       } catch (e) {
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('Erreur: $e'), backgroundColor: Colors.red),
+            SnackBar(content: Text(context.l10n.errorWithMessage('$e')), backgroundColor: Colors.red),
           );
         }
       } finally {
@@ -666,6 +661,7 @@ class _AddEditChildDialogState extends State<AddEditChildDialog> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = context.l10n;
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final primaryColor = isDark
         ? AppColors.primaryDark
@@ -682,11 +678,8 @@ class _AddEditChildDialogState extends State<AddEditChildDialog> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                isEditing ? 'Modifier enfant' : 'Ajouter un enfant',
-                style: GoogleFonts.outfit(
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold,
-                ),
+                isEditing ? l10n.profileEditChild : l10n.addChild,
+                style: AppTypography.fromContext(context, fontSize: 20, fontWeight: FontWeight.bold),
               ),
               const SizedBox(height: AppSpacing.lg),
 
@@ -756,7 +749,7 @@ class _AddEditChildDialogState extends State<AddEditChildDialog> {
               TextField(
                 controller: _nameController,
                 decoration: InputDecoration(
-                  labelText: 'Prénom',
+                  labelText: l10n.profileFirstName,
                   prefixIcon: const Icon(Icons.person_outline),
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(12),
@@ -771,7 +764,7 @@ class _AddEditChildDialogState extends State<AddEditChildDialog> {
                   Expanded(
                     child: _GenderOption(
                       gender: ChildGender.girl,
-                      label: 'Fille',
+                      label: l10n.profileGirl,
                       icon: Icons.face_3_rounded,
                       color: Colors.pink,
                       isSelected: _gender == ChildGender.girl,
@@ -782,7 +775,7 @@ class _AddEditChildDialogState extends State<AddEditChildDialog> {
                   Expanded(
                     child: _GenderOption(
                       gender: ChildGender.boy,
-                      label: 'Garçon',
+                      label: l10n.profileBoy,
                       icon: Icons.face_rounded,
                       color: Colors.blue,
                       isSelected: _gender == ChildGender.boy,
@@ -813,12 +806,10 @@ class _AddEditChildDialogState extends State<AddEditChildDialog> {
                         child: Text(
                           _birthDate != null
                               ? dateFormat.format(_birthDate!)
-                              : 'Date de naissance *',
-                          style: GoogleFonts.outfit(
-                            color: _birthDate != null
+                              : '${l10n.profileBirthDate} *',
+                          style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: _birthDate != null
                                 ? null
-                                : Colors.grey.shade600,
-                          ),
+                                : Colors.grey.shade600),
                         ),
                       ),
                       Icon(Icons.calendar_today, size: 18, color: primaryColor),
@@ -843,7 +834,7 @@ class _AddEditChildDialogState extends State<AddEditChildDialog> {
                       onPressed: _isLoading
                           ? null
                           : () => Navigator.pop(context),
-                      child: const Text('Annuler'),
+                      child: Text(l10n.profileCancel),
                     ),
                   ),
                   const SizedBox(width: AppSpacing.sm),
@@ -863,7 +854,7 @@ class _AddEditChildDialogState extends State<AddEditChildDialog> {
                                 color: Colors.white,
                               ),
                             )
-                          : Text(isEditing ? 'Modifier' : 'Ajouter'),
+                          : Text(isEditing ? l10n.profileEditChild : l10n.addChild),
                     ),
                   ),
                 ],
@@ -916,10 +907,7 @@ class _GenderOption extends StatelessWidget {
             const SizedBox(height: 4),
             Text(
               label,
-              style: GoogleFonts.outfit(
-                fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
-                color: isSelected ? color : Colors.grey,
-              ),
+              style: AppTypography.fromContext(context, fontSize: 14, fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal, color: isSelected ? color : Colors.grey),
             ),
           ],
         ),
@@ -971,7 +959,7 @@ class _EditCycleSettingsDialogState extends State<EditCycleSettingsDialog> {
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Erreur: $e'), backgroundColor: Colors.red),
+          SnackBar(content: Text(context.l10n.errorWithMessage('$e')), backgroundColor: Colors.red),
         );
       }
     } finally {
@@ -981,6 +969,7 @@ class _EditCycleSettingsDialogState extends State<EditCycleSettingsDialog> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = context.l10n;
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final primaryColor = isDark
         ? AppColors.primaryDark
@@ -995,17 +984,14 @@ class _EditCycleSettingsDialogState extends State<EditCycleSettingsDialog> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              'Paramètres du cycle',
-              style: GoogleFonts.outfit(
-                fontSize: 20,
-                fontWeight: FontWeight.bold,
-              ),
+              l10n.profileCycleSettings,
+              style: AppTypography.fromContext(context, fontSize: 20, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: AppSpacing.lg),
 
             // Tracking toggle
             SwitchListTile(
-              title: const Text('Activer le suivi'),
+              title: Text(l10n.cycleActivateTracking),
               value: _isTracking,
               onChanged: (value) => setState(() => _isTracking = value),
               activeThumbColor: primaryColor,
@@ -1014,8 +1000,8 @@ class _EditCycleSettingsDialogState extends State<EditCycleSettingsDialog> {
 
             // Cycle length
             ListTile(
-              title: const Text('Durée du cycle'),
-              subtitle: Text('$_cycleLength jours'),
+              title: Text(l10n.profileCycleLength),
+              subtitle: Text(l10n.profileDaysCount(_cycleLength)),
               trailing: Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
@@ -1027,7 +1013,7 @@ class _EditCycleSettingsDialogState extends State<EditCycleSettingsDialog> {
                   ),
                   Text(
                     '$_cycleLength',
-                    style: GoogleFonts.outfit(fontWeight: FontWeight.bold),
+                    style: AppTypography.fromContext(context, fontSize: 14, fontWeight: FontWeight.bold),
                   ),
                   IconButton(
                     onPressed: _cycleLength < 40
@@ -1041,8 +1027,8 @@ class _EditCycleSettingsDialogState extends State<EditCycleSettingsDialog> {
 
             // Period duration
             ListTile(
-              title: const Text('Durée des règles'),
-              subtitle: Text('$_periodDuration jours'),
+              title: Text(l10n.profilePeriodDuration),
+              subtitle: Text(l10n.profileDaysCount(_periodDuration)),
               trailing: Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
@@ -1054,7 +1040,7 @@ class _EditCycleSettingsDialogState extends State<EditCycleSettingsDialog> {
                   ),
                   Text(
                     '$_periodDuration',
-                    style: GoogleFonts.outfit(fontWeight: FontWeight.bold),
+                    style: AppTypography.fromContext(context, fontSize: 14, fontWeight: FontWeight.bold),
                   ),
                   IconButton(
                     onPressed: _periodDuration < 10
@@ -1073,7 +1059,7 @@ class _EditCycleSettingsDialogState extends State<EditCycleSettingsDialog> {
                 Expanded(
                   child: OutlinedButton(
                     onPressed: _isLoading ? null : () => Navigator.pop(context),
-                    child: const Text('Annuler'),
+                    child: Text(l10n.profileCancel),
                   ),
                 ),
                 const SizedBox(width: AppSpacing.sm),
@@ -1093,7 +1079,7 @@ class _EditCycleSettingsDialogState extends State<EditCycleSettingsDialog> {
                               color: Colors.white,
                             ),
                           )
-                        : const Text('Enregistrer'),
+                        : Text(l10n.profileSave),
                   ),
                 ),
               ],

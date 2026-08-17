@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 
+import '../../../core/extensions/l10n_extension.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../marketplace/screens/marketplace_screen.dart';
+import '../../../core/theme/app_typography.dart';
 
 /// Shortcut card on the Dashboard linking to the partner Marketplace.
 class MarketplaceShortcutCard extends StatelessWidget {
@@ -20,8 +21,8 @@ class MarketplaceShortcutCard extends StatelessWidget {
           decoration: BoxDecoration(
             gradient: const LinearGradient(
               colors: [AppColors.casablanca, Color(0xFFE8833A)],
-              begin: Alignment.centerLeft,
-              end: Alignment.centerRight,
+              begin: AlignmentDirectional.centerStart,
+              end: AlignmentDirectional.centerEnd,
             ),
             borderRadius: BorderRadius.circular(18),
             boxShadow: [
@@ -55,19 +56,12 @@ class MarketplaceShortcutCard extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        'Marketplace',
-                        style: GoogleFonts.outfit(
-                          fontSize: 15,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.white,
-                        ),
+                        context.l10n.marketplaceTitle,
+                        style: AppTypography.fromContext(context, fontSize: 15, fontWeight: FontWeight.bold, color: Colors.white),
                       ),
                       Text(
-                        'Produits bébé & maman de nos partenaires',
-                        style: GoogleFonts.outfit(
-                          fontSize: 11,
-                          color: Colors.white.withValues(alpha: 0.8),
-                        ),
+                        context.l10n.homeMarketplaceSubtitle,
+                        style: Theme.of(context).textTheme.labelSmall?.copyWith(color: Colors.white.withValues(alpha: 0.8)),
                       ),
                     ],
                   ),

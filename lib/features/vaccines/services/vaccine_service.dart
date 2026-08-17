@@ -7,6 +7,7 @@ import 'package:flutter/services.dart';
 
 import 'package:intl/intl.dart';
 
+import '../../../core/services/notification_l10n.dart';
 import '../../../core/services/notification_service.dart';
 import '../models/vaccine.dart';
 import '../models/vaccine_status.dart';
@@ -130,6 +131,7 @@ class VaccineService {
     final calendar = await loadVaccineCalendar();
     final statuses = await getVaccinationStatuses(childId);
     final completedGroups = statuses.map((s) => s.vaccineGroupId).toSet();
+    final l10n = await loadStoredL10n();
 
     for (final group in calendar.groups) {
       // Skip if completed
@@ -150,17 +152,20 @@ class VaccineService {
         0,
       );
 
-      // If 9 AM today is passed, schedule for tomorrow? No, just keep Date.
-
       // Generate unique ID
       final notificationId = (childId + group.id).hashCode;
+      final formattedDate = DateFormat('dd/MM/yyyy').format(dueDate);
 
       await _notificationService.scheduleNotification(
         id: notificationId,
-        title: 'Rappel Vaccin - $childName',
-        body:
-            'Le vaccin ${group.vaccineCodesLabel} est prévu pour le ${DateFormat('dd/MM/yyyy').format(dueDate)}',
+        title: l10n.notifVaccineReminderTitle(childName),
+        body: l10n.notifVaccineReminderBody(
+          group.vaccineCodesLabel,
+          formattedDate,
+        ),
         scheduledDate: scheduleDate,
+        channelName: l10n.notifVaccineChannelName,
+        channelDesc: l10n.notifVaccineChannelDesc,
       );
     }
   }

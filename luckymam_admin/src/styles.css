@@ -202,3 +202,13 @@
       transparent 0
     );
 }
+
+/* Login brand panel — dot grid only (solid cherry base, no gradient) */
+@utility login-brand-pattern-overlay {
+  background-image: radial-gradient(
+    circle at 1px 1px,
+    rgb(255 255 255 / 0.14) 1px,
+    transparent 0
+  );
+  background-size: 20px 20px;
+}

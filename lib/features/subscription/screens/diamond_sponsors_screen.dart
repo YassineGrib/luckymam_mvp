@@ -1,41 +1,44 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
+import '../../../core/theme/app_typography.dart';
 
+import '../../../core/extensions/l10n_extension.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_spacing.dart';
+import '../../../l10n/app_localizations.dart';
 
 /// Diamond Sponsor showcase page.
 /// Displays logos and information about Luckymam's diamond-tier sponsors.
 class DiamondSponsorsScreen extends StatelessWidget {
   const DiamondSponsorsScreen({super.key});
 
-  // Placeholder diamond sponsors data
-  static const List<_SponsorData> _sponsors = [
+  List<_SponsorData> _sponsors(AppLocalizations l10n) => [
     _SponsorData(
-      name: 'Partenaire Diamant 1',
-      category: 'Santé & Maternité',
-      description: 'Leader en solutions de santé pour femmes et enfants.',
+      name: l10n.subscriptionDiamondPartner1Name,
+      category: l10n.subscriptionDiamondPartner1Category,
+      description: l10n.subscriptionDiamondPartner1Description,
       emoji: '🏥',
-      color: Color(0xFF2196F3),
+      color: const Color(0xFF2196F3),
     ),
     _SponsorData(
-      name: 'Partenaire Diamant 2',
-      category: 'Nutrition Infantile',
-      description: 'Experts en nutrition pour bébés et jeunes enfants.',
+      name: l10n.subscriptionDiamondPartner2Name,
+      category: l10n.subscriptionDiamondPartner2Category,
+      description: l10n.subscriptionDiamondPartner2Description,
       emoji: '🍼',
-      color: Color(0xFFFF9800),
+      color: const Color(0xFFFF9800),
     ),
     _SponsorData(
-      name: 'Partenaire Diamant 3',
-      category: 'Puériculture',
-      description: 'Équipements premium pour l\'éveil de votre bébé.',
+      name: l10n.subscriptionDiamondPartner3Name,
+      category: l10n.subscriptionDiamondPartner3Category,
+      description: l10n.subscriptionDiamondPartner3Description,
       emoji: '🛍️',
-      color: Color(0xFF9C27B0),
+      color: const Color(0xFF9C27B0),
     ),
   ];
 
   @override
   Widget build(BuildContext context) {
+    final l10n = context.l10n;
+    final sponsors = _sponsors(l10n);
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final bgColor = isDark
         ? AppColors.backgroundDark
@@ -57,8 +60,8 @@ class DiamondSponsorsScreen extends StatelessWidget {
           onPressed: () => Navigator.pop(context),
         ),
         title: Text(
-          'Sponsors Diamant',
-          style: GoogleFonts.outfit(
+          l10n.subscriptionDiamondSponsorsTitle,
+          style: AppTypography.fromContext(context, 
             fontSize: 18,
             fontWeight: FontWeight.w600,
             color: textColor,
@@ -109,8 +112,8 @@ class DiamondSponsorsScreen extends StatelessWidget {
                   ),
                   const SizedBox(height: AppSpacing.md),
                   Text(
-                    'Nos Partenaires Diamant',
-                    style: GoogleFonts.outfit(
+                    l10n.subscriptionDiamondPartnersHero,
+                    style: AppTypography.fromContext(context, 
                       fontSize: 22,
                       fontWeight: FontWeight.bold,
                       color: Colors.white,
@@ -119,8 +122,8 @@ class DiamondSponsorsScreen extends StatelessWidget {
                   ),
                   const SizedBox(height: 8),
                   Text(
-                    'Des marques de confiance qui accompagnent\nchaque maman dans son parcours',
-                    style: GoogleFonts.outfit(
+                    l10n.subscriptionDiamondPartnersSubtitle,
+                    style: AppTypography.fromContext(context, 
                       fontSize: 13,
                       color: Colors.white60,
                       height: 1.5,
@@ -132,11 +135,11 @@ class DiamondSponsorsScreen extends StatelessWidget {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      _diamondPill('💎 Exclusif'),
+                      _diamondPill(context, l10n.subscriptionDiamondPillExclusive),
                       const SizedBox(width: 8),
-                      _diamondPill('⭐ Premium'),
+                      _diamondPill(context, l10n.subscriptionDiamondPillPremium),
                       const SizedBox(width: 8),
-                      _diamondPill('✅ Certifié'),
+                      _diamondPill(context, l10n.subscriptionDiamondPillCertified),
                     ],
                   ),
                 ],
@@ -147,8 +150,8 @@ class DiamondSponsorsScreen extends StatelessWidget {
 
             // Section title
             Text(
-              'Logos & Partenaires',
-              style: GoogleFonts.outfit(
+              l10n.subscriptionDiamondLogosSection,
+              style: AppTypography.fromContext(context, 
                 fontSize: 16,
                 fontWeight: FontWeight.bold,
                 color: textColor,
@@ -156,16 +159,17 @@ class DiamondSponsorsScreen extends StatelessWidget {
             ),
             const SizedBox(height: 4),
             Text(
-              'Partenaires officiels de l\'application Luckymam',
-              style: GoogleFonts.outfit(fontSize: 13, color: secondaryColor),
+              l10n.subscriptionDiamondOfficialPartners,
+              style: AppTypography.fromContext(context, fontSize: 13, color: secondaryColor),
             ),
 
             const SizedBox(height: AppSpacing.md),
 
             // Sponsors grid
-            ..._sponsors.map(
+            ...sponsors.map(
               (sponsor) => _SponsorCard(
                 sponsor: sponsor,
+                diamondBadgeLabel: l10n.subscriptionDiamondBadge,
                 isDark: isDark,
                 textColor: textColor,
                 secondaryColor: secondaryColor,
@@ -193,8 +197,8 @@ class DiamondSponsorsScreen extends StatelessWidget {
                   ),
                   const SizedBox(height: AppSpacing.sm),
                   Text(
-                    'Rejoignez nos Sponsors Diamant',
-                    style: GoogleFonts.outfit(
+                    l10n.subscriptionDiamondJoinTitle,
+                    style: AppTypography.fromContext(context, 
                       fontSize: 16,
                       fontWeight: FontWeight.bold,
                       color: Colors.white,
@@ -203,8 +207,8 @@ class DiamondSponsorsScreen extends StatelessWidget {
                   ),
                   const SizedBox(height: 4),
                   Text(
-                    'Atteignez des milliers de mamans algériennes.\nContactez-nous pour un partenariat Diamant.',
-                    style: GoogleFonts.outfit(
+                    l10n.subscriptionDiamondJoinSubtitle,
+                    style: AppTypography.fromContext(context, 
                       fontSize: 12,
                       color: Colors.white70,
                       height: 1.5,
@@ -222,8 +226,8 @@ class DiamondSponsorsScreen extends StatelessWidget {
                       borderRadius: BorderRadius.circular(12),
                     ),
                     child: Text(
-                      'sponsors@Luckymam.com',
-                      style: GoogleFonts.outfit(
+                      l10n.subscriptionDiamondContactEmail,
+                      style: AppTypography.fromContext(context, 
                         fontSize: 13,
                         fontWeight: FontWeight.w600,
                         color: AppColors.magentaPink,
@@ -241,7 +245,7 @@ class DiamondSponsorsScreen extends StatelessWidget {
     );
   }
 
-  Widget _diamondPill(String label) {
+  Widget _diamondPill(BuildContext context, String label) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
       decoration: BoxDecoration(
@@ -251,7 +255,7 @@ class DiamondSponsorsScreen extends StatelessWidget {
       ),
       child: Text(
         label,
-        style: GoogleFonts.outfit(
+        style: AppTypography.fromContext(context, 
           fontSize: 11,
           color: Colors.white,
           fontWeight: FontWeight.w500,
@@ -264,12 +268,14 @@ class DiamondSponsorsScreen extends StatelessWidget {
 class _SponsorCard extends StatelessWidget {
   const _SponsorCard({
     required this.sponsor,
+    required this.diamondBadgeLabel,
     required this.isDark,
     required this.textColor,
     required this.secondaryColor,
   });
 
   final _SponsorData sponsor;
+  final String diamondBadgeLabel;
   final bool isDark;
   final Color textColor;
   final Color secondaryColor;
@@ -317,7 +323,7 @@ class _SponsorCard extends StatelessWidget {
                     Expanded(
                       child: Text(
                         sponsor.name,
-                        style: GoogleFonts.outfit(
+                        style: AppTypography.fromContext(context, 
                           fontSize: 15,
                           fontWeight: FontWeight.w700,
                           color: textColor,
@@ -346,8 +352,8 @@ class _SponsorCard extends StatelessWidget {
                           ),
                           const SizedBox(width: 2),
                           Text(
-                            'Diamant',
-                            style: GoogleFonts.outfit(
+                            diamondBadgeLabel,
+                            style: AppTypography.fromContext(context, 
                               fontSize: 9,
                               fontWeight: FontWeight.bold,
                               color: Colors.white,
@@ -361,7 +367,7 @@ class _SponsorCard extends StatelessWidget {
                 const SizedBox(height: 2),
                 Text(
                   sponsor.category,
-                  style: GoogleFonts.outfit(
+                  style: AppTypography.fromContext(context, 
                     fontSize: 11,
                     color: sponsor.color,
                     fontWeight: FontWeight.w600,
@@ -370,7 +376,7 @@ class _SponsorCard extends StatelessWidget {
                 const SizedBox(height: 4),
                 Text(
                   sponsor.description,
-                  style: GoogleFonts.outfit(
+                  style: AppTypography.fromContext(context, 
                     fontSize: 12,
                     color: secondaryColor,
                     height: 1.4,

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:google_fonts/google_fonts.dart';
+import '../../../core/theme/app_typography.dart';
+import '../../../core/extensions/l10n_extension.dart';
 import '../../../core/theme/app_colors.dart';
 import '../models/reel_item.dart';
 import '../providers/reels_provider.dart';
@@ -13,6 +14,7 @@ class ReelOverlay extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = context.l10n;
     return Stack(
       children: [
         // Bottom gradient scrim
@@ -51,14 +53,14 @@ class ReelOverlay extends ConsumerWidget {
               const SizedBox(height: 24),
               _ActionButton(
                 icon: Icons.bookmark_border_rounded,
-                label: 'Sauver',
+                label: l10n.reelsSave,
                 color: Colors.white,
                 onTap: () {},
               ),
               const SizedBox(height: 24),
               _ActionButton(
                 icon: Icons.share_rounded,
-                label: 'Partager',
+                label: l10n.share,
                 color: Colors.white,
                 onTap: () {},
               ),
@@ -98,7 +100,7 @@ class ReelOverlay extends ConsumerWidget {
                   const SizedBox(width: 10),
                   Text(
                     reel.author,
-                    style: GoogleFonts.outfit(
+                    style: AppTypography.fromContext(context,
                       fontSize: 15,
                       fontWeight: FontWeight.w600,
                       color: Colors.white,
@@ -111,7 +113,7 @@ class ReelOverlay extends ConsumerWidget {
               // Title
               Text(
                 reel.title,
-                style: GoogleFonts.outfit(
+                style: AppTypography.fromContext(context,
                   fontSize: 18,
                   fontWeight: FontWeight.bold,
                   color: Colors.white,
@@ -124,7 +126,7 @@ class ReelOverlay extends ConsumerWidget {
                 reel.description,
                 maxLines: 2,
                 overflow: TextOverflow.ellipsis,
-                style: GoogleFonts.outfit(
+                style: AppTypography.fromContext(context,
                   fontSize: 13,
                   color: Colors.white.withValues(alpha: 0.85),
                   height: 1.4,
@@ -166,7 +168,7 @@ class _ActionButton extends StatelessWidget {
             const SizedBox(height: 4),
             Text(
               label,
-              style: GoogleFonts.outfit(
+              style: AppTypography.fromContext(context,
                 fontSize: 11,
                 fontWeight: FontWeight.w500,
                 color: Colors.white.withValues(alpha: 0.9),

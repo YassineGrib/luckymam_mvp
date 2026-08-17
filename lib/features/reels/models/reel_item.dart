@@ -1,3 +1,5 @@
+import '../../../l10n/app_localizations.dart';
+
 /// Category for educational reels
 enum ReelCategory {
   vaccins,
@@ -57,6 +59,23 @@ extension ReelCategoryExtension on ReelCategory {
         return '👶';
       case ReelCategory.nutrition:
         return '🥗';
+    }
+  }
+
+  String shortLabelL10n(AppLocalizations l10n) {
+    switch (this) {
+      case ReelCategory.vaccins:
+        return l10n.reelCategoryVaccins;
+      case ReelCategory.grossessehta:
+        return l10n.reelCategoryGrossesseHta;
+      case ReelCategory.grossessediabete:
+        return l10n.reelCategoryGrossesseDiabete;
+      case ReelCategory.soutienEnfants:
+        return l10n.reelCategorySoutien;
+      case ReelCategory.soinsQuotidiens:
+        return l10n.reelCategorySoins;
+      case ReelCategory.nutrition:
+        return l10n.reelCategoryNutrition;
     }
   }
 }

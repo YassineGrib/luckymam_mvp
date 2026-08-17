@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:google_fonts/google_fonts.dart';
+import '../../../core/theme/app_typography.dart';
 
+import '../../../core/extensions/l10n_extension.dart';
 import '../../../core/services/analytics_service.dart';
 import '../models/house_ad.dart';
 
@@ -47,6 +48,8 @@ class _ReelAdItemState extends State<ReelAdItem> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = context.l10n;
+    final lang = Localizations.localeOf(context).languageCode;
     final ad = widget.ad;
     final imageUrl = ad.safeImageUrl;
 
@@ -58,16 +61,16 @@ class _ReelAdItemState extends State<ReelAdItem> {
           Image.asset(
             ad.assetPath!,
             fit: BoxFit.cover,
-            errorBuilder: (context, error, stackTrace) => _gradient(ad),
+            errorBuilder: (context, error, stackTrace) => _gradient(ad, lang),
           )
         else if (imageUrl != null)
           Image.network(
             imageUrl,
             fit: BoxFit.cover,
-            errorBuilder: (context, error, stackTrace) => _gradient(ad),
+            errorBuilder: (context, error, stackTrace) => _gradient(ad, lang),
           )
         else
-          _gradient(ad),
+          _gradient(ad, lang),
 
         // Scrim for readability
         Container(
@@ -95,8 +98,8 @@ class _ReelAdItemState extends State<ReelAdItem> {
               borderRadius: BorderRadius.circular(12),
             ),
             child: Text(
-              '${Localizations.localeOf(context).languageCode == 'ar' ? 'برعاية' : Localizations.localeOf(context).languageCode == 'fr' ? 'Sponsorisé' : 'Sponsored'} · ${ad.sponsorName}',
-              style: GoogleFonts.outfit(
+              l10n.adsSponsored(ad.getSponsorName(lang)),
+              style: AppTypography.fromContext(context,
                 fontSize: 12,
                 fontWeight: FontWeight.w600,
                 color: Colors.white,
@@ -114,8 +117,8 @@ class _ReelAdItemState extends State<ReelAdItem> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                ad.title,
-                style: GoogleFonts.outfit(
+                ad.getTitle(lang),
+                style: AppTypography.fromContext(context,
                   fontSize: 22,
                   fontWeight: FontWeight.bold,
                   color: Colors.white,
@@ -123,14 +126,14 @@ class _ReelAdItemState extends State<ReelAdItem> {
               ),
               const SizedBox(height: 6),
               Text(
-                ad.subtitle,
-                style: GoogleFonts.outfit(
+                ad.getSubtitle(lang),
+                style: AppTypography.fromContext(context,
                   fontSize: 14,
                   color: Colors.white.withValues(alpha: 0.9),
                   height: 1.4,
                 ),
               ),
-              if (ad.ctaLabel != null) ...[
+              if (ad.getCtaLabel(lang) != null) ...[
                 const SizedBox(height: 14),
                 SizedBox(
                   width: double.infinity,
@@ -152,8 +155,8 @@ class _ReelAdItemState extends State<ReelAdItem> {
                       ),
                     ),
                     child: Text(
-                      ad.ctaLabel!,
-                      style: GoogleFonts.outfit(
+                      ad.getCtaLabel(lang)!,
+                      style: AppTypography.fromContext(context,
                         fontSize: 14,
                         fontWeight: FontWeight.bold,
                       ),
@@ -168,7 +171,7 @@ class _ReelAdItemState extends State<ReelAdItem> {
     );
   }
 
-  Widget _gradient(HouseAd ad) {
+  Widget _gradient(HouseAd ad, String lang) {
     return Container(
       decoration: BoxDecoration(
         gradient: LinearGradient(

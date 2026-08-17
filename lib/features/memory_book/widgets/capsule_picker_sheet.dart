@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:google_fonts/google_fonts.dart';
 
+import '../../../core/extensions/l10n_extension.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_spacing.dart';
 import '../../capsules/models/capsule.dart';
@@ -20,6 +20,7 @@ class CapsulePickerSheet extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = context.l10n;
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final bgColor = isDark ? AppColors.surfaceDark : Colors.white;
     final textColor = isDark
@@ -31,7 +32,6 @@ class CapsulePickerSheet extends ConsumerWidget {
 
     final capsulesAsync = ref.watch(capsulesByChildProvider(childId));
 
-    final lang = Localizations.localeOf(context).languageCode;
     return DraggableScrollableSheet(
       initialChildSize: 0.7,
       minChildSize: 0.4,
@@ -66,13 +66,8 @@ class CapsulePickerSheet extends ConsumerWidget {
                   children: [
                     Expanded(
                       child: Text(
-                        lang == 'ar'
-                            ? 'اختر كبسولة ذكريات'
-                            : lang == 'en'
-                                ? 'Choose a Capsule'
-                                : 'Choisir une capsule',
-                        style: GoogleFonts.outfit(
-                          fontSize: 18,
+                        l10n.albumChooseCapsule,
+                        style: Theme.of(context).textTheme.titleMedium?.copyWith(
                           fontWeight: FontWeight.bold,
                           color: textColor,
                         ),
@@ -92,12 +87,10 @@ class CapsulePickerSheet extends ConsumerWidget {
                       const Center(child: CircularProgressIndicator()),
                   error: (e, _) => Center(
                     child: Text(
-                      lang == 'ar'
-                          ? 'خطأ في التحميل'
-                          : lang == 'en'
-                              ? 'Loading error'
-                              : 'Erreur de chargement',
-                      style: GoogleFonts.outfit(color: secondaryColor),
+                      l10n.albumLoadingError,
+                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                        color: secondaryColor,
+                      ),
                     ),
                   ),
                   data: (capsules) {
@@ -106,15 +99,10 @@ class CapsulePickerSheet extends ConsumerWidget {
                         child: Padding(
                           padding: const EdgeInsets.all(AppSpacing.xl),
                           child: Text(
-                            lang == 'ar'
-                                ? 'لا توجد كبسولات لهذا الطفل.\nقومي بإنشاء كبسولة جديدة لهذه المناسبة.'
-                                : lang == 'en'
-                                    ? 'No capsules for this child.\nCreate a new one for this event.'
-                                    : 'Aucune capsule pour cet enfant.\nCréez-en une nouvelle pour ce moment.',
+                            l10n.albumNoCapsulesForChild,
                             textAlign: TextAlign.center,
-                            style: GoogleFonts.outfit(
+                            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                               color: secondaryColor,
-                              fontSize: 14,
                             ),
                           ),
                         ),

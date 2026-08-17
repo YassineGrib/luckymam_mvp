@@ -4,7 +4,6 @@ import 'dart:math';
 import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:google_fonts/google_fonts.dart';
 
 import '../../../core/theme/app_colors.dart';
 
@@ -160,7 +159,7 @@ class _CapsuleAudioPlayerState extends State<CapsuleAudioPlayer>
                   children: [
                     Text(
                       _formatDuration(_position),
-                      style: GoogleFonts.outfit(
+                      style: Theme.of(context).textTheme.labelSmall?.copyWith(
                         fontSize: 12,
                         fontWeight: FontWeight.w600,
                         color: Colors.white,
@@ -168,7 +167,7 @@ class _CapsuleAudioPlayerState extends State<CapsuleAudioPlayer>
                     ),
                     Text(
                       _formatDuration(totalDuration),
-                      style: GoogleFonts.outfit(
+                      style: Theme.of(context).textTheme.labelSmall?.copyWith(
                         fontSize: 12,
                         color: Colors.white.withValues(alpha: 0.45),
                       ),

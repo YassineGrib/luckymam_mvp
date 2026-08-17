@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
+import '../../../core/theme/app_typography.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_theme.dart';
 
@@ -61,7 +61,7 @@ class PrimaryButton extends StatelessWidget {
                       ],
                       Text(
                         text,
-                        style: GoogleFonts.outfit(
+                        style: AppTypography.fromContext(context, 
                           fontSize: 16,
                           fontWeight: FontWeight.w600,
                           color: Colors.white,

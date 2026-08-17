@@ -69,5 +69,998 @@
   "law1807Text": "Conformément aux dispositions de la Loi n° 18-07 du 10 juin 2018 relative à la protection des personnes physiques dans le traitement des données à caractère personnel, vous acceptez que vos données personnelles soient collectées, traitées et stockées en toute sécurité par Luckymam pour le bon fonctionnement de l'application. Vous pouvez exercer vos droits d'accès, de rectification et de suppression à tout moment.",
   "law1807Checkbox": "J’accepte la Loi 18/07",
   "law1807Error": "L’acceptation de la Loi 18/07 est obligatoire pour continuer.",
-  "capsule": "Capsule"
+  "capsule": "Capsule",
+  "navHome": "Accueil",
+  "navTimeline": "Timeline",
+  "navCapsules": "Capsules",
+  "navHealth": "Santé",
+  "navProfile": "Profil",
+  "dashboardQuickAccess": "Accès Rapide",
+  "dashboardHealthWellbeing": "Mon Bien-être",
+  "dashboardHealthPregnancy": "Ma Grossesse",
+  "dashboardHealthDefault": "Ma Santé",
+  "dashboardMyChildren": "Mes Enfants",
+  "dashboardMyMemories": "Mes Souvenirs",
+  "dashboardSeeAll": "Voir tout",
+  "dashboardSeeAllCapsules": "Voir toutes les capsules",
+  "dashboardPartnerShop": "Boutique Partenaires",
+  "dashboardHopeBannerTitle": "Votre parcours commence ici 💜",
+  "dashboardHopeBannerSubtitle": "Suivez votre cycle et prenez soin de vous.\nVos enfants apparaîtront ici dès l'arrivée de bébé.",
+  "dashboardPregnantBannerTitle": "Votre bébé grandit 🩷",
+  "dashboardPregnantBannerSubtitle": "La section Mes Enfants sera disponible\naprès la naissance de votre bébé.",
+  "cycleTrackingTitle": "Suivi du Cycle",
+  "cycleActivateTracking": "Activer le suivi",
+  "cycleEnterPregnancyStart": "Renseigner ma date de début",
+  "cyclePregnancySubtitleWeekDays": "Semaine {week} · DPA dans {days} j",
+  "@cyclePregnancySubtitleWeekDays": {
+    "placeholders": {
+      "week": {"type": "int"},
+      "days": {"type": "int"}
+    }
+  },
+  "cycleDayPhase": "Jour {day} · {phase}",
+  "@cycleDayPhase": {
+    "placeholders": {
+      "day": {"type": "int"},
+      "phase": {"type": "String"}
+    }
+  },
+  "cycleDayLabel": "Jour",
+  "cycleWeekLabel": "SA",
+  "cycleConfigure": "Configurer mon cycle",
+  "cycleLogPeriod": "Enregistrer mes règles",
+  "cyclePeriodInDays": "Règles dans {days} j",
+  "@cyclePeriodInDays": {
+    "placeholders": {
+      "days": {"type": "int"}
+    }
+  },
+  "cycleLmpPrompt": "Renseignez votre date de dernières règles (DDR)\npour suivre votre grossesse semaine par semaine.",
+  "cycleEnterLmp": "Entrer ma DDR",
+  "cycleModifyLmp": "Modifier ma DDR",
+  "cycleLmpDatePickerHelp": "Date de dernières règles (DDR)",
+  "cycleWeekProgress": "Semaine {week} / 40",
+  "@cycleWeekProgress": {
+    "placeholders": {
+      "week": {"type": "int"}
+    }
+  },
+  "cycleDueDateLabel": "DPA : {date}",
+  "@cycleDueDateLabel": {
+    "placeholders": {
+      "date": {"type": "String"}
+    }
+  },
+  "cycleDaysUntilDelivery": "J−{days} avant l'accouchement",
+  "@cycleDaysUntilDelivery": {
+    "placeholders": {
+      "days": {"type": "int"}
+    }
+  },
+  "cyclePhaseMenstruation": "Menstruation",
+  "cyclePhaseFollicular": "Folliculaire",
+  "cyclePhaseOvulation": "Ovulation",
+  "cyclePhaseLuteal": "Lutéale",
+  "cyclePhaseDescMenstruation": "Votre cycle commence. Prenez soin de vous.",
+  "cyclePhaseDescFollicular": "Votre corps se prépare. Vous vous sentez plus énergique.",
+  "cyclePhaseDescOvulation": "Période de fertilité maximale.",
+  "cyclePhaseDescLuteal": "Préparation pour le prochain cycle.",
+  "cyclePhaseDescDefault": "Évolution de votre cycle féminin.",
+  "greetingMorning": "Bonjour",
+  "greetingAfternoon": "Bon après-midi",
+  "greetingEvening": "Bonsoir",
+  "defaultMotherName": "Maman",
+  "statusWelcome": "Bienvenue",
+  "statusPregnant": "Enceinte",
+  "statusHope": "En espoir",
+  "statusMom": "Maman",
+  "dailyTipSectionTitle": "CONSEIL DU JOUR",
+  "dailyTipFooter": "— Luckymam Team 💕",
+  "upgradePremiumTitle": "Passez à Premium",
+  "upgradePremiumSubtitle": "Capsules illimitées • Sans pubs",
+  "marketplaceTitle": "Marketplace",
+  "marketplaceSubtitle": "Produits de nos partenaires",
+  "marketplaceMyOrders": "Mes commandes",
+  "marketplaceAllCategories": "Tous",
+  "marketplaceNoProducts": "Aucun produit dans cette catégorie",
+  "marketplaceMyCart": "Mon panier",
+  "myOrdersTitle": "Mes Commandes",
+  "myOrdersLoadError": "Erreur de chargement",
+  "myOrdersEmptyTitle": "Aucune commande pour le moment",
+  "myOrdersEmptySubtitle": "Vos commandes marketplace apparaîtront ici",
+  "orderItemCount": "{count, plural, =1{1 article} other{{count} articles}}",
+  "@orderItemCount": {
+    "placeholders": {
+      "count": {"type": "int"}
+    }
+  },
+  "cartTitle": "Mon Panier",
+  "cartClear": "Vider",
+  "labelTotal": "Total",
+  "cartProceedCheckout": "Passer la commande",
+  "cartEmptyTitle": "Votre panier est vide",
+  "cartEmptySubtitle": "Parcourez le marketplace pour découvrir\nles produits de nos partenaires",
+  "productHighlights": "Points clés",
+  "productPartnerDefault": "Partenaire Luckymam",
+  "productPartnerBadge": "Partenaire",
+  "productOrder": "Commander",
+  "productOutOfStock": "Rupture de stock",
+  "productQuantity": "Quantité",
+  "productMaxQtyReached": "Quantité maximale atteinte pour ce produit",
+  "productAddedToCart": "{productName} ajouté au panier",
+  "@productAddedToCart": {
+    "placeholders": {
+      "productName": {"type": "String"}
+    }
+  },
+  "productViewCart": "Voir le panier",
+  "productAddToCart": "Ajouter au panier",
+  "checkoutTitle": "Finaliser la commande",
+  "checkoutSubtotal": "Sous-total",
+  "checkoutShipping": "Livraison",
+  "checkoutPaymentNote": "Paiement à la livraison. Le partenaire vous appellera pour confirmer la commande.",
+  "checkoutDeliveryInfo": "Informations de livraison",
+  "checkoutFullNameHint": "Votre nom et prénom",
+  "checkoutPhone": "Téléphone",
+  "checkoutWilaya": "Wilaya",
+  "checkoutWilayaHint": "Votre wilaya",
+  "checkoutAddress": "Adresse complète",
+  "checkoutAddressHint": "Rue, numéro, quartier...",
+  "checkoutPhoneInvalid": "Numéro invalide (ex : 0550 00 00 00)",
+  "checkoutConfirm": "Confirmer la commande",
+  "checkoutErrorGeneric": "Erreur lors de la commande",
+  "checkoutConfirmedTitle": "Commande confirmée !",
+  "checkoutConfirmedSubtitle": "Le partenaire vous contactera par téléphone pour confirmer la livraison et le paiement.",
+  "checkoutViewOrders": "Voir mes commandes",
+  "checkoutBackHome": "Retour à l'accueil",
+  "printAlbumSummary": "{pageCount} pages · {childName}",
+  "@printAlbumSummary": {
+    "placeholders": {
+      "pageCount": {"type": "int"},
+      "childName": {"type": "String"}
+    }
+  },
+  "printVipFreeNote": "Offert avec votre abonnement VIP 🎁",
+  "printPricingNote": "Nos équipes vous contacteront pour confirmer le tarif d'impression.",
+  "printOrderSentTitle": "Commande envoyée !",
+  "printOrderSentMessage": "« {albumTitle} » sera imprimé et expédié à l'adresse indiquée. Nous vous contacterons par téléphone pour confirmer.",
+  "@printOrderSentMessage": {
+    "placeholders": {
+      "albumTitle": {"type": "String"}
+    }
+  },
+  "printEstimatedDelay": "Délai estimé : 7-14 jours",
+  "printBackToAlbum": "Retour à l'album",
+  "printPreviewTitle": "Aperçu de l'album",
+  "printPreparingAlbum": "Préparation de votre album...",
+  "printOrderPrinting": "Commander l'impression",
+  "memoryBookTitle": "Livre de Mémoires",
+  "memoryBookSubtitle": "Albums auto-générés",
+  "albumPredefinedTitle": "Album prédéfini",
+  "albumPredefinedSubtitle": "Naissance, 1ère année…",
+  "albumFreeTitle": "Album libre",
+  "albumFreeSubtitle": "Pages vierges à remplir",
+  "albumAddChildFirst": "Ajoutez d'abord un enfant pour créer un album",
+  "albumForWhichChild": "Pour quel enfant ?",
+  "albumDefaultTitleForChild": "Album de {childName}",
+  "@albumDefaultTitleForChild": {
+    "placeholders": {
+      "childName": {"type": "String"}
+    }
+  },
+  "albumNewFreeTitle": "Nouvel album libre",
+  "albumTitleHint": "Titre de l'album",
+  "albumCancel": "Annuler",
+  "albumCreate": "Créer",
+  "albumCreateError": "Erreur lors de la création de l'album",
+  "memoryBookNoAlbums": "Aucun album disponible",
+  "memoryBookCaptureMore": "Capturez plus de souvenirs\npour débloquer des albums automatiques",
+  "albumLoadingError": "Erreur de chargement",
+  "memoryBookGenerateError": "Impossible de générer les albums",
+  "albumChooseTemplateFor": "Choisissez un modèle pour {childName}",
+  "@albumChooseTemplateFor": {
+    "placeholders": {
+      "childName": {"type": "String"}
+    }
+  },
+  "albumCreateTemplateConfirm": "Créer « {templateTitle} » ?",
+  "@albumCreateTemplateConfirm": {
+    "placeholders": {
+      "templateTitle": {"type": "String"}
+    }
+  },
+  "albumCreateTemplateDesc": "Cet album sera créé pour {childName} avec {slotCount} évènements à remplir.",
+  "@albumCreateTemplateDesc": {
+    "placeholders": {
+      "childName": {"type": "String"},
+      "slotCount": {"type": "int"}
+    }
+  },
+  "albumTemplateEventCount": "{count} évènements",
+  "@albumTemplateEventCount": {
+    "placeholders": {
+      "count": {"type": "int"}
+    }
+  },
+  "albumErrorWithMessage": "Erreur : {error}",
+  "@albumErrorWithMessage": {
+    "placeholders": {
+      "error": {"type": "String"}
+    }
+  },
+  "albumNotFound": "Album introuvable",
+  "albumTemplateNotFound": "Modèle introuvable",
+  "albumEventsFilledProgress": "{filled}/{total} évènements remplis",
+  "@albumEventsFilledProgress": {
+    "placeholders": {
+      "filled": {"type": "int"},
+      "total": {"type": "int"}
+    }
+  },
+  "albumMemoryAttached": "Souvenir attaché",
+  "albumExistingCapsule": "Existante",
+  "albumNewCapsule": "Nouvelle",
+  "albumPageCaption": "Page {number}",
+  "@albumPageCaption": {
+    "placeholders": {
+      "number": {"type": "int"}
+    }
+  },
+  "albumPagesFilledDraft": "{filled}/{total} pages remplies · Brouillon",
+  "@albumPagesFilledDraft": {
+    "placeholders": {
+      "filled": {"type": "int"},
+      "total": {"type": "int"}
+    }
+  },
+  "albumRenameTitle": "Renommer l'album",
+  "albumSave": "Enregistrer",
+  "albumChooseExistingCapsule": "Choisir une capsule existante",
+  "albumCreateNewCapsule": "Créer une nouvelle capsule",
+  "albumPrintNeedMemory": "Ajoutez au moins un souvenir pour pouvoir commander l'impression.",
+  "albumChooseCapsule": "Choisir une capsule",
+  "albumNoCapsulesForChild": "Aucune capsule pour cet enfant.\nCréez-en une nouvelle pour ce moment.",
+  "timeline_quick_add": "Ajouter rapidement",
+  "timeline_quick_add_prompt": "Que souhaitez-vous faire ?",
+  "timeline_create_capsule": "Créer une capsule",
+  "timeline_create_capsule_subtitle": "Capturez un souvenir maintenant",
+  "timeline_mark_milestone": "Marquer un jalon",
+  "timeline_mark_milestone_subtitle": "Ouvrez un jalon de la phase actuelle",
+  "timeline_upcoming_milestones": "Jalons à venir",
+  "timeline_all_milestones_have_memory": "Tous les jalons de cette phase ont déjà un souvenir ✓",
+  "timeline_add": "Ajouter",
+  "milestone_capture": "Capturer",
+  "milestone_memory": "Souvenir",
+  "milestone_phase": "Phase",
+  "milestone_suggested": "Suggéré",
+  "milestone_capsule_ready": "Capsule réalisée",
+  "milestone_view_capsule": "Voir la capsule",
+  "milestone_tap_to_open_memory": "Appuyez pour ouvrir le souvenir",
+  "milestone_mark_complete": "Marquer terminé",
+  "milestone_close": "Fermer",
+  "milestone_capture_this_moment": "Capturer ce moment",
+  "milestone_capsule_not_found": "Capsule introuvable",
+  "milestone_tips_and_photo_ideas": "Conseils & idées photo",
+  "milestone_reminder_on": "Rappel le {date}",
+  "@milestone_reminder_on": {
+    "placeholders": {
+      "date": {"type": "String"}
+    }
+  },
+  "milestone_schedule_reminder": "Programmer un rappel",
+  "milestone_marked_complete": "Jalon marqué comme terminé ✓",
+  "milestone_error": "Erreur : {error}",
+  "@milestone_error": {
+    "placeholders": {
+      "error": {"type": "String"}
+    }
+  },
+  "milestone_tips": "Conseils",
+  "milestone_understand_this": "Comprendre ce jalon",
+  "milestone_key_points": "À retenir",
+  "milestone_photo_ideas": "Idées pour la photo",
+  "milestone_reminder_tomorrow": "Demain",
+  "milestone_reminder_date_at_nine": "d MMM à 09:00",
+  "milestone_reminder_in_3_days": "Dans 3 jours",
+  "milestone_reminder_in_1_week": "Dans 1 semaine",
+  "milestone_reminder_on_milestone_day": "Le jour du jalon",
+  "milestone_reminder_choose_date_time": "Choisir une date et heure",
+  "milestone_reminder_manual_selection": "Sélection manuelle",
+  "milestone_reminder_cancel": "Annuler le rappel",
+  "milestone_reminder_cancel_subtitle": "Supprimer le rappel programmé",
+  "milestone_reminder_future_date_required": "Choisissez une date dans le futur",
+  "milestone_reminder_enable_notifications": "Activez les notifications de jalons dans Paramètres > Notifications",
+  "milestone_reminder_scheduled": "Rappel programmé le {date} ✓",
+  "@milestone_reminder_scheduled": {
+    "placeholders": {
+      "date": {"type": "String"}
+    }
+  },
+  "milestone_reminder_cancelled": "Rappel annulé",
+  "notificationsTitle": "Notifications",
+  "notificationsSmartReminders": "Rappels intelligents",
+  "notificationsSmartRemindersSubtitle": "Gérez vos rappels personnalisés",
+  "notificationsSystemSettings": "Paramètres système",
+  "notificationsVaccineTitle": "Rappels Vaccination",
+  "notificationsVaccineSubtitle": "2 jours avant la date du vaccin, à 09h00",
+  "notificationsMilestoneTitle": "Jalons de Développement",
+  "notificationsMilestoneSubtitle": "7 jours avant chaque étape clé, à 09h00",
+  "notificationsCycleTitle": "Cycle Féminin",
+  "notificationsCycleSubtitle": "Règles dans 2 jours • Phase ovulatoire — à 08h00",
+  "notificationsInfoNote": "Les rappels sont planifiés automatiquement. Ils s'adaptent à vos données personnelles et celles de votre enfant.",
+  "profileTimelineDisplay": "Affichage Timeline",
+  "profileTimelineHorizontal": "Vue horizontale",
+  "profileTimelineVertical": "Vue verticale",
+  "profileViewHorizontal": "Horizontale",
+  "profileViewVertical": "Verticale",
+  "vaccineLinkedMemory": "Souvenir lié",
+  "vaccineCapsuleTitle": "Capsule de vaccination",
+  "vaccineMemorySection": "Souvenir",
+  "vaccineMemoryPrompt": "Ajoutez une photo ou un enregistrement pour garder en mémoire ce moment.",
+  "vaccineReelsTitle": "Reels éducatifs",
+  "vaccineReelsSubtitle": "Regardez des vidéos courtes sur ce vaccin réalisées par des professionnels de santé.",
+  "vaccineReelsButton": "Reels",
+  "orderStatusPending": "En attente",
+  "orderStatusConfirmed": "Confirmée",
+  "orderStatusShipped": "Expédiée",
+  "orderStatusDelivered": "Livrée",
+  "orderStatusCancelled": "Annulée",
+  "retry": "Réessayer",
+  "share": "Partager",
+  "delete": "Supprimer",
+  "confirm": "Confirmer",
+  "later": "Plus tard",
+  "premiumRequired": "Premium requis",
+  "capsulesGalleryTitle": "Mes Capsules",
+  "capsulesRemaining": "{count} restantes",
+  "@capsulesRemaining": {
+    "placeholders": {
+      "count": {"type": "int"}
+    }
+  },
+  "capsulesQuotaLimitTitle": "Limite atteinte",
+  "capsulesQuotaLimitMessage": "Vous avez atteint la limite de {limit} capsules pour le forfait gratuit. Passez à Premium pour un stockage illimité !",
+  "@capsulesQuotaLimitMessage": {
+    "placeholders": {
+      "limit": {"type": "int"}
+    }
+  },
+  "capsulesUnderstood": "Compris",
+  "capsulesViewPremium": "Voir Premium",
+  "capsulesEmptyTitle": "Aucune capsule",
+  "capsulesEmptySubtitle": "Capturez vos premiers souvenirs\nen appuyant sur le bouton ci-dessous",
+  "capsulesLoadErrorSubtitle": "Impossible de charger les capsules",
+  "capsuleSharePreparing": "Préparation du partage…",
+  "capsuleShareText": "✨ Un souvenir précieux via Luckymam\n{emotion}",
+  "@capsuleShareText": {
+    "placeholders": {
+      "emotion": {"type": "String"}
+    }
+  },
+  "capsuleShareError": "Erreur de partage : {error}",
+  "@capsuleShareError": {
+    "placeholders": {
+      "error": {"type": "String"}
+    }
+  },
+  "capsuleGalleryPermissionDenied": "Permission galerie refusée",
+  "capsuleSavedToGallery": "Enregistré dans l'album Luckymam 📸",
+  "capsuleSaveError": "Erreur d'enregistrement : {error}",
+  "@capsuleSaveError": {
+    "placeholders": {
+      "error": {"type": "String"}
+    }
+  },
+  "capsulePremiumFeatureTitle": "Fonctionnalité Premium",
+  "capsulePremiumFeatureDesc": "Le partage et l'enregistrement de capsules\nsont réservés aux abonnés Premium et VIP.",
+  "capsulePremiumUpgradeCta": "🌟 Passer à Premium — 2 490 DA/an",
+  "capsuleDeleteTitle": "Supprimer la capsule ?",
+  "capsuleDeleteMessage": "Cette action est irréversible. Le souvenir sera supprimé définitivement.",
+  "capsuleNewTitle": "Nouvelle Capsule",
+  "capsuleAddPhoto": "Ajouter une photo",
+  "capsulePhotoSourceHint": "Appareil photo ou galerie",
+  "capsuleAddChildPrompt": "Ajoutez un enfant dans votre profil pour créer des capsules",
+  "capsuleWhichChild": "🧒 Pour quel enfant ?",
+  "capsuleTagsOptional": "🏷️ Tags (optionnel)",
+  "capsuleAddTagHint": "Ajouter un tag...",
+  "capsuleCategory": "📂 Catégorie",
+  "capsuleRequired": "(obligatoire)",
+  "capsulePhotoDate": "📅 Date de la photo",
+  "capsuleTodayDefault": "Aujourd'hui (par défaut)",
+  "capsulePhotoDateHint": "Utile si la photo a été prise à une autre date",
+  "capsulePhotoDatePickerHelp": "Date de la photo",
+  "capsuleChooseSource": "Choisir une source",
+  "capsuleCamera": "Appareil photo",
+  "capsuleGallery": "Galerie",
+  "capsuleCreatedSuccess": "Capsule créée avec succès ! ✨",
+  "capsuleEmotion": "Émotion",
+  "capsuleVoiceMessageOptional": "🎤 Message vocal (optionnel)",
+  "capsuleHoldToRecord": "Maintenir pour enregistrer",
+  "capsuleMaxDuration": "Max {seconds}s",
+  "@capsuleMaxDuration": {
+    "placeholders": {
+      "seconds": {"type": "int"}
+    }
+  },
+  "capsuleReleaseToStop": "Relâchez pour arrêter l'enregistrement",
+  "capsuleVoiceRecorded": "Message vocal enregistré",
+  "capsuleDuration": "Durée : {duration}",
+  "@capsuleDuration": {
+    "placeholders": {
+      "duration": {"type": "String"}
+    }
+  },
+  "healthLoadingError": "Erreur de chargement",
+  "healthHubSubtitle": "Croissance & Rendez-vous",
+  "healthTabGrowth": "📈 Croissance",
+  "healthTabAppointments": "🗓 Rendez-vous",
+  "healthNoChildTitle": "Aucun enfant enregistré",
+  "healthNoChildHint": "Ajoutez un enfant dans votre profil.",
+  "healthTabSubtitle": "Vaccins · Croissance · Rendez-vous",
+  "healthTabVaccines": "💉 Vaccins",
+  "healthTabRdv": "🗓 RDV",
+  "healthErrorWithDetail": "Erreur : {error}",
+  "@healthErrorWithDetail": {
+    "placeholders": {
+      "error": {"type": "String"}
+    }
+  },
+  "healthWeightChartTitle": "Courbe de poids",
+  "healthWhoP50": "OMS p50",
+  "healthMeasurementHistory": "Historique des mesures",
+  "healthMeasurementFab": "Mesure",
+  "healthNoMeasurementsTitle": "Aucune mesure enregistrée",
+  "healthNoMeasurementsHint": "Appuyez sur + pour ajouter\nune mesure de croissance.",
+  "healthDeleteMeasurementTitle": "Supprimer cette mesure ?",
+  "healthCancel": "Annuler",
+  "healthDelete": "Supprimer",
+  "healthNewMeasurement": "Nouvelle mesure",
+  "healthWeightKg": "Poids (kg)",
+  "healthHeightCm": "Taille (cm)",
+  "healthNotesOptional": "Notes (optionnel)",
+  "healthMeasurementSaved": "Mesure enregistrée ✓",
+  "healthSave": "Enregistrer",
+  "healthAppointmentFab": "Rendez-vous",
+  "healthNoAppointmentsTitle": "Aucun rendez-vous",
+  "healthNoAppointmentsHint": "Enregistrez les visites médicales\net les résultats de bilans.",
+  "healthDeleteAppointmentTitle": "Supprimer ce rendez-vous ?",
+  "healthNewAppointment": "Nouveau rendez-vous",
+  "healthDoctorName": "Nom du médecin",
+  "healthSpecialty": "Spécialité",
+  "healthNotesObservationsOptional": "Notes / observations (optionnel)",
+  "healthAttachPhoto": "Photo",
+  "healthAttachPdfFile": "PDF / Fichier",
+  "healthUploadingFiles": "Téléchargement des fichiers…",
+  "healthSaving": "Enregistrement…",
+  "healthAppointmentSaved": "Rendez-vous enregistré ✓",
+  "healthSaveError": "Erreur lors de l'enregistrement",
+  "healthWeightValue": "{value} kg",
+  "@healthWeightValue": {
+    "placeholders": {
+      "value": {"type": "String"}
+    }
+  },
+  "healthHeightValue": "{value} cm",
+  "@healthHeightValue": {
+    "placeholders": {
+      "value": {"type": "String"}
+    }
+  },
+  "healthChartAxisKg": "{value} kg",
+  "@healthChartAxisKg": {
+    "placeholders": {
+      "value": {"type": "String"}
+    }
+  },
+  "healthChartAxisMonths": "{value}m",
+  "@healthChartAxisMonths": {
+    "placeholders": {
+      "value": {"type": "String"}
+    }
+  },
+  "healthChartTooltip": "{weight} kg\n{months}m",
+  "@healthChartTooltip": {
+    "placeholders": {
+      "weight": {"type": "String"},
+      "months": {"type": "String"}
+    }
+  },
+  "healthChartEmptyHint": "Ajoutez une mesure\npour voir la courbe",
+  "healthApptTypeGeneraliste": "Médecin généraliste",
+  "healthApptTypePediatre": "Pédiatre",
+  "healthApptTypeDentiste": "Dentiste",
+  "healthApptTypeOphtalmologue": "Ophtalmologue",
+  "healthApptTypeCardiologue": "Cardiologue",
+  "healthApptTypeAutre": "Autre spécialiste",
+  "healthMotherTitle": "Santé Maman",
+  "healthMotherPregnancyTracking": "Suivi de grossesse",
+  "healthMotherViewMedicalInfo": "Consultez vos infos médicales",
+  "subscriptionPlansTitle": "Choisir un forfait",
+  "subscriptionPlansSubtitle": "Débloquez toutes les fonctionnalités",
+  "subscriptionPlanCurrentBadge": "Actuel",
+  "subscriptionPlanCurrentButton": "Votre forfait actuel",
+  "subscriptionPlanSelect": "Sélectionner",
+  "subscriptionPlanChoose": "Choisir ce forfait",
+  "paymentTitle": "Paiement",
+  "paymentBaridiMob": "BaridiMob",
+  "paymentMethodTitle": "Moyen de paiement",
+  "paymentMethodCib": "CIB",
+  "paymentMethodCibDescription": "Carte Interbancaire",
+  "paymentMethodEdahabia": "Edahabia",
+  "paymentMethodEdahabiaDescription": "Algérie Poste",
+  "paymentCardDetailsTitle": "Détails de la carte",
+  "paymentCardHolderLabel": "Titulaire de la carte",
+  "paymentCardNumberLabel": "Numéro de carte",
+  "paymentCardNumberHint": "0000 0000 0000 0000",
+  "paymentExpiryLabel": "Expiration",
+  "paymentExpiryHint": "MM/AA",
+  "paymentCvvLabel": "CVV",
+  "paymentCvvHint": "***",
+  "paymentPhoneHint": "0550 00 00 00",
+  "paymentSecurityNotice": "Paiement sécurisé via BaridiMob. Vos données bancaires sont protégées.",
+  "paymentConfirmButton": "Confirmer le paiement • {price} DZD",
+  "@paymentConfirmButton": {
+    "placeholders": {
+      "price": {"type": "int"}
+    }
+  },
+  "paymentPriceDzd": "{price} DZD",
+  "@paymentPriceDzd": {
+    "placeholders": {
+      "price": {"type": "int"}
+    }
+  },
+  "paymentSuccessTitle": "Paiement réussi !",
+  "paymentSuccessActivePlan": "Votre abonnement {planTitle} est maintenant actif.",
+  "@paymentSuccessActivePlan": {
+    "placeholders": {
+      "planTitle": {"type": "String"}
+    }
+  },
+  "paymentSuccessAlbumPerk": "Votre album imprimé gratuit vous attend ! Rendez-vous dans votre profil.",
+  "subscriptionAlbumClaimTitle": "Album Imprimé Gratuit",
+  "subscriptionAlbumClaimSubtitle": "Votre cadeau VIP 🎁",
+  "subscriptionAlbumClaimInfo": "En tant que membre VIP, vous recevez un album photo imprimé de vos plus beaux souvenirs. Remplissez le formulaire ci-dessous.",
+  "subscriptionAlbumClaimSubmit": "Envoyer ma demande",
+  "subscriptionAlbumClaimSubmittedTitle": "Demande envoyée !",
+  "subscriptionAlbumClaimSubmittedMessage": "Votre album imprimé sera préparé et expédié à l'adresse indiquée. Nous vous contacterons par téléphone pour confirmer.",
+  "subscriptionAlbumClaimSelectChildError": "Veuillez sélectionner un enfant",
+  "subscriptionBack": "Retour",
+  "subscriptionDiamondSponsorsTitle": "Sponsors Diamant",
+  "subscriptionDiamondPartnersHero": "Nos Partenaires Diamant",
+  "subscriptionDiamondPartnersSubtitle": "Des marques de confiance qui accompagnent\nchaque maman dans son parcours",
+  "subscriptionDiamondPillExclusive": "💎 Exclusif",
+  "subscriptionDiamondPillPremium": "⭐ Premium",
+  "subscriptionDiamondPillCertified": "✅ Certifié",
+  "subscriptionDiamondLogosSection": "Logos & Partenaires",
+  "subscriptionDiamondOfficialPartners": "Partenaires officiels de l'application Luckymam",
+  "subscriptionDiamondBadge": "Diamant",
+  "subscriptionDiamondJoinTitle": "Rejoignez nos Sponsors Diamant",
+  "subscriptionDiamondJoinSubtitle": "Atteignez des milliers de mamans algériennes.\nContactez-nous pour un partenariat Diamant.",
+  "subscriptionDiamondContactEmail": "sponsors@Luckymam.com",
+  "subscriptionDiamondPartner1Name": "Partenaire Diamant 1",
+  "subscriptionDiamondPartner1Category": "Santé & Maternité",
+  "subscriptionDiamondPartner1Description": "Leader en solutions de santé pour femmes et enfants.",
+  "subscriptionDiamondPartner2Name": "Partenaire Diamant 2",
+  "subscriptionDiamondPartner2Category": "Nutrition Infantile",
+  "subscriptionDiamondPartner2Description": "Experts en nutrition pour bébés et jeunes enfants.",
+  "subscriptionDiamondPartner3Name": "Partenaire Diamant 3",
+  "subscriptionDiamondPartner3Category": "Puériculture",
+  "subscriptionDiamondPartner3Description": "Équipements premium pour l'éveil de votre bébé.",
+  "homeMarketplaceSubtitle": "Produits bébé & maman de nos partenaires",
+  "homeHealthTitle": "Santé Enfant",
+  "homeHealthSubtitle": "Courbe de croissance · Rendez-vous médicaux",
+  "homeReelsSubtitle": "Vidéos courtes · Conseils parentaux",
+  "homeMemoryBookAlbumsCount": "{count, plural, =1{1 album auto-généré} other{{count} albums auto-générés}}",
+  "@homeMemoryBookAlbumsCount": {
+    "placeholders": {
+      "count": {"type": "int"}
+    }
+  },
+  "homeMemoryBookEmptySubtitle": "Vos souvenirs en albums",
+  "homeChildAllGood": "Tout va bien !",
+  "homeChildVaccineLabel": "Vaccin: {codes}",
+  "@homeChildVaccineLabel": {
+    "placeholders": {
+      "codes": {"type": "String"}
+    }
+  },
+  "homeYourChildren": "Vos Enfants",
+  "homeRecentCapsulesEmpty": "Créez votre première capsule!",
+  "homeVaccineCalendarTitle": "Calendrier Vaccinal",
+  "homeVaccineCalendarSubtitle": "Programme National Algérien",
+  "homeVaccineMarkComplete": "Marquer comme fait",
+  "homeVaccineDateLabel": "Date de vaccination",
+  "homeVaccineNotesHint": "Ex: Docteur Martin, clinique...",
+  "homeVaccineMarkedComplete": "Vaccin marqué comme fait ✓",
+  "homeVaccineCancelTitle": "Annuler le vaccin ?",
+  "homeVaccineCancelMessage": "Voulez-vous marquer \"{ageLabel}\" comme non fait ?",
+  "@homeVaccineCancelMessage": {
+    "placeholders": {
+      "ageLabel": {"type": "String"}
+    }
+  },
+  "homeVaccineNo": "Non",
+  "homeVaccineYesCancel": "Oui, annuler",
+  "homeVaccineNoChildrenHint": "Ajoutez un enfant dans votre profil pour voir son calendrier vaccinal.",
+  "homeLoadDataError": "Impossible de charger les données",
+  "profilePersonalInfo": "Informations Personnelles",
+  "profileMedicalInfo": "Informations Médicales",
+  "profileCurrentStatus": "Statut Actuel",
+  "profileMenstrualCycle": "Cycle Menstruel",
+  "profileMyPregnancy": "Ma Grossesse",
+  "profileMySubscription": "Mon Abonnement",
+  "profileSettings": "Paramètres",
+  "profileNotProvided": "Non renseigné",
+  "profilePhone": "Téléphone",
+  "profileBirthDate": "Date de naissance",
+  "profileWilaya": "Wilaya",
+  "profileCurrentPhase": "Phase actuelle",
+  "profileLastPregnancy": "Dernière grossesse",
+  "profileBloodType": "Groupe sanguin",
+  "profileAllergies": "Allergies",
+  "profileNoKnownAllergies": "Aucune allergie connue",
+  "profileMedicalConditions": "Conditions médicales",
+  "profileNone": "Aucune",
+  "profileDoctor": "Médecin traitant",
+  "profilePregnancyLmpPrompt": "Renseignez votre DDR pour calculer votre DPA et votre semaine d'aménorrhée.",
+  "profileLmpLabel": "DDR (dernières règles)",
+  "profileGestationalWeek": "Semaine d'aménorrhée",
+  "profileDueDateLabel": "DPA (date présumée)",
+  "profileCountdown": "Compte à rebours",
+  "profileLastPeriod": "Dernières règles",
+  "profileNextPeriod": "Prochaines règles",
+  "profileAverageDuration": "Durée moyenne",
+  "profileCycleNotActive": "Suivi du cycle non activé",
+  "profileCycleDays": "Cycle de {days} jours",
+  "@profileCycleDays": {
+    "placeholders": {
+      "days": {"type": "int"}
+    }
+  },
+  "profileFreePlan": "Forfait gratuit",
+  "profileManage": "Gérer",
+  "profileAlbumClaimSent": "Demande d'album envoyée ✓",
+  "profileClaimFreeAlbum": "Réclamer votre album imprimé gratuit 🎁",
+  "profileDarkTheme": "Thème sombre",
+  "profileLanguage": "Langue",
+  "profileNotifications": "Notifications",
+  "profileManageReminders": "Gérer les rappels",
+  "profileLogout": "Déconnexion",
+  "profileSelectLanguage": "Choisir la langue",
+  "profileLanguageFr": "Français",
+  "profileLanguageAr": "العربية",
+  "profileLanguageEn": "English",
+  "profileStatusHopeShort": "Espoir",
+  "profileLoading": "Chargement...",
+  "profileDefaultUser": "Utilisatrice",
+  "profileError": "Erreur",
+  "profileEditPersonalInfo": "Modifier mes informations",
+  "profileEditMedicalInfoTitle": "Informations médicales",
+  "profileAllergiesHint": "Allergies (séparées par virgule)",
+  "profileConditionsHint": "Conditions médicales (séparées par virgule)",
+  "profileDoctorName": "Nom du médecin",
+  "profileDoctorPhone": "Téléphone du médecin",
+  "profileEditChild": "Modifier enfant",
+  "profileFirstName": "Prénom",
+  "profileGirl": "Fille",
+  "profileBoy": "Garçon",
+  "profileBirthDateRequired": "La date de naissance est obligatoire",
+  "profileDeleteChildTitle": "Supprimer cet enfant ?",
+  "profileIrreversibleAction": "Cette action est irréversible.",
+  "profileCycleSettings": "Paramètres du cycle",
+  "profileCycleLength": "Durée du cycle",
+  "profilePeriodDuration": "Durée des règles",
+  "profileDaysCount": "{count} jours",
+  "@profileDaysCount": {
+    "placeholders": {
+      "count": {"type": "int"}
+    }
+  },
+  "profileNewCapsule": "Nouvelle capsule",
+  "profileVaccinesDone": "Vaccins faits",
+  "profileAge": "Âge",
+  "profileVaccinations": "Vaccinations",
+  "profileNoCapsulesForChild": "Aucune capsule pour {name}",
+  "@profileNoCapsulesForChild": {
+    "placeholders": {
+      "name": {"type": "String"}
+    }
+  },
+  "profileCaptureFirstMemory": "Capturez un premier souvenir !",
+  "profileMvpFooter": "MVP - {appName} {year}",
+  "@profileMvpFooter": {
+    "placeholders": {
+      "appName": {"type": "String"},
+      "year": {"type": "int"}
+    }
+  },
+  "profileGestationalWeekValue": "SA {week} / 40",
+  "@profileGestationalWeekValue": {
+    "placeholders": {
+      "week": {"type": "int"}
+    }
+  },
+  "profilePhasePeriod": "Règles",
+  "profilePhaseFollicular": "Phase Folliculaire",
+  "profilePhaseOvulatory": "Phase Ovulatoire",
+  "profilePhaseLuteal": "Phase Lutéale",
+  "profileSave": "Enregistrer",
+  "profileCancel": "Annuler",
+  "errorWithMessage": "Erreur : {error}",
+  "@errorWithMessage": {
+    "placeholders": {
+      "error": {"type": "String"}
+    }
+  },
+  "reelsTitle": "Reels Éducatifs",
+  "reelsFiltered": "Filtré : {label}",
+  "@reelsFiltered": {
+    "placeholders": {
+      "label": {"type": "String"}
+    }
+  },
+  "reelsEmptyCategory": "Aucun reel dans cette catégorie",
+  "reelsAll": "Tous",
+  "reelsSave": "Sauver",
+  "reelCategoryVaccins": "Vaccins",
+  "reelCategoryGrossesseHta": "Grossesse & HTA",
+  "reelCategoryGrossesseDiabete": "Grossesse & Diabète",
+  "reelCategorySoutien": "Soutien",
+  "reelCategorySoins": "Soins",
+  "reelCategoryNutrition": "Nutrition",
+  "adsSponsored": "Sponsorisé · {sponsor}",
+  "@adsSponsored": {
+    "placeholders": {
+      "sponsor": {"type": "String"}
+    }
+  },
+  "authLaw1807LegalRef": "Référence d'alignement légal : Loi Algérienne n° 18-07 relative à la protection des personnes physiques dans le traitement des données à caractère personnel.",
+  "authLaw1807ScrollWarning": "Veuillez faire défiler tout le texte vers le bas pour activer l'acceptation.",
+  "onboardingTitleLine1": "Des souvenirs à transmettre,",
+  "onboardingTitleLine2": "des émotions à revivre",
+  "timelineLifeBook": "Le Livre de Vie",
+  "timelineLifeBookOf": "de {name}",
+  "@timelineLifeBookOf": {
+    "placeholders": {
+      "name": {"type": "String"}
+    }
+  },
+  "timelineNoMilestonesPhase": "Aucun jalon pour cette phase",
+  "timelineMilestonesAppear": "Les jalons apparaîtront au bon moment",
+  "timelineAddChildTitle": "Ajoutez un enfant",
+  "timelineAddChildHint": "Pour voir sa timeline personnalisée",
+  "timelineStatusCompleted": "✓ Réalisé",
+  "timelineStatusOverdue": "À rattraper",
+  "timelineStatusNow": "Maintenant",
+  "timelineDueToday": "Aujourd'hui",
+  "timelineDueDaysAgo": "il y a {days}j",
+  "@timelineDueDaysAgo": {
+    "placeholders": {
+      "days": {"type": "int"}
+    }
+  },
+  "timelineDueInDays": "dans {days}j",
+  "@timelineDueInDays": {
+    "placeholders": {
+      "days": {"type": "int"}
+    }
+  },
+  "timelineDueInMonths": "dans {months} mois",
+  "@timelineDueInMonths": {
+    "placeholders": {
+      "months": {"type": "int"}
+    }
+  },
+  "timelineDueInYears": "dans {years} ans",
+  "@timelineDueInYears": {
+    "placeholders": {
+      "years": {"type": "int"}
+    }
+  },
+  "timelineDueInYearsSingular": "dans {years} an",
+  "@timelineDueInYearsSingular": {
+    "placeholders": {
+      "years": {"type": "int"}
+    }
+  },
+  "timelinePhaseCurrent": "Actuel",
+  "vaccineDetails": "Détails",
+  "vaccineCancel": "Annuler le vaccin",
+  "vaccineMarkDone": "Marquer comme fait",
+  "vaccineDoneOn": "Fait le {date}",
+  "@vaccineDoneOn": {
+    "placeholders": {
+      "date": {"type": "String"}
+    }
+  },
+  "vaccineCompleted": "Complété",
+  "vaccineOverdueDays": "En retard de {days} jours",
+  "@vaccineOverdueDays": {
+    "placeholders": {
+      "days": {"type": "int"}
+    }
+  },
+  "vaccineDueToday": "Prévu aujourd'hui",
+  "vaccineDueInDays": "Dans {days} jours",
+  "@vaccineDueInDays": {
+    "placeholders": {
+      "days": {"type": "int"}
+    }
+  },
+  "vaccineDone": "Fait",
+  "vaccineMark": "Marquer",
+  "vaccineLinkedMemoryEmoji": "Souvenir lié 🌟",
+  "authPrivacyTitle": "Confidentialité & CGU",
+  "authPrivacyHeroTitle": "Vos données nous tiennent à cœur",
+  "authPrivacyLastUpdated": "Dernière mise à jour : 1er mars 2026",
+  "authPrivacyPolicyTitle": "Politique de Confidentialité",
+  "authPrivacySection1Title": "1. Données collectées",
+  "authPrivacySection1Body": "Lorsque vous créez un compte Luckymam, nous collectons :\n\n• Votre nom et adresse e-mail\n• Votre date du terme (grossesse)\n• La date de naissance de votre bébé\n• Les informations relatives à vos enfants (prénom, date de naissance)\n• Les capsules photos et moments de vie que vous choisissez de partager\n• Les données de santé saisies volontairement (vaccins, suivi médical)",
+  "authPrivacySection2Title": "2. Utilisation de vos données",
+  "authPrivacySection2Body": "Vos données sont utilisées exclusivement pour :\n\n• Vous fournir les fonctionnalités de l'application (Timeline, Capsules, Vaccins)\n• Personnaliser votre expérience selon votre profil maternel\n• Vous envoyer des rappels et notifications pertinents\n• Améliorer nos services de manière anonyme et agrégée\n\nNous ne vendons ni ne partageons jamais vos données personnelles avec des tiers à des fins commerciales.",
+  "authPrivacySection3Title": "3. Stockage & Sécurité",
+  "authPrivacySection3Body": "Vos données sont stockées de manière sécurisée sur des serveurs Firebase (Google Cloud Platform), certifiés ISO 27001 et conformes au RGPD.\n\n• Chiffrement en transit (TLS 1.3) et au repos (AES-256)\n• Accès restreint à votre seul compte via authentification sécurisée\n• Sauvegardes automatiques chiffrées",
+  "authPrivacySection4Title": "4. Vos droits (RGPD)",
+  "authPrivacySection4Body": "Conformément au Règlement Général sur la Protection des Données, vous disposez des droits suivants :\n\n• Droit d'accès à vos données personnelles\n• Droit de rectification des données inexactes\n• Droit à l'effacement (« droit à l'oubli »)\n• Droit à la portabilité de vos données\n• Droit d'opposition au traitement\n\nPour exercer ces droits : privacy@Luckymam.com",
+  "authPrivacySection5Title": "5. Conservation des données",
+  "authPrivacySection5Body": "Vos données sont conservées tant que votre compte est actif. En cas de suppression du compte, toutes vos données personnelles sont effacées dans un délai de 30 jours.\n\nVous pouvez demander la suppression depuis : Profil → Paramètres → Supprimer mon compte.",
+  "authTermsTitle": "Conditions d'Utilisation",
+  "authTermsSection1Title": "1. Acceptation des conditions",
+  "authTermsSection1Body": "En créant un compte et en utilisant l'application Luckymam, vous acceptez les présentes conditions d'utilisation dans leur intégralité. Si vous n'acceptez pas ces conditions, veuillez ne pas utiliser l'application.",
+  "authTermsSection2Title": "2. Description du service",
+  "authTermsSection2Body": "Luckymam est une application mobile dédiée à accompagner les mamans dans leur parcours de maternité. Elle propose :\n\n• La création et conservation de capsules photo de vie\n• Le suivi de la Timeline des moments importants\n• Le suivi des vaccinations de l'enfant\n• L'accès à des Reels éducatifs sur la grossesse et la maternité\n• Des fonctionnalités premium et VIP sur abonnement",
+  "authTermsSection3Title": "3. Responsabilités",
+  "authTermsSection3Body": "Luckymam n'est pas un service médical et ne remplace pas l'avis d'un professionnel de santé. Les informations fournies (calendrier vaccinal, conseils de grossesse) sont données à titre indicatif uniquement.\n\nVous êtes responsable de la confidentialité de vos identifiants de connexion et de l'exactitude des informations que vous saisissez.",
+  "authTermsSection4Title": "4. Abonnements & Facturation",
+  "authTermsSection4Body": "Luckymam propose trois niveaux d'accès :\n\n• Gratuit : fonctionnalités de base\n• Prémium : 2 490 DA/an — accès à toutes les fonctionnalités avancées\n• VIP : 9 890 DA/an — carte VIP personnalisée + partenaires exclusifs\n\nLes abonnements sont renouvelés automatiquement. Vous pouvez annuler à tout moment depuis votre espace abonnement.",
+  "authTermsSection5Title": "5. Modifications",
+  "authTermsSection5Body": "Luckymam se réserve le droit de modifier ces conditions à tout moment. Toute modification sera notifiée par e-mail et dans l'application. L'utilisation continue de l'application après notification vaut acceptation des nouvelles conditions.",
+  "authPrivacyQuestionsTitle": "Des questions ?",
+  "authPrivacyContactEmail": "Contactez-nous à privacy@Luckymam.com",
+  "vaccineDetailProtectsAgainst": "Protège contre : {disease}",
+  "@vaccineDetailProtectsAgainst": {
+    "placeholders": {
+      "disease": {"type": "String"}
+    }
+  },
+  "vaccineDetailPurposeTitle": "À quoi sert ce vaccin ?",
+  "vaccineDetailHowItWorks": "Comment fonctionne-t-il ?",
+  "vaccineDetailSideEffects": "Effets secondaires possibles",
+  "vaccineDetailFallback": "Ce vaccin fait partie du calendrier vaccinal national algérien. Consultez votre pédiatre pour plus d'informations.",
+  "vaccineDetailDisclaimer": "Ces informations sont à titre éducatif uniquement. Consultez toujours votre médecin ou pédiatre avant toute décision médicale.",
+  "subscriptionPlanFreeTitle": "Gratuit",
+  "subscriptionPlanFreeSubtitle": "Pour commencer",
+  "subscriptionPlanFreeFeatureCapsules": "25 capsules maximum",
+  "subscriptionPlanFreeFeatureChild": "1 enfant",
+  "subscriptionPlanFreeFeatureMilestones": "Jalons de développement",
+  "subscriptionPlanFreeFeatureVaccines": "Vaccinations",
+  "subscriptionPlanPremiumTitle": "Prémium",
+  "subscriptionPlanPremiumSubtitle": "Pour les mamans actives",
+  "subscriptionPlanPremiumFeatureUnlimitedCapsules": "Capsules illimitées",
+  "subscriptionPlanPremiumFeatureAllChildren": "Tous les enfants",
+  "subscriptionPlanPremiumFeatureMemoryBook": "Livre de Mémoires",
+  "subscriptionPlanPremiumFeatureFullHealth": "Suivi de santé complet",
+  "subscriptionPlanPremiumFeatureNoAds": "Sans publicités",
+  "subscriptionPlanVipTitle": "VIP Annuel",
+  "subscriptionPlanVipSubtitle": "L'expérience complète",
+  "subscriptionPlanVipFeatureAllPremium": "Tout Prémium inclus",
+  "subscriptionPlanVipFeatureFreeAlbum": "Album imprimé OFFERT 🎁",
+  "subscriptionPlanVipFeaturePrioritySupport": "Support prioritaire",
+  "subscriptionPlanVipFeatureVipCard": "Carte VIP personnalisée",
+  "subscriptionPlanVipFeaturePartnerCard": "Utilisation de la carte VIP avec nos partenaires*",
+  "subscriptionPlanBillingPerYear": "/an",
+  "subscriptionPlanFreePrice": "Gratuit",
+  "subscriptionPlanPriceDzd": "{price} DZD",
+  "@subscriptionPlanPriceDzd": {
+    "placeholders": {
+      "price": {"type": "int"}
+    }
+  },
+  "subscriptionSnackUpgradeSuccess": "Abonnement {tier} activé !",
+  "@subscriptionSnackUpgradeSuccess": {
+    "placeholders": {
+      "tier": {"type": "String"}
+    }
+  },
+  "subscriptionSnackAlbumClaimSuccess": "Demande d'album envoyée ! Nous vous contacterons bientôt.",
+  "subscriptionSnackError": "Erreur : {details}",
+  "@subscriptionSnackError": {
+    "placeholders": {
+      "details": {"type": "String"}
+    }
+  },
+  "profileSnackPersonalInfoUpdated": "Informations mises à jour",
+  "profileSnackPhotoUpdated": "Photo de profil mise à jour",
+  "profileSnackStatusUpdated": "Statut mis à jour",
+  "profileSnackMedicalUpdated": "Informations médicales mises à jour",
+  "profileSnackCycleUpdated": "Cycle mis à jour",
+  "profileSnackPeriodLogged": "Règles enregistrées",
+  "profileSnackPregnancyLmpSaved": "Date de début de grossesse enregistrée",
+  "profileSnackChildAdded": "Enfant ajouté",
+  "profileSnackChildUpdated": "Enfant mis à jour",
+  "profileSnackChildDeleted": "Enfant supprimé",
+  "profileSnackError": "Erreur : {details}",
+  "@profileSnackError": {
+    "placeholders": {
+      "details": {"type": "String"}
+    }
+  },
+  "authErrorUnknown": "Erreur inconnue",
+  "authWelcome": "Bienvenue {name} !",
+  "@authWelcome": {
+    "placeholders": {
+      "name": {"type": "String"}
+    }
+  },
+  "notifVaccineChannelName": "Vaccinations",
+  "notifVaccineChannelDesc": "Rappels de vaccination",
+  "notifMilestoneChannelName": "Jalons",
+  "notifMilestoneChannelDesc": "Alertes étapes de développement",
+  "notifCycleChannelName": "Cycle Féminin",
+  "notifCycleChannelDesc": "Rappels du cycle féminin",
+  "notifVaccineReminderTitle": "💉 Rappel Vaccin – {childName}",
+  "@notifVaccineReminderTitle": {
+    "placeholders": {
+      "childName": {"type": "String"}
+    }
+  },
+  "notifVaccineReminderBody": "{vaccineLabel} prévu le {date}",
+  "@notifVaccineReminderBody": {
+    "placeholders": {
+      "vaccineLabel": {"type": "String"},
+      "date": {"type": "String"}
+    }
+  },
+  "notifMilestoneUpcomingTitle": "⭐ Étape à venir – {childName}",
+  "@notifMilestoneUpcomingTitle": {
+    "placeholders": {
+      "childName": {"type": "String"}
+    }
+  },
+  "notifMilestoneUpcomingBody": "\"{milestoneTitle}\" dans 7 jours",
+  "@notifMilestoneUpcomingBody": {
+    "placeholders": {
+      "milestoneTitle": {"type": "String"}
+    }
+  },
+  "notifMilestoneCustomTitle": "⏰ Rappel – {childName}",
+  "@notifMilestoneCustomTitle": {
+    "placeholders": {
+      "childName": {"type": "String"}
+    }
+  },
+  "notifMilestoneCustomBody": "\"{milestoneTitle}\" — Appuyez pour ouvrir",
+  "@notifMilestoneCustomBody": {
+    "placeholders": {
+      "milestoneTitle": {"type": "String"}
+    }
+  },
+  "notifCyclePeriodTitle": "🌸 Règles dans 2 jours",
+  "notifCyclePeriodBody": "Pensez à vous préparer pour votre prochain cycle.",
+  "notifCycleOvulationTitle": "🌿 Phase Ovulatoire demain",
+  "notifCycleOvulationBody": "Votre période de fertilité maximale commence demain.",
+  "profileAgeMonthsOnly": "{count} mois",
+  "@profileAgeMonthsOnly": {
+    "placeholders": {
+      "count": {"type": "int"}
+    }
+  },
+  "profileAgeYearsOnly": "{count, plural, =1{1 an} other{{count} ans}}",
+  "@profileAgeYearsOnly": {
+    "placeholders": {
+      "count": {"type": "int"}
+    }
+  },
+  "profileAgeYearsAndMonths": "{years, plural, =1{1 an {months} mois} other{{years} ans {months} mois}}",
+  "@profileAgeYearsAndMonths": {
+    "placeholders": {
+      "years": {"type": "int"},
+      "months": {"type": "int"}
+    }
+  },
+  "signupConsentPrefix": "En créant un compte, vous nous donnez la permission de stocker en toute sécurité votre date du terme, la date de naissance de votre bébé et toute autre donnée saisie. En continuant, vous acceptez la ",
+  "signupConsentPrivacyLink": "politique de confidentialité",
+  "signupConsentAnd": " et les ",
+  "signupConsentTermsLink": "conditions d'utilisation"
 }

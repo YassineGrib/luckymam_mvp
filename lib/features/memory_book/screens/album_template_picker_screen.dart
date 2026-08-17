@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:google_fonts/google_fonts.dart';
 
+import '../../../core/extensions/l10n_extension.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_spacing.dart';
 import '../data/album_templates_data.dart';
@@ -23,6 +23,7 @@ class AlbumTemplatePickerScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = context.l10n;
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final bgColor = isDark
         ? AppColors.backgroundDark
@@ -43,13 +44,8 @@ class AlbumTemplatePickerScreen extends ConsumerWidget {
           onPressed: () => Navigator.pop(context),
         ),
         title: Text(
-          lang == 'ar'
-              ? 'ألبوم مسبق الصنع'
-              : lang == 'en'
-                  ? 'Predefined Album'
-                  : 'Album prédéfini',
-          style: GoogleFonts.outfit(
-            fontSize: 18,
+          l10n.albumPredefinedTitle,
+          style: Theme.of(context).textTheme.titleMedium?.copyWith(
             fontWeight: FontWeight.w600,
             color: textColor,
           ),
@@ -64,12 +60,10 @@ class AlbumTemplatePickerScreen extends ConsumerWidget {
         ),
         children: [
           Text(
-            lang == 'ar'
-                ? 'اختر نموذجاً لـ $childName'
-                : lang == 'en'
-                    ? 'Choose a template for $childName'
-                    : 'Choisissez un modèle pour $childName',
-            style: GoogleFonts.outfit(fontSize: 14, color: secondaryText),
+            l10n.albumChooseTemplateFor(childName),
+            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+              color: secondaryText,
+            ),
           ),
           const SizedBox(height: AppSpacing.md),
           ...albumTemplates.map(
@@ -93,45 +87,29 @@ class AlbumTemplatePickerScreen extends ConsumerWidget {
     AlbumTemplate template,
     String lang,
   ) async {
+    final l10n = context.l10n;
+    final templateTitle = template.getTitle(lang);
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (ctx) => AlertDialog(
         title: Text(
-          lang == 'ar'
-              ? 'إنشاء « ${template.getTitle(lang)} » ؟'
-              : lang == 'en'
-                  ? 'Create "${template.getTitle(lang)}"? '
-                  : 'Créer « ${template.getTitle(lang)} » ?',
-          style: GoogleFonts.outfit(fontWeight: FontWeight.bold),
+          l10n.albumCreateTemplateConfirm(templateTitle),
+          style: Theme.of(context).textTheme.titleLarge?.copyWith(
+            fontWeight: FontWeight.bold,
+          ),
         ),
         content: Text(
-          lang == 'ar'
-              ? 'سيتم إنشاء هذا الألبوم لـ $childName مع ${template.slotCount} مناسبة لملئها.'
-              : lang == 'en'
-                  ? 'This album will be created for $childName with ${template.slotCount} events to fill.'
-                  : 'Cet album sera créé pour $childName avec ${template.slotCount} évènements à remplir.',
-          style: GoogleFonts.outfit(),
+          l10n.albumCreateTemplateDesc(childName, template.slotCount),
+          style: Theme.of(context).textTheme.bodyMedium,
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(ctx, false),
-            child: Text(
-              lang == 'ar'
-                  ? 'إلغاء'
-                  : lang == 'en'
-                      ? 'Cancel'
-                      : 'Annuler',
-            ),
+            child: Text(l10n.albumCancel),
           ),
           FilledButton(
             onPressed: () => Navigator.pop(ctx, true),
-            child: Text(
-              lang == 'ar'
-                  ? 'إنشاء'
-                  : lang == 'en'
-                      ? 'Create'
-                      : 'Créer',
-            ),
+            child: Text(l10n.albumCreate),
           ),
         ],
       ),
@@ -148,13 +126,7 @@ class AlbumTemplatePickerScreen extends ConsumerWidget {
     if (album == null) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text(
-            lang == 'ar'
-                ? 'خطأ أثناء إنشاء الألبوم'
-                : lang == 'en'
-                    ? 'Error creating the album'
-                    : 'Erreur lors de la création de l\'album',
-          ),
+          content: Text(l10n.albumCreateError),
           backgroundColor: AppColors.error,
         ),
       );
@@ -183,6 +155,7 @@ class _TemplateCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = context.l10n;
     return GestureDetector(
       onTap: onTap,
       child: Container(
@@ -220,8 +193,7 @@ class _TemplateCard extends StatelessWidget {
                 children: [
                   Text(
                     template.getTitle(lang),
-                    style: GoogleFonts.outfit(
-                      fontSize: 17,
+                    style: Theme.of(context).textTheme.titleMedium?.copyWith(
                       fontWeight: FontWeight.bold,
                       color: Colors.white,
                     ),
@@ -229,8 +201,7 @@ class _TemplateCard extends StatelessWidget {
                   const SizedBox(height: 2),
                   Text(
                     template.getSubtitle(lang),
-                    style: GoogleFonts.outfit(
-                      fontSize: 12,
+                    style: Theme.of(context).textTheme.labelSmall?.copyWith(
                       color: Colors.white.withValues(alpha: 0.85),
                     ),
                   ),
@@ -245,13 +216,8 @@ class _TemplateCard extends StatelessWidget {
                       borderRadius: BorderRadius.circular(12),
                     ),
                     child: Text(
-                      lang == 'ar'
-                          ? '${template.slotCount} مناسبات'
-                          : lang == 'en'
-                              ? '${template.slotCount} events'
-                              : '${template.slotCount} évènements',
-                      style: GoogleFonts.outfit(
-                        fontSize: 11,
+                      l10n.albumTemplateEventCount(template.slotCount),
+                      style: Theme.of(context).textTheme.labelSmall?.copyWith(
                         fontWeight: FontWeight.w600,
                         color: Colors.white,
                       ),

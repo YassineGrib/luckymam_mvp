@@ -17,7 +17,10 @@ class MarketplaceService {
           .map(MarketplaceProduct.fromFirestoreDoc)
           .whereType<MarketplaceProduct>()
           .toList();
-      products.sort((a, b) => a.name.compareTo(b.name));
+      products.sort((a, b) {
+        if (a.featured != b.featured) return a.featured ? -1 : 1;
+        return a.name.compareTo(b.name);
+      });
       return products;
     });
   }

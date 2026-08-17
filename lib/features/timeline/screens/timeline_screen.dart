@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
+import '../../../core/theme/app_typography.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:google_fonts/google_fonts.dart';
 
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_spacing.dart';
@@ -13,6 +13,7 @@ import '../services/timeline_service.dart';
 import '../widgets/timeline_rail.dart';
 import '../widgets/phase_carousel.dart';
 import 'milestone_detail_screen.dart';
+import '../../../core/extensions/l10n_extension.dart';
 import '../../../core/services/analytics_service.dart';
 import '../../../core/providers/display_provider.dart';
 import '../../../shared/widgets/page_header_with_filter.dart';
@@ -91,8 +92,8 @@ class _TimelineScreenState extends ConsumerState<TimelineScreen> {
                   children: [
                     // Header with child selector
                     PageHeaderWithFilter(
-                      title: 'Le Livre de Vie',
-                      subtitle: 'de ${selectedChild.name}',
+                      title: context.l10n.timelineLifeBook,
+                      subtitle: context.l10n.timelineLifeBookOf(selectedChild.name),
                       icon: Icons.auto_stories_rounded,
                       iconColor: primary,
                       iconGradient: null,
@@ -157,7 +158,7 @@ class _TimelineScreenState extends ConsumerState<TimelineScreen> {
 
     return allMilestonesAsync.when(
       loading: () => const Center(child: CircularProgressIndicator()),
-      error: (e, _) => Center(child: Text('Erreur: $e')),
+      error: (e, _) => Center(child: Text(context.l10n.errorWithMessage('$e'))),
       data: (allMilestones) {
         // Filter by selected phase
         final phaseMilestones = allMilestones
@@ -183,6 +184,7 @@ class _TimelineScreenState extends ConsumerState<TimelineScreen> {
     Color textColor,
     Color secondaryText,
   ) {
+    final l10n = context.l10n;
     return Center(
       child: Padding(
         padding: const EdgeInsets.all(AppSpacing.xl),
@@ -196,8 +198,8 @@ class _TimelineScreenState extends ConsumerState<TimelineScreen> {
             ),
             const SizedBox(height: AppSpacing.md),
             Text(
-              'Aucun jalon pour cette phase',
-              style: GoogleFonts.outfit(
+              l10n.timelineNoMilestonesPhase,
+              style: AppTypography.fromContext(context, 
                 fontSize: 18,
                 fontWeight: FontWeight.w600,
                 color: textColor,
@@ -205,8 +207,8 @@ class _TimelineScreenState extends ConsumerState<TimelineScreen> {
             ),
             const SizedBox(height: AppSpacing.xs),
             Text(
-              'Les jalons apparaîtront au bon moment',
-              style: GoogleFonts.outfit(fontSize: 14, color: secondaryText),
+              l10n.timelineMilestonesAppear,
+              style: AppTypography.fromContext(context, fontSize: 14, color: secondaryText),
               textAlign: TextAlign.center,
             ),
           ],
@@ -221,6 +223,7 @@ class _TimelineScreenState extends ConsumerState<TimelineScreen> {
     Color secondaryText,
     Color primary,
   ) {
+    final l10n = context.l10n;
     return Center(
       child: Padding(
         padding: const EdgeInsets.all(AppSpacing.xl),
@@ -236,8 +239,8 @@ class _TimelineScreenState extends ConsumerState<TimelineScreen> {
             ),
             const SizedBox(height: AppSpacing.md),
             Text(
-              'Ajoutez un enfant',
-              style: GoogleFonts.outfit(
+              l10n.timelineAddChildTitle,
+              style: AppTypography.fromContext(context, 
                 fontSize: 20,
                 fontWeight: FontWeight.bold,
                 color: textColor,
@@ -245,8 +248,8 @@ class _TimelineScreenState extends ConsumerState<TimelineScreen> {
             ),
             const SizedBox(height: AppSpacing.xs),
             Text(
-              'Pour voir sa timeline personnalisée',
-              style: GoogleFonts.outfit(fontSize: 14, color: secondaryText),
+              l10n.timelineAddChildHint,
+              style: AppTypography.fromContext(context, fontSize: 14, color: secondaryText),
             ),
           ],
         ),
@@ -259,6 +262,7 @@ class _TimelineScreenState extends ConsumerState<TimelineScreen> {
     Color textColor,
     Color secondaryText,
   ) {
+    final l10n = context.l10n;
     return Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -266,8 +270,8 @@ class _TimelineScreenState extends ConsumerState<TimelineScreen> {
           const Icon(Icons.error_outline, size: 48, color: AppColors.error),
           const SizedBox(height: AppSpacing.md),
           Text(
-            'Erreur de chargement',
-            style: GoogleFonts.outfit(fontSize: 18, color: textColor),
+            l10n.healthLoadingError,
+            style: AppTypography.fromContext(context, fontSize: 18, color: textColor),
           ),
         ],
       ),
@@ -292,7 +296,7 @@ class _TimelineScreenState extends ConsumerState<TimelineScreen> {
   }
 
   void _openQuickAdd(BuildContext context, Child child) {
-    final lang = Localizations.localeOf(context).languageCode;
+    final l10n = context.l10n;
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final primary = isDark ? AppColors.primaryDark : AppColors.primaryLight;
     final surface = isDark ? AppColors.surfaceDark : Colors.white;
@@ -308,7 +312,7 @@ class _TimelineScreenState extends ConsumerState<TimelineScreen> {
         borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
       ),
       builder: (_) => Padding(
-        padding: const EdgeInsets.fromLTRB(20, 16, 20, 32),
+        padding: const EdgeInsetsDirectional.fromSTEB(20, 16, 20, 32),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -326,12 +330,8 @@ class _TimelineScreenState extends ConsumerState<TimelineScreen> {
             ),
             const SizedBox(height: 20),
             Text(
-              lang == 'ar'
-                  ? 'إضافة سريعة'
-                  : lang == 'en'
-                      ? 'Quick Add'
-                      : 'Ajouter rapidement',
-              style: GoogleFonts.outfit(
+              l10n.timeline_quick_add,
+              style: AppTypography.fromContext(context, 
                 fontSize: 18,
                 fontWeight: FontWeight.bold,
                 color: textColor,
@@ -339,12 +339,8 @@ class _TimelineScreenState extends ConsumerState<TimelineScreen> {
             ),
             const SizedBox(height: 6),
             Text(
-              lang == 'ar'
-                  ? 'ماذا ترغبين في فعله؟'
-                  : lang == 'en'
-                      ? 'What would you like to do?'
-                      : 'Que souhaitez-vous faire ?',
-              style: GoogleFonts.outfit(fontSize: 13, color: secondary),
+              l10n.timeline_quick_add_prompt,
+              style: AppTypography.fromContext(context, fontSize: 13, color: secondary),
             ),
             const SizedBox(height: 20),
 
@@ -352,16 +348,8 @@ class _TimelineScreenState extends ConsumerState<TimelineScreen> {
             _QuickAddTile(
               icon: Icons.camera_alt_rounded,
               color: primary,
-              title: lang == 'ar'
-                  ? 'إنشاء كبسولة'
-                  : lang == 'en'
-                      ? 'Create a capsule'
-                      : 'Créer une capsule',
-              subtitle: lang == 'ar'
-                  ? 'وثقي ذكرى الآن'
-                  : lang == 'en'
-                      ? 'Capture a memory now'
-                      : 'Capturez un souvenir maintenant',
+              title: l10n.timeline_create_capsule,
+              subtitle: l10n.timeline_create_capsule_subtitle,
               onTap: () {
                 Navigator.pop(context);
                 AnalyticsService().logEvent('timeline_quickadd_selected',
@@ -381,16 +369,8 @@ class _TimelineScreenState extends ConsumerState<TimelineScreen> {
             _QuickAddTile(
               icon: Icons.star_rounded,
               color: Colors.orange,
-              title: lang == 'ar'
-                  ? 'تحديد جلون'
-                  : lang == 'en'
-                      ? 'Mark a milestone'
-                      : 'Marquer un jalon',
-              subtitle: lang == 'ar'
-                  ? 'افتحي جلوناً من المرحلة الحالية'
-                  : lang == 'en'
-                      ? 'Open a milestone from current phase'
-                      : 'Ouvrez un jalon de la phase actuelle',
+              title: l10n.timeline_mark_milestone,
+              subtitle: l10n.timeline_mark_milestone_subtitle,
               onTap: () {
                 Navigator.pop(context);
                 AnalyticsService().logEvent('timeline_quickadd_selected',
@@ -405,6 +385,7 @@ class _TimelineScreenState extends ConsumerState<TimelineScreen> {
   }
 
   void _openMilestonePickerSheet(BuildContext context, String childId) {
+    final l10n = context.l10n;
     final lang = Localizations.localeOf(context).languageCode;
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final surface = isDark ? AppColors.surfaceDark : Colors.white;
@@ -431,7 +412,7 @@ class _TimelineScreenState extends ConsumerState<TimelineScreen> {
         maxChildSize: 0.85,
         expand: false,
         builder: (_, scrollCtrl) => Padding(
-          padding: const EdgeInsets.fromLTRB(20, 16, 20, 32),
+          padding: const EdgeInsetsDirectional.fromSTEB(20, 16, 20, 32),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -447,12 +428,8 @@ class _TimelineScreenState extends ConsumerState<TimelineScreen> {
               ),
               const SizedBox(height: 20),
               Text(
-                lang == 'ar'
-                    ? 'الجالونات القادمة'
-                    : lang == 'en'
-                        ? 'Upcoming Milestones'
-                        : 'Jalons à venir',
-                style: GoogleFonts.outfit(
+                l10n.timeline_upcoming_milestones,
+                style: AppTypography.fromContext(context, 
                   fontSize: 18,
                   fontWeight: FontWeight.bold,
                   color: textColor,
@@ -460,7 +437,7 @@ class _TimelineScreenState extends ConsumerState<TimelineScreen> {
               ),
               Text(
                 _selectedPhase.getLabel(lang),
-                style: GoogleFonts.outfit(fontSize: 13, color: secondary),
+                style: AppTypography.fromContext(context, fontSize: 13, color: secondary),
               ),
               const SizedBox(height: 16),
               if (phaseMilestones.isEmpty)
@@ -468,12 +445,8 @@ class _TimelineScreenState extends ConsumerState<TimelineScreen> {
                   padding: const EdgeInsets.symmetric(vertical: 24),
                   child: Center(
                     child: Text(
-                      lang == 'ar'
-                          ? 'كل جالونات هذه المرحلة لديها ذكرى بالفعل ✓'
-                          : lang == 'en'
-                              ? 'All milestones in this phase already have a memory ✓'
-                              : 'Tous les jalons de cette phase ont déjà un souvenir ✓',
-                      style: GoogleFonts.outfit(fontSize: 13, color: secondary),
+                      l10n.timeline_all_milestones_have_memory,
+                      style: AppTypography.fromContext(context, fontSize: 13, color: secondary),
                       textAlign: TextAlign.center,
                     ),
                   ),
@@ -512,7 +485,7 @@ class _TimelineScreenState extends ConsumerState<TimelineScreen> {
                         ),
                         title: Text(
                           m.milestone.getTitle(lang),
-                          style: GoogleFonts.outfit(
+                          style: AppTypography.fromContext(context, 
                             fontSize: 14,
                             fontWeight: FontWeight.w600,
                             color: textColor,
@@ -520,7 +493,7 @@ class _TimelineScreenState extends ConsumerState<TimelineScreen> {
                         ),
                         subtitle: Text(
                           m.milestone.ageRange,
-                          style: GoogleFonts.outfit(
+                          style: AppTypography.fromContext(context, 
                             fontSize: 12,
                             color: secondary,
                           ),
@@ -561,12 +534,8 @@ class _TimelineScreenState extends ConsumerState<TimelineScreen> {
             const Icon(Icons.add_rounded, color: Colors.white, size: 18),
             const SizedBox(width: 4),
             Text(
-              Localizations.localeOf(context).languageCode == 'ar'
-                  ? 'إضافة'
-                  : Localizations.localeOf(context).languageCode == 'en'
-                      ? 'Add'
-                      : 'Ajouter',
-              style: GoogleFonts.outfit(
+              context.l10n.timeline_add,
+              style: AppTypography.fromContext(context, 
                 fontSize: 13,
                 fontWeight: FontWeight.w600,
                 color: Colors.white,
@@ -630,7 +599,7 @@ class _QuickAddTile extends StatelessWidget {
                 children: [
                   Text(
                     title,
-                    style: GoogleFonts.outfit(
+                    style: AppTypography.fromContext(context, 
                       fontSize: 15,
                       fontWeight: FontWeight.w600,
                       color: textColor,
@@ -639,7 +608,7 @@ class _QuickAddTile extends StatelessWidget {
                   const SizedBox(height: 2),
                   Text(
                     subtitle,
-                    style: GoogleFonts.outfit(fontSize: 12, color: secondary),
+                    style: AppTypography.fromContext(context, fontSize: 12, color: secondary),
                   ),
                 ],
               ),

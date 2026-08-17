@@ -3,8 +3,9 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:google_fonts/google_fonts.dart';
+import '../../../core/theme/app_typography.dart';
 
+import '../../../core/extensions/l10n_extension.dart';
 import '../../../core/services/analytics_service.dart';
 import '../models/house_ad.dart';
 import '../providers/ads_providers.dart';
@@ -109,6 +110,8 @@ class _InterstitialAdScreenState extends ConsumerState<InterstitialAdScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = context.l10n;
+    final lang = Localizations.localeOf(context).languageCode;
     final ad = widget.ad;
     final imageUrl = ad.safeImageUrl;
 
@@ -125,17 +128,17 @@ class _InterstitialAdScreenState extends ConsumerState<InterstitialAdScreen> {
                 ad.assetPath!,
                 fit: BoxFit.cover,
                 errorBuilder: (context, error, stackTrace) =>
-                    _gradientCreative(ad),
+                    _gradientCreative(ad, lang),
               )
             else if (imageUrl != null)
               Image.network(
                 imageUrl,
                 fit: BoxFit.cover,
                 errorBuilder: (context, error, stackTrace) =>
-                    _gradientCreative(ad),
+                    _gradientCreative(ad, lang),
               )
             else
-              _gradientCreative(ad),
+              _gradientCreative(ad, lang),
 
             // ── Top bar: sponsor badge + timer / close ───────────────
             SafeArea(
@@ -156,8 +159,8 @@ class _InterstitialAdScreenState extends ConsumerState<InterstitialAdScreen> {
                         borderRadius: BorderRadius.circular(12),
                       ),
                       child: Text(
-                        '${Localizations.localeOf(context).languageCode == 'ar' ? 'برعاية' : Localizations.localeOf(context).languageCode == 'fr' ? 'Sponsorisé' : 'Sponsored'} · ${ad.sponsorName}',
-                        style: GoogleFonts.outfit(
+                        l10n.adsSponsored(ad.getSponsorName(lang)),
+                        style: AppTypography.fromContext(context,
                           fontSize: 12,
                           fontWeight: FontWeight.w600,
                           color: Colors.white,
@@ -192,7 +195,7 @@ class _InterstitialAdScreenState extends ConsumerState<InterstitialAdScreen> {
                             child: Center(
                               child: Text(
                                 '$_remaining',
-                                style: GoogleFonts.outfit(
+                                style: AppTypography.fromContext(context,
                                   fontSize: 15,
                                   fontWeight: FontWeight.bold,
                                   color: Colors.white,
@@ -206,7 +209,7 @@ class _InterstitialAdScreenState extends ConsumerState<InterstitialAdScreen> {
             ),
 
             // ── Bottom CTA ───────────────────────────────────────────
-            if (ad.ctaLabel != null)
+            if (ad.getCtaLabel(lang) != null)
               Positioned(
                 left: 24,
                 right: 24,
@@ -224,8 +227,8 @@ class _InterstitialAdScreenState extends ConsumerState<InterstitialAdScreen> {
                       ),
                     ),
                     child: Text(
-                      ad.ctaLabel!,
-                      style: GoogleFonts.outfit(
+                      ad.getCtaLabel(lang)!,
+                      style: AppTypography.fromContext(context,
                         fontSize: 15,
                         fontWeight: FontWeight.bold,
                       ),
@@ -239,7 +242,7 @@ class _InterstitialAdScreenState extends ConsumerState<InterstitialAdScreen> {
     );
   }
 
-  Widget _gradientCreative(HouseAd ad) {
+  Widget _gradientCreative(HouseAd ad, String lang) {
     return Container(
       decoration: BoxDecoration(
         gradient: LinearGradient(
@@ -257,9 +260,9 @@ class _InterstitialAdScreenState extends ConsumerState<InterstitialAdScreen> {
               Text(ad.emoji, style: const TextStyle(fontSize: 72)),
               const SizedBox(height: 24),
               Text(
-                ad.title,
+                ad.getTitle(lang),
                 textAlign: TextAlign.center,
-                style: GoogleFonts.outfit(
+                style: AppTypography.fromContext(context,
                   fontSize: 28,
                   fontWeight: FontWeight.bold,
                   color: Colors.white,
@@ -268,9 +271,9 @@ class _InterstitialAdScreenState extends ConsumerState<InterstitialAdScreen> {
               ),
               const SizedBox(height: 12),
               Text(
-                ad.subtitle,
+                ad.getSubtitle(lang),
                 textAlign: TextAlign.center,
-                style: GoogleFonts.outfit(
+                style: AppTypography.fromContext(context,
                   fontSize: 15,
                   color: Colors.white.withValues(alpha: 0.9),
                   height: 1.5,

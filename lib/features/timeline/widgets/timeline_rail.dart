@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
+import '../../../core/theme/app_typography.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 
+import '../../../core/extensions/l10n_extension.dart';
 import '../../../core/theme/app_colors.dart';
+import '../../../l10n/app_localizations.dart';
 import '../../../core/theme/app_spacing.dart';
 import '../models/milestone.dart';
 import '../models/phase.dart';
@@ -229,8 +231,8 @@ Widget _completedIcon(double size) {
           size: size * 0.55,
         ),
       ),
-      Positioned(
-        right: 0,
+      PositionedDirectional(
+        end: 0,
         bottom: 0,
         child: Container(
           width: size * 0.38,
@@ -250,24 +252,29 @@ Widget _completedIcon(double size) {
   );
 }
 
-Widget _buildStatusBadge(_NodeStatus status, Phase phase) {
+Widget _buildStatusBadge(
+  BuildContext context,
+  _NodeStatus status,
+  Phase phase,
+  AppLocalizations l10n,
+) {
   String label;
   Color bgColor;
   Color textColor;
 
   switch (status) {
     case _NodeStatus.completed:
-      label = '✓ Réalisé';
+      label = l10n.timelineStatusCompleted;
       bgColor = AppColors.success.withValues(alpha: 0.15);
       textColor = AppColors.success;
       break;
     case _NodeStatus.overdue:
-      label = 'À rattraper';
+      label = l10n.timelineStatusOverdue;
       bgColor = AppColors.error.withValues(alpha: 0.12);
       textColor = AppColors.error;
       break;
     case _NodeStatus.current:
-      label = 'Maintenant';
+      label = l10n.timelineStatusNow;
       bgColor = phase.color.withValues(alpha: 0.12);
       textColor = phase.color;
       break;
@@ -283,7 +290,7 @@ Widget _buildStatusBadge(_NodeStatus status, Phase phase) {
     ),
     child: Text(
       label,
-      style: GoogleFonts.outfit(
+      style: AppTypography.fromContext(context, 
         fontSize: 10,
         fontWeight: FontWeight.w700,
         color: textColor,
@@ -292,19 +299,21 @@ Widget _buildStatusBadge(_NodeStatus status, Phase phase) {
   );
 }
 
-String _formatDue(MilestoneWithDueDate m) {
+String _formatDue(MilestoneWithDueDate m, AppLocalizations l10n) {
   if (m.dueDate == null) return '';
   final now = DateTime.now();
   final diff = m.dueDate!.difference(now).inDays;
-  if (diff.abs() < 1) return "Aujourd'hui";
-  if (diff < 0) return 'il y a ${-diff}j';
-  if (diff <= 30) return 'dans ${diff}j';
+  if (diff.abs() < 1) return l10n.timelineDueToday;
+  if (diff < 0) return l10n.timelineDueDaysAgo(-diff);
+  if (diff <= 30) return l10n.timelineDueInDays(diff);
   if (diff <= 365) {
     final months = (diff / 30).round();
-    return 'dans $months mois';
+    return l10n.timelineDueInMonths(months);
   }
   final years = (diff / 365).round();
-  return 'dans $years an${years > 1 ? 's' : ''}';
+  return years > 1
+      ? l10n.timelineDueInYears(years)
+      : l10n.timelineDueInYearsSingular(years);
 }
 
 String _formatCompletedDate(DateTime date) {
@@ -587,10 +596,12 @@ class _MilestoneCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = context.l10n;
+    final lang = Localizations.localeOf(context).languageCode;
     return Container(
       width: width,
-      margin: EdgeInsets.only(
-        right: isHorizontal ? 16 : 0,
+      margin: EdgeInsetsDirectional.only(
+        end: isHorizontal ? 16 : 0,
         top: isHorizontal ? 0 : 6,
         bottom: isHorizontal ? 0 : 6,
       ),
@@ -646,7 +657,7 @@ class _MilestoneCard extends StatelessWidget {
                 ),
               ),
               const Spacer(),
-              _buildStatusBadge(status, phase),
+              _buildStatusBadge(context, status, phase, l10n),
             ],
           ),
 
@@ -654,8 +665,8 @@ class _MilestoneCard extends StatelessWidget {
 
           // Title — clean, no strikethrough
           Text(
-            m.titleFr,
-            style: GoogleFonts.outfit(
+            m.getTitle(lang),
+            style: AppTypography.fromContext(context, 
               fontSize: 13,
               fontWeight: FontWeight.w700,
               color: isCompleted ? subtitleColor : titleColor,
@@ -668,8 +679,8 @@ class _MilestoneCard extends StatelessWidget {
 
           // Description
           Text(
-            m.descriptionFr,
-            style: GoogleFonts.outfit(
+            m.getDescription(lang),
+            style: AppTypography.fromContext(context, 
               fontSize: 11,
               color: subtitleColor,
               height: 1.3,
@@ -691,7 +702,7 @@ class _MilestoneCard extends StatelessWidget {
                 ),
                 child: Text(
                   m.ageRange,
-                  style: GoogleFonts.outfit(
+                  style: AppTypography.fromContext(context, 
                     fontSize: 10,
                     fontWeight: FontWeight.w600,
                     color: phase.color,
@@ -712,7 +723,7 @@ class _MilestoneCard extends StatelessWidget {
                           Expanded(
                             child: Text(
                               _formatCompletedDate(milestone.completedAt!),
-                              style: GoogleFonts.outfit(
+                              style: AppTypography.fromContext(context, 
                                 fontSize: 10,
                                 color: AppColors.success,
                                 fontWeight: FontWeight.w600,
@@ -724,8 +735,8 @@ class _MilestoneCard extends StatelessWidget {
                       )
                     : milestone.dueDate != null
                     ? Text(
-                        _formatDue(milestone),
-                        style: GoogleFonts.outfit(
+                        _formatDue(milestone, l10n),
+                        style: AppTypography.fromContext(context, 
                           fontSize: 10,
                           color: isOverdue ? AppColors.error : subtitleColor,
                           fontWeight: isOverdue
@@ -759,8 +770,8 @@ class _MilestoneCard extends StatelessWidget {
                   ),
                   const SizedBox(width: 4),
                   Text(
-                    'Capturer',
-                    style: GoogleFonts.outfit(
+                    l10n.milestone_capture,
+                    style: AppTypography.fromContext(context, 
                       fontSize: 11,
                       fontWeight: FontWeight.w600,
                       color: Colors.white,
@@ -794,8 +805,8 @@ class _MilestoneCard extends StatelessWidget {
                   ),
                   const SizedBox(width: 4),
                   Text(
-                    'Voir la capsule',
-                    style: GoogleFonts.outfit(
+                    l10n.milestone_view_capsule,
+                    style: AppTypography.fromContext(context, 
                       fontSize: 11,
                       fontWeight: FontWeight.w600,
                       color: AppColors.success,

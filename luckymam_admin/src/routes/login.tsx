@@ -22,6 +22,7 @@ import { useI18n } from "@/i18n";
 import "@/i18n/pages/login";
 import { signInWithEmailAndPassword, signOut, sendPasswordResetEmail } from "firebase/auth";
 import { auth } from "@/lib/firebase";
+import luckymamLogo from "@/assets/luckymam-logo.svg";
 
 export const Route = createFileRoute("/login")({
   validateSearch: (search: Record<string, unknown>) => ({
@@ -96,22 +97,32 @@ function LoginPage() {
   }
 
   return (
-    <div
-      dir="rtl"
-      className="min-h-screen w-full bg-gradient-to-br from-cherry-50 via-background to-blush-50 flex items-center justify-center p-4 lg:p-8"
-    >
-      <div className="w-full max-w-[1400px] grid grid-cols-1 lg:grid-cols-2 rounded-[32px] overflow-hidden bg-card shadow-2xl shadow-cherry-600/10 border border-border/60 min-h-[640px]">
-        {/* LEFT: Brand / Story panel */}
-        <aside className="relative hidden lg:flex flex-col justify-between p-12 bg-gradient-to-br from-cherry-600 via-cherry-500 to-cherry-700 text-white overflow-hidden">
-          {/* decorative blobs */}
-          <div className="pointer-events-none absolute -top-20 -left-20 size-80 rounded-full bg-white/10 blur-3xl" />
-          <div className="pointer-events-none absolute bottom-0 -right-16 size-96 rounded-full bg-blush-300/25 blur-3xl" />
-          <div className="pointer-events-none absolute inset-0 opacity-[0.07] [background-image:radial-gradient(circle_at_1px_1px,white_1px,transparent_0)] [background-size:22px_22px]" />
+    <div className="min-h-screen w-full bg-gradient-to-br from-cherry-50 via-background to-blush-50 flex items-center justify-center p-4 lg:p-8">
+      <div
+        dir="rtl"
+        className="w-full max-w-[1400px] grid grid-cols-1 lg:grid-cols-2 rounded-[32px] overflow-hidden bg-card shadow-2xl shadow-cherry-600/10 border border-border/60 min-h-[640px]"
+      >
+        {/* Brand / Story panel — visually on the right in RTL */}
+        <aside className="relative hidden lg:flex flex-col justify-between p-12 bg-cherry-600 text-white overflow-hidden">
+          <div
+            className="pointer-events-none absolute inset-0 login-brand-pattern-overlay"
+            aria-hidden
+          />
+          <div
+            className="pointer-events-none absolute -bottom-28 -left-20 size-[440px] opacity-[0.12]"
+            aria-hidden
+          >
+            <img src={luckymamLogo} alt="" className="size-full object-contain brightness-0 invert" />
+          </div>
 
           {/* top: logo */}
-          <div className="relative flex items-center gap-3">
-            <div className="size-12 rounded-2xl bg-white/15 backdrop-blur grid place-items-center font-display font-extrabold text-2xl border border-white/25">
-              L
+          <div className="relative z-10 flex items-center gap-3">
+            <div className="size-12 shrink-0 rounded-2xl bg-white grid place-items-center p-2 shadow-lg shadow-cherry-900/30 ring-1 ring-white/50">
+              <img
+                src={luckymamLogo}
+                alt="Luckymam"
+                className="size-full object-contain"
+              />
             </div>
             <div>
               <div className="font-display font-extrabold text-2xl leading-none">
@@ -124,17 +135,17 @@ function LoginPage() {
           </div>
 
           {/* middle: headline */}
-          <div className="relative space-y-6 max-w-md">
+          <div className="relative z-10 space-y-6 max-w-md">
             <div className="inline-flex items-center gap-2 rounded-full bg-white/15 backdrop-blur px-3 py-1.5 text-xs border border-white/20">
               <Sparkles className="size-3.5" />
               {tr("لوحة تحكم الإصدار 2026")}
             </div>
-            <h1 className="font-display font-extrabold text-4xl xl:text-5xl leading-[1.15] tracking-tight">
+            <h1 className="font-display font-extrabold text-4xl xl:text-5xl leading-[1.15] tracking-tight text-white">
               {tr("مرحبا بعودتك،")}
               <br />
               <span className="text-blush-100">{tr("قائدة الاستوديو ✨")}</span>
             </h1>
-            <p className="text-white/85 text-[15px] leading-relaxed">
+            <p className="text-white/90 text-[15px] leading-relaxed">
               {tr("أدر طلبات الطباعة، ألبومات VIP، اشتراكات المستخدمين، ومحتوى الريلز من واجهة واحدة أنيقة وسريعة.")}
             </p>
 
@@ -148,7 +159,7 @@ function LoginPage() {
           </div>
 
           {/* bottom: secure badge */}
-          <div className="relative space-y-4">
+          <div className="relative z-10 space-y-4">
             <div className="grid grid-cols-1 gap-3 text-sm text-white/90">
               <FeaturePill icon={ShieldCheck} label={tr("مصادقة Firebase + claim admin")} />
               <FeaturePill icon={Sparkles} label={tr("مزامنة لحظية مع Firestore")} />
@@ -164,8 +175,12 @@ function LoginPage() {
         <section className="relative flex flex-col justify-center p-8 sm:p-12 lg:p-16">
           {/* mobile mini logo */}
           <div className="lg:hidden flex items-center gap-2 mb-8">
-            <div className="size-10 rounded-xl bg-cherry-600 text-white grid place-items-center font-display font-extrabold">
-              L
+            <div className="size-10 shrink-0 rounded-xl bg-white grid place-items-center p-1.5 shadow-sm shadow-cherry-600/20 ring-1 ring-cherry-100">
+              <img
+                src={luckymamLogo}
+                alt="Luckymam"
+                className="size-full object-contain"
+              />
             </div>
             <div className="font-display font-extrabold text-lg text-cherry-600">
               Luckymam Admin
@@ -343,9 +358,9 @@ function FeaturePill({
   label: string;
 }) {
   return (
-    <div className="flex items-center gap-2 rounded-xl bg-white/10 backdrop-blur border border-white/15 px-3 py-2.5 text-sm">
-      <Icon className="size-4 opacity-90" />
-      <span>{label}</span>
+    <div className="flex items-center gap-2 rounded-xl bg-white/15 border border-white/20 px-3 py-2.5 text-sm text-white shadow-sm shadow-cherry-900/10">
+      <Icon className="size-4 shrink-0 text-white/90" />
+      <span className="leading-snug">{label}</span>
     </div>
   );
 }

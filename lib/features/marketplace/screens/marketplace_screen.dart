@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
+import '../../../core/theme/app_typography.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:google_fonts/google_fonts.dart';
 
+import '../../../core/extensions/l10n_extension.dart';
 import '../../../core/services/analytics_service.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_spacing.dart';
@@ -29,6 +30,7 @@ class _MarketplaceScreenState extends ConsumerState<MarketplaceScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = context.l10n;
     final lang = Localizations.localeOf(context).languageCode;
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final bgColor = isDark
@@ -41,6 +43,7 @@ class _MarketplaceScreenState extends ConsumerState<MarketplaceScreen> {
 
     final products = ref.watch(filteredProductsProvider);
     final selectedCategory = ref.watch(selectedProductCategoryProvider);
+    final isLoading = ref.watch(marketplaceCatalogLoadingProvider);
 
     return Scaffold(
       backgroundColor: bgColor,
@@ -49,13 +52,13 @@ class _MarketplaceScreenState extends ConsumerState<MarketplaceScreen> {
           children: [
             // ── Header ────────────────────────────────────────────────
             Padding(
-              padding: const EdgeInsets.fromLTRB(8, 12, 20, 8),
+              padding: const EdgeInsetsDirectional.fromSTEB(8, 12, 20, 8),
               child: Row(
                 children: [
                   IconButton(
                     onPressed: () => Navigator.pop(context),
                     icon: Icon(
-                      Icons.arrow_back_ios_new_rounded,
+                      Icons.arrow_back,
                       color: textColor,
                     ),
                   ),
@@ -79,20 +82,16 @@ class _MarketplaceScreenState extends ConsumerState<MarketplaceScreen> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          'Marketplace',
-                          style: GoogleFonts.outfit(
+                          l10n.marketplaceTitle,
+                          style: AppTypography.fromContext(context, 
                             fontSize: 20,
                             fontWeight: FontWeight.bold,
                             color: textColor,
                           ),
                         ),
                         Text(
-                          lang == 'ar'
-                              ? 'منتجات شركائنا الموثوقين'
-                              : lang == 'en'
-                                  ? 'Products from our partners'
-                                  : 'Produits de nos partenaires',
-                          style: GoogleFonts.outfit(
+                          l10n.marketplaceSubtitle,
+                          style: AppTypography.fromContext(context, 
                             fontSize: 13,
                             color: secondaryText,
                           ),
@@ -101,11 +100,7 @@ class _MarketplaceScreenState extends ConsumerState<MarketplaceScreen> {
                     ),
                   ),
                   IconButton(
-                    tooltip: lang == 'ar'
-                        ? 'طلباتي'
-                        : lang == 'en'
-                            ? 'My orders'
-                            : 'Mes commandes',
+                    tooltip: l10n.marketplaceMyOrders,
                     onPressed: () => Navigator.of(context).push(
                       MaterialPageRoute(
                         builder: (_) => const MyOrdersScreen(),
@@ -116,7 +111,7 @@ class _MarketplaceScreenState extends ConsumerState<MarketplaceScreen> {
                       color: secondaryText,
                     ),
                   ),
-                  _CartButton(textColor: textColor, lang: lang),
+                  _CartButton(textColor: textColor, tooltip: l10n.marketplaceMyCart),
                 ],
               ),
             ),
@@ -131,7 +126,7 @@ class _MarketplaceScreenState extends ConsumerState<MarketplaceScreen> {
                 ),
                 children: [
                   _CategoryChip(
-                    label: lang == 'ar' ? 'الكل' : lang == 'en' ? 'All' : 'Tous',
+                    label: l10n.marketplaceAllCategories,
                     icon: Icons.apps_rounded,
                     color: AppColors.magentaPink,
                     isSelected: selectedCategory == null,
@@ -160,10 +155,12 @@ class _MarketplaceScreenState extends ConsumerState<MarketplaceScreen> {
 
             // ── Product grid ──────────────────────────────────────────
             Expanded(
-              child: products.isEmpty
-                  ? _buildEmptyState(textColor, secondaryText, lang)
+              child: isLoading
+                  ? const Center(child: CircularProgressIndicator())
+                  : products.isEmpty
+                  ? _buildEmptyState(secondaryText, l10n.marketplaceNoProducts)
                   : GridView.builder(
-                      padding: const EdgeInsets.fromLTRB(
+                      padding: const EdgeInsetsDirectional.fromSTEB(
                         AppSpacing.screenPaddingH,
                         AppSpacing.xs,
                         AppSpacing.screenPaddingH,
@@ -200,7 +197,7 @@ class _MarketplaceScreenState extends ConsumerState<MarketplaceScreen> {
     );
   }
 
-  Widget _buildEmptyState(Color textColor, Color secondaryText, String lang) {
+  Widget _buildEmptyState(Color secondaryText, String message) {
     return Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -212,12 +209,8 @@ class _MarketplaceScreenState extends ConsumerState<MarketplaceScreen> {
           ),
           const SizedBox(height: AppSpacing.md),
           Text(
-            lang == 'ar'
-                ? 'لا توجد منتجات في هذه الفئة'
-                : lang == 'en'
-                    ? 'No products in this category'
-                    : 'Aucun produit dans cette catégorie',
-            style: GoogleFonts.outfit(fontSize: 15, color: secondaryText),
+            message,
+            style: AppTypography.fromContext(context, fontSize: 15, color: secondaryText),
           ),
         ],
       ),
@@ -227,10 +220,10 @@ class _MarketplaceScreenState extends ConsumerState<MarketplaceScreen> {
 
 /// Cart icon with a live item-count badge.
 class _CartButton extends ConsumerWidget {
-  const _CartButton({required this.textColor, required this.lang});
+  const _CartButton({required this.textColor, required this.tooltip});
 
   final Color textColor;
-  final String lang;
+  final String tooltip;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -240,11 +233,7 @@ class _CartButton extends ConsumerWidget {
       clipBehavior: Clip.none,
       children: [
         IconButton(
-          tooltip: lang == 'ar'
-              ? 'سلتي'
-              : lang == 'en'
-                  ? 'My cart'
-                  : 'Mon panier',
+          tooltip: tooltip,
           onPressed: () => Navigator.of(
             context,
           ).push(MaterialPageRoute(builder: (_) => const CartScreen())),
@@ -264,7 +253,7 @@ class _CartButton extends ConsumerWidget {
               child: Center(
                 child: Text(
                   '$count',
-                  style: GoogleFonts.outfit(
+                  style: AppTypography.fromContext(context, 
                     fontSize: 10,
                     fontWeight: FontWeight.bold,
                     color: Colors.white,
@@ -301,7 +290,7 @@ class _CategoryChip extends StatelessWidget {
       onTap: onTap,
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 200),
-        margin: const EdgeInsets.only(right: 8),
+        margin: const EdgeInsetsDirectional.only(end: 8),
         padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
         decoration: BoxDecoration(
           color: isSelected
@@ -336,7 +325,7 @@ class _CategoryChip extends StatelessWidget {
             const SizedBox(width: 5),
             Text(
               label,
-              style: GoogleFonts.outfit(
+              style: AppTypography.fromContext(context, 
                 fontSize: 12,
                 fontWeight: isSelected ? FontWeight.w700 : FontWeight.w500,
                 color: isSelected
@@ -368,7 +357,8 @@ class _ProductCard extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final partner = ref.watch(partnerByIdProvider(product.partnerId));
+    final lang = Localizations.localeOf(context).languageCode;
+    final vendorLabel = ref.watch(productVendorLabelProvider(product));
     final categoryColor = product.category.color;
     final imageUrl = product.safeImageUrl;
 
@@ -417,8 +407,8 @@ class _ProductCard extends ConsumerWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    product.name,
-                    style: GoogleFonts.outfit(
+                    product.displayName(lang),
+                    style: AppTypography.fromContext(context, 
                       fontSize: 13,
                       fontWeight: FontWeight.w600,
                       color: textColor,
@@ -428,16 +418,15 @@ class _ProductCard extends ConsumerWidget {
                     overflow: TextOverflow.ellipsis,
                   ),
                   const SizedBox(height: 4),
-                  if (partner != null)
-                    Text(
-                      partner.name,
-                      style: GoogleFonts.outfit(
-                        fontSize: 11,
-                        color: secondaryText,
-                      ),
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
+                  Text(
+                    vendorLabel,
+                    style: AppTypography.fromContext(context, 
+                      fontSize: 11,
+                      color: secondaryText,
                     ),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
                   const SizedBox(height: 6),
                   Container(
                     padding: const EdgeInsets.symmetric(
@@ -450,7 +439,7 @@ class _ProductCard extends ConsumerWidget {
                     ),
                     child: Text(
                       product.formattedPrice,
-                      style: GoogleFonts.outfit(
+                      style: AppTypography.fromContext(context, 
                         fontSize: 12,
                         fontWeight: FontWeight.w700,
                         color: categoryColor,

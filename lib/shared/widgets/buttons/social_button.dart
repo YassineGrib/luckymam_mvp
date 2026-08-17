@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
+import '../../../core/theme/app_typography.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_theme.dart';
 
@@ -75,7 +75,7 @@ class SocialButton extends StatelessWidget {
                 const SizedBox(width: 12),
                 Text(
                   text,
-                  style: GoogleFonts.outfit(
+                  style: AppTypography.fromContext(context, 
                     fontSize: 14,
                     fontWeight: FontWeight.w500,
                     color: textColor,

@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 
+import '../../../core/extensions/l10n_extension.dart';
+import '../../../core/extensions/profile_l10n_extension.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_spacing.dart';
 import '../../../shared/widgets/app_logo.dart';
@@ -12,6 +13,7 @@ import '../capsules/screens/create_capsule_screen.dart';
 import 'models/profile_models.dart';
 import '../timeline/screens/timeline_screen.dart';
 import '../vaccines/providers/vaccine_providers.dart';
+import '../../core/theme/app_typography.dart';
 
 /// Rich profile page for an individual child.
 class ChildProfileScreen extends ConsumerWidget {
@@ -21,6 +23,7 @@ class ChildProfileScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = context.l10n;
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final bgColor = isDark
         ? AppColors.backgroundDark
@@ -63,7 +66,7 @@ class ChildProfileScreen extends ConsumerWidget {
                   Icons.add_a_photo_rounded,
                   color: Colors.white,
                 ),
-                tooltip: 'Nouvelle capsule',
+                tooltip: l10n.profileNewCapsule,
               ),
             ],
           ),
@@ -71,7 +74,7 @@ class ChildProfileScreen extends ConsumerWidget {
           // ── Quick Stats ──────────────────────────────────────────────
           SliverToBoxAdapter(
             child: Padding(
-              padding: const EdgeInsets.fromLTRB(
+              padding: const EdgeInsetsDirectional.fromSTEB(
                 AppSpacing.screenPaddingH,
                 AppSpacing.md,
                 AppSpacing.screenPaddingH,
@@ -82,7 +85,7 @@ class ChildProfileScreen extends ConsumerWidget {
                   _StatCard(
                     icon: Icons.photo_library_rounded,
                     color: primary,
-                    label: 'Capsules',
+                    label: l10n.capsule,
                     value:
                         capsulesAsync.whenOrNull(
                           data: (list) => '${list.length}',
@@ -96,7 +99,7 @@ class ChildProfileScreen extends ConsumerWidget {
                   _StatCard(
                     icon: Icons.vaccines_rounded,
                     color: AppColors.success,
-                    label: 'Vaccins faits',
+                    label: l10n.profileVaccinesDone,
                     value:
                         vaccinesAsync.whenOrNull(
                           data: (list) =>
@@ -111,8 +114,8 @@ class ChildProfileScreen extends ConsumerWidget {
                   _StatCard(
                     icon: Icons.cake_rounded,
                     color: AppColors.goldenrod,
-                    label: 'Âge',
-                    value: child.ageString,
+                    label: l10n.profileAge,
+                    value: child.localizedAgeString(l10n),
                     surface: surface,
                     textColor: textColor,
                     secondaryText: secondaryText,
@@ -125,7 +128,7 @@ class ChildProfileScreen extends ConsumerWidget {
           // ── CTA Buttons ──────────────────────────────────────────────
           SliverToBoxAdapter(
             child: Padding(
-              padding: const EdgeInsets.fromLTRB(
+              padding: const EdgeInsetsDirectional.fromSTEB(
                 AppSpacing.screenPaddingH,
                 AppSpacing.md,
                 AppSpacing.screenPaddingH,
@@ -136,7 +139,7 @@ class ChildProfileScreen extends ConsumerWidget {
                   Expanded(
                     child: _CtaButton(
                       icon: Icons.timeline_rounded,
-                      label: 'Timeline',
+                      label: l10n.navTimeline,
                       color: genderColor,
                       onTap: () => _openTimeline(context),
                     ),
@@ -145,7 +148,7 @@ class ChildProfileScreen extends ConsumerWidget {
                   Expanded(
                     child: _CtaButton(
                       icon: Icons.add_a_photo_rounded,
-                      label: 'Capsule',
+                      label: l10n.capsule,
                       color: primary,
                       onTap: () => _createCapsule(context),
                     ),
@@ -158,7 +161,7 @@ class ChildProfileScreen extends ConsumerWidget {
           // ── Capsules Section ─────────────────────────────────────────
           SliverToBoxAdapter(
             child: Padding(
-              padding: const EdgeInsets.fromLTRB(
+              padding: const EdgeInsetsDirectional.fromSTEB(
                 AppSpacing.screenPaddingH,
                 AppSpacing.lg,
                 AppSpacing.screenPaddingH,
@@ -169,12 +172,8 @@ class ChildProfileScreen extends ConsumerWidget {
                   Icon(Icons.photo_library_rounded, size: 18, color: primary),
                   const SizedBox(width: 8),
                   Text(
-                    'Mes Souvenirs',
-                    style: GoogleFonts.outfit(
-                      fontSize: 17,
-                      fontWeight: FontWeight.bold,
-                      color: textColor,
-                    ),
+                    l10n.dashboardMyMemories,
+                    style: AppTypography.fromContext(context, fontSize: 17, fontWeight: FontWeight.bold, color: textColor),
                   ),
                 ],
               ),
@@ -190,11 +189,11 @@ class ChildProfileScreen extends ConsumerWidget {
                 return SliverToBoxAdapter(
                   child: _EmptyState(
                     icon: Icons.photo_camera_rounded,
-                    label: 'Aucune capsule pour ${child.name}',
-                    sub: 'Capturez un premier souvenir !',
+                    label: l10n.profileNoCapsulesForChild(child.name),
+                    sub: l10n.profileCaptureFirstMemory,
                     color: primary,
                     onAction: () => _createCapsule(context),
-                    actionLabel: 'Capturer',
+                    actionLabel: l10n.milestone_capture,
                   ),
                 );
               }
@@ -275,7 +274,7 @@ class ChildProfileScreen extends ConsumerWidget {
           // ── Vaccines Section ─────────────────────────────────────────
           SliverToBoxAdapter(
             child: Padding(
-              padding: const EdgeInsets.fromLTRB(
+              padding: const EdgeInsetsDirectional.fromSTEB(
                 AppSpacing.screenPaddingH,
                 AppSpacing.lg,
                 AppSpacing.screenPaddingH,
@@ -290,12 +289,8 @@ class ChildProfileScreen extends ConsumerWidget {
                   ),
                   const SizedBox(width: 8),
                   Text(
-                    'Vaccinations',
-                    style: GoogleFonts.outfit(
-                      fontSize: 17,
-                      fontWeight: FontWeight.bold,
-                      color: textColor,
-                    ),
+                    l10n.profileVaccinations,
+                    style: AppTypography.fromContext(context, fontSize: 17, fontWeight: FontWeight.bold, color: textColor),
                   ),
                 ],
               ),
@@ -365,18 +360,11 @@ class ChildProfileScreen extends ConsumerWidget {
                               children: [
                                 Text(
                                   v.group.vaccineCodesLabel,
-                                  style: GoogleFonts.outfit(
-                                    fontSize: 13,
-                                    fontWeight: FontWeight.w600,
-                                    color: textColor,
-                                  ),
+                                  style: AppTypography.fromContext(context, fontSize: 13, fontWeight: FontWeight.w600, color: textColor),
                                 ),
                                 Text(
                                   v.group.ageFr,
-                                  style: GoogleFonts.outfit(
-                                    fontSize: 11,
-                                    color: secondaryText,
-                                  ),
+                                  style: Theme.of(context).textTheme.labelSmall?.copyWith(color: secondaryText),
                                 ),
                               ],
                             ),
@@ -386,11 +374,7 @@ class ChildProfileScreen extends ConsumerWidget {
                               DateFormat(
                                 'dd/MM/yy',
                               ).format(v.status!.completedAt!),
-                              style: GoogleFonts.outfit(
-                                fontSize: 11,
-                                color: AppColors.success,
-                                fontWeight: FontWeight.w600,
-                              ),
+                              style: Theme.of(context).textTheme.labelSmall?.copyWith(fontWeight: FontWeight.w600, color: AppColors.success),
                             ),
                         ],
                       ),
@@ -452,6 +436,7 @@ class _HeroHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = context.l10n;
     return Container(
       decoration: BoxDecoration(
         gradient: LinearGradient(
@@ -484,7 +469,7 @@ class _HeroHeader extends StatelessWidget {
           ),
           // Content
           Padding(
-            padding: const EdgeInsets.fromLTRB(24, 80, 24, 24),
+            padding: const EdgeInsetsDirectional.fromSTEB(24, 80, 24, 24),
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.end,
               children: [
@@ -509,11 +494,7 @@ class _HeroHeader extends StatelessWidget {
                             child.name.isNotEmpty
                                 ? child.name[0].toUpperCase()
                                 : '?',
-                            style: GoogleFonts.outfit(
-                              fontSize: 30,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.white,
-                            ),
+                            style: AppTypography.fromContext(context, fontSize: 30, fontWeight: FontWeight.bold, color: Colors.white),
                           ),
                         )
                       : null,
@@ -527,11 +508,7 @@ class _HeroHeader extends StatelessWidget {
                     children: [
                       Text(
                         child.name,
-                        style: GoogleFonts.outfit(
-                          fontSize: 24,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.white,
-                        ),
+                        style: Theme.of(context).textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.bold, color: Colors.white),
                       ),
                       const SizedBox(height: 4),
                       Row(
@@ -546,12 +523,8 @@ class _HeroHeader extends StatelessWidget {
                               borderRadius: BorderRadius.circular(10),
                             ),
                             child: Text(
-                              '${child.genderLabel} · ${child.ageString}',
-                              style: GoogleFonts.outfit(
-                                fontSize: 12,
-                                color: Colors.white,
-                                fontWeight: FontWeight.w600,
-                              ),
+                              '${child.localizedGenderLabel(l10n)} · ${child.localizedAgeString(l10n)}',
+                              style: Theme.of(context).textTheme.bodySmall?.copyWith(fontWeight: FontWeight.w600, color: Colors.white),
                             ),
                           ),
                           const SizedBox(width: 8),
@@ -560,10 +533,7 @@ class _HeroHeader extends StatelessWidget {
                               'd MMM yyyy',
                               'fr_FR',
                             ).format(child.birthDate),
-                            style: GoogleFonts.outfit(
-                              fontSize: 11,
-                              color: Colors.white70,
-                            ),
+                            style: Theme.of(context).textTheme.labelSmall?.copyWith(color: Colors.white70),
                           ),
                         ],
                       ),
@@ -622,15 +592,11 @@ class _StatCard extends StatelessWidget {
             const SizedBox(height: 6),
             Text(
               value,
-              style: GoogleFonts.outfit(
-                fontSize: 15,
-                fontWeight: FontWeight.bold,
-                color: textColor,
-              ),
+              style: AppTypography.fromContext(context, fontSize: 15, fontWeight: FontWeight.bold, color: textColor),
             ),
             Text(
               label,
-              style: GoogleFonts.outfit(fontSize: 10, color: secondaryText),
+              style: AppTypography.fromContext(context, fontSize: 10, color: secondaryText),
               textAlign: TextAlign.center,
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
@@ -685,11 +651,7 @@ class _CtaButton extends StatelessWidget {
             const SizedBox(width: 8),
             Text(
               label,
-              style: GoogleFonts.outfit(
-                fontSize: 13,
-                fontWeight: FontWeight.w700,
-                color: Colors.white,
-              ),
+              style: AppTypography.fromContext(context, fontSize: 13, fontWeight: FontWeight.w700, color: Colors.white),
             ),
           ],
         ),
@@ -727,17 +689,13 @@ class _EmptyState extends StatelessWidget {
           const SizedBox(height: AppSpacing.sm),
           Text(
             label,
-            style: GoogleFonts.outfit(
-              fontSize: 14,
-              fontWeight: FontWeight.w600,
-              color: color.withValues(alpha: 0.8),
-            ),
+            style: Theme.of(context).textTheme.titleSmall?.copyWith(fontWeight: FontWeight.w600, color: color.withValues(alpha: 0.8)),
             textAlign: TextAlign.center,
           ),
           const SizedBox(height: 4),
           Text(
             sub,
-            style: GoogleFonts.outfit(fontSize: 12, color: Colors.grey),
+            style: Theme.of(context).textTheme.bodySmall?.copyWith(color: Colors.grey),
             textAlign: TextAlign.center,
           ),
           const SizedBox(height: AppSpacing.md),
@@ -751,11 +709,7 @@ class _EmptyState extends StatelessWidget {
               ),
               child: Text(
                 actionLabel,
-                style: GoogleFonts.outfit(
-                  fontSize: 13,
-                  fontWeight: FontWeight.w700,
-                  color: Colors.white,
-                ),
+                style: AppTypography.fromContext(context, fontSize: 13, fontWeight: FontWeight.w700, color: Colors.white),
               ),
             ),
           ),

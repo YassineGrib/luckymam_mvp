@@ -1085,6 +1085,8 @@ interface ProductCardProps {
 
 function ProductCard({ product: p, onEdit, onArchive }: ProductCardProps) {
   const { tr } = useI18n();
+  const formatDZD = (n: number) =>
+    new Intl.NumberFormat("fr-DZ").format(n) + " " + tr("د.ج");
   const s = PRODUCT_STATUS_META[p.status];
   const discount = p.compareAt
     ? Math.round(((p.compareAt - p.priceDZD) / p.compareAt) * 100)

@@ -1,6 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import 'notification_l10n.dart';
 import 'notification_service.dart';
 import '../../features/profile/models/profile_models.dart';
 
@@ -14,8 +15,8 @@ final cycleNotificationServiceProvider = Provider<CycleNotificationService>((
 /// Schedules menstrual cycle phase reminders.
 ///
 /// Schedules two notifications per cycle:
-///   1. "Règles dans 2 jours" — 2 days before the next period at 08:00.
-///   2. "Phase Ovulatoire demain" — on day 12 of the cycle at 08:00.
+///   1. Period in 2 days — 2 days before the next period at 08:00.
+///   2. Ovulation tomorrow — on day 12 of the cycle at 08:00.
 class CycleNotificationService {
   final NotificationService _notifications;
 
@@ -30,9 +31,17 @@ class CycleNotificationService {
     if (cycleInfo.lastPeriodDate == null) return;
     if (cycleInfo.nextPeriodDate == null) return;
 
+    final l10n = await loadStoredL10n();
+
     await _notifications.scheduleCycleReminders(
       lastPeriodDate: cycleInfo.lastPeriodDate!,
       nextPeriodDate: cycleInfo.nextPeriodDate!,
+      periodTitle: l10n.notifCyclePeriodTitle,
+      periodBody: l10n.notifCyclePeriodBody,
+      ovulationTitle: l10n.notifCycleOvulationTitle,
+      ovulationBody: l10n.notifCycleOvulationBody,
+      channelName: l10n.notifCycleChannelName,
+      channelDesc: l10n.notifCycleChannelDesc,
     );
 
     debugPrint(

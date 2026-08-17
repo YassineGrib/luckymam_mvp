@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
+
 import '../../../core/theme/app_colors.dart';
 
 /// Navigation item data model.
@@ -40,7 +40,7 @@ class AppBottomNav extends StatelessWidget {
         : Colors.grey.shade600;
 
     return Container(
-      margin: const EdgeInsets.fromLTRB(20, 0, 20, 24),
+      margin: const EdgeInsetsDirectional.fromSTEB(20, 0, 20, 24),
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 12),
       decoration: BoxDecoration(
         color: backgroundColor,
@@ -87,9 +87,8 @@ class AppBottomNav extends StatelessWidget {
                     const SizedBox(width: 8),
                     Text(
                       item.label,
-                      style: GoogleFonts.outfit(
+                      style: Theme.of(context).textTheme.labelLarge?.copyWith(
                         fontSize: 13,
-                        fontWeight: FontWeight.w600,
                         color: primaryColor,
                       ),
                     ),

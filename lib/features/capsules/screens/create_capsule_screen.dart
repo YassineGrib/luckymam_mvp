@@ -2,9 +2,9 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:image_picker/image_picker.dart';
 
+import '../../../core/extensions/l10n_extension.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_spacing.dart';
 import '../../profile/models/profile_models.dart';
@@ -70,6 +70,8 @@ class _CreateCapsuleScreenState extends ConsumerState<CreateCapsuleScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = context.l10n;
+    final lang = Localizations.localeOf(context).languageCode;
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final bgColor = isDark
         ? AppColors.backgroundDark
@@ -94,8 +96,8 @@ class _CreateCapsuleScreenState extends ConsumerState<CreateCapsuleScreen> {
           icon: Icon(Icons.close_rounded, color: textColor),
         ),
         title: Text(
-          'Nouvelle Capsule',
-          style: GoogleFonts.outfit(
+          l10n.capsuleNewTitle,
+          style: Theme.of(context).textTheme.titleMedium?.copyWith(
             fontSize: 18,
             fontWeight: FontWeight.w600,
             color: textColor,
@@ -114,8 +116,8 @@ class _CreateCapsuleScreenState extends ConsumerState<CreateCapsuleScreen> {
                     ),
                   )
                 : Text(
-                    'Enregistrer',
-                    style: GoogleFonts.outfit(
+                    l10n.albumSave,
+                    style: Theme.of(context).textTheme.labelLarge?.copyWith(
                       fontWeight: FontWeight.w600,
                       color: _canSave ? primary : secondaryText,
                     ),
@@ -129,15 +131,34 @@ class _CreateCapsuleScreenState extends ConsumerState<CreateCapsuleScreen> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             // Photo section
-            _buildPhotoSection(isDark, primary, textColor, secondaryText),
+            _buildPhotoSection(
+              context,
+              isDark,
+              primary,
+              textColor,
+              secondaryText,
+            ),
             const SizedBox(height: AppSpacing.lg),
 
             // Category selector (mandatory)
-            _buildCategorySection(isDark, primary, textColor, secondaryText),
+            _buildCategorySection(
+              context,
+              lang,
+              isDark,
+              primary,
+              textColor,
+              secondaryText,
+            ),
             const SizedBox(height: AppSpacing.lg),
 
             // Date of capture
-            _buildDateSection(isDark, primary, textColor, secondaryText),
+            _buildDateSection(
+              context,
+              isDark,
+              primary,
+              textColor,
+              secondaryText,
+            ),
             const SizedBox(height: AppSpacing.lg),
 
             // Child selector
@@ -145,6 +166,7 @@ class _CreateCapsuleScreenState extends ConsumerState<CreateCapsuleScreen> {
               loading: () => const SizedBox.shrink(),
               error: (_, _) => const SizedBox.shrink(),
               data: (children) => _buildChildSelector(
+                context,
                 children,
                 isDark,
                 primary,
@@ -186,7 +208,7 @@ class _CreateCapsuleScreenState extends ConsumerState<CreateCapsuleScreen> {
             const SizedBox(height: AppSpacing.lg),
 
             // Tags
-            _buildTagsSection(isDark, primary, textColor, secondaryText),
+            _buildTagsSection(context, isDark, primary, textColor, secondaryText),
             const SizedBox(height: AppSpacing.xl),
           ],
         ),
@@ -202,11 +224,13 @@ class _CreateCapsuleScreenState extends ConsumerState<CreateCapsuleScreen> {
       !_isLoading;
 
   Widget _buildPhotoSection(
+    BuildContext context,
     bool isDark,
     Color primary,
     Color textColor,
     Color secondaryText,
   ) {
+    final l10n = context.l10n;
     if (_selectedPhoto != null) {
       return Stack(
         children: [
@@ -219,9 +243,9 @@ class _CreateCapsuleScreenState extends ConsumerState<CreateCapsuleScreen> {
               fit: BoxFit.cover,
             ),
           ),
-          Positioned(
+          PositionedDirectional(
             top: 8,
-            right: 8,
+            end: 8,
             child: IconButton(
               onPressed: () => setState(() => _selectedPhoto = null),
               style: IconButton.styleFrom(backgroundColor: Colors.black54),
@@ -262,8 +286,8 @@ class _CreateCapsuleScreenState extends ConsumerState<CreateCapsuleScreen> {
             ),
             const SizedBox(height: AppSpacing.md),
             Text(
-              'Ajouter une photo',
-              style: GoogleFonts.outfit(
+              l10n.capsuleAddPhoto,
+              style: Theme.of(context).textTheme.titleSmall?.copyWith(
                 fontSize: 16,
                 fontWeight: FontWeight.w600,
                 color: textColor,
@@ -271,8 +295,10 @@ class _CreateCapsuleScreenState extends ConsumerState<CreateCapsuleScreen> {
             ),
             const SizedBox(height: 4),
             Text(
-              'Appareil photo ou galerie',
-              style: GoogleFonts.outfit(fontSize: 13, color: secondaryText),
+              l10n.capsulePhotoSourceHint,
+              style: Theme.of(
+                context,
+              ).textTheme.bodySmall?.copyWith(fontSize: 13, color: secondaryText),
             ),
           ],
         ),
@@ -281,12 +307,14 @@ class _CreateCapsuleScreenState extends ConsumerState<CreateCapsuleScreen> {
   }
 
   Widget _buildChildSelector(
+    BuildContext context,
     List<Child> children,
     bool isDark,
     Color primary,
     Color textColor,
     Color secondaryText,
   ) {
+    final l10n = context.l10n;
     if (children.isEmpty) {
       return Container(
         padding: const EdgeInsets.all(AppSpacing.md),
@@ -300,8 +328,10 @@ class _CreateCapsuleScreenState extends ConsumerState<CreateCapsuleScreen> {
             const SizedBox(width: AppSpacing.sm),
             Expanded(
               child: Text(
-                'Ajoutez un enfant dans votre profil pour créer des capsules',
-                style: GoogleFonts.outfit(fontSize: 13, color: textColor),
+                l10n.capsuleAddChildPrompt,
+                style: Theme.of(
+                  context,
+                ).textTheme.bodySmall?.copyWith(fontSize: 13, color: textColor),
               ),
             ),
           ],
@@ -325,8 +355,8 @@ class _CreateCapsuleScreenState extends ConsumerState<CreateCapsuleScreen> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          '🧒 Pour quel enfant ?',
-          style: GoogleFonts.outfit(
+          l10n.capsuleWhichChild,
+          style: Theme.of(context).textTheme.bodyMedium?.copyWith(
             fontSize: 14,
             fontWeight: FontWeight.w500,
             color: textColor,
@@ -369,7 +399,7 @@ class _CreateCapsuleScreenState extends ConsumerState<CreateCapsuleScreen> {
                         child.name.isNotEmpty
                             ? child.name[0].toUpperCase()
                             : '?',
-                        style: GoogleFonts.outfit(
+                        style: Theme.of(context).textTheme.labelSmall?.copyWith(
                           fontSize: 12,
                           fontWeight: FontWeight.bold,
                           color: isSelected ? Colors.white : secondaryText,
@@ -379,7 +409,7 @@ class _CreateCapsuleScreenState extends ConsumerState<CreateCapsuleScreen> {
                     const SizedBox(width: 8),
                     Text(
                       child.name,
-                      style: GoogleFonts.outfit(
+                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                         fontSize: 14,
                         fontWeight: isSelected
                             ? FontWeight.w600
@@ -398,17 +428,19 @@ class _CreateCapsuleScreenState extends ConsumerState<CreateCapsuleScreen> {
   }
 
   Widget _buildTagsSection(
+    BuildContext context,
     bool isDark,
     Color primary,
     Color textColor,
     Color secondaryText,
   ) {
+    final l10n = context.l10n;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          '🏷️ Tags (optionnel)',
-          style: GoogleFonts.outfit(
+          l10n.capsuleTagsOptional,
+          style: Theme.of(context).textTheme.bodyMedium?.copyWith(
             fontSize: 14,
             fontWeight: FontWeight.w500,
             color: textColor,
@@ -419,10 +451,12 @@ class _CreateCapsuleScreenState extends ConsumerState<CreateCapsuleScreen> {
         // Tag input
         TextField(
           controller: _tagController,
-          style: GoogleFonts.outfit(color: textColor),
+          style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: textColor),
           decoration: InputDecoration(
-            hintText: 'Ajouter un tag...',
-            hintStyle: GoogleFonts.outfit(color: secondaryText),
+            hintText: l10n.capsuleAddTagHint,
+            hintStyle: Theme.of(
+              context,
+            ).textTheme.bodyMedium?.copyWith(color: secondaryText),
             filled: true,
             fillColor: isDark
                 ? AppColors.inputBackgroundDark
@@ -449,7 +483,9 @@ class _CreateCapsuleScreenState extends ConsumerState<CreateCapsuleScreen> {
                   (tag) => Chip(
                     label: Text(
                       '#$tag',
-                      style: GoogleFonts.outfit(fontSize: 12, color: textColor),
+                      style: Theme.of(
+                        context,
+                      ).textTheme.labelSmall?.copyWith(color: textColor),
                     ),
                     deleteIcon: Icon(
                       Icons.close,
@@ -471,19 +507,22 @@ class _CreateCapsuleScreenState extends ConsumerState<CreateCapsuleScreen> {
   }
 
   Widget _buildCategorySection(
+    BuildContext context,
+    String lang,
     bool isDark,
     Color primary,
     Color textColor,
     Color secondaryText,
   ) {
+    final l10n = context.l10n;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Row(
           children: [
             Text(
-              '📂 Catégorie',
-              style: GoogleFonts.outfit(
+              l10n.capsuleCategory,
+              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                 fontSize: 14,
                 fontWeight: FontWeight.w600,
                 color: textColor,
@@ -491,8 +530,10 @@ class _CreateCapsuleScreenState extends ConsumerState<CreateCapsuleScreen> {
             ),
             const SizedBox(width: 4),
             Text(
-              '(obligatoire)',
-              style: GoogleFonts.outfit(fontSize: 12, color: AppColors.error),
+              l10n.capsuleRequired,
+              style: Theme.of(
+                context,
+              ).textTheme.bodySmall?.copyWith(fontSize: 12, color: AppColors.error),
             ),
           ],
         ),
@@ -528,8 +569,8 @@ class _CreateCapsuleScreenState extends ConsumerState<CreateCapsuleScreen> {
                     Text(cat.emoji, style: const TextStyle(fontSize: 16)),
                     const SizedBox(width: 6),
                     Text(
-                      cat.labelFr,
-                      style: GoogleFonts.outfit(
+                      cat.getLabel(lang),
+                      style: Theme.of(context).textTheme.bodySmall?.copyWith(
                         fontSize: 13,
                         fontWeight: isSelected
                             ? FontWeight.w700
@@ -548,11 +589,13 @@ class _CreateCapsuleScreenState extends ConsumerState<CreateCapsuleScreen> {
   }
 
   Widget _buildDateSection(
+    BuildContext context,
     bool isDark,
     Color primary,
     Color textColor,
     Color secondaryText,
   ) {
+    final l10n = context.l10n;
     final formattedDate = _capturedAt != null
         ? '${_capturedAt!.day.toString().padLeft(2, '0')}/${_capturedAt!.month.toString().padLeft(2, '0')}/${_capturedAt!.year}'
         : null;
@@ -561,8 +604,8 @@ class _CreateCapsuleScreenState extends ConsumerState<CreateCapsuleScreen> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          '📅 Date de la photo',
-          style: GoogleFonts.outfit(
+          l10n.capsulePhotoDate,
+          style: Theme.of(context).textTheme.bodyMedium?.copyWith(
             fontSize: 14,
             fontWeight: FontWeight.w600,
             color: textColor,
@@ -592,8 +635,8 @@ class _CreateCapsuleScreenState extends ConsumerState<CreateCapsuleScreen> {
                 const SizedBox(width: 12),
                 Expanded(
                   child: Text(
-                    formattedDate ?? 'Aujourd’hui (par défaut)',
-                    style: GoogleFonts.outfit(
+                    formattedDate ?? l10n.capsuleTodayDefault,
+                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                       fontSize: 14,
                       color: _capturedAt != null ? textColor : secondaryText,
                     ),
@@ -614,8 +657,8 @@ class _CreateCapsuleScreenState extends ConsumerState<CreateCapsuleScreen> {
         ),
         const SizedBox(height: 4),
         Text(
-          'Utile si la photo a été prise à une autre date',
-          style: GoogleFonts.outfit(
+          l10n.capsulePhotoDateHint,
+          style: Theme.of(context).textTheme.bodySmall?.copyWith(
             fontSize: 11,
             color: secondaryText,
             fontStyle: FontStyle.italic,
@@ -626,14 +669,15 @@ class _CreateCapsuleScreenState extends ConsumerState<CreateCapsuleScreen> {
   }
 
   Future<void> _pickCapturedDate() async {
+    final l10n = context.l10n;
     final picked = await showDatePicker(
       context: context,
       initialDate: _capturedAt ?? DateTime.now(),
       firstDate: DateTime(2000),
       lastDate: DateTime.now(),
-      helpText: 'Date de la photo',
-      confirmText: 'Confirmer',
-      cancelText: 'Annuler',
+      helpText: l10n.capsulePhotoDatePickerHelp,
+      confirmText: l10n.confirm,
+      cancelText: l10n.albumCancel,
       builder: (context, child) {
         final primary = Theme.of(context).brightness == Brightness.dark
             ? AppColors.primaryDark
@@ -664,6 +708,7 @@ class _CreateCapsuleScreenState extends ConsumerState<CreateCapsuleScreen> {
   }
 
   void _showPhotoSourceSheet() {
+    final l10n = context.l10n;
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final surface = isDark ? AppColors.surfaceDark : AppColors.surfaceLight;
     final textColor = isDark ? Colors.white : AppColors.onSurfaceLight;
@@ -681,8 +726,8 @@ class _CreateCapsuleScreenState extends ConsumerState<CreateCapsuleScreen> {
           mainAxisSize: MainAxisSize.min,
           children: [
             Text(
-              'Choisir une source',
-              style: GoogleFonts.outfit(
+              l10n.capsuleChooseSource,
+              style: Theme.of(context).textTheme.titleMedium?.copyWith(
                 fontSize: 18,
                 fontWeight: FontWeight.bold,
                 color: textColor,
@@ -694,7 +739,7 @@ class _CreateCapsuleScreenState extends ConsumerState<CreateCapsuleScreen> {
               children: [
                 _buildSourceOption(
                   icon: Icons.camera_alt_rounded,
-                  label: 'Appareil photo',
+                  label: l10n.capsuleCamera,
                   color: primary,
                   onTap: () {
                     Navigator.pop(context);
@@ -703,7 +748,7 @@ class _CreateCapsuleScreenState extends ConsumerState<CreateCapsuleScreen> {
                 ),
                 _buildSourceOption(
                   icon: Icons.photo_library_rounded,
-                  label: 'Galerie',
+                  label: l10n.capsuleGallery,
                   color: AppColors.smaltBlue,
                   onTap: () {
                     Navigator.pop(context);
@@ -744,7 +789,7 @@ class _CreateCapsuleScreenState extends ConsumerState<CreateCapsuleScreen> {
           const SizedBox(height: 8),
           Text(
             label,
-            style: GoogleFonts.outfit(
+            style: Theme.of(context).textTheme.bodySmall?.copyWith(
               fontSize: 13,
               fontWeight: FontWeight.w500,
               color: textColor,
@@ -773,7 +818,7 @@ class _CreateCapsuleScreenState extends ConsumerState<CreateCapsuleScreen> {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Erreur: ${e.toString()}'),
+            content: Text(context.l10n.milestone_error(e.toString())),
             backgroundColor: AppColors.error,
           ),
         );
@@ -810,10 +855,7 @@ class _CreateCapsuleScreenState extends ConsumerState<CreateCapsuleScreen> {
       Navigator.pop(context);
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text(
-            'Capsule créée avec succès! ✨',
-            style: GoogleFonts.outfit(),
-          ),
+          content: Text(context.l10n.capsuleCreatedSuccess),
           backgroundColor: AppColors.success,
         ),
       );

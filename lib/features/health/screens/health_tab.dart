@@ -1,14 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:google_fonts/google_fonts.dart';
 
+import '../../../core/extensions/l10n_extension.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_spacing.dart';
+import '../../../l10n/app_localizations.dart';
 import '../../profile/models/profile_models.dart';
 import '../../profile/providers/profile_providers.dart';
 import '../../home/tabs/vaccinations_tab.dart';
 import '../screens/appointments_screen.dart';
 import '../screens/growth_screen.dart';
+import '../../../core/theme/app_typography.dart';
 
 /// Main "Santé" tab — health hub with Vaccines, Growth & Appointments sub-tabs.
 class HealthTab extends ConsumerStatefulWidget {
@@ -37,6 +39,7 @@ class _HealthTabState extends ConsumerState<HealthTab>
 
   @override
   Widget build(BuildContext context) {
+    final l10n = context.l10n;
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final primary = isDark ? AppColors.primaryDark : AppColors.primaryLight;
     final textColor = isDark ? Colors.white : AppColors.onSurfaceLight;
@@ -54,10 +57,15 @@ class _HealthTabState extends ConsumerState<HealthTab>
       body: SafeArea(
         child: childrenAsync.when(
           loading: () => const Center(child: CircularProgressIndicator()),
-          error: (_, _) => _buildError(textColor),
+          error: (_, _) => _buildError(l10n),
           data: (children) {
             if (children.isEmpty) {
-              return _buildNoChildren(primary, textColor, secondaryText);
+              return _buildNoChildren(
+                primary,
+                textColor,
+                secondaryText,
+                l10n,
+              );
             }
 
             _selectedChild ??= children.first;
@@ -67,7 +75,7 @@ class _HealthTabState extends ConsumerState<HealthTab>
 
             return Column(
               children: [
-                _buildHeader(primary, textColor, secondaryText),
+                _buildHeader(primary, textColor, secondaryText, l10n),
 
                 // Child selector (only when 2+ children)
                 if (children.length > 1)
@@ -79,7 +87,7 @@ class _HealthTabState extends ConsumerState<HealthTab>
                   ),
 
                 // Sub-tab bar
-                _buildTabBar(primary, textColor, isDark),
+                _buildTabBar(primary, textColor, isDark, l10n),
 
                 // Tab views
                 Expanded(
@@ -109,55 +117,52 @@ class _HealthTabState extends ConsumerState<HealthTab>
 
   // ─── Header ──────────────────────────────────────────────────────────────
 
-  Widget _buildHeader(Color primary, Color textColor, Color secondaryText) =>
-      Padding(
-        padding: const EdgeInsets.fromLTRB(
-          AppSpacing.screenPaddingH,
-          AppSpacing.md,
-          AppSpacing.screenPaddingH,
-          AppSpacing.sm,
+  Widget _buildHeader(
+    Color primary,
+    Color textColor,
+    Color secondaryText,
+    AppLocalizations l10n,
+  ) => Padding(
+    padding: const EdgeInsets.fromLTRB(
+      AppSpacing.screenPaddingH,
+      AppSpacing.md,
+      AppSpacing.screenPaddingH,
+      AppSpacing.sm,
+    ),
+    child: Row(
+      children: [
+        Container(
+          width: 48,
+          height: 48,
+          decoration: BoxDecoration(
+            gradient: AppColors.primaryGradient,
+            borderRadius: BorderRadius.circular(14),
+          ),
+          child: const Icon(
+            Icons.health_and_safety_rounded,
+            color: Colors.white,
+            size: 26,
+          ),
         ),
-        child: Row(
-          children: [
-            Container(
-              width: 48,
-              height: 48,
-              decoration: BoxDecoration(
-                gradient: AppColors.primaryGradient,
-                borderRadius: BorderRadius.circular(14),
+        const SizedBox(width: AppSpacing.md),
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                l10n.navHealth,
+                style: Theme.of(context).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold, color: textColor),
               ),
-              child: const Icon(
-                Icons.health_and_safety_rounded,
-                color: Colors.white,
-                size: 26,
+              Text(
+                l10n.healthTabSubtitle,
+                style: AppTypography.fromContext(context, fontSize: 13, color: secondaryText),
               ),
-            ),
-            const SizedBox(width: AppSpacing.md),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    'Santé',
-                    style: GoogleFonts.outfit(
-                      fontSize: 22,
-                      fontWeight: FontWeight.bold,
-                      color: textColor,
-                    ),
-                  ),
-                  Text(
-                    'Vaccins · Croissance · Rendez-vous',
-                    style: GoogleFonts.outfit(
-                      fontSize: 13,
-                      color: secondaryText,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ],
+            ],
+          ),
         ),
-      );
+      ],
+    ),
+  );
 
   // ─── Child selector ───────────────────────────────────────────────────────
 
@@ -189,11 +194,7 @@ class _HealthTabState extends ConsumerState<HealthTab>
             ),
             child: Text(
               child.name,
-              style: GoogleFonts.outfit(
-                fontSize: 14,
-                fontWeight: FontWeight.w600,
-                color: selected ? Colors.white : primary,
-              ),
+              style: Theme.of(context).textTheme.titleSmall?.copyWith(fontWeight: FontWeight.w600, color: selected ? Colors.white : primary),
             ),
           ),
         );
@@ -203,7 +204,12 @@ class _HealthTabState extends ConsumerState<HealthTab>
 
   // ─── Tab bar ──────────────────────────────────────────────────────────────
 
-  Widget _buildTabBar(Color primary, Color textColor, bool isDark) => Padding(
+  Widget _buildTabBar(
+    Color primary,
+    Color textColor,
+    bool isDark,
+    AppLocalizations l10n,
+  ) => Padding(
     padding: const EdgeInsets.fromLTRB(
       AppSpacing.screenPaddingH,
       AppSpacing.sm,
@@ -224,19 +230,16 @@ class _HealthTabState extends ConsumerState<HealthTab>
           borderRadius: BorderRadius.circular(14),
         ),
         indicatorSize: TabBarIndicatorSize.tab,
-        labelStyle: GoogleFonts.outfit(
-          fontSize: 13,
-          fontWeight: FontWeight.w600,
-        ),
-        unselectedLabelStyle: GoogleFonts.outfit(fontSize: 13),
+        labelStyle: AppTypography.fromContext(context, fontSize: 13, fontWeight: FontWeight.w600),
+        unselectedLabelStyle: AppTypography.fromContext(context, fontSize: 13),
         labelColor: Colors.white,
         unselectedLabelColor: textColor.withValues(alpha: 0.6),
         dividerColor: Colors.transparent,
         padding: const EdgeInsets.all(4),
-        tabs: const [
-          Tab(text: '💉 Vaccins'),
-          Tab(text: '📈 Croissance'),
-          Tab(text: '🗓 RDV'),
+        tabs: [
+          Tab(text: l10n.healthTabVaccines),
+          Tab(text: l10n.healthTabGrowth),
+          Tab(text: l10n.healthTabRdv),
         ],
       ),
     ),
@@ -244,10 +247,10 @@ class _HealthTabState extends ConsumerState<HealthTab>
 
   // ─── Error / empty states ─────────────────────────────────────────────────
 
-  Widget _buildError(Color textColor) => Center(
+  Widget _buildError(AppLocalizations l10n) => Center(
     child: Text(
-      'Erreur de chargement',
-      style: GoogleFonts.outfit(color: AppColors.error),
+      l10n.healthLoadingError,
+      style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: AppColors.error),
     ),
   );
 
@@ -255,6 +258,7 @@ class _HealthTabState extends ConsumerState<HealthTab>
     Color primary,
     Color textColor,
     Color secondaryText,
+    AppLocalizations l10n,
   ) => Center(
     child: Column(
       mainAxisAlignment: MainAxisAlignment.center,
@@ -266,17 +270,13 @@ class _HealthTabState extends ConsumerState<HealthTab>
         ),
         const SizedBox(height: AppSpacing.md),
         Text(
-          'Aucun enfant enregistré',
-          style: GoogleFonts.outfit(
-            fontSize: 18,
-            fontWeight: FontWeight.bold,
-            color: textColor,
-          ),
+          l10n.healthNoChildTitle,
+          style: AppTypography.fromContext(context, fontSize: 18, fontWeight: FontWeight.bold, color: textColor),
         ),
         const SizedBox(height: AppSpacing.xs),
         Text(
-          'Ajoutez un enfant dans votre profil.',
-          style: GoogleFonts.outfit(color: secondaryText),
+          l10n.healthNoChildHint,
+          style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: secondaryText),
         ),
       ],
     ),

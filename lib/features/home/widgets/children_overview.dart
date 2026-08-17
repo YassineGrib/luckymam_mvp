@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:google_fonts/google_fonts.dart';
 
+import '../../../core/extensions/l10n_extension.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../profile/child_profile_screen.dart';
 import '../../profile/profile_screen.dart';
 import '../providers/home_providers.dart';
 import 'child_summary_card.dart';
+import '../../../core/theme/app_typography.dart';
 
 /// Horizontal list of children summaries.
 class ChildrenOverview extends ConsumerWidget {
@@ -24,12 +25,8 @@ class ChildrenOverview extends ConsumerWidget {
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
           child: Text(
-            'Vos Enfants',
-            style: GoogleFonts.outfit(
-              fontSize: 18,
-              fontWeight: FontWeight.bold,
-              color: titleColor,
-            ),
+            context.l10n.homeYourChildren,
+            style: AppTypography.fromContext(context, fontSize: 18, fontWeight: FontWeight.bold, color: titleColor),
           ),
         ),
         SizedBox(
@@ -84,7 +81,7 @@ class ChildrenOverview extends ConsumerWidget {
 
     return Container(
       width: 160,
-      margin: const EdgeInsets.only(right: 12),
+      margin: const EdgeInsetsDirectional.only(end: 12),
       decoration: BoxDecoration(
         color: color,
         borderRadius: BorderRadius.circular(16),
@@ -109,7 +106,7 @@ class ChildrenOverview extends ConsumerWidget {
       },
       child: Container(
         width: 60,
-        margin: const EdgeInsets.only(right: 20), // Extra padding at end
+        margin: const EdgeInsetsDirectional.only(end: 20), // Extra padding at end
         decoration: BoxDecoration(
           color: cardColor,
           borderRadius: BorderRadius.circular(16),

@@ -16,6 +16,35 @@ enum AppointmentType {
     AppointmentType.cardiologue => 'Cardiologue',
     AppointmentType.autre => 'Autre spécialiste',
   };
+
+  String get labelAr => switch (this) {
+    AppointmentType.generaliste => 'طبيب عام',
+    AppointmentType.pediatre => 'طبيب أطفال',
+    AppointmentType.dentiste => 'طبيب أسنان',
+    AppointmentType.ophtalmologue => 'طبيب عيون',
+    AppointmentType.cardiologue => 'طبيب قلب',
+    AppointmentType.autre => 'أخصائي آخر',
+  };
+
+  String get labelEn => switch (this) {
+    AppointmentType.generaliste => 'General practitioner',
+    AppointmentType.pediatre => 'Pediatrician',
+    AppointmentType.dentiste => 'Dentist',
+    AppointmentType.ophtalmologue => 'Ophthalmologist',
+    AppointmentType.cardiologue => 'Cardiologist',
+    AppointmentType.autre => 'Other specialist',
+  };
+
+  String getLabel(String locale) {
+    switch (locale) {
+      case 'ar':
+        return labelAr;
+      case 'en':
+        return labelEn;
+      default:
+        return labelFr;
+    }
+  }
 }
 
 /// A medical appointment record with optional attached files.

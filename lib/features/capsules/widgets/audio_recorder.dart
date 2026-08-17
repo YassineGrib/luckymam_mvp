@@ -3,10 +3,10 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:record/record.dart';
 
+import '../../../core/extensions/l10n_extension.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_spacing.dart';
 
@@ -107,6 +107,7 @@ class _AudioRecorderWidgetState extends State<AudioRecorderWidget>
 
   @override
   Widget build(BuildContext context) {
+    final l10n = context.l10n;
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final primary = isDark ? AppColors.primaryDark : AppColors.primaryLight;
     final textColor = isDark ? Colors.white : AppColors.onSurfaceLight;
@@ -115,8 +116,8 @@ class _AudioRecorderWidgetState extends State<AudioRecorderWidget>
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          '🎤 Message vocal (optionnel)',
-          style: GoogleFonts.outfit(
+          l10n.capsuleVoiceMessageOptional,
+          style: Theme.of(context).textTheme.bodyMedium?.copyWith(
             fontSize: 14,
             fontWeight: FontWeight.w500,
             color: textColor,
@@ -162,8 +163,8 @@ class _AudioRecorderWidgetState extends State<AudioRecorderWidget>
                     Text(
                       _isRecording
                           ? _formattedTime
-                          : 'Maintenir pour enregistrer',
-                      style: GoogleFonts.outfit(
+                          : l10n.capsuleHoldToRecord,
+                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                         fontSize: _isRecording ? 20 : 14,
                         fontWeight: _isRecording
                             ? FontWeight.bold
@@ -176,8 +177,8 @@ class _AudioRecorderWidgetState extends State<AudioRecorderWidget>
                     if (_isRecording) ...[
                       const SizedBox(height: 4),
                       Text(
-                        'Max ${widget.maxDuration}s',
-                        style: GoogleFonts.outfit(
+                        l10n.capsuleMaxDuration(widget.maxDuration),
+                        style: Theme.of(context).textTheme.bodySmall?.copyWith(
                           fontSize: 12,
                           color: textColor.withValues(alpha: 0.5),
                         ),
@@ -192,8 +193,8 @@ class _AudioRecorderWidgetState extends State<AudioRecorderWidget>
 
         const SizedBox(height: AppSpacing.xs),
         Text(
-          'Relâchez pour arrêter l\'enregistrement',
-          style: GoogleFonts.outfit(
+          l10n.capsuleReleaseToStop,
+          style: Theme.of(context).textTheme.bodySmall?.copyWith(
             fontSize: 12,
             color: textColor.withValues(alpha: 0.5),
           ),
@@ -222,6 +223,7 @@ class RecordedAudioPreview extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = context.l10n;
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final textColor = isDark ? Colors.white : AppColors.onSurfaceLight;
 
@@ -249,16 +251,16 @@ class RecordedAudioPreview extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  'Message vocal enregistré',
-                  style: GoogleFonts.outfit(
+                  l10n.capsuleVoiceRecorded,
+                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                     fontSize: 14,
                     fontWeight: FontWeight.w600,
                     color: textColor,
                   ),
                 ),
                 Text(
-                  'Durée: $_formattedDuration',
-                  style: GoogleFonts.outfit(
+                  l10n.capsuleDuration(_formattedDuration),
+                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
                     fontSize: 12,
                     color: textColor.withValues(alpha: 0.7),
                   ),

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:google_fonts/google_fonts.dart';
 
+import '../../../core/extensions/l10n_extension.dart';
 import '../../../core/services/analytics_service.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_spacing.dart';
@@ -15,7 +15,7 @@ class CartScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final lang = Localizations.localeOf(context).languageCode;
+    final l10n = context.l10n;
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final bgColor = isDark
         ? AppColors.backgroundDark
@@ -38,14 +38,8 @@ class CartScreen extends ConsumerWidget {
           onPressed: () => Navigator.pop(context),
         ),
         title: Text(
-          lang == 'ar'
-              ? 'سلتي'
-              : lang == 'en'
-                  ? 'My Cart'
-                  : 'Mon Panier',
-          style: GoogleFonts.outfit(
-            fontSize: 18,
-            fontWeight: FontWeight.w600,
+          l10n.cartTitle,
+          style: Theme.of(context).textTheme.titleMedium?.copyWith(
             color: textColor,
           ),
         ),
@@ -54,24 +48,18 @@ class CartScreen extends ConsumerWidget {
             TextButton(
               onPressed: () => ref.read(cartProvider.notifier).clear(),
               child: Text(
-                lang == 'ar'
-                    ? 'تفريغ'
-                    : lang == 'en'
-                        ? 'Clear'
-                        : 'Vider',
-                style: GoogleFonts.outfit(
-                  fontSize: 13,
+                l10n.cartClear,
+                style: Theme.of(context).textTheme.labelLarge?.copyWith(
                   color: AppColors.error,
-                  fontWeight: FontWeight.w600,
                 ),
               ),
             ),
         ],
       ),
       body: cart.isEmpty
-          ? _buildEmptyCart(textColor, secondaryText, lang)
+          ? _buildEmptyCart(context, textColor, secondaryText)
           : ListView.separated(
-              padding: const EdgeInsets.fromLTRB(
+              padding: const EdgeInsetsDirectional.fromSTEB(
                 AppSpacing.screenPaddingH,
                 AppSpacing.sm,
                 AppSpacing.screenPaddingH,
@@ -95,7 +83,7 @@ class CartScreen extends ConsumerWidget {
           : SafeArea(
               top: false,
               child: Container(
-                padding: const EdgeInsets.fromLTRB(20, 12, 20, 12),
+                padding: const EdgeInsetsDirectional.fromSTEB(20, 12, 20, 12),
                 decoration: BoxDecoration(
                   color: isDark ? AppColors.surfaceDark : Colors.white,
                   borderRadius: const BorderRadius.vertical(
@@ -116,20 +104,14 @@ class CartScreen extends ConsumerWidget {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Text(
-                          lang == 'ar'
-                              ? 'المجموع'
-                              : lang == 'en'
-                                  ? 'Total'
-                                  : 'Total',
-                          style: GoogleFonts.outfit(
-                            fontSize: 15,
+                          l10n.labelTotal,
+                          style: Theme.of(context).textTheme.bodyLarge?.copyWith(
                             color: secondaryText,
                           ),
                         ),
                         Text(
                           _formatDZD(total),
-                          style: GoogleFonts.outfit(
-                            fontSize: 20,
+                          style: Theme.of(context).textTheme.titleLarge?.copyWith(
                             fontWeight: FontWeight.bold,
                             color: AppColors.magentaPink,
                           ),
@@ -163,18 +145,7 @@ class CartScreen extends ConsumerWidget {
                             Icons.arrow_forward_rounded,
                             color: Colors.white,
                           ),
-                          label: Text(
-                            lang == 'ar'
-                                ? 'إتمام الطلب'
-                                : lang == 'en'
-                                    ? 'Proceed to checkout'
-                                    : 'Passer la commande',
-                            style: GoogleFonts.outfit(
-                              fontSize: 16,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.white,
-                            ),
-                          ),
+                          label: Text(l10n.cartProceedCheckout),
                           style: ElevatedButton.styleFrom(
                             backgroundColor: Colors.transparent,
                             shadowColor: Colors.transparent,
@@ -193,7 +164,12 @@ class CartScreen extends ConsumerWidget {
     );
   }
 
-  Widget _buildEmptyCart(Color textColor, Color secondaryText, String lang) {
+  Widget _buildEmptyCart(
+    BuildContext context,
+    Color textColor,
+    Color secondaryText,
+  ) {
+    final l10n = context.l10n;
     return Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -205,26 +181,18 @@ class CartScreen extends ConsumerWidget {
           ),
           const SizedBox(height: AppSpacing.md),
           Text(
-            lang == 'ar'
-                ? 'سلتك فارغة'
-                : lang == 'en'
-                    ? 'Your cart is empty'
-                    : 'Votre panier est vide',
-            style: GoogleFonts.outfit(
-              fontSize: 17,
-              fontWeight: FontWeight.w600,
+            l10n.cartEmptyTitle,
+            style: Theme.of(context).textTheme.titleMedium?.copyWith(
               color: textColor,
             ),
           ),
           const SizedBox(height: 6),
           Text(
-            lang == 'ar'
-                ? 'تصفحي المتجر لاكتشاف\nمنتجات شركائنا الموثوقين'
-                : lang == 'en'
-                    ? 'Browse the marketplace to discover\nproducts from our partners'
-                    : 'Parcourez le marketplace pour découvrir\nles produits de nos partenaires',
+            l10n.cartEmptySubtitle,
             textAlign: TextAlign.center,
-            style: GoogleFonts.outfit(fontSize: 13, color: secondaryText),
+            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+              color: secondaryText,
+            ),
           ),
         ],
       ),
@@ -257,6 +225,7 @@ class _CartLineCard extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final lang = Localizations.localeOf(context).languageCode;
     final categoryColor = item.product.category.color;
 
     return Container(
@@ -270,7 +239,6 @@ class _CartLineCard extends ConsumerWidget {
       ),
       child: Row(
         children: [
-          // Product visual
           Container(
             width: 54,
             height: 54,
@@ -287,15 +255,13 @@ class _CartLineCard extends ConsumerWidget {
             ),
           ),
           const SizedBox(width: AppSpacing.sm),
-          // Name + unit price
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  item.product.name,
-                  style: GoogleFonts.outfit(
-                    fontSize: 13,
+                  item.product.displayName(lang),
+                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                     fontWeight: FontWeight.w600,
                     color: textColor,
                   ),
@@ -305,8 +271,7 @@ class _CartLineCard extends ConsumerWidget {
                 const SizedBox(height: 2),
                 Text(
                   item.product.formattedPrice,
-                  style: GoogleFonts.outfit(
-                    fontSize: 12,
+                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
                     fontWeight: FontWeight.w700,
                     color: categoryColor,
                   ),
@@ -314,12 +279,10 @@ class _CartLineCard extends ConsumerWidget {
               ],
             ),
           ),
-          // Quantity stepper
           Row(
             children: [
               _QtyButton(
                 icon: Icons.remove_rounded,
-                isDark: isDark,
                 onTap: () => ref
                     .read(cartProvider.notifier)
                     .updateQuantity(item.product.id, item.quantity - 1),
@@ -329,8 +292,7 @@ class _CartLineCard extends ConsumerWidget {
                 child: Center(
                   child: Text(
                     '${item.quantity}',
-                    style: GoogleFonts.outfit(
-                      fontSize: 15,
+                    style: Theme.of(context).textTheme.titleMedium?.copyWith(
                       fontWeight: FontWeight.bold,
                       color: textColor,
                     ),
@@ -339,7 +301,6 @@ class _CartLineCard extends ConsumerWidget {
               ),
               _QtyButton(
                 icon: Icons.add_rounded,
-                isDark: isDark,
                 onTap: () => ref
                     .read(cartProvider.notifier)
                     .updateQuantity(item.product.id, item.quantity + 1),
@@ -355,12 +316,10 @@ class _CartLineCard extends ConsumerWidget {
 class _QtyButton extends StatelessWidget {
   const _QtyButton({
     required this.icon,
-    required this.isDark,
     required this.onTap,
   });
 
   final IconData icon;
-  final bool isDark;
   final VoidCallback onTap;
 
   @override

@@ -1,6 +1,10 @@
 {
   "@@locale": "ar",
   "appName": "Luckymam",
+  "welcomeTitle": "مرحباً بك في",
+  "welcomeSubtitle": "احفظي كل لحظة ثمينة في حياتك كأم",
+  "getStarted": "ابدئي",
+  "swipeToGetStarted": "اسحبي للبدء",
   "login": "تسجيل الدخول",
   "signUp": "إنشاء حساب",
   "loginTitle": "تسجيل الدخول إلى حسابك",
@@ -14,6 +18,7 @@
   "forgotPassword": "نسيت كلمة المرور؟",
   "or": "أو",
   "signInWithGoogle": "المتابعة باستخدام Google",
+  "signInWithApple": "المتابعة باستخدام Apple",
   "dontHaveAccount": "ليس لديك حساب؟",
   "alreadyHaveAccount": "هل لديك حساب بالفعل؟",
   "continueText": "متابعة",
@@ -24,9 +29,993 @@
   "name": "الاسم الكامل",
   "nameHint": "اسمك الكامل",
   "errorNameTooShort": "يجب أن يتكون الاسم من حرفين على الأقل",
+  "featureNotAvailableMVP": "هذه الميزة غير متاحة في النسخة التجريبية",
+  "myChildren": "أطفالي",
+  "noChildrenTitle": "لا يوجد أطفال مسجلون",
+  "noChildrenSubtitle": "أضيفي أطفالك لمتابعة نموهم وتطعيماتهم والمزيد.",
+  "addFirstChild": "إضافة طفلي الأول",
+  "addChild": "إضافة طفل",
+  "privacy": "الخصوصية",
+  "helpAndSupport": "المساعدة والدعم",
+  "dataProtection": "حماية البيانات",
+  "dataProtectionDesc": "يتم تخزين بياناتك الشخصية بأمان ولا تُشارك مع أطراف ثالثة دون موافقتك.",
+  "medicalDataPrivacy": "البيانات الطبية",
+  "medicalDataPrivacyDesc": "معلوماتك الطبية (الدورة، الحمل، الأطفال) سرية تماماً ولا يمكن الوصول إليها إلا من قبلك.",
+  "dataDeleteTitle": "حذف البيانات",
+  "dataDeleteDesc": "يمكنك طلب حذف حسابك وبياناتك بالكامل في أي وقت من الإعدادات.",
+  "offlineData": "البيانات دون اتصال",
+  "offlineDataDesc": "قد تُخزَّن بعض البيانات محلياً على جهازك للاستخدام دون اتصال.",
+  "faqTitle": "الأسئلة الشائعة",
+  "faqAddChild": "كيف أضيف طفلاً؟",
+  "faqAddChildAnswer": "اذهبي إلى ملفك الشخصي، قسم \"أطفالي\"، ثم اضغطي على \"إضافة طفل\".",
+  "faqCycle": "كيف أتابع دورتي الشهرية؟",
+  "faqCycleAnswer": "في قسم \"الدورة الشهرية\" في ملفك، اضغطي على \"تسجيل الدورة\" لتحديد تاريخ البداية.",
+  "faqEditInfo": "كيف أعدّل معلوماتي؟",
+  "faqEditInfoAnswer": "اضغطي على أيقونة القلم بجانب كل معلومة لتعديلها.",
+  "faqDataSecurity": "هل بياناتي آمنة؟",
+  "faqDataSecurityAnswer": "نعم، جميع بياناتك مشفرة ومخزنة بأمان. راجعي سياسة الخصوصية للمزيد.",
+  "contactUs": "تواصلي معنا",
+  "emailSupport": "البريد الإلكتروني",
+  "emailSupportHint": "support@luckymam.site",
+  "sendEmailPrompt": "راسلينا على support@luckymam.site",
+  "liveChat": "الدردشة المباشرة",
+  "liveChatUnavailable": "متاحة قريباً",
+  "featureComingSoon": "ستكون هذه الميزة متاحة قريباً",
+  "appVersion": "الإصدار 1.0.0",
   "law1807Title": "القانون 18-07 لحماية المعطيات الشخصية",
   "law1807Text": "وفقاً لأحكام القانون رقم 18-07 المؤرخ في 10 يونيو 2018 المتعلق بحماية الأشخاص الطبيعيين في مجال معالجة المعطيات ذات الطابع الشخصي، فإنك توافق على جمع بياناتك الشخصية ومعالجتها وتخزينها بأمان في تطبيق Luckymam لاستخدامها حصرياً في تقديم خدمات التطبيق وتخصيص تجربتك. يمكنك ممارسة حقوقك في الوصول والتصحيح والحذف في أي وقت.",
   "law1807Checkbox": "أوافق على أحكام القانون 18-07",
   "law1807Error": "يجب الموافقة على أحكام القانون 18-07 للمتابعة.",
-  "capsule": "كبسولة"
+  "capsule": "كبسولة",
+  "navHome": "الرئيسية",
+  "navTimeline": "خط الحياة",
+  "navCapsules": "الكبسولات",
+  "navHealth": "الصحة",
+  "navProfile": "الملف",
+  "dashboardQuickAccess": "وصول سريع",
+  "dashboardHealthWellbeing": "عافيتي",
+  "dashboardHealthPregnancy": "حملي",
+  "dashboardHealthDefault": "صحتي",
+  "dashboardMyChildren": "أطفالي",
+  "dashboardMyMemories": "ذكرياتي",
+  "dashboardSeeAll": "عرض الكل",
+  "dashboardSeeAllCapsules": "عرض جميع الكبسولات",
+  "dashboardPartnerShop": "متجر الشركاء",
+  "dashboardHopeBannerTitle": "رحلتك تبدأ من هنا 💜",
+  "dashboardHopeBannerSubtitle": "تابعي دورتك واعتني بنفسك.\nستظهر أقسام أطفالك هنا بمجرد وصول طفلك.",
+  "dashboardPregnantBannerTitle": "طفلك ينمو 🩷",
+  "dashboardPregnantBannerSubtitle": "سيكون قسم أطفالي متاحاً\nبعد ولادة طفلك.",
+  "cycleTrackingTitle": "متابعة الدورة",
+  "cycleActivateTracking": "تفعيل المتابعة",
+  "cycleEnterPregnancyStart": "تحديد تاريخ بداية الحمل",
+  "cyclePregnancySubtitleWeekDays": "الأسبوع {week} · الولادة المتوقعة خلال {days} يوم",
+  "cycleDayPhase": "اليوم {day} · {phase}",
+  "cycleDayLabel": "يوم",
+  "cycleWeekLabel": "أسبوع",
+  "cycleConfigure": "إعداد دورتي",
+  "cycleLogPeriod": "تسجيل دورتي الشهرية",
+  "cyclePeriodInDays": "الحيض خلال {days} يوم",
+  "cycleLmpPrompt": "سجّلي تاريخ آخر دورة شهرية (DDR)\nلمتابعة حملك أسبوعًا بأسبوع.",
+  "cycleEnterLmp": "إدخال تاريخ آخر دورة",
+  "cycleModifyLmp": "تعديل تاريخ آخر دورة",
+  "cycleLmpDatePickerHelp": "تاريخ آخر دورة شهرية (DDR)",
+  "cycleWeekProgress": "الأسبوع {week} / 40",
+  "cycleDueDateLabel": "تاريخ الولادة المتوقع: {date}",
+  "cycleDaysUntilDelivery": "باقي {days} يوم على الولادة",
+  "cyclePhaseMenstruation": "الحيض",
+  "cyclePhaseFollicular": "الطور الجريبي",
+  "cyclePhaseOvulation": "التبويض",
+  "cyclePhaseLuteal": "الطور الأصفري",
+  "cyclePhaseDescMenstruation": "تبدأ دورتكِ الآن. اعتني بنفسكِ.",
+  "cyclePhaseDescFollicular": "يستعد جسمكِ الآن. تشعرين بنشاط أكبر.",
+  "cyclePhaseDescOvulation": "فترة الخصوبة القصوى.",
+  "cyclePhaseDescLuteal": "الاستعداد للدورة القادمة.",
+  "cyclePhaseDescDefault": "تطور دورتكِ النسائية.",
+  "greetingMorning": "صباح الخير",
+  "greetingAfternoon": "مساء الخير",
+  "greetingEvening": "مساء الخير",
+  "defaultMotherName": "أم",
+  "statusWelcome": "مرحباً",
+  "statusPregnant": "حامل",
+  "statusHope": "في انتظار الحمل",
+  "statusMom": "أم",
+  "dailyTipSectionTitle": "نصيحة اليوم",
+  "dailyTipFooter": "— فريق Luckymam 💕",
+  "upgradePremiumTitle": "ترقية إلى Premium",
+  "upgradePremiumSubtitle": "كبسولات غير محدودة • بدون إعلانات",
+  "marketplaceTitle": "المتجر",
+  "marketplaceSubtitle": "منتجات شركائنا الموثوقين",
+  "marketplaceMyOrders": "طلباتي",
+  "marketplaceAllCategories": "الكل",
+  "marketplaceNoProducts": "لا توجد منتجات في هذه الفئة",
+  "marketplaceMyCart": "سلتي",
+  "myOrdersTitle": "طلباتي",
+  "myOrdersLoadError": "خطأ في التحميل",
+  "myOrdersEmptyTitle": "لا توجد طلبات حالياً",
+  "myOrdersEmptySubtitle": "ستظهر طلبات المتجر الخاصة بك هنا",
+  "orderItemCount": "{count, plural, =1{منتج واحد} other{{count} منتجات}}",
+  "cartTitle": "سلتي",
+  "cartClear": "تفريغ",
+  "labelTotal": "المجموع",
+  "cartProceedCheckout": "إتمام الطلب",
+  "cartEmptyTitle": "سلتك فارغة",
+  "cartEmptySubtitle": "تصفحي المتجر لاكتشاف\nمنتجات شركائنا الموثوقين",
+  "productHighlights": "النقاط الرئيسية",
+  "productPartnerDefault": "شريك Luckymam",
+  "productPartnerBadge": "شريك",
+  "productOrder": "طلب",
+  "productOutOfStock": "نفدت الكمية",
+  "productQuantity": "الكمية",
+  "productMaxQtyReached": "تم الوصول إلى الحد الأقصى للكمية لهذا المنتج",
+  "productAddedToCart": "تمت إضافة {productName} إلى السلة",
+  "productViewCart": "عرض السلة",
+  "productAddToCart": "إضافة إلى السلة",
+  "checkoutTitle": "إتمام الطلب",
+  "checkoutSubtotal": "المجموع الفرعي",
+  "checkoutShipping": "الشحن",
+  "checkoutPaymentNote": "الدفع عند التسليم. سيتصل بك الشريك لتأكيد الطلب.",
+  "checkoutDeliveryInfo": "معلومات التسليم",
+  "checkoutFullNameHint": "الاسم واللقب",
+  "checkoutPhone": "رقم الهاتف",
+  "checkoutWilaya": "الولاية",
+  "checkoutWilayaHint": "الولاية الخاصة بك",
+  "checkoutAddress": "العنوان الكامل",
+  "checkoutAddressHint": "الشارع، رقم الباب، الحي...",
+  "checkoutPhoneInvalid": "رقم غير صحيح (مثال: 0550 00 00 00)",
+  "checkoutConfirm": "تأكيد الطلب",
+  "checkoutErrorGeneric": "حدث خطأ أثناء إرسال الطلب",
+  "checkoutConfirmedTitle": "تم تأكيد الطلب!",
+  "checkoutConfirmedSubtitle": "سيتصل بك الشريك هاتفياً لتأكيد التسليم والدفع.",
+  "checkoutViewOrders": "عرض طلباتي",
+  "checkoutBackHome": "العودة إلى الرئيسية",
+  "printAlbumSummary": "{pageCount} صفحات · {childName}",
+  "@printAlbumSummary": {
+    "placeholders": {
+      "pageCount": {"type": "int"},
+      "childName": {"type": "String"}
+    }
+  },
+  "printVipFreeNote": "مجانًا مع اشتراك VIP الخاص بك 🎁",
+  "printPricingNote": "سيتواصل معك فريقنا لتأكيد تكلفة الطباعة والتسليم.",
+  "printOrderSentTitle": "تم إرسال الطلب!",
+  "printOrderSentMessage": "سيتم طباعة ألبوم « {albumTitle} » وشحنه إلى العنوان المحدد. سنتصل بك هاتفياً للتأكيد.",
+  "@printOrderSentMessage": {
+    "placeholders": {
+      "albumTitle": {"type": "String"}
+    }
+  },
+  "printEstimatedDelay": "الوقت المتوقع: 7-14 يوم",
+  "printBackToAlbum": "العودة إلى الألبوم",
+  "printPreviewTitle": "معاينة الألبوم",
+  "printPreparingAlbum": "جاري تجهيز ألبومك...",
+  "printOrderPrinting": "طلب الطباعة",
+  "timeline_quick_add": "إضافة سريعة",
+  "timeline_quick_add_prompt": "ماذا ترغبين في فعله؟",
+  "timeline_create_capsule": "إنشاء كبسولة",
+  "timeline_create_capsule_subtitle": "وثقي ذكرى الآن",
+  "timeline_mark_milestone": "تحديد جلون",
+  "timeline_mark_milestone_subtitle": "افتحي جلوناً من المرحلة الحالية",
+  "timeline_upcoming_milestones": "الجالونات القادمة",
+  "timeline_all_milestones_have_memory": "كل جالونات هذه المرحلة لديها ذكرى بالفعل ✓",
+  "timeline_add": "إضافة",
+  "milestone_capture": "توثيق",
+  "milestone_memory": "ذكرى",
+  "milestone_phase": "المرحلة",
+  "milestone_suggested": "مقترح",
+  "milestone_capsule_ready": "الكبسولة جاهزة",
+  "milestone_view_capsule": "عرض الكبسولة",
+  "milestone_tap_to_open_memory": "اضغطي لفتح الذكرى",
+  "milestone_mark_complete": "تحديد كمكتمل",
+  "milestone_close": "إغلاق",
+  "milestone_capture_this_moment": "توثيق هذه اللحظة",
+  "milestone_capsule_not_found": "الكبسولة غير موجودة",
+  "milestone_tips_and_photo_ideas": "نصائح وأفكار للصور",
+  "milestone_reminder_on": "تذكير في {date}",
+  "@milestone_reminder_on": {
+    "placeholders": {
+      "date": {"type": "String"}
+    }
+  },
+  "milestone_schedule_reminder": "برمجة تذكير",
+  "milestone_marked_complete": "تم تحديد الجالون كمكتمل ✓",
+  "milestone_error": "خطأ: {error}",
+  "@milestone_error": {
+    "placeholders": {
+      "error": {"type": "String"}
+    }
+  },
+  "milestone_tips": "نصائح",
+  "milestone_understand_this": "فهم هذا الجالون",
+  "milestone_key_points": "نقاط هامة",
+  "milestone_photo_ideas": "أفكار للصور",
+  "milestone_reminder_tomorrow": "غداً",
+  "milestone_reminder_date_at_nine": "d MMM في 09:00",
+  "milestone_reminder_in_3_days": "خلال 3 أيام",
+  "milestone_reminder_in_1_week": "خلال أسبوع",
+  "milestone_reminder_on_milestone_day": "يوم الجالون",
+  "milestone_reminder_choose_date_time": "اختيار تاريخ ووقت",
+  "milestone_reminder_manual_selection": "تحديد يدوي",
+  "milestone_reminder_cancel": "إلغاء التذكير",
+  "milestone_reminder_cancel_subtitle": "حذف التذكير المبرمج",
+  "milestone_reminder_future_date_required": "يرجى اختيار تاريخ في المستقبل",
+  "milestone_reminder_enable_notifications": "يرجى تفعيل تنبيهات الجالونات في الإعدادات > الإشعارات",
+  "milestone_reminder_scheduled": "تمت برمجة التذكير في {date} ✓",
+  "@milestone_reminder_scheduled": {
+    "placeholders": {
+      "date": {"type": "String"}
+    }
+  },
+  "milestone_reminder_cancelled": "تم إلغاء التذكير",
+  "memoryBookTitle": "دفتر الذكريات",
+  "memoryBookSubtitle": "ألبومات مصممة تلقائياً",
+  "albumPredefinedTitle": "ألبوم مسبق الصنع",
+  "albumPredefinedSubtitle": "الولادة، السنة الأولى…",
+  "albumFreeTitle": "ألبوم حر",
+  "albumFreeSubtitle": "صفحات فارغة لملئها",
+  "albumAddChildFirst": "أضيفي طفلاً أولاً لإنشاء ألبوم",
+  "albumForWhichChild": "لأي طفل ؟",
+  "albumDefaultTitleForChild": "ألبوم لـ {childName}",
+  "@albumDefaultTitleForChild": {
+    "placeholders": {
+      "childName": {"type": "String"}
+    }
+  },
+  "albumNewFreeTitle": "ألبوم حر جديد",
+  "albumTitleHint": "عنوان الألبوم",
+  "albumCancel": "إلغاء",
+  "albumCreate": "إنشاء",
+  "albumCreateError": "خطأ أثناء إنشاء الألبوم",
+  "memoryBookNoAlbums": "لا توجد ألبومات متاحة",
+  "memoryBookCaptureMore": "سجلي المزيد من الذكريات\nلفتح الألبومات التلقائية",
+  "albumLoadingError": "خطأ في التحميل",
+  "memoryBookGenerateError": "تعذر إنشاء الألبومات",
+  "albumChooseTemplateFor": "اختر نموذجاً لـ {childName}",
+  "@albumChooseTemplateFor": {
+    "placeholders": {
+      "childName": {"type": "String"}
+    }
+  },
+  "albumCreateTemplateConfirm": "إنشاء « {templateTitle} » ؟",
+  "@albumCreateTemplateConfirm": {
+    "placeholders": {
+      "templateTitle": {"type": "String"}
+    }
+  },
+  "albumCreateTemplateDesc": "سيتم إنشاء هذا الألبوم لـ {childName} مع {slotCount} مناسبة لملئها.",
+  "@albumCreateTemplateDesc": {
+    "placeholders": {
+      "childName": {"type": "String"},
+      "slotCount": {"type": "int"}
+    }
+  },
+  "albumTemplateEventCount": "{count} مناسبات",
+  "@albumTemplateEventCount": {
+    "placeholders": {
+      "count": {"type": "int"}
+    }
+  },
+  "albumErrorWithMessage": "خطأ: {error}",
+  "@albumErrorWithMessage": {
+    "placeholders": {
+      "error": {"type": "String"}
+    }
+  },
+  "albumNotFound": "الألبوم غير موجود",
+  "albumTemplateNotFound": "النموذج غير موجود",
+  "albumEventsFilledProgress": "تم ملء {filled}/{total} مناسبة",
+  "@albumEventsFilledProgress": {
+    "placeholders": {
+      "filled": {"type": "int"},
+      "total": {"type": "int"}
+    }
+  },
+  "albumMemoryAttached": "ذكرى مرفقة",
+  "albumExistingCapsule": "موجودة",
+  "albumNewCapsule": "جديدة",
+  "albumPageCaption": "الصفحة {number}",
+  "@albumPageCaption": {
+    "placeholders": {
+      "number": {"type": "int"}
+    }
+  },
+  "albumPagesFilledDraft": "تم ملء {filled}/{total} صفحة · مسودة",
+  "@albumPagesFilledDraft": {
+    "placeholders": {
+      "filled": {"type": "int"},
+      "total": {"type": "int"}
+    }
+  },
+  "albumRenameTitle": "إعادة تسمية الألبوم",
+  "albumSave": "حفظ",
+  "albumChooseExistingCapsule": "اختيار كبسولة موجودة",
+  "albumCreateNewCapsule": "إنشاء كبسولة جديدة",
+  "albumPrintNeedMemory": "أضيفي ذكرى واحدة على الأقل لتتمكني من طلب الطباعة.",
+  "albumChooseCapsule": "اختر كبسولة ذكريات",
+  "albumNoCapsulesForChild": "لا توجد كبسولات لهذا الطفل.\nقومي بإنشاء كبسولة جديدة لهذه المناسبة.",
+  "notificationsTitle": "التنبيهات",
+  "notificationsSmartReminders": "التذكيرات الذكية",
+  "notificationsSmartRemindersSubtitle": "إدارة التنبيهات المخصصة لكِ",
+  "notificationsSystemSettings": "إعدادات النظام",
+  "notificationsVaccineTitle": "تذكيرات اللقاحات",
+  "notificationsVaccineSubtitle": "قبل يومين من موعد اللقاح، عند الساعة 09:00 صباحاً",
+  "notificationsMilestoneTitle": "مراحل التطور والنمو",
+  "notificationsMilestoneSubtitle": "قبل 7 أيام من كل مرحلة رئيسية، عند الساعة 09:00 صباحاً",
+  "notificationsCycleTitle": "الدورة النسائية",
+  "notificationsCycleSubtitle": "الحيض خلال يومين • فترة التبويض — عند الساعة 08:00 صباحاً",
+  "notificationsInfoNote": "تتم جدولة التذكيرات تلقائياً وتتكيف مع بياناتكِ الشخصية وبيانات طفلكِ.",
+  "profileTimelineDisplay": "عرض الخط الزمني",
+  "profileTimelineHorizontal": "عرض أفقي",
+  "profileTimelineVertical": "عرض عمودي",
+  "profileViewHorizontal": "أفقي",
+  "profileViewVertical": "عمودي",
+  "vaccineLinkedMemory": "ذكرى مرتبطة",
+  "vaccineCapsuleTitle": "كبسولة اللقاح",
+  "vaccineMemorySection": "الذكرى",
+  "vaccineMemoryPrompt": "أضيفي صورة أو تسجيلاً صوتياً للاحتفاظ بذكرى هذه اللحظة.",
+  "vaccineReelsTitle": "فيديوهات تعليمية",
+  "vaccineReelsSubtitle": "شاهدي فيديوهات قصيرة عن هذا اللقاح من قبل متخصصين في الصحة.",
+  "vaccineReelsButton": "فيديوهات",
+  "orderStatusPending": "قيد الانتظار",
+  "orderStatusConfirmed": "مؤكدة",
+  "orderStatusShipped": "تم الشحن",
+  "orderStatusDelivered": "تم التسليم",
+  "orderStatusCancelled": "ملغاة",
+  "retry": "إعادة المحاولة",
+  "share": "مشاركة",
+  "delete": "حذف",
+  "confirm": "تأكيد",
+  "later": "لاحقاً",
+  "premiumRequired": "Premium مطلوب",
+  "capsulesGalleryTitle": "كبسولاتي",
+  "capsulesRemaining": "{count} متبقية",
+  "@capsulesRemaining": {
+    "placeholders": {
+      "count": {"type": "int"}
+    }
+  },
+  "capsulesQuotaLimitTitle": "تم الوصول إلى الحد",
+  "capsulesQuotaLimitMessage": "لقد وصلت إلى حد {limit} كبسولة في الخطة المجانية. انتقلي إلى Premium للتخزين غير المحدود!",
+  "@capsulesQuotaLimitMessage": {
+    "placeholders": {
+      "limit": {"type": "int"}
+    }
+  },
+  "capsulesUnderstood": "فهمت",
+  "capsulesViewPremium": "عرض Premium",
+  "capsulesEmptyTitle": "لا توجد كبسولات",
+  "capsulesEmptySubtitle": "سجّلي ذكرياتك الأولى\nبالضغط على الزر أدناه",
+  "capsulesLoadErrorSubtitle": "تعذّر تحميل الكبسولات",
+  "capsuleSharePreparing": "جاري التحضير للمشاركة…",
+  "capsuleShareText": "✨ ذكرى ثمينة عبر Luckymam\n{emotion}",
+  "@capsuleShareText": {
+    "placeholders": {
+      "emotion": {"type": "String"}
+    }
+  },
+  "capsuleShareError": "خطأ في المشاركة: {error}",
+  "@capsuleShareError": {
+    "placeholders": {
+      "error": {"type": "String"}
+    }
+  },
+  "capsuleGalleryPermissionDenied": "تم رفض إذن المعرض",
+  "capsuleSavedToGallery": "تم الحفظ في ألبوم Luckymam 📸",
+  "capsuleSaveError": "خطأ في الحفظ: {error}",
+  "@capsuleSaveError": {
+    "placeholders": {
+      "error": {"type": "String"}
+    }
+  },
+  "capsulePremiumFeatureTitle": "ميزة Premium",
+  "capsulePremiumFeatureDesc": "مشاركة وحفظ الكبسولات\nمخصصة لمشتركي Premium و VIP.",
+  "capsulePremiumUpgradeCta": "🌟 الانتقال إلى Premium — 2 490 د.ج/سنة",
+  "capsuleDeleteTitle": "حذف الكبسولة؟",
+  "capsuleDeleteMessage": "هذا الإجراء لا رجعة فيه. سيتم حذف الذكرى نهائياً.",
+  "capsuleNewTitle": "كبسولة جديدة",
+  "capsuleAddPhoto": "إضافة صورة",
+  "capsulePhotoSourceHint": "الكاميرا أو المعرض",
+  "capsuleAddChildPrompt": "أضيفي طفلاً في ملفك الشخصي لإنشاء كبسولات",
+  "capsuleWhichChild": "🧒 لأي طفل؟",
+  "capsuleTagsOptional": "🏷️ وسوم (اختياري)",
+  "capsuleAddTagHint": "إضافة وسم...",
+  "capsuleCategory": "📂 الفئة",
+  "capsuleRequired": "(إلزامي)",
+  "capsulePhotoDate": "📅 تاريخ الصورة",
+  "capsuleTodayDefault": "اليوم (افتراضي)",
+  "capsulePhotoDateHint": "مفيد إذا التُقطت الصورة في تاريخ مختلف",
+  "capsulePhotoDatePickerHelp": "تاريخ الصورة",
+  "capsuleChooseSource": "اختر المصدر",
+  "capsuleCamera": "الكاميرا",
+  "capsuleGallery": "المعرض",
+  "capsuleCreatedSuccess": "تم إنشاء الكبسولة بنجاح! ✨",
+  "capsuleEmotion": "المشاعر",
+  "capsuleVoiceMessageOptional": "🎤 رسالة صوتية (اختياري)",
+  "capsuleHoldToRecord": "اضغطي مطولاً للتسجيل",
+  "capsuleMaxDuration": "الحد الأقصى {seconds} ث",
+  "@capsuleMaxDuration": {
+    "placeholders": {
+      "seconds": {"type": "int"}
+    }
+  },
+  "capsuleReleaseToStop": "أفلتي لإيقاف التسجيل",
+  "capsuleVoiceRecorded": "تم تسجيل الرسالة الصوتية",
+  "capsuleDuration": "المدة: {duration}",
+  "@capsuleDuration": {
+    "placeholders": {
+      "duration": {"type": "String"}
+    }
+  },
+  "healthLoadingError": "خطأ في التحميل",
+  "healthHubSubtitle": "النمو والمواعيد",
+  "healthTabGrowth": "📈 النمو",
+  "healthTabAppointments": "🗓 المواعيد",
+  "healthNoChildTitle": "لا يوجد طفل مسجل",
+  "healthNoChildHint": "أضيفي طفلاً في ملفكِ الشخصي.",
+  "healthTabSubtitle": "اللقاحات · النمو · المواعيد",
+  "healthTabVaccines": "💉 اللقاحات",
+  "healthTabRdv": "🗓 موعد",
+  "healthErrorWithDetail": "خطأ: {error}",
+  "@healthErrorWithDetail": {
+    "placeholders": {
+      "error": {"type": "String"}
+    }
+  },
+  "healthWeightChartTitle": "منحنى الوزن",
+  "healthWhoP50": "OMS p50",
+  "healthMeasurementHistory": "سجل القياسات",
+  "healthMeasurementFab": "قياس",
+  "healthNoMeasurementsTitle": "لا توجد قياسات مسجلة",
+  "healthNoMeasurementsHint": "اضغطي على + لإضافة\nقياس للنمو.",
+  "healthDeleteMeasurementTitle": "حذف هذا القياس؟",
+  "healthCancel": "إلغاء",
+  "healthDelete": "حذف",
+  "healthNewMeasurement": "قياس جديد",
+  "healthWeightKg": "الوزن (كغ)",
+  "healthHeightCm": "الطول (سم)",
+  "healthNotesOptional": "ملاحظات (اختياري)",
+  "healthMeasurementSaved": "تم حفظ القياس ✓",
+  "healthSave": "حفظ",
+  "healthAppointmentFab": "موعد",
+  "healthNoAppointmentsTitle": "لا توجد مواعيد",
+  "healthNoAppointmentsHint": "سجّلي الزيارات الطبية\nونتائج الفحوصات.",
+  "healthDeleteAppointmentTitle": "حذف هذا الموعد؟",
+  "healthNewAppointment": "موعد جديد",
+  "healthDoctorName": "اسم الطبيب",
+  "healthSpecialty": "التخصص",
+  "healthNotesObservationsOptional": "ملاحظات / ملاحظات (اختياري)",
+  "healthAttachPhoto": "صورة",
+  "healthAttachPdfFile": "PDF / ملف",
+  "healthUploadingFiles": "جاري رفع الملفات…",
+  "healthSaving": "جاري الحفظ…",
+  "healthAppointmentSaved": "تم حفظ الموعد ✓",
+  "healthSaveError": "خطأ أثناء الحفظ",
+  "healthWeightValue": "{value} كغ",
+  "@healthWeightValue": {
+    "placeholders": {
+      "value": {"type": "String"}
+    }
+  },
+  "healthHeightValue": "{value} سم",
+  "@healthHeightValue": {
+    "placeholders": {
+      "value": {"type": "String"}
+    }
+  },
+  "healthChartAxisKg": "{value} كغ",
+  "@healthChartAxisKg": {
+    "placeholders": {
+      "value": {"type": "String"}
+    }
+  },
+  "healthChartAxisMonths": "{value}ش",
+  "@healthChartAxisMonths": {
+    "placeholders": {
+      "value": {"type": "String"}
+    }
+  },
+  "healthChartTooltip": "{weight} كغ\n{months}ش",
+  "@healthChartTooltip": {
+    "placeholders": {
+      "weight": {"type": "String"},
+      "months": {"type": "String"}
+    }
+  },
+  "healthChartEmptyHint": "أضيفي قياساً\nلعرض المنحنى",
+  "healthApptTypeGeneraliste": "طبيب عام",
+  "healthApptTypePediatre": "طبيب أطفال",
+  "healthApptTypeDentiste": "طبيب أسنان",
+  "healthApptTypeOphtalmologue": "طبيب عيون",
+  "healthApptTypeCardiologue": "طبيب قلب",
+  "healthApptTypeAutre": "اختصاصي آخر",
+  "healthMotherTitle": "صحة الأم",
+  "healthMotherPregnancyTracking": "متابعة الحمل",
+  "healthMotherViewMedicalInfo": "اطّلعي على معلوماتكِ الطبية",
+  "subscriptionPlansTitle": "اختر باقة",
+  "subscriptionPlansSubtitle": "افتح جميع الميزات",
+  "subscriptionPlanCurrentBadge": "الحالية",
+  "subscriptionPlanCurrentButton": "باقتك الحالية",
+  "subscriptionPlanSelect": "اختيار",
+  "subscriptionPlanChoose": "اختر هذه الباقة",
+  "paymentTitle": "الدفع",
+  "paymentBaridiMob": "BaridiMob",
+  "paymentMethodTitle": "طريقة الدفع",
+  "paymentMethodCib": "CIB",
+  "paymentMethodCibDescription": "البطاقة البنكية",
+  "paymentMethodEdahabia": "Edahabia",
+  "paymentMethodEdahabiaDescription": "بريد الجزائر",
+  "paymentCardDetailsTitle": "تفاصيل البطاقة",
+  "paymentCardHolderLabel": "اسم حامل البطاقة",
+  "paymentCardNumberLabel": "رقم البطاقة",
+  "paymentCardNumberHint": "0000 0000 0000 0000",
+  "paymentExpiryLabel": "تاريخ الانتهاء",
+  "paymentExpiryHint": "MM/YY",
+  "paymentCvvLabel": "CVV",
+  "paymentCvvHint": "***",
+  "paymentPhoneHint": "0550 00 00 00",
+  "paymentSecurityNotice": "دفع آمن عبر BaridiMob. بياناتك البنكية محمية.",
+  "paymentConfirmButton": "تأكيد الدفع • {price} د.ج",
+  "@paymentConfirmButton": {
+    "placeholders": {
+      "price": {"type": "int"}
+    }
+  },
+  "paymentPriceDzd": "{price} د.ج",
+  "@paymentPriceDzd": {
+    "placeholders": {
+      "price": {"type": "int"}
+    }
+  },
+  "paymentSuccessTitle": "تم الدفع بنجاح!",
+  "paymentSuccessActivePlan": "اشتراك {planTitle} نشط الآن.",
+  "@paymentSuccessActivePlan": {
+    "placeholders": {
+      "planTitle": {"type": "String"}
+    }
+  },
+  "paymentSuccessAlbumPerk": "ألبومك المطبوع المجاني في انتظارك! توجه إلى ملفك الشخصي.",
+  "subscriptionAlbumClaimTitle": "ألبوم مطبوع مجاني",
+  "subscriptionAlbumClaimSubtitle": "هدية VIP 🎁",
+  "subscriptionAlbumClaimInfo": "كعضو VIP، تحصلين على ألبوم صور مطبوع لأجمل ذكرياتك. املئي النموذج أدناه.",
+  "subscriptionAlbumClaimSubmit": "إرسال طلبي",
+  "subscriptionAlbumClaimSubmittedTitle": "تم إرسال الطلب!",
+  "subscriptionAlbumClaimSubmittedMessage": "سيتم تحضير ألبومك المطبوع وشحنه إلى العنوان المحدد. سنتواصل معك هاتفياً للتأكيد.",
+  "subscriptionAlbumClaimSelectChildError": "يرجى اختيار طفل",
+  "subscriptionBack": "رجوع",
+  "subscriptionDiamondSponsorsTitle": "رعاة الماس",
+  "subscriptionDiamondPartnersHero": "شركاؤنا الماسيون",
+  "subscriptionDiamondPartnersSubtitle": "علامات موثوقة ترافق\nكل أم في رحلتها",
+  "subscriptionDiamondPillExclusive": "💎 حصري",
+  "subscriptionDiamondPillPremium": "⭐ بريميوم",
+  "subscriptionDiamondPillCertified": "✅ معتمد",
+  "subscriptionDiamondLogosSection": "الشعارات والشركاء",
+  "subscriptionDiamondOfficialPartners": "شركاء Luckymam الرسميون",
+  "subscriptionDiamondBadge": "ماس",
+  "subscriptionDiamondJoinTitle": "انضم إلى رعاتنا الماسيين",
+  "subscriptionDiamondJoinSubtitle": "تواصل مع آلاف الأمهات الجزائريات.\nاتصل بنا لشراكة ماسية.",
+  "subscriptionDiamondContactEmail": "sponsors@Luckymam.com",
+  "subscriptionDiamondPartner1Name": "شريك ماسي 1",
+  "subscriptionDiamondPartner1Category": "الصحة والأمومة",
+  "subscriptionDiamondPartner1Description": "رائد في حلول الصحة للنساء والأطفال.",
+  "subscriptionDiamondPartner2Name": "شريك ماسي 2",
+  "subscriptionDiamondPartner2Category": "تغذية الرضع",
+  "subscriptionDiamondPartner2Description": "خبراء في تغذية الرضع والأطفال الصغار.",
+  "subscriptionDiamondPartner3Name": "شريك ماسي 3",
+  "subscriptionDiamondPartner3Category": "مستلزمات الأطفال",
+  "subscriptionDiamondPartner3Description": "معدات مميزة لإيقاظ طفلك.",
+  "homeMarketplaceSubtitle": "منتجات للأطفال والأمهات من شركائنا",
+  "homeHealthTitle": "صحة الطفل",
+  "homeHealthSubtitle": "منحنى النمو · المواعيد الطبية",
+  "homeReelsSubtitle": "فيديوهات قصيرة · نصائح للأمهات",
+  "homeMemoryBookAlbumsCount": "{count, plural, =1{ألبوم واحد مُولَّد تلقائياً} other{{count} ألبومات مُولَّدة تلقائياً}}",
+  "@homeMemoryBookAlbumsCount": {
+    "placeholders": {
+      "count": {"type": "int"}
+    }
+  },
+  "homeMemoryBookEmptySubtitle": "ذكرياتك في ألبومات",
+  "homeChildAllGood": "كل شيء على ما يرام!",
+  "homeChildVaccineLabel": "لقاح: {codes}",
+  "@homeChildVaccineLabel": {
+    "placeholders": {
+      "codes": {"type": "String"}
+    }
+  },
+  "homeYourChildren": "أطفالك",
+  "homeRecentCapsulesEmpty": "أنشئي كبسولتك الأولى!",
+  "homeVaccineCalendarTitle": "جدول التطعيمات",
+  "homeVaccineCalendarSubtitle": "البرنامج الوطني الجزائري",
+  "homeVaccineMarkComplete": "تحديد كمُنجَز",
+  "homeVaccineDateLabel": "تاريخ التطعيم",
+  "homeVaccineNotesHint": "مثال: د. مارتن، العيادة...",
+  "homeVaccineMarkedComplete": "تم تحديد اللقاح كمُنجَز ✓",
+  "homeVaccineCancelTitle": "إلغاء اللقاح؟",
+  "homeVaccineCancelMessage": "هل تريدين تحديد \"{ageLabel}\" كغير مُنجَز؟",
+  "@homeVaccineCancelMessage": {
+    "placeholders": {
+      "ageLabel": {"type": "String"}
+    }
+  },
+  "homeVaccineNo": "لا",
+  "homeVaccineYesCancel": "نعم، إلغاء",
+  "homeVaccineNoChildrenHint": "أضيفي طفلاً في ملفك الشخصي لعرض جدول تطعيماته.",
+  "homeLoadDataError": "تعذّر تحميل البيانات",
+  "profilePersonalInfo": "المعلومات الشخصية",
+  "profileMedicalInfo": "المعلومات الطبية",
+  "profileCurrentStatus": "الحالة الحالية",
+  "profileMenstrualCycle": "الدورة الشهرية",
+  "profileMyPregnancy": "حملي",
+  "profileMySubscription": "اشتراكي",
+  "profileSettings": "الإعدادات",
+  "profileNotProvided": "غير محدد",
+  "profilePhone": "الهاتف",
+  "profileBirthDate": "تاريخ الميلاد",
+  "profileWilaya": "الولاية",
+  "profileCurrentPhase": "المرحلة الحالية",
+  "profileLastPregnancy": "آخر حمل",
+  "profileBloodType": "فصيلة الدم",
+  "profileAllergies": "الحساسية",
+  "profileNoKnownAllergies": "لا توجد حساسية معروفة",
+  "profileMedicalConditions": "الحالات الطبية",
+  "profileNone": "لا شيء",
+  "profileDoctor": "الطبيب المعالج",
+  "profilePregnancyLmpPrompt": "أدخلي تاريخ آخر دورة لحساب موعد الولادة وأسبوع الحمل.",
+  "profileLmpLabel": "آخر دورة شهرية",
+  "profileGestationalWeek": "أسبوع الحمل",
+  "profileDueDateLabel": "موعد الولادة المتوقع",
+  "profileCountdown": "العد التنازلي",
+  "profileLastPeriod": "آخر دورة",
+  "profileNextPeriod": "الدورة القادمة",
+  "profileAverageDuration": "المدة المتوسطة",
+  "profileCycleNotActive": "تتبع الدورة غير مفعّل",
+  "profileCycleDays": "دورة {days} يوم",
+  "@profileCycleDays": {
+    "placeholders": {
+      "days": {"type": "int"}
+    }
+  },
+  "profileFreePlan": "الخطة المجانية",
+  "profileManage": "إدارة",
+  "profileAlbumClaimSent": "تم إرسال طلب الألبوم ✓",
+  "profileClaimFreeAlbum": "اطلبي ألبومك المطبوع المجاني 🎁",
+  "profileDarkTheme": "المظهر الداكن",
+  "profileLanguage": "اللغة",
+  "profileNotifications": "الإشعارات",
+  "profileManageReminders": "إدارة التنبيهات",
+  "profileLogout": "تسجيل الخروج",
+  "profileSelectLanguage": "اختر اللغة",
+  "profileLanguageFr": "Français",
+  "profileLanguageAr": "العربية",
+  "profileLanguageEn": "English",
+  "profileStatusHopeShort": "أمل",
+  "profileLoading": "جاري التحميل...",
+  "profileDefaultUser": "مستخدمة",
+  "profileError": "خطأ",
+  "profileEditPersonalInfo": "تعديل معلوماتي",
+  "profileEditMedicalInfoTitle": "المعلومات الطبية",
+  "profileAllergiesHint": "الحساسية (مفصولة بفاصلة)",
+  "profileConditionsHint": "الحالات الطبية (مفصولة بفاصلة)",
+  "profileDoctorName": "اسم الطبيب",
+  "profileDoctorPhone": "هاتف الطبيب",
+  "profileEditChild": "تعديل الطفل",
+  "profileFirstName": "الاسم",
+  "profileGirl": "بنت",
+  "profileBoy": "ولد",
+  "profileBirthDateRequired": "تاريخ الميلاد إلزامي",
+  "profileDeleteChildTitle": "حذف هذا الطفل؟",
+  "profileIrreversibleAction": "هذا الإجراء لا رجعة فيه.",
+  "profileCycleSettings": "إعدادات الدورة",
+  "profileCycleLength": "مدة الدورة",
+  "profilePeriodDuration": "مدة الحيض",
+  "profileDaysCount": "{count} أيام",
+  "@profileDaysCount": {
+    "placeholders": {
+      "count": {"type": "int"}
+    }
+  },
+  "profileNewCapsule": "كبسولة جديدة",
+  "profileVaccinesDone": "التطعيمات المنجزة",
+  "profileAge": "العمر",
+  "profileVaccinations": "التطعيمات",
+  "profileNoCapsulesForChild": "لا توجد كبسولات لـ {name}",
+  "@profileNoCapsulesForChild": {
+    "placeholders": {
+      "name": {"type": "String"}
+    }
+  },
+  "profileCaptureFirstMemory": "وثّقي أول ذكرى!",
+  "profileMvpFooter": "MVP - {appName} {year}",
+  "@profileMvpFooter": {
+    "placeholders": {
+      "appName": {"type": "String"},
+      "year": {"type": "int"}
+    }
+  },
+  "profileGestationalWeekValue": "أسبوع {week} / 40",
+  "@profileGestationalWeekValue": {
+    "placeholders": {
+      "week": {"type": "int"}
+    }
+  },
+  "profilePhasePeriod": "الحيض",
+  "profilePhaseFollicular": "المرحلة الجريبية",
+  "profilePhaseOvulatory": "مرحلة الإباضة",
+  "profilePhaseLuteal": "المرحلة الأصفرية",
+  "profileSave": "حفظ",
+  "profileCancel": "إلغاء",
+  "errorWithMessage": "خطأ: {error}",
+  "@errorWithMessage": {
+    "placeholders": {
+      "error": {"type": "String"}
+    }
+  },
+  "reelsTitle": "مقاطع توعوية",
+  "reelsFiltered": "تصفية: {label}",
+  "@reelsFiltered": {
+    "placeholders": {
+      "label": {"type": "String"}
+    }
+  },
+  "reelsEmptyCategory": "لا توجد مقاطع في هذه الفئة",
+  "reelsAll": "الكل",
+  "reelsSave": "حفظ",
+  "reelCategoryVaccins": "التطعيمات",
+  "reelCategoryGrossesseHta": "الحمل وارتفاع الضغط",
+  "reelCategoryGrossesseDiabete": "الحمل والسكري",
+  "reelCategorySoutien": "الدعم",
+  "reelCategorySoins": "الرعاية",
+  "reelCategoryNutrition": "التغذية",
+  "adsSponsored": "برعاية · {sponsor}",
+  "@adsSponsored": {
+    "placeholders": {
+      "sponsor": {"type": "String"}
+    }
+  },
+  "authLaw1807LegalRef": "مرجع الامتثال القانوني: القانون الجزائري رقم 18-07 المتعلق بحماية الأشخاص الطبيعيين في مجال معالجة المعطيات ذات الطابع الشخصي.",
+  "authLaw1807ScrollWarning": "يرجى قراءة النص بالكامل وتمريره إلى الأسفل لتفعيل زر القبول.",
+  "onboardingTitleLine1": "ذكريات تُورَث،",
+  "onboardingTitleLine2": "مشاعر تُعاش من جديد",
+  "timelineLifeBook": "كتاب الحياة",
+  "timelineLifeBookOf": "لـ {name}",
+  "@timelineLifeBookOf": {
+    "placeholders": {
+      "name": {"type": "String"}
+    }
+  },
+  "timelineNoMilestonesPhase": "لا توجد جالونات لهذه المرحلة",
+  "timelineMilestonesAppear": "ستظهر الجالونات في الوقت المناسب",
+  "timelineAddChildTitle": "أضيفي طفلاً",
+  "timelineAddChildHint": "لعرض خطه الزمني المخصص",
+  "timelineStatusCompleted": "✓ مُنجَز",
+  "timelineStatusOverdue": "يجب اللحاق",
+  "timelineStatusNow": "الآن",
+  "timelineDueToday": "اليوم",
+  "timelineDueDaysAgo": "منذ {days} ي",
+  "@timelineDueDaysAgo": {
+    "placeholders": {
+      "days": {"type": "int"}
+    }
+  },
+  "timelineDueInDays": "خلال {days} ي",
+  "@timelineDueInDays": {
+    "placeholders": {
+      "days": {"type": "int"}
+    }
+  },
+  "timelineDueInMonths": "خلال {months} أشهر",
+  "@timelineDueInMonths": {
+    "placeholders": {
+      "months": {"type": "int"}
+    }
+  },
+  "timelineDueInYears": "خلال {years} سنوات",
+  "@timelineDueInYears": {
+    "placeholders": {
+      "years": {"type": "int"}
+    }
+  },
+  "timelineDueInYearsSingular": "خلال {years} سنة",
+  "@timelineDueInYearsSingular": {
+    "placeholders": {
+      "years": {"type": "int"}
+    }
+  },
+  "timelinePhaseCurrent": "الحالي",
+  "vaccineDetails": "التفاصيل",
+  "vaccineCancel": "إلغاء اللقاح",
+  "vaccineMarkDone": "تحديد كمُنجَز",
+  "vaccineDoneOn": "تم في {date}",
+  "@vaccineDoneOn": {
+    "placeholders": {
+      "date": {"type": "String"}
+    }
+  },
+  "vaccineCompleted": "مكتمل",
+  "vaccineOverdueDays": "متأخر {days} أيام",
+  "@vaccineOverdueDays": {
+    "placeholders": {
+      "days": {"type": "int"}
+    }
+  },
+  "vaccineDueToday": "مقرر اليوم",
+  "vaccineDueInDays": "خلال {days} أيام",
+  "@vaccineDueInDays": {
+    "placeholders": {
+      "days": {"type": "int"}
+    }
+  },
+  "vaccineDone": "مُنجَز",
+  "vaccineMark": "تحديد",
+  "vaccineLinkedMemoryEmoji": "ذكرى مرتبطة 🌟",
+  "authPrivacyTitle": "الخصوصية والشروط",
+  "authPrivacyHeroTitle": "بياناتكم تهمّنا",
+  "authPrivacyLastUpdated": "آخر تحديث: 1 مارس 2026",
+  "authPrivacyPolicyTitle": "سياسة الخصوصية",
+  "authPrivacySection1Title": "1. البيانات المجمّعة",
+  "authPrivacySection1Body": "عند إنشاء حساب Luckymam، نجمع:\n\n• اسمك وبريدك الإلكتروني\n• موعد الولادة (الحمل)\n• تاريخ ميلاد طفلك\n• معلومات عن أطفالك (الاسم، تاريخ الميلاد)\n• كبسولات الصور واللحظات التي تختارين مشاركتها\n• بيانات صحية تدخلينها طوعاً (التطعيمات، المتابعة الطبية)",
+  "authPrivacySection2Title": "2. استخدام بياناتك",
+  "authPrivacySection2Body": "تُستخدم بياناتك حصرياً من أجل:\n\n• توفير ميزات التطبيق (الخط الزمني، الكبسولات، التطعيمات)\n• تخصيص تجربتك حسب ملفك الأمومي\n• إرسال تذكيرات وإشعارات ذات صلة\n• تحسين خدماتنا بشكل مجهول ومجمّع\n\nلا نبيع أو نشارك بياناتك الشخصية مع أطراف ثالثة لأغراض تجارية.",
+  "authPrivacySection3Title": "3. التخزين والأمان",
+  "authPrivacySection3Body": "يتم تخزين بياناتك بشكل آمن على خوادم Firebase (Google Cloud Platform)، معتمدة ISO 27001 ومتوافقة مع RGPD.\n\n• تشفير أثناء النقل (TLS 1.3) وفي حالة السكون (AES-256)\n• وصول مقيد لحسابك فقط عبر مصادقة آمنة\n• نسخ احتياطية تلقائية مشفّرة",
+  "authPrivacySection4Title": "4. حقوقك (RGPD)",
+  "authPrivacySection4Body": "وفقاً للائحة حماية البيانات العامة، لديك الحقوق التالية:\n\n• الحق في الوصول إلى بياناتك الشخصية\n• الحق في تصحيح البيانات غير الدقيقة\n• الحق في المحو (« الحق في النسيان »)\n• الحق في نقل البيانات\n• الحق في الاعتراض على المعالجة\n\nلممارسة هذه الحقوق: privacy@Luckymam.com",
+  "authPrivacySection5Title": "5. الاحتفاظ بالبيانات",
+  "authPrivacySection5Body": "يتم الاحتفاظ ببياناتك طالما حسابك نشط. عند حذف الحساب، تُمحى جميع البيانات الشخصية خلال 30 يوماً.\n\nيمكنك طلب الحذف من: الملف الشخصي → الإعدادات → حذف حسابي.",
+  "authTermsTitle": "شروط الاستخدام",
+  "authTermsSection1Title": "1. قبول الشروط",
+  "authTermsSection1Body": "بإنشاء حساب واستخدام تطبيق Luckymam، تقبلين شروط الاستخدام هذه بالكامل. إذا لم تقبلي هذه الشروط، يرجى عدم استخدام التطبيق.",
+  "authTermsSection2Title": "2. وصف الخدمة",
+  "authTermsSection2Body": "Luckymam تطبيق جوال مخصص لمرافقة الأمهات في رحلة الأمومة. يقدّم:\n\n• إنشاء والحفاظ على كبسولات صور الحياة\n• متابعة الخط الزمني للحظات المهمة\n• متابعة تطعيمات الطفل\n• الوصول إلى مقاطع توعوية عن الحمل والأمومة\n• ميزات Premium و VIP باشتراك",
+  "authTermsSection3Title": "3. المسؤوليات",
+  "authTermsSection3Body": "Luckymam ليست خدمة طبية ولا تحل محل رأي متخصص في الصحة. المعلومات المقدّمة (جدول التطعيم، نصائح الحمل) للإرشاد فقط.\n\nأنت مسؤولة عن سرية بيانات الدخول ودقة المعلومات التي تدخلينها.",
+  "authTermsSection4Title": "4. الاشتراكات والفوترة",
+  "authTermsSection4Body": "تقدّم Luckymam ثلاث مستويات:\n\n• مجاني: الميزات الأساسية\n• Premium: 2490 دج/سنة — جميع الميزات المتقدمة\n• VIP: 9890 دج/سنة — بطاقة VIP + شركاء حصريون\n\nتتجدد الاشتراكات تلقائياً. يمكنك الإلغاء في أي وقت من مساحة الاشتراك.",
+  "authTermsSection5Title": "5. التعديلات",
+  "authTermsSection5Body": "تحتفظ Luckymam بالحق في تعديل هذه الشروط في أي وقت. سيتم إخطارك بأي تغيير عبر البريد الإلكتروني وفي التطبيق. الاستمرار في الاستخدام بعد الإخطار يعني قبول الشروط الجديدة.",
+  "authPrivacyQuestionsTitle": "أسئلة؟",
+  "authPrivacyContactEmail": "تواصلي معنا على privacy@Luckymam.com",
+  "vaccineDetailProtectsAgainst": "يحمي من: {disease}",
+  "@vaccineDetailProtectsAgainst": {
+    "placeholders": {
+      "disease": {"type": "String"}
+    }
+  },
+  "vaccineDetailPurposeTitle": "ما فائدة هذا اللقاح؟",
+  "vaccineDetailHowItWorks": "كيف يعمل؟",
+  "vaccineDetailSideEffects": "الآثار الجانبية المحتملة",
+  "vaccineDetailFallback": "هذا اللقاح جزء من جدول التطعيم الوطني الجزائري. استشيري طبيب الأطفال للمزيد من المعلومات.",
+  "vaccineDetailDisclaimer": "هذه المعلومات لأغراض تعليمية فقط. استشيري دائماً طبيبك أو طبيب الأطفال قبل أي قرار طبي.",
+  "subscriptionPlanFreeTitle": "مجاني",
+  "subscriptionPlanFreeSubtitle": "للبدء",
+  "subscriptionPlanFreeFeatureCapsules": "25 كبسولة كحد أقصى",
+  "subscriptionPlanFreeFeatureChild": "طفل واحد",
+  "subscriptionPlanFreeFeatureMilestones": "معالم النمو",
+  "subscriptionPlanFreeFeatureVaccines": "التطعيمات",
+  "subscriptionPlanPremiumTitle": "Premium",
+  "subscriptionPlanPremiumSubtitle": "للأمهات النشطات",
+  "subscriptionPlanPremiumFeatureUnlimitedCapsules": "كبسولات غير محدودة",
+  "subscriptionPlanPremiumFeatureAllChildren": "جميع الأطفال",
+  "subscriptionPlanPremiumFeatureMemoryBook": "كتاب الذكريات",
+  "subscriptionPlanPremiumFeatureFullHealth": "متابعة صحية كاملة",
+  "subscriptionPlanPremiumFeatureNoAds": "بدون إعلانات",
+  "subscriptionPlanVipTitle": "VIP سنوي",
+  "subscriptionPlanVipSubtitle": "التجربة الكاملة",
+  "subscriptionPlanVipFeatureAllPremium": "كل ميزات Premium",
+  "subscriptionPlanVipFeatureFreeAlbum": "ألبوم مطبوع مجاني 🎁",
+  "subscriptionPlanVipFeaturePrioritySupport": "دعم ذو أولوية",
+  "subscriptionPlanVipFeatureVipCard": "بطاقة VIP شخصية",
+  "subscriptionPlanVipFeaturePartnerCard": "استخدام بطاقة VIP مع شركائنا*",
+  "subscriptionPlanBillingPerYear": "/سنة",
+  "subscriptionPlanFreePrice": "مجاني",
+  "subscriptionPlanPriceDzd": "{price} دج",
+  "@subscriptionPlanPriceDzd": {
+    "placeholders": {
+      "price": {"type": "int"}
+    }
+  },
+  "subscriptionSnackUpgradeSuccess": "تم تفعيل اشتراك {tier}!",
+  "@subscriptionSnackUpgradeSuccess": {
+    "placeholders": {
+      "tier": {"type": "String"}
+    }
+  },
+  "subscriptionSnackAlbumClaimSuccess": "تم إرسال طلب الألبوم! سنتواصل معك قريباً.",
+  "subscriptionSnackError": "خطأ: {details}",
+  "@subscriptionSnackError": {
+    "placeholders": {
+      "details": {"type": "String"}
+    }
+  },
+  "profileSnackPersonalInfoUpdated": "تم تحديث المعلومات",
+  "profileSnackPhotoUpdated": "تم تحديث صورة الملف الشخصي",
+  "profileSnackStatusUpdated": "تم تحديث الحالة",
+  "profileSnackMedicalUpdated": "تم تحديث المعلومات الطبية",
+  "profileSnackCycleUpdated": "تم تحديث الدورة",
+  "profileSnackPeriodLogged": "تم تسجيل الدورة",
+  "profileSnackPregnancyLmpSaved": "تم حفظ تاريخ بداية الحمل",
+  "profileSnackChildAdded": "تمت إضافة الطفل",
+  "profileSnackChildUpdated": "تم تحديث الطفل",
+  "profileSnackChildDeleted": "تم حذف الطفل",
+  "profileSnackError": "خطأ: {details}",
+  "@profileSnackError": {
+    "placeholders": {
+      "details": {"type": "String"}
+    }
+  },
+  "authErrorUnknown": "خطأ غير معروف",
+  "authWelcome": "مرحباً {name}!",
+  "@authWelcome": {
+    "placeholders": {
+      "name": {"type": "String"}
+    }
+  },
+  "notifVaccineChannelName": "التطعيمات",
+  "notifVaccineChannelDesc": "تذكيرات التطعيم",
+  "notifMilestoneChannelName": "مراحل النمو",
+  "notifMilestoneChannelDesc": "تنبيهات مراحل التطور",
+  "notifCycleChannelName": "الدورة النسائية",
+  "notifCycleChannelDesc": "تذكيرات الدورة",
+  "notifVaccineReminderTitle": "💉 تذكير لقاح – {childName}",
+  "@notifVaccineReminderTitle": {
+    "placeholders": {
+      "childName": {"type": "String"}
+    }
+  },
+  "notifVaccineReminderBody": "{vaccineLabel} موعده {date}",
+  "@notifVaccineReminderBody": {
+    "placeholders": {
+      "vaccineLabel": {"type": "String"},
+      "date": {"type": "String"}
+    }
+  },
+  "notifMilestoneUpcomingTitle": "⭐ مرحلة قادمة – {childName}",
+  "@notifMilestoneUpcomingTitle": {
+    "placeholders": {
+      "childName": {"type": "String"}
+    }
+  },
+  "notifMilestoneUpcomingBody": "\"{milestoneTitle}\" خلال 7 أيام",
+  "@notifMilestoneUpcomingBody": {
+    "placeholders": {
+      "milestoneTitle": {"type": "String"}
+    }
+  },
+  "notifMilestoneCustomTitle": "⏰ تذكير – {childName}",
+  "@notifMilestoneCustomTitle": {
+    "placeholders": {
+      "childName": {"type": "String"}
+    }
+  },
+  "notifMilestoneCustomBody": "\"{milestoneTitle}\" — اضغطي للفتح",
+  "@notifMilestoneCustomBody": {
+    "placeholders": {
+      "milestoneTitle": {"type": "String"}
+    }
+  },
+  "notifCyclePeriodTitle": "🌸 الدورة خلال يومين",
+  "notifCyclePeriodBody": "استعدي لدورتك القادمة.",
+  "notifCycleOvulationTitle": "🌿 مرحلة الإباضة غداً",
+  "notifCycleOvulationBody": "تبدأ فترة الخصوبة القصوى غداً.",
+  "profileAgeMonthsOnly": "{count} شهر",
+  "@profileAgeMonthsOnly": {
+    "placeholders": {
+      "count": {"type": "int"}
+    }
+  },
+  "profileAgeYearsOnly": "{count, plural, =1{سنة واحدة} other{{count} سنوات}}",
+  "@profileAgeYearsOnly": {
+    "placeholders": {
+      "count": {"type": "int"}
+    }
+  },
+  "profileAgeYearsAndMonths": "{years, plural, =1{سنة واحدة {months} شهر} other{{years} سنوات {months} شهر}}",
+  "@profileAgeYearsAndMonths": {
+    "placeholders": {
+      "years": {"type": "int"},
+      "months": {"type": "int"}
+    }
+  },
+  "signupConsentPrefix": "بإنشاء حساب، تمنحيننا الإذن بتخزين موعد الولادة وتاريخ ميلاد طفلك وأي بيانات أخرى تدخلينها بشكل آمن. بالمتابعة، تقبلين ",
+  "signupConsentPrivacyLink": "سياسة الخصوصية",
+  "signupConsentAnd": " و",
+  "signupConsentTermsLink": "شروط الاستخدام"
 }

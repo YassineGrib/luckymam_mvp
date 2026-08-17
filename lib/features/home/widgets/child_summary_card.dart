@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 
-import 'package:google_fonts/google_fonts.dart';
 
+import '../../../core/extensions/l10n_extension.dart';
+import '../../../core/extensions/profile_l10n_extension.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../profile/models/profile_models.dart';
 
@@ -35,17 +36,20 @@ class ChildSummaryCard extends StatelessWidget {
         ? AppColors.textSecondaryDark
         : AppColors.textSecondaryLight;
 
+    final l10n = context.l10n;
+    final lang = Localizations.localeOf(context).languageCode;
+
     // Determine what to show (Vaccine takes priority if urgent)
-    String eventText = 'Tout va bien !';
+    String eventText = l10n.homeChildAllGood;
     IconData eventIcon = Icons.check_circle_rounded;
     Color eventColor = Colors.green;
 
     if (nextVaccine != null) {
-      eventText = 'Vaccin: ${nextVaccine!.group.vaccineCodesLabel}';
+      eventText = l10n.homeChildVaccineLabel(nextVaccine!.group.vaccineCodesLabel);
       eventIcon = Icons.medical_services_rounded;
       eventColor = AppColors.error; // Urgent
     } else if (nextMilestone != null) {
-      eventText = nextMilestone!.milestone.titleFr;
+      eventText = nextMilestone!.milestone.getTitle(lang);
       eventIcon = Icons.star_rounded;
       eventColor = AppColors.goldenrod;
     }
@@ -54,7 +58,7 @@ class ChildSummaryCard extends StatelessWidget {
       onTap: onTap,
       child: Container(
         width: 160,
-        margin: const EdgeInsets.only(right: 12),
+        margin: const EdgeInsetsDirectional.only(end: 12),
         decoration: BoxDecoration(
           color: cardColor,
           borderRadius: BorderRadius.circular(20),
@@ -122,11 +126,7 @@ class ChildSummaryCard extends StatelessWidget {
                         child.name.isNotEmpty
                             ? child.name[0].toUpperCase()
                             : '?',
-                        style: GoogleFonts.outfit(
-                          fontSize: 24,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.white,
-                        ),
+                        style: Theme.of(context).textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.bold, color: Colors.white),
                       ),
                     ),
                   ),
@@ -139,20 +139,13 @@ class ChildSummaryCard extends StatelessWidget {
                 child.name,
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
-                style: GoogleFonts.outfit(
-                  fontSize: 16,
-                  fontWeight: FontWeight.bold,
-                  color: child.photoUrl != null ? Colors.white : textColor,
-                ),
+                style: Theme.of(context).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold, color: child.photoUrl != null ? Colors.white : textColor),
               ),
               Text(
-                child.ageString,
-                style: GoogleFonts.outfit(
-                  fontSize: 12,
-                  color: child.photoUrl != null
+                child.localizedAgeString(l10n),
+                style: Theme.of(context).textTheme.bodySmall?.copyWith(color: child.photoUrl != null
                       ? Colors.white.withValues(alpha: 0.8)
-                      : secondaryColor,
-                ),
+                      : secondaryColor),
               ),
               const SizedBox(height: 8),
 
@@ -179,13 +172,9 @@ class ChildSummaryCard extends StatelessWidget {
                         eventText,
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
-                        style: GoogleFonts.outfit(
-                          fontSize: 11,
-                          fontWeight: FontWeight.w600,
-                          color: child.photoUrl != null
+                        style: Theme.of(context).textTheme.labelSmall?.copyWith(fontWeight: FontWeight.w600, color: child.photoUrl != null
                               ? Colors.white
-                              : eventColor,
-                        ),
+                              : eventColor),
                       ),
                     ),
                   ],

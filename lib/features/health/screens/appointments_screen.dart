@@ -3,16 +3,21 @@ import 'dart:io';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 
+import '../../../core/extensions/l10n_extension.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_spacing.dart';
+import '../../../l10n/app_localizations.dart';
 import '../../profile/models/profile_models.dart';
 import '../models/appointment.dart';
 import '../providers/health_providers.dart';
 import '../widgets/appointment_card.dart';
+import '../../../core/theme/app_typography.dart';
+
+String _healthDateLocale(String languageCode) =>
+    languageCode == 'fr' ? 'fr_FR' : languageCode;
 
 /// Appointments screen — list of doctor visits with file attachments.
 class AppointmentsScreen extends ConsumerStatefulWidget {
@@ -26,6 +31,7 @@ class AppointmentsScreen extends ConsumerStatefulWidget {
 class _AppointmentsScreenState extends ConsumerState<AppointmentsScreen> {
   @override
   Widget build(BuildContext context) {
+    final l10n = context.l10n;
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final primary = isDark ? AppColors.primaryDark : AppColors.primaryLight;
     final bgColor = isDark
@@ -44,13 +50,13 @@ class _AppointmentsScreenState extends ConsumerState<AppointmentsScreen> {
         loading: () => const Center(child: CircularProgressIndicator()),
         error: (e, _) => Center(
           child: Text(
-            'Erreur: $e',
-            style: GoogleFonts.outfit(color: AppColors.error),
+            l10n.healthErrorWithDetail('$e'),
+            style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: AppColors.error),
           ),
         ),
         data: (appointments) {
           if (appointments.isEmpty) {
-            return _buildEmpty(primary, secondary);
+            return _buildEmpty(primary, secondary, l10n);
           }
           return ListView.builder(
             padding: const EdgeInsets.fromLTRB(
@@ -72,15 +78,16 @@ class _AppointmentsScreenState extends ConsumerState<AppointmentsScreen> {
         foregroundColor: Colors.white,
         icon: const Icon(Icons.add_rounded),
         label: Text(
-          'Rendez-vous',
-          style: GoogleFonts.outfit(fontWeight: FontWeight.w600),
+          l10n.healthAppointmentFab,
+          style: AppTypography.fromContext(context, fontSize: 14, fontWeight: FontWeight.w600),
         ),
         onPressed: () => _showAddSheet(context, primary, textColor, isDark),
       ),
     );
   }
 
-  Widget _buildEmpty(Color primary, Color secondary) => Center(
+  Widget _buildEmpty(Color primary, Color secondary, AppLocalizations l10n) =>
+      Center(
     child: Padding(
       padding: const EdgeInsets.all(AppSpacing.screenPaddingH),
       child: Column(
@@ -93,17 +100,13 @@ class _AppointmentsScreenState extends ConsumerState<AppointmentsScreen> {
           ),
           const SizedBox(height: AppSpacing.md),
           Text(
-            'Aucun rendez-vous',
-            style: GoogleFonts.outfit(
-              fontSize: 18,
-              fontWeight: FontWeight.bold,
-              color: secondary,
-            ),
+            l10n.healthNoAppointmentsTitle,
+            style: AppTypography.fromContext(context, fontSize: 18, fontWeight: FontWeight.bold, color: secondary),
           ),
           const SizedBox(height: AppSpacing.xs),
           Text(
-            'Enregistrez les visites médicales\net les résultats de bilans.',
-            style: GoogleFonts.outfit(fontSize: 13, color: secondary),
+            l10n.healthNoAppointmentsHint,
+            style: AppTypography.fromContext(context, fontSize: 13, color: secondary),
             textAlign: TextAlign.center,
           ),
         ],
@@ -112,26 +115,24 @@ class _AppointmentsScreenState extends ConsumerState<AppointmentsScreen> {
   );
 
   void _confirmDelete(Appointment appt) {
+    final l10n = context.l10n;
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final textColor = isDark ? Colors.white : AppColors.onSurfaceLight;
     showDialog(
       context: context,
       builder: (_) => AlertDialog(
         title: Text(
-          'Supprimer ce rendez-vous ?',
-          style: GoogleFonts.outfit(
-            fontWeight: FontWeight.bold,
-            color: textColor,
-          ),
+          l10n.healthDeleteAppointmentTitle,
+          style: AppTypography.fromContext(context, fontSize: 14, fontWeight: FontWeight.bold, color: textColor),
         ),
         content: Text(
           appt.doctorName,
-          style: GoogleFonts.outfit(color: textColor.withValues(alpha: 0.7)),
+          style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: textColor.withValues(alpha: 0.7)),
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: Text('Annuler', style: GoogleFonts.outfit()),
+            child: Text(l10n.healthCancel, style: Theme.of(context).textTheme.bodyMedium),
           ),
           TextButton(
             onPressed: () {
@@ -144,8 +145,8 @@ class _AppointmentsScreenState extends ConsumerState<AppointmentsScreen> {
                   );
             },
             child: Text(
-              'Supprimer',
-              style: GoogleFonts.outfit(color: AppColors.error),
+              l10n.healthDelete,
+              style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: AppColors.error),
             ),
           ),
         ],
@@ -159,6 +160,10 @@ class _AppointmentsScreenState extends ConsumerState<AppointmentsScreen> {
     Color textColor,
     bool isDark,
   ) {
+    final l10n = context.l10n;
+    final dateLocale = _healthDateLocale(
+      Localizations.localeOf(context).languageCode,
+    );
     DateTime selectedDate = DateTime.now();
     AppointmentType selectedType = AppointmentType.pediatre;
     final doctorCtrl = TextEditingController();
@@ -199,25 +204,19 @@ class _AppointmentsScreenState extends ConsumerState<AppointmentsScreen> {
                 ),
                 const SizedBox(height: AppSpacing.lg),
                 Text(
-                  'Nouveau rendez-vous',
-                  style: GoogleFonts.outfit(
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold,
-                    color: textColor,
-                  ),
+                  l10n.healthNewAppointment,
+                  style: AppTypography.fromContext(context, fontSize: 20, fontWeight: FontWeight.bold, color: textColor),
                 ),
                 const SizedBox(height: AppSpacing.md),
 
                 // Doctor name
                 TextField(
                   controller: doctorCtrl,
-                  style: GoogleFonts.outfit(color: textColor),
+                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: textColor),
                   textCapitalization: TextCapitalization.words,
                   decoration: InputDecoration(
-                    labelText: 'Nom du médecin',
-                    labelStyle: GoogleFonts.outfit(
-                      color: textColor.withValues(alpha: 0.6),
-                    ),
+                    labelText: l10n.healthDoctorName,
+                    labelStyle: Theme.of(context).textTheme.bodyMedium?.copyWith(color: textColor.withValues(alpha: 0.6)),
                     prefixIcon: Icon(
                       Icons.person_outline_rounded,
                       color: primary,
@@ -249,15 +248,13 @@ class _AppointmentsScreenState extends ConsumerState<AppointmentsScreen> {
                 // Type dropdown
                 DropdownButtonFormField<AppointmentType>(
                   initialValue: selectedType,
-                  style: GoogleFonts.outfit(color: textColor),
+                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: textColor),
                   dropdownColor: isDark
                       ? AppColors.surfaceDark
                       : AppColors.surfaceLight,
                   decoration: InputDecoration(
-                    labelText: 'Spécialité',
-                    labelStyle: GoogleFonts.outfit(
-                      color: textColor.withValues(alpha: 0.6),
-                    ),
+                    labelText: l10n.healthSpecialty,
+                    labelStyle: Theme.of(context).textTheme.bodyMedium?.copyWith(color: textColor.withValues(alpha: 0.6)),
                     prefixIcon: Icon(
                       Icons.local_hospital_outlined,
                       color: primary,
@@ -288,8 +285,8 @@ class _AppointmentsScreenState extends ConsumerState<AppointmentsScreen> {
                         (t) => DropdownMenuItem(
                           value: t,
                           child: Text(
-                            t.labelFr,
-                            style: GoogleFonts.outfit(color: textColor),
+                            healthAppointmentTypeLabel(l10n, t),
+                            style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: textColor),
                           ),
                         ),
                       )
@@ -333,8 +330,10 @@ class _AppointmentsScreenState extends ConsumerState<AppointmentsScreen> {
                         ),
                         const SizedBox(width: 10),
                         Text(
-                          DateFormat('d MMMM yyyy', 'fr').format(selectedDate),
-                          style: GoogleFonts.outfit(color: textColor),
+                          DateFormat('d MMMM yyyy', dateLocale).format(
+                            selectedDate,
+                          ),
+                          style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: textColor),
                         ),
                       ],
                     ),
@@ -346,12 +345,10 @@ class _AppointmentsScreenState extends ConsumerState<AppointmentsScreen> {
                 TextField(
                   controller: notesCtrl,
                   maxLines: 2,
-                  style: GoogleFonts.outfit(color: textColor),
+                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: textColor),
                   decoration: InputDecoration(
-                    hintText: 'Notes / observations (optionnel)',
-                    hintStyle: GoogleFonts.outfit(
-                      color: textColor.withValues(alpha: 0.4),
-                    ),
+                    hintText: l10n.healthNotesObservationsOptional,
+                    hintStyle: Theme.of(context).textTheme.bodyMedium?.copyWith(color: textColor.withValues(alpha: 0.4)),
                     filled: true,
                     fillColor: isDark
                         ? AppColors.inputBackgroundDark
@@ -380,7 +377,7 @@ class _AppointmentsScreenState extends ConsumerState<AppointmentsScreen> {
                 Row(
                   children: [
                     _AttachBtn(
-                      label: 'Photo',
+                      label: l10n.healthAttachPhoto,
                       icon: Icons.camera_alt_outlined,
                       primary: primary,
                       textColor: textColor,
@@ -396,7 +393,7 @@ class _AppointmentsScreenState extends ConsumerState<AppointmentsScreen> {
                     ),
                     const SizedBox(width: AppSpacing.sm),
                     _AttachBtn(
-                      label: 'PDF / Fichier',
+                      label: l10n.healthAttachPdfFile,
                       icon: Icons.attach_file_rounded,
                       primary: primary,
                       textColor: textColor,
@@ -501,9 +498,9 @@ class _AppointmentsScreenState extends ConsumerState<AppointmentsScreen> {
                           SnackBar(
                             content: Text(
                               attachedFiles.isNotEmpty
-                                  ? 'Téléchargement des fichiers…'
-                                  : 'Enregistrement…',
-                              style: GoogleFonts.outfit(),
+                                  ? l10n.healthUploadingFiles
+                                  : l10n.healthSaving,
+                              style: Theme.of(context).textTheme.bodyMedium,
                             ),
                             duration: const Duration(seconds: 30),
                           ),
@@ -528,9 +525,9 @@ class _AppointmentsScreenState extends ConsumerState<AppointmentsScreen> {
                           SnackBar(
                             content: Text(
                               ok
-                                  ? 'Rendez-vous enregistré ✓'
-                                  : 'Erreur lors de l\'enregistrement',
-                              style: GoogleFonts.outfit(),
+                                  ? l10n.healthAppointmentSaved
+                                  : l10n.healthSaveError,
+                              style: Theme.of(context).textTheme.bodyMedium,
                             ),
                             backgroundColor: ok
                                 ? AppColors.success
@@ -539,11 +536,8 @@ class _AppointmentsScreenState extends ConsumerState<AppointmentsScreen> {
                         );
                       },
                       child: Text(
-                        'Enregistrer',
-                        style: GoogleFonts.outfit(
-                          fontWeight: FontWeight.w600,
-                          color: Colors.white,
-                        ),
+                        l10n.healthSave,
+                        style: AppTypography.fromContext(context, fontSize: 14, fontWeight: FontWeight.w600, color: Colors.white),
                       ),
                     ),
                   ),
@@ -578,7 +572,7 @@ class _AttachBtn extends StatelessWidget {
       icon: Icon(icon, size: 16, color: primary),
       label: Text(
         label,
-        style: GoogleFonts.outfit(fontSize: 13, color: primary),
+        style: AppTypography.fromContext(context, fontSize: 13, color: primary),
       ),
       style: OutlinedButton.styleFrom(
         side: BorderSide(color: primary.withValues(alpha: 0.4)),

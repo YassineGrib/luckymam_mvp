@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:lukymam_mvp/l10n/app_localizations.dart';
 import 'package:go_router/go_router.dart';
-import 'package:google_fonts/google_fonts.dart';
+import '../../core/extensions/l10n_extension.dart';
 import '../../core/services/auth_service.dart';
 import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_spacing.dart';
@@ -51,6 +51,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
 
     if (!mounted) return;
 
+    final l10n = context.l10n;
     setState(() => _isLoading = false);
 
     if (result.isSuccess) {
@@ -69,7 +70,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text('Bienvenue ${result.user?.displayName ?? ""}!'),
+          content: Text(l10n.authWelcome(result.user?.displayName ?? '')),
           backgroundColor: Colors.green,
         ),
       );
@@ -78,7 +79,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
       // Show error message
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text(result.errorMessage ?? 'Erreur inconnue'),
+          content: Text(result.errorMessage ?? l10n.authErrorUnknown),
           backgroundColor: Colors.red,
         ),
       );
@@ -93,6 +94,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
 
     if (!mounted) return;
 
+    final l10n = context.l10n;
     if (result.isSuccess) {
       String destination = '/law-consent';
       try {
@@ -109,7 +111,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
 
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text('Bienvenue ${result.user?.displayName ?? ""}!'),
+          content: Text(l10n.authWelcome(result.user?.displayName ?? '')),
           backgroundColor: Colors.green,
         ),
       );
@@ -118,7 +120,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
       setState(() => _isGoogleLoading = false);
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text(result.errorMessage ?? 'Erreur inconnue'),
+          content: Text(result.errorMessage ?? l10n.authErrorUnknown),
           backgroundColor: Colors.red,
         ),
       );
@@ -155,11 +157,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                 // Title
                 Text(
                   l10n.signUpTitle,
-                  style: GoogleFonts.outfit(
-                    fontSize: 24,
-                    fontWeight: FontWeight.bold,
-                    color: textColor,
-                  ),
+                  style: Theme.of(context).textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.bold, color: textColor),
                 ),
 
                 const SizedBox(height: AppSpacing.xl),
@@ -281,7 +279,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                 const SizedBox(height: AppSpacing.md),
 
                 // RGPD Consent Mention
-                _ConsentMention(isDark: isDark, secondaryColor: secondaryColor),
+                _ConsentMention(isDark: isDark, secondaryColor: secondaryColor, l10n: l10n),
 
                 const SizedBox(height: AppSpacing.lg),
 
@@ -371,10 +369,15 @@ class _OrDivider extends StatelessWidget {
 /// RGPD consent mention shown below the sign-up button.
 /// Tapping the underlined links navigates to the privacy policy page.
 class _ConsentMention extends StatelessWidget {
-  const _ConsentMention({required this.isDark, required this.secondaryColor});
+  const _ConsentMention({
+    required this.isDark,
+    required this.secondaryColor,
+    required this.l10n,
+  });
 
   final bool isDark;
   final Color secondaryColor;
+  final AppLocalizations l10n;
 
   @override
   Widget build(BuildContext context) {
@@ -398,17 +401,12 @@ class _ConsentMention extends StatelessWidget {
         text: TextSpan(
           style: TextStyle(fontSize: 11.5, color: secondaryColor, height: 1.6),
           children: [
-            const TextSpan(
-              text:
-                  'En créant un compte, vous nous donnez la permission de stocker '
-                  'en toute sécurité votre date du terme, la date de naissance de votre '
-                  'bébé et toute autre donnée saisie. En continuant, vous acceptez la ',
-            ),
+            TextSpan(text: l10n.signupConsentPrefix),
             WidgetSpan(
               child: GestureDetector(
                 onTap: () => context.push('/privacy-policy'),
                 child: Text(
-                  'politique de confidentialité',
+                  l10n.signupConsentPrivacyLink,
                   style: TextStyle(
                     fontSize: 11.5,
                     color: linkColor,
@@ -419,12 +417,12 @@ class _ConsentMention extends StatelessWidget {
                 ),
               ),
             ),
-            const TextSpan(text: ' et les '),
+            TextSpan(text: l10n.signupConsentAnd),
             WidgetSpan(
               child: GestureDetector(
                 onTap: () => context.push('/privacy-policy'),
                 child: Text(
-                  "conditions d'utilisation",
+                  l10n.signupConsentTermsLink,
                   style: TextStyle(
                     fontSize: 11.5,
                     color: linkColor,

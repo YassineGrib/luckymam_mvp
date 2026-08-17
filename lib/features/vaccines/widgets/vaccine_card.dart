@@ -1,10 +1,11 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:google_fonts/google_fonts.dart';
+import '../../../core/theme/app_typography.dart';
 import 'package:intl/intl.dart';
 import 'package:shimmer/shimmer.dart';
 
+import '../../../core/extensions/l10n_extension.dart';
 import '../../../core/services/analytics_service.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_spacing.dart';
@@ -94,7 +95,7 @@ class _VaccineCardState extends ConsumerState<VaccineCard>
                         children: [
                           Text(
                             widget.vaccineGroup.group.ageFr,
-                            style: GoogleFonts.outfit(
+                            style: AppTypography.fromContext(context,
                               fontSize: 18,
                               fontWeight: FontWeight.w600,
                               color: textColor,
@@ -148,6 +149,7 @@ class _VaccineCardState extends ConsumerState<VaccineCard>
     Color secondaryText,
     Color primary,
   ) {
+    final l10n = context.l10n;
     return Padding(
       padding: const EdgeInsets.fromLTRB(
         AppSpacing.md,
@@ -184,7 +186,7 @@ class _VaccineCardState extends ConsumerState<VaccineCard>
                       children: [
                         Text(
                           vaccine.code,
-                          style: GoogleFonts.outfit(
+                          style: AppTypography.fromContext(context,
                             fontSize: 14,
                             fontWeight: FontWeight.w500,
                             color: textColor.withValues(alpha: 0.9),
@@ -192,7 +194,7 @@ class _VaccineCardState extends ConsumerState<VaccineCard>
                         ),
                         Text(
                           vaccine.nameFr,
-                          style: GoogleFonts.outfit(
+                          style: AppTypography.fromContext(context,
                             fontSize: 12,
                             color: secondaryText,
                           ),
@@ -230,8 +232,8 @@ class _VaccineCardState extends ConsumerState<VaccineCard>
                           ),
                           const SizedBox(width: 3),
                           Text(
-                            'Détails',
-                            style: GoogleFonts.outfit(
+                            l10n.vaccineDetails,
+                            style: AppTypography.fromContext(context,
                               fontSize: 11,
                               fontWeight: FontWeight.w600,
                               color: primary,
@@ -267,7 +269,7 @@ class _VaccineCardState extends ConsumerState<VaccineCard>
                     Expanded(
                       child: Text(
                         widget.vaccineGroup.status!.notes!,
-                        style: GoogleFonts.outfit(
+                        style: AppTypography.fromContext(context,
                           fontSize: 12,
                           color: secondaryText,
                         ),
@@ -288,8 +290,8 @@ class _VaccineCardState extends ConsumerState<VaccineCard>
                     onPressed: widget.onMarkIncomplete,
                     icon: const Icon(Icons.undo_rounded, size: 18),
                     label: Text(
-                      'Annuler le vaccin',
-                      style: GoogleFonts.outfit(fontWeight: FontWeight.w600),
+                      l10n.vaccineCancel,
+                      style: AppTypography.fromContext(context, fontSize: 14, fontWeight: FontWeight.w600),
                     ),
                     style: OutlinedButton.styleFrom(
                       foregroundColor: AppColors.error,
@@ -313,8 +315,9 @@ class _VaccineCardState extends ConsumerState<VaccineCard>
                         color: Colors.white,
                       ),
                       label: Text(
-                        'Marquer comme fait',
-                        style: GoogleFonts.outfit(
+                        l10n.vaccineMarkDone,
+                        style: AppTypography.fromContext(context,
+                          fontSize: 14,
                           fontWeight: FontWeight.w600,
                           color: Colors.white,
                         ),
@@ -369,10 +372,8 @@ class _VaccineCardState extends ConsumerState<VaccineCard>
                 color: primary,
               ),
               label: Text(
-                Localizations.localeOf(context).languageCode == 'ar'
-                    ? 'فيديوهات'
-                    : 'Reels',
-                style: GoogleFonts.outfit(fontWeight: FontWeight.w600),
+                l10n.vaccineReelsButton,
+                style: AppTypography.fromContext(context, fontSize: 14, fontWeight: FontWeight.w600),
               ),
               style: OutlinedButton.styleFrom(
                 foregroundColor: primary,
@@ -426,6 +427,7 @@ class _VaccineCardState extends ConsumerState<VaccineCard>
     Color textColor,
     Color secondaryText,
   ) {
+    final l10n = context.l10n;
     return Row(
       children: [
         ClipRRect(
@@ -476,12 +478,8 @@ class _VaccineCardState extends ConsumerState<VaccineCard>
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                Localizations.localeOf(context).languageCode == 'ar'
-                    ? 'ذكرى مرتبطة 🌟'
-                    : Localizations.localeOf(context).languageCode == 'en'
-                        ? 'Linked Memory 🌟'
-                        : 'Souvenir lié 🌟',
-                style: GoogleFonts.outfit(
+                l10n.vaccineLinkedMemoryEmoji,
+                style: AppTypography.fromContext(context,
                   fontSize: 14,
                   fontWeight: FontWeight.w600,
                   color: textColor,
@@ -490,7 +488,7 @@ class _VaccineCardState extends ConsumerState<VaccineCard>
               const SizedBox(height: 2),
               Text(
                 '${capsule.emotion.emoji} ${capsule.emotion.getLabel(Localizations.localeOf(context).languageCode)}',
-                style: GoogleFonts.outfit(
+                style: AppTypography.fromContext(context,
                   fontSize: 12,
                   color: secondaryText,
                 ),
@@ -540,7 +538,7 @@ class _VaccineCardState extends ConsumerState<VaccineCard>
         icon: Icon(Icons.camera_enhance_rounded, size: 18, color: primary),
         label: Text(
           l10n.capsule,
-          style: GoogleFonts.outfit(fontWeight: FontWeight.w600),
+          style: AppTypography.fromContext(context, fontSize: 14, fontWeight: FontWeight.w600),
         ),
         style: OutlinedButton.styleFrom(
           foregroundColor: primary,
@@ -606,6 +604,7 @@ class _VaccineCardState extends ConsumerState<VaccineCard>
   }
 
   Widget _buildStatusText(Color secondaryText, Color primary) {
+    final l10n = context.l10n;
     String text;
     Color color = secondaryText;
 
@@ -613,19 +612,24 @@ class _VaccineCardState extends ConsumerState<VaccineCard>
       case VaccineStatusType.completed:
         final date = widget.vaccineGroup.status?.completedAt;
         text = date != null
-            ? 'Fait le ${DateFormat('d MMM yyyy', 'fr').format(date)}'
-            : 'Complété';
+            ? l10n.vaccineDoneOn(
+                DateFormat(
+                  'd MMM yyyy',
+                  Localizations.localeOf(context).languageCode,
+                ).format(date),
+              )
+            : l10n.vaccineCompleted;
         color = AppColors.success;
         break;
       case VaccineStatusType.overdue:
-        text = 'En retard de ${-widget.vaccineGroup.daysUntilDue} jours';
+        text = l10n.vaccineOverdueDays(-widget.vaccineGroup.daysUntilDue);
         color = AppColors.error;
         break;
       case VaccineStatusType.dueSoon:
         if (widget.vaccineGroup.daysUntilDue == 0) {
-          text = 'Prévu aujourd\'hui';
+          text = l10n.vaccineDueToday;
         } else {
-          text = 'Dans ${widget.vaccineGroup.daysUntilDue} jours';
+          text = l10n.vaccineDueInDays(widget.vaccineGroup.daysUntilDue);
         }
         color = AppColors.casablanca;
         break;
@@ -639,7 +643,7 @@ class _VaccineCardState extends ConsumerState<VaccineCard>
 
     return Text(
       text,
-      style: GoogleFonts.outfit(
+      style: AppTypography.fromContext(context,
         fontSize: 13,
         fontWeight: FontWeight.w500,
         color: color,
@@ -725,8 +729,8 @@ class _VaccineCardState extends ConsumerState<VaccineCard>
             const Icon(Icons.check_rounded, size: 16, color: AppColors.success),
             const SizedBox(width: 4),
             Text(
-              'Fait',
-              style: GoogleFonts.outfit(
+              context.l10n.vaccineDone,
+              style: AppTypography.fromContext(context,
                 fontSize: 12,
                 fontWeight: FontWeight.w600,
                 color: AppColors.success,
@@ -747,8 +751,8 @@ class _VaccineCardState extends ConsumerState<VaccineCard>
         borderRadius: BorderRadius.circular(20),
       ),
       child: Text(
-        'Marquer',
-        style: GoogleFonts.outfit(
+        context.l10n.vaccineMark,
+        style: AppTypography.fromContext(context,
           fontSize: 12,
           fontWeight: FontWeight.w600,
           color: Colors.white,

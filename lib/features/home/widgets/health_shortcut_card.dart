@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 
+import '../../../core/extensions/l10n_extension.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../health/screens/health_hub_screen.dart';
+import '../../../core/theme/app_typography.dart';
 
 /// Shortcut card on the Dashboard linking to the Health Hub (Growth & Appointments).
 class HealthShortcutCard extends StatelessWidget {
@@ -54,19 +55,12 @@ class HealthShortcutCard extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        'Santé Enfant',
-                        style: GoogleFonts.outfit(
-                          fontSize: 15,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.white,
-                        ),
+                        context.l10n.homeHealthTitle,
+                        style: AppTypography.fromContext(context, fontSize: 15, fontWeight: FontWeight.bold, color: Colors.white),
                       ),
                       Text(
-                        'Courbe de croissance · Rendez-vous médicaux',
-                        style: GoogleFonts.outfit(
-                          fontSize: 11,
-                          color: Colors.white.withValues(alpha: 0.8),
-                        ),
+                        context.l10n.homeHealthSubtitle,
+                        style: Theme.of(context).textTheme.labelSmall?.copyWith(color: Colors.white.withValues(alpha: 0.8)),
                       ),
                     ],
                   ),

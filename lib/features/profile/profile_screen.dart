@@ -2,12 +2,12 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import '../../l10n/app_localizations.dart';
 import '../../core/services/auth_service.dart';
 import '../../core/services/analytics_service.dart';
+import '../../core/extensions/profile_l10n_extension.dart';
 import '../../core/providers/theme_provider.dart';
 import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_spacing.dart';
@@ -17,14 +17,17 @@ import 'help_screen.dart';
 import 'providers/profile_providers.dart';
 import 'widgets/edit_dialogs.dart';
 import '../subscription/models/subscription_models.dart';
+import '../subscription/subscription_plan_l10n.dart';
 import '../subscription/providers/subscription_providers.dart';
 import '../subscription/screens/subscription_plans_screen.dart';
 import '../subscription/screens/album_claim_screen.dart';
 import 'widgets/profile_widgets.dart';
 import '../notifications/notifications_screen.dart';
 import '../../core/providers/locale_provider.dart';
+import '../../core/extensions/l10n_extension.dart';
 import '../../core/providers/display_provider.dart';
 import '../timeline/widgets/timeline_rail.dart';
+import '../../core/theme/app_typography.dart';
 
 /// Full profile screen with Firestore integration.
 class ProfileScreen extends ConsumerWidget {
@@ -50,22 +53,28 @@ class ProfileScreen extends ConsumerWidget {
 
     // Show snackbar on success/error
     ref.listen<ProfileActionsState>(profileActionsProvider, (previous, next) {
+      final snackL10n = context.l10n;
       if (next.successMessage != null) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text(next.successMessage!),
+            content: Text(next.successMessage!.localize(snackL10n)),
             backgroundColor: Colors.green,
           ),
         );
         ref.read(profileActionsProvider.notifier).clearMessages();
       }
-      if (next.error != null) {
+      if (next.errorDetails != null) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(next.error!), backgroundColor: Colors.red),
+          SnackBar(
+            content: Text(snackL10n.profileSnackError(next.errorDetails!)),
+            backgroundColor: Colors.red,
+          ),
         );
         ref.read(profileActionsProvider.notifier).clearMessages();
       }
     });
+
+    final l10n = context.l10n;
 
     return Scaffold(
       body: CustomScrollView(
@@ -75,7 +84,7 @@ class ProfileScreen extends ConsumerWidget {
             child: profileAsync.when(
               data: (profile) => _ProfileHeader(
                 name:
-                    profile?.displayName ?? user?.displayName ?? 'Utilisatrice',
+                    profile?.displayName ?? user?.displayName ?? l10n.profileDefaultUser,
                 email: profile?.email ?? user?.email ?? '',
                 photoUrl: profile?.photoUrl ?? user?.photoURL,
                 status: profile?.status ?? UserStatus.mom,
@@ -85,7 +94,7 @@ class ProfileScreen extends ConsumerWidget {
                 onCameraTap: () => _pickProfileImage(context, ref),
               ),
               loading: () => _ProfileHeader(
-                name: user?.displayName ?? 'Chargement...',
+                name: user?.displayName ?? l10n.profileLoading,
                 email: user?.email ?? '',
                 photoUrl: user?.photoURL,
                 status: UserStatus.mom,
@@ -94,7 +103,7 @@ class ProfileScreen extends ConsumerWidget {
                 secondaryColor: secondaryColor,
               ),
               error: (_, _) => _ProfileHeader(
-                name: user?.displayName ?? 'Erreur',
+                name: user?.displayName ?? l10n.profileError,
                 email: user?.email ?? '',
                 photoUrl: user?.photoURL,
                 status: UserStatus.mom,
@@ -111,7 +120,7 @@ class ProfileScreen extends ConsumerWidget {
 
           // Profile sections
           SliverPadding(
-            padding: const EdgeInsets.fromLTRB(
+            padding: const EdgeInsetsDirectional.fromSTEB(
               AppSpacing.screenPaddingH,
               AppSpacing.md,
               AppSpacing.screenPaddingH,
@@ -126,11 +135,11 @@ class ProfileScreen extends ConsumerWidget {
                     fallbackUser: user,
                     onEdit: () => _showEditPersonalInfo(context, ref, profile),
                   ),
-                  loading: () => const _LoadingSectionCard(
-                    title: 'Informations Personnelles',
+                  loading: () => _LoadingSectionCard(
+                    title: l10n.profilePersonalInfo,
                   ),
-                  error: (_, _) => const _ErrorSectionCard(
-                    title: 'Informations Personnelles',
+                  error: (_, _) => _ErrorSectionCard(
+                    title: l10n.profilePersonalInfo,
                   ),
                 ),
 
@@ -147,9 +156,9 @@ class ProfileScreen extends ConsumerWidget {
                     },
                   ),
                   loading: () =>
-                      const _LoadingSectionCard(title: 'Statut Actuel'),
+                      _LoadingSectionCard(title: l10n.profileCurrentStatus),
                   error: (_, _) =>
-                      const _ErrorSectionCard(title: 'Statut Actuel'),
+                      _ErrorSectionCard(title: l10n.profileCurrentStatus),
                 ),
 
                 // 3. Children — masqué si HOPE ou ENCEINTE
@@ -163,7 +172,7 @@ class ProfileScreen extends ConsumerWidget {
                         _showAddChildDialog(context, ref, child),
                   ),
                   loading: () =>
-                      const _LoadingSectionCard(title: 'Mes Enfants'),
+                      _LoadingSectionCard(title: l10n.myChildren),
                   error: (_, _) => _EmptyChildrenSection(
                     primaryColor: primaryColor,
                     onAddChild: () => _showAddChildDialog(context, ref),
@@ -183,11 +192,12 @@ class ProfileScreen extends ConsumerWidget {
                       profile?.medicalInfo,
                     ),
                   ),
-                  loading: () => const _LoadingSectionCard(
-                    title: 'Informations Médicales',
+                  loading: () => _LoadingSectionCard(
+                    title: context.l10n.profileMedicalInfo,
                   ),
-                  error: (_, _) =>
-                      const _ErrorSectionCard(title: 'Informations Médicales'),
+                  error: (_, _) => _ErrorSectionCard(
+                    title: context.l10n.profileMedicalInfo,
+                  ),
                 ),
 
                 // 5. Cycle / Grossesse
@@ -209,10 +219,12 @@ class ProfileScreen extends ConsumerWidget {
                       ),
                     );
                   },
-                  loading: () =>
-                      const _LoadingSectionCard(title: 'Cycle Menstruel'),
-                  error: (err, st) =>
-                      const _ErrorSectionCard(title: 'Cycle Menstruel'),
+                  loading: () => _LoadingSectionCard(
+                    title: context.l10n.profileMenstrualCycle,
+                  ),
+                  error: (_, _) => _ErrorSectionCard(
+                    title: context.l10n.profileMenstrualCycle,
+                  ),
                 ),
 
                 // 6. App Settings
@@ -331,7 +343,7 @@ class ProfileScreen extends ConsumerWidget {
       initialDate: now.subtract(const Duration(days: 70)),
       firstDate: now.subtract(const Duration(days: 280)),
       lastDate: now,
-      helpText: 'Date de dernières règles (DDR)',
+      helpText: context.l10n.cycleLmpDatePickerHelp,
       builder: (context, child) {
         return Theme(
           data: Theme.of(context).copyWith(
@@ -405,11 +417,12 @@ class _ProfileHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = context.l10n;
     final statusLabel = status == UserStatus.pregnant
-        ? 'Enceinte'
+        ? l10n.statusPregnant
         : status == UserStatus.hope
-            ? 'En espoir'
-            : 'Maman';
+            ? l10n.statusHope
+            : l10n.statusMom;
     final statusColor = status == UserStatus.pregnant
         ? Colors.pink
         : status == UserStatus.hope
@@ -417,7 +430,7 @@ class _ProfileHeader extends StatelessWidget {
             : Colors.green;
 
     return Container(
-      padding: EdgeInsets.fromLTRB(
+      padding: EdgeInsetsDirectional.fromSTEB(
         AppSpacing.screenPaddingH,
         MediaQuery.of(context).padding.top + AppSpacing.lg,
         AppSpacing.screenPaddingH,
@@ -465,11 +478,7 @@ class _ProfileHeader extends StatelessWidget {
                       : Center(
                           child: Text(
                             name.isNotEmpty ? name[0].toUpperCase() : 'U',
-                            style: GoogleFonts.outfit(
-                              fontSize: 32,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.white,
-                            ),
+                            style: Theme.of(context).textTheme.headlineLarge?.copyWith(fontWeight: FontWeight.bold, color: Colors.white),
                           ),
                         ),
                 ),
@@ -507,19 +516,12 @@ class _ProfileHeader extends StatelessWidget {
               children: [
                 Text(
                   name,
-                  style: GoogleFonts.outfit(
-                    fontSize: 22,
-                    fontWeight: FontWeight.bold,
-                    color: textColor,
-                  ),
+                  style: Theme.of(context).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold, color: textColor),
                 ),
                 const SizedBox(height: 4),
                 Text(
                   email,
-                  style: GoogleFonts.outfit(
-                    fontSize: 14,
-                    color: secondaryColor,
-                  ),
+                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: secondaryColor),
                 ),
                 const SizedBox(height: 8),
                 Container(
@@ -545,11 +547,7 @@ class _ProfileHeader extends StatelessWidget {
                       const SizedBox(width: 6),
                       Text(
                         statusLabel,
-                        style: GoogleFonts.outfit(
-                          fontSize: 12,
-                          fontWeight: FontWeight.w600,
-                          color: statusColor,
-                        ),
+                        style: Theme.of(context).textTheme.bodySmall?.copyWith(fontWeight: FontWeight.w600, color: statusColor),
                       ),
                     ],
                   ),
@@ -576,45 +574,46 @@ class _PersonalInfoSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = context.l10n;
     final dateFormat = DateFormat('dd MMMM yyyy', 'fr_FR');
 
     return ProfileSectionCard(
-      title: 'Informations Personnelles',
+      title: l10n.profilePersonalInfo,
       icon: Icons.person_rounded,
       iconColor: Colors.blue,
       initiallyExpanded: true,
       children: [
         ProfileInfoRow(
-          label: 'Nom complet',
+          label: l10n.name,
           value:
               profile?.displayName ??
               fallbackUser?.displayName ??
-              'Non renseigné',
+              l10n.profileNotProvided,
           icon: Icons.badge_outlined,
           onEdit: onEdit,
         ),
         ProfileInfoRow(
-          label: 'E-mail',
-          value: profile?.email ?? fallbackUser?.email ?? 'Non renseigné',
+          label: l10n.email,
+          value: profile?.email ?? fallbackUser?.email ?? l10n.profileNotProvided,
           icon: Icons.email_outlined,
         ),
         ProfileInfoRow(
-          label: 'Téléphone',
-          value: profile?.phone ?? 'Non renseigné',
+          label: l10n.profilePhone,
+          value: profile?.phone ?? l10n.profileNotProvided,
           icon: Icons.phone_outlined,
           onEdit: onEdit,
         ),
         ProfileInfoRow(
-          label: 'Date de naissance',
+          label: l10n.profileBirthDate,
           value: profile?.birthDate != null
               ? dateFormat.format(profile!.birthDate!)
-              : 'Non renseigné',
+              : l10n.profileNotProvided,
           icon: Icons.cake_outlined,
           onEdit: onEdit,
         ),
         ProfileInfoRow(
-          label: 'Wilaya',
-          value: profile?.wilaya ?? 'Non renseigné',
+          label: l10n.profileWilaya,
+          value: profile?.wilaya ?? l10n.profileNotProvided,
           icon: Icons.location_on_outlined,
           onEdit: onEdit,
         ),
@@ -636,10 +635,11 @@ class _StatusSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = context.l10n;
     final dateFormat = DateFormat('MMMM yyyy', 'fr_FR');
 
     return ProfileSectionCard(
-      title: 'Statut Actuel',
+      title: l10n.profileCurrentStatus,
       icon: Icons.favorite_rounded,
       iconColor: Colors.pink,
       children: [
@@ -650,13 +650,13 @@ class _StatusSection extends StatelessWidget {
         ),
         const SizedBox(height: AppSpacing.sm),
         ProfileInfoRow(
-          label: 'Phase actuelle',
-          value: profile?.statusLabel ?? 'Maman',
+          label: l10n.profileCurrentPhase,
+          value: profile?.localizedStatusLabel(l10n) ?? l10n.statusMom,
           valueColor: primaryColor,
         ),
         if (profile?.lastPregnancyDate != null)
           ProfileInfoRow(
-            label: 'Dernière grossesse',
+            label: l10n.profileLastPregnancy,
             value: dateFormat.format(profile!.lastPregnancyDate!),
             icon: Icons.calendar_today_outlined,
           ),
@@ -678,6 +678,7 @@ class _StatusSelector extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = context.l10n;
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final bgColor = isDark ? const Color(0xFF252538) : Colors.grey.shade100;
 
@@ -693,19 +694,19 @@ class _StatusSelector extends StatelessWidget {
             context,
             UserStatus.pregnant,
             Icons.pregnant_woman_rounded,
-            'Enceinte',
+            l10n.statusPregnant,
           ),
           _buildOption(
             context,
             UserStatus.mom,
             Icons.child_friendly_rounded,
-            'Maman',
+            l10n.statusMom,
           ),
           _buildOption(
             context,
             UserStatus.hope,
             Icons.favorite_border_rounded,
-            'Espoir',
+            l10n.profileStatusHopeShort,
           ),
         ],
       ),
@@ -744,13 +745,9 @@ class _StatusSelector extends StatelessWidget {
               const SizedBox(width: 8),
               Text(
                 label,
-                style: GoogleFonts.outfit(
-                  fontSize: 13,
-                  fontWeight: FontWeight.w600,
-                  color: isSelected
+                style: AppTypography.fromContext(context, fontSize: 13, fontWeight: FontWeight.w600, color: isSelected
                       ? Colors.white
-                      : (isDark ? Colors.white60 : Colors.grey),
-                ),
+                      : (isDark ? Colors.white60 : Colors.grey)),
               ),
             ],
           ),
@@ -775,8 +772,9 @@ class _ChildrenSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = context.l10n;
     return ProfileSectionCard(
-      title: 'Mes Enfants',
+      title: l10n.myChildren,
       icon: Icons.child_care_rounded,
       iconColor: Colors.orange,
       trailing: Container(
@@ -787,11 +785,7 @@ class _ChildrenSection extends StatelessWidget {
         ),
         child: Text(
           '${children.length}',
-          style: GoogleFonts.outfit(
-            fontSize: 12,
-            fontWeight: FontWeight.bold,
-            color: Colors.orange,
-          ),
+          style: Theme.of(context).textTheme.bodySmall?.copyWith(fontWeight: FontWeight.bold, color: Colors.orange),
         ),
       ),
       children: [
@@ -801,8 +795,8 @@ class _ChildrenSection extends StatelessWidget {
             child: ChildCard(
               name: child.name,
               birthDate:
-                  '${DateFormat('dd MMM yyyy', 'fr_FR').format(child.birthDate)} (${child.ageString})',
-              gender: child.genderLabel,
+                  '${DateFormat('dd MMM yyyy', 'fr_FR').format(child.birthDate)} (${child.localizedAgeString(l10n)})',
+              gender: child.localizedGenderLabel(l10n),
               photoUrl: child.photoUrl,
             ),
           ),
@@ -811,8 +805,8 @@ class _ChildrenSection extends StatelessWidget {
           Padding(
             padding: const EdgeInsets.symmetric(vertical: AppSpacing.sm),
             child: Text(
-              'Aucun enfant enregistré',
-              style: GoogleFonts.outfit(fontSize: 14, color: Colors.grey),
+              l10n.noChildrenTitle,
+              style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: Colors.grey),
             ),
           ),
         const SizedBox(height: AppSpacing.xs),
@@ -830,6 +824,7 @@ class _AddChildButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = context.l10n;
     return InkWell(
       onTap: onTap,
       borderRadius: BorderRadius.circular(12),
@@ -848,12 +843,8 @@ class _AddChildButton extends StatelessWidget {
             Icon(Icons.add_rounded, color: primaryColor, size: 20),
             const SizedBox(width: 8),
             Text(
-              'Ajouter un enfant',
-              style: GoogleFonts.outfit(
-                fontSize: 14,
-                fontWeight: FontWeight.w600,
-                color: primaryColor,
-              ),
+              l10n.addChild,
+              style: Theme.of(context).textTheme.titleSmall?.copyWith(fontWeight: FontWeight.w600, color: primaryColor),
             ),
           ],
         ),
@@ -870,37 +861,38 @@ class _MedicalInfoSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = context.l10n;
     return ProfileSectionCard(
-      title: 'Informations Médicales',
+      title: l10n.profileMedicalInfo,
       icon: Icons.medical_services_rounded,
       iconColor: Colors.red,
       children: [
         ProfileInfoRow(
-          label: 'Groupe sanguin',
-          value: medicalInfo.bloodType ?? 'Non renseigné',
+          label: l10n.profileBloodType,
+          value: medicalInfo.bloodType ?? l10n.profileNotProvided,
           icon: Icons.water_drop_outlined,
           valueColor: medicalInfo.bloodType != null ? Colors.red : null,
           onEdit: onEdit,
         ),
         ProfileInfoRow(
-          label: 'Allergies',
+          label: l10n.profileAllergies,
           value: medicalInfo.allergies.isNotEmpty
               ? medicalInfo.allergies.join(', ')
-              : 'Aucune allergie connue',
+              : l10n.profileNoKnownAllergies,
           icon: Icons.warning_amber_outlined,
           onEdit: onEdit,
         ),
         ProfileInfoRow(
-          label: 'Conditions médicales',
+          label: l10n.profileMedicalConditions,
           value: medicalInfo.conditions.isNotEmpty
               ? medicalInfo.conditions.join(', ')
-              : 'Aucune',
+              : l10n.profileNone,
           icon: Icons.health_and_safety_outlined,
           onEdit: onEdit,
         ),
         ProfileInfoRow(
-          label: 'Médecin traitant',
-          value: medicalInfo.doctorName ?? 'Non renseigné',
+          label: l10n.profileDoctor,
+          value: medicalInfo.doctorName ?? l10n.profileNotProvided,
           icon: Icons.person_outline_rounded,
           onEdit: onEdit,
         ),
@@ -924,11 +916,12 @@ class _PregnancySection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = context.l10n;
     final lmp = cycleInfo.lastPeriodDate;
     final dateFormat = DateFormat('dd MMMM yyyy', 'fr_FR');
 
     return ProfileSectionCard(
-      title: 'Ma Grossesse',
+      title: l10n.profileMyPregnancy,
       icon: Icons.pregnant_woman_rounded,
       iconColor: Colors.pink,
       children: [
@@ -936,32 +929,32 @@ class _PregnancySection extends StatelessWidget {
           Padding(
             padding: const EdgeInsets.symmetric(vertical: AppSpacing.sm),
             child: Text(
-              'Renseignez votre DDR pour calculer votre DPA et votre semaine d\'aménorrhée.',
-              style: GoogleFonts.outfit(fontSize: 14, color: Colors.grey),
+              l10n.profilePregnancyLmpPrompt,
+              style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: Colors.grey),
             ),
           ),
         ] else ...[
           ProfileInfoRow(
-            label: 'DDR (dernières règles)',
+            label: l10n.profileLmpLabel,
             value: dateFormat.format(lmp),
             icon: Icons.event_outlined,
             onEdit: onEnterLmp,
           ),
           ProfileInfoRow(
-            label: 'Semaine d\'aménorrhée',
-            value: 'SA ${_week(lmp)} / 40',
+            label: l10n.profileGestationalWeek,
+            value: l10n.profileGestationalWeekValue(_week(lmp)),
             icon: Icons.loop_rounded,
             valueColor: Colors.pink,
           ),
           ProfileInfoRow(
-            label: 'DPA (date présumée)',
+            label: l10n.profileDueDateLabel,
             value: dateFormat.format(_dpa(lmp)),
             icon: Icons.child_care_rounded,
             valueColor: Colors.pink,
           ),
           ProfileInfoRow(
-            label: 'Compte à rebours',
-            value: 'J−${_daysLeft(lmp)} avant l\'accouchement',
+            label: l10n.profileCountdown,
+            value: l10n.cycleDaysUntilDelivery(_daysLeft(lmp)),
             icon: Icons.hourglass_bottom_rounded,
           ),
         ],
@@ -970,7 +963,7 @@ class _PregnancySection extends StatelessWidget {
           onPressed: onEnterLmp,
           icon: const Icon(Icons.calendar_today_rounded),
           label: Text(
-            lmp == null ? 'Entrer ma DDR' : 'Modifier ma DDR',
+            lmp == null ? l10n.cycleEnterLmp : l10n.cycleModifyLmp,
           ),
           style: ElevatedButton.styleFrom(
             backgroundColor: Colors.pink,
@@ -1015,11 +1008,12 @@ class _CycleSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = context.l10n;
     final dateFormat = DateFormat('dd MMMM yyyy', 'fr_FR');
     final phaseColor = _getPhaseColor(cycleInfo.currentPhase);
 
     return ProfileSectionCard(
-      title: 'Cycle Menstruel',
+      title: l10n.profileMenstrualCycle,
       icon: Icons.loop_rounded,
       iconColor: Colors.purple,
       trailing: IconButton(
@@ -1032,40 +1026,40 @@ class _CycleSection extends StatelessWidget {
           CycleDayIndicator(
             currentDay: cycleInfo.currentDay,
             cycleLength: cycleInfo.cycleLength,
-            phase: cycleInfo.currentPhase,
+            phase: localizedCyclePhase(l10n, cycleInfo.currentPhase),
             phaseColor: phaseColor,
           ),
           const SizedBox(height: AppSpacing.md),
           ProfileInfoRow(
-            label: 'Dernières règles',
+            label: l10n.profileLastPeriod,
             value: dateFormat.format(cycleInfo.lastPeriodDate!),
             icon: Icons.event_outlined,
           ),
           if (cycleInfo.nextPeriodDate != null)
             ProfileInfoRow(
-              label: 'Prochaines règles',
+              label: l10n.profileNextPeriod,
               value: dateFormat.format(cycleInfo.nextPeriodDate!),
               icon: Icons.event_available_outlined,
               valueColor: Colors.purple,
             ),
           ProfileInfoRow(
-            label: 'Durée moyenne',
-            value: '${cycleInfo.periodDuration} jours',
+            label: l10n.profileAverageDuration,
+            value: l10n.profileDaysCount(cycleInfo.periodDuration),
             icon: Icons.timelapse_outlined,
           ),
         ] else
           Padding(
             padding: const EdgeInsets.symmetric(vertical: AppSpacing.sm),
             child: Text(
-              'Suivi du cycle non activé',
-              style: GoogleFonts.outfit(fontSize: 14, color: Colors.grey),
+              l10n.profileCycleNotActive,
+              style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: Colors.grey),
             ),
           ),
         const SizedBox(height: AppSpacing.sm),
         ElevatedButton.icon(
           onPressed: onLogPeriod,
           icon: const Icon(Icons.add_rounded),
-          label: const Text('Enregistrer mes règles'),
+          label: Text(l10n.cycleLogPeriod),
           style: ElevatedButton.styleFrom(
             backgroundColor: Colors.purple,
             foregroundColor: Colors.white,
@@ -1088,6 +1082,7 @@ class _SubscriptionSection extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = context.l10n;
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final textColor = isDark ? Colors.white : AppColors.onSurfaceLight;
     final subTextColor = isDark
@@ -1102,7 +1097,7 @@ class _SubscriptionSection extends ConsumerWidget {
     );
 
     return ProfileSectionCard(
-      title: 'Mon Abonnement',
+      title: l10n.profileMySubscription,
       icon: Icons.workspace_premium_rounded,
       iconColor: primaryColor,
       children: [
@@ -1123,21 +1118,14 @@ class _SubscriptionSection extends ConsumerWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    plan.title,
-                    style: GoogleFonts.outfit(
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
-                      color: textColor,
-                    ),
+                    plan.localizedTitle(l10n),
+                    style: Theme.of(context).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold, color: textColor),
                   ),
                   Text(
                     plan.priceDZD == 0
-                        ? 'Forfait gratuit'
-                        : '${plan.priceLabel} ${plan.billingCycle}',
-                    style: GoogleFonts.outfit(
-                      fontSize: 13,
-                      color: subTextColor,
-                    ),
+                        ? l10n.profileFreePlan
+                        : '${plan.localizedPriceLabel(l10n)} ${plan.localizedBillingCycle(l10n)}',
+                    style: AppTypography.fromContext(context, fontSize: 13, color: subTextColor),
                   ),
                 ],
               ),
@@ -1149,12 +1137,8 @@ class _SubscriptionSection extends ConsumerWidget {
                 ),
               ),
               child: Text(
-                'Gérer',
-                style: GoogleFonts.outfit(
-                  fontSize: 13,
-                  fontWeight: FontWeight.w600,
-                  color: primaryColor,
-                ),
+                l10n.profileManage,
+                style: AppTypography.fromContext(context, fontSize: 13, fontWeight: FontWeight.w600, color: primaryColor),
               ),
             ),
           ],
@@ -1188,13 +1172,9 @@ class _SubscriptionSection extends ConsumerWidget {
                   Expanded(
                     child: Text(
                       albumClaimed
-                          ? 'Demande d\'album envoyée ✓'
-                          : 'Réclamer votre album imprimé gratuit 🎁',
-                      style: GoogleFonts.outfit(
-                        fontSize: 13,
-                        fontWeight: FontWeight.w600,
-                        color: const Color(0xFFFF6F00),
-                      ),
+                          ? l10n.profileAlbumClaimSent
+                          : l10n.profileClaimFreeAlbum,
+                      style: AppTypography.fromContext(context, fontSize: 13, fontWeight: FontWeight.w600, color: const Color(0xFFFF6F00)),
                     ),
                   ),
                   if (!albumClaimed)
@@ -1228,24 +1208,19 @@ class _SettingsSection extends ConsumerWidget {
     showDialog(
       context: context,
       builder: (BuildContext context) {
-        final activeLocale = ref.watch(localeProvider);
-        final dialogTitle = activeLocale.languageCode == 'ar'
-            ? 'اختر اللغة'
-            : activeLocale.languageCode == 'en'
-                ? 'Select Language'
-                : 'Choisir la langue';
+        final l10n = context.l10n;
 
         return AlertDialog(
           title: Text(
-            dialogTitle,
-            style: GoogleFonts.outfit(fontWeight: FontWeight.bold),
+            l10n.profileSelectLanguage,
+            style: AppTypography.fromContext(context, fontSize: 14, fontWeight: FontWeight.bold),
           ),
           content: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              _buildLanguageOption(context, ref, const Locale('fr'), 'Français'),
-              _buildLanguageOption(context, ref, const Locale('ar'), 'العربية'),
-              _buildLanguageOption(context, ref, const Locale('en'), 'English'),
+              _buildLanguageOption(context, ref, const Locale('fr'), l10n.profileLanguageFr),
+              _buildLanguageOption(context, ref, const Locale('ar'), l10n.profileLanguageAr),
+              _buildLanguageOption(context, ref, const Locale('en'), l10n.profileLanguageEn),
             ],
           ),
         );
@@ -1264,9 +1239,7 @@ class _SettingsSection extends ConsumerWidget {
     return ListTile(
       title: Text(
         label,
-        style: GoogleFonts.outfit(
-          fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
-        ),
+        style: AppTypography.fromContext(context, fontSize: 14, fontWeight: isSelected ? FontWeight.bold : FontWeight.normal),
       ),
       trailing: isSelected
           ? const Icon(Icons.check, color: AppColors.magentaPink)
@@ -1280,6 +1253,7 @@ class _SettingsSection extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = context.l10n;
     final secondaryColor = isDark
         ? AppColors.textSecondaryDark
         : AppColors.textSecondaryLight;
@@ -1287,17 +1261,13 @@ class _SettingsSection extends ConsumerWidget {
     final activeLocale = ref.watch(localeProvider);
 
     final langLabel = activeLocale.languageCode == 'ar'
-        ? 'العربية'
+        ? l10n.profileLanguageAr
         : activeLocale.languageCode == 'en'
-            ? 'English'
-            : 'Français';
+            ? l10n.profileLanguageEn
+            : l10n.profileLanguageFr;
 
     return ProfileSectionCard(
-      title: activeLocale.languageCode == 'ar' 
-          ? 'الإعدادات' 
-          : activeLocale.languageCode == 'en'
-              ? 'Settings'
-              : 'Paramètres',
+      title: l10n.profileSettings,
       icon: Icons.settings_rounded,
       iconColor: Colors.grey,
       children: [
@@ -1305,11 +1275,7 @@ class _SettingsSection extends ConsumerWidget {
           icon: Icons.dark_mode_outlined,
           textColor: textColor,
           secondaryColor: secondaryColor,
-          title: activeLocale.languageCode == 'ar' 
-              ? 'المظهر الداكن' 
-              : activeLocale.languageCode == 'en'
-                  ? 'Dark Theme'
-                  : 'Thème sombre',
+          title: l10n.profileDarkTheme,
           trailing: Switch(
             value: isDark,
             onChanged: (value) {
@@ -1322,11 +1288,7 @@ class _SettingsSection extends ConsumerWidget {
           icon: Icons.language_outlined,
           textColor: textColor,
           secondaryColor: secondaryColor,
-          title: activeLocale.languageCode == 'ar' 
-              ? 'اللغة' 
-              : activeLocale.languageCode == 'en'
-                  ? 'Language'
-                  : 'Langue',
+          title: l10n.profileLanguage,
           subtitle: langLabel,
           onTap: () => _showLanguageDialog(context, ref),
         ),
@@ -1338,16 +1300,8 @@ class _SettingsSection extends ConsumerWidget {
           icon: Icons.notifications_outlined,
           textColor: textColor,
           secondaryColor: secondaryColor,
-          title: activeLocale.languageCode == 'ar'
-              ? 'الإشعارات'
-              : activeLocale.languageCode == 'en'
-                  ? 'Notifications'
-                  : 'Notifications',
-          subtitle: activeLocale.languageCode == 'ar' 
-              ? 'إدارة التنبيهات' 
-              : activeLocale.languageCode == 'en'
-                  ? 'Manage reminders'
-                  : 'Gérer les rappels',
+          title: l10n.profileNotifications,
+          subtitle: l10n.profileManageReminders,
           onTap: () {
             Navigator.of(context).push(
               MaterialPageRoute(builder: (_) => const NotificationsScreen()),
@@ -1358,11 +1312,7 @@ class _SettingsSection extends ConsumerWidget {
           icon: Icons.lock_outline_rounded,
           textColor: textColor,
           secondaryColor: secondaryColor,
-          title: activeLocale.languageCode == 'ar' 
-              ? 'الخصوصية' 
-              : activeLocale.languageCode == 'en'
-                  ? 'Privacy'
-                  : 'Confidentialité',
+          title: l10n.privacy,
           onTap: () {
             Navigator.of(
               context,
@@ -1373,11 +1323,7 @@ class _SettingsSection extends ConsumerWidget {
           icon: Icons.help_outline_rounded,
           textColor: textColor,
           secondaryColor: secondaryColor,
-          title: activeLocale.languageCode == 'ar' 
-              ? 'المساعدة والدعم' 
-              : activeLocale.languageCode == 'en'
-                  ? 'Help & Support'
-                  : 'Aide & Support',
+          title: l10n.helpAndSupport,
           onTap: () {
             Navigator.of(
               context,
@@ -1390,13 +1336,7 @@ class _SettingsSection extends ConsumerWidget {
           child: OutlinedButton.icon(
             onPressed: onLogout,
             icon: const Icon(Icons.logout_rounded),
-            label: Text(
-              activeLocale.languageCode == 'ar' 
-                  ? 'تسجيل الخروج' 
-                  : activeLocale.languageCode == 'en'
-                      ? 'Logout'
-                      : 'Déconnexion',
-            ),
+            label: Text(l10n.profileLogout),
             style: OutlinedButton.styleFrom(
               foregroundColor: Colors.red,
               side: const BorderSide(color: Colors.red),
@@ -1424,10 +1364,10 @@ class _DisplaySettingsTile extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = context.l10n;
     final mode = ref.watch(timelineViewModeProvider);
     final isHorizontal = mode == TimelineViewMode.horizontal;
-    final activeLocale = ref.watch(localeProvider);
-    final lang = activeLocale.languageCode;
+    final textTheme = Theme.of(context).textTheme;
 
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 4),
@@ -1440,31 +1380,17 @@ class _DisplaySettingsTile extends ConsumerWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  lang == 'ar'
-                      ? 'عرض الخط الزمني'
-                      : lang == 'en'
-                          ? 'Timeline Display'
-                          : 'Affichage Timeline',
-                  style: GoogleFonts.outfit(
-                    fontSize: 14,
+                  l10n.profileTimelineDisplay,
+                  style: textTheme.bodyMedium?.copyWith(
                     fontWeight: FontWeight.w500,
                     color: textColor,
                   ),
                 ),
                 Text(
                   isHorizontal
-                      ? (lang == 'ar'
-                          ? 'عرض أفقي'
-                          : lang == 'en'
-                              ? 'Horizontal view'
-                              : 'Vue horizontale')
-                      : (lang == 'ar'
-                          ? 'عرض عمودي'
-                          : lang == 'en'
-                              ? 'Vertical view'
-                              : 'Vue verticale'),
-                  style: GoogleFonts.outfit(
-                    fontSize: 12,
+                      ? l10n.profileTimelineHorizontal
+                      : l10n.profileTimelineVertical,
+                  style: textTheme.bodySmall?.copyWith(
                     color: secondaryColor,
                   ),
                 ),
@@ -1483,11 +1409,7 @@ class _DisplaySettingsTile extends ConsumerWidget {
                 _ViewModeButton(
                   icon: Icons.view_column_rounded,
                   selected: isHorizontal,
-                  tooltip: lang == 'ar'
-                      ? 'أفقي'
-                      : lang == 'en'
-                          ? 'Horizontal'
-                          : 'Horizontale',
+                  tooltip: l10n.profileViewHorizontal,
                   onTap: () => ref
                       .read(timelineViewModeProvider.notifier)
                       .setMode(TimelineViewMode.horizontal),
@@ -1495,11 +1417,7 @@ class _DisplaySettingsTile extends ConsumerWidget {
                 _ViewModeButton(
                   icon: Icons.view_stream_rounded,
                   selected: !isHorizontal,
-                  tooltip: lang == 'ar'
-                      ? 'عمودي'
-                      : lang == 'en'
-                          ? 'Vertical'
-                          : 'Verticale',
+                  tooltip: l10n.profileViewVertical,
                   onTap: () => ref
                       .read(timelineViewModeProvider.notifier)
                       .setMode(TimelineViewMode.vertical),
@@ -1586,19 +1504,12 @@ class _SettingsTile extends StatelessWidget {
                 children: [
                   Text(
                     title,
-                    style: GoogleFonts.outfit(
-                      fontSize: 14,
-                      fontWeight: FontWeight.w500,
-                      color: textColor,
-                    ),
+                    style: AppTypography.fromContext(context, fontSize: 14, fontWeight: FontWeight.w500, color: textColor),
                   ),
                   if (subtitle != null)
                     Text(
                       subtitle!,
-                      style: GoogleFonts.outfit(
-                        fontSize: 12,
-                        color: secondaryColor,
-                      ),
+                      style: Theme.of(context).textTheme.bodySmall?.copyWith(color: secondaryColor),
                     ),
                 ],
               ),
@@ -1643,11 +1554,7 @@ class _EmptyChildrenSection extends StatelessWidget {
         ),
         child: Text(
           '0',
-          style: GoogleFonts.outfit(
-            fontSize: 12,
-            fontWeight: FontWeight.bold,
-            color: Colors.orange,
-          ),
+          style: Theme.of(context).textTheme.bodySmall?.copyWith(fontWeight: FontWeight.bold, color: Colors.orange),
         ),
       ),
       initiallyExpanded: true,
@@ -1656,7 +1563,7 @@ class _EmptyChildrenSection extends StatelessWidget {
           padding: const EdgeInsets.symmetric(vertical: AppSpacing.sm),
           child: Text(
             l10n.noChildrenTitle,
-            style: GoogleFonts.outfit(fontSize: 14, color: Colors.grey),
+            style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: Colors.grey),
           ),
         ),
         const SizedBox(height: AppSpacing.xs),
@@ -1696,8 +1603,8 @@ class _ErrorSectionCard extends StatelessWidget {
       iconColor: Colors.red,
       children: [
         Text(
-          'Erreur de chargement',
-          style: GoogleFonts.outfit(color: Colors.red),
+          context.l10n.healthLoadingError,
+          style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: Colors.red),
         ),
         const SizedBox(height: AppSpacing.md),
       ],

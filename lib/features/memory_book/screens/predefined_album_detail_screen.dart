@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:google_fonts/google_fonts.dart';
 
+import '../../../core/extensions/l10n_extension.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_spacing.dart';
 import '../../capsules/models/capsule.dart';
@@ -31,49 +31,31 @@ class PredefinedAlbumDetailScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = context.l10n;
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final bgColor = isDark
         ? AppColors.backgroundDark
         : AppColors.backgroundLight;
 
     final albumAsync = ref.watch(predefinedAlbumProvider(albumId));
-    final lang = Localizations.localeOf(context).languageCode;
 
     return Scaffold(
       backgroundColor: bgColor,
       body: albumAsync.when(
         loading: () => const Center(child: CircularProgressIndicator()),
         error: (e, _) => Center(
-          child: Text(
-            lang == 'ar'
-                ? 'خطأ: $e'
-                : lang == 'en'
-                    ? 'Error: $e'
-                    : 'Erreur : $e',
-          ),
+          child: Text(l10n.albumErrorWithMessage(e.toString())),
         ),
         data: (album) {
           if (album == null) {
             return Center(
-              child: Text(
-                lang == 'ar'
-                    ? 'الألبوم غير موجود'
-                    : lang == 'en'
-                        ? 'Album not found'
-                        : 'Album introuvable',
-              ),
+              child: Text(l10n.albumNotFound),
             );
           }
           final template = findAlbumTemplate(album.templateId);
           if (template == null) {
             return Center(
-              child: Text(
-                lang == 'ar'
-                    ? 'النموذج غير موجود'
-                    : lang == 'en'
-                        ? 'Template not found'
-                        : 'Modèle introuvable',
-              ),
+              child: Text(l10n.albumTemplateNotFound),
             );
           }
           return _AlbumBody(album: album, template: template);
@@ -91,6 +73,7 @@ class _AlbumBody extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = context.l10n;
     final lang = Localizations.localeOf(context).languageCode;
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final textColor = isDark ? Colors.white : AppColors.onSurfaceLight;
@@ -152,20 +135,17 @@ class _AlbumBody extends ConsumerWidget {
                       const SizedBox(height: 8),
                       Text(
                         template.getTitle(lang),
-                        style: GoogleFonts.outfit(
-                          fontSize: 22,
+                        style: Theme.of(context).textTheme.titleLarge?.copyWith(
                           fontWeight: FontWeight.bold,
                           color: Colors.white,
                         ),
                       ),
                       Text(
-                        lang == 'ar'
-                            ? 'تم ملء ${album.filledCount}/${template.slotCount} مناسبة'
-                            : lang == 'en'
-                                ? '${album.filledCount}/${template.slotCount} events completed'
-                                : '${album.filledCount}/${template.slotCount} évènements remplis',
-                        style: GoogleFonts.outfit(
-                          fontSize: 13,
+                        l10n.albumEventsFilledProgress(
+                          album.filledCount,
+                          template.slotCount,
+                        ),
+                        style: Theme.of(context).textTheme.labelMedium?.copyWith(
                           color: Colors.white.withValues(alpha: 0.85),
                         ),
                       ),
@@ -268,6 +248,7 @@ class _FilledSlotCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = context.l10n;
     return GestureDetector(
       onTap: () => Navigator.of(context).push(
         MaterialPageRoute(builder: (_) => CapsuleDetailScreen(capsule: capsule)),
@@ -312,8 +293,7 @@ class _FilledSlotCard extends StatelessWidget {
                       Expanded(
                         child: Text(
                           slot.getTitle(lang),
-                          style: GoogleFonts.outfit(
-                            fontSize: 14,
+                          style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                             fontWeight: FontWeight.w600,
                             color: textColor,
                           ),
@@ -325,13 +305,8 @@ class _FilledSlotCard extends StatelessWidget {
                   ),
                   const SizedBox(height: 2),
                   Text(
-                    lang == 'ar'
-                        ? 'ذكرى مرفقة'
-                        : lang == 'en'
-                            ? 'Memory attached'
-                            : 'Souvenir attaché',
-                    style: GoogleFonts.outfit(
-                      fontSize: 12,
+                    l10n.albumMemoryAttached,
+                    style: Theme.of(context).textTheme.labelMedium?.copyWith(
                       color: AppColors.success,
                     ),
                   ),
@@ -369,6 +344,7 @@ class _EmptySlotCard extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = context.l10n;
     return Container(
       padding: const EdgeInsets.all(AppSpacing.md),
       decoration: BoxDecoration(
@@ -399,16 +375,14 @@ class _EmptySlotCard extends ConsumerWidget {
                   children: [
                     Text(
                       slot.getTitle(lang),
-                      style: GoogleFonts.outfit(
-                        fontSize: 14,
+                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                         fontWeight: FontWeight.w600,
                         color: textColor,
                       ),
                     ),
                     Text(
                       slot.getDescription(lang),
-                      style: GoogleFonts.outfit(
-                        fontSize: 12,
+                      style: Theme.of(context).textTheme.labelMedium?.copyWith(
                         color: secondaryText,
                       ),
                       maxLines: 2,
@@ -431,12 +405,10 @@ class _EmptySlotCard extends ConsumerWidget {
                     color: accentColor,
                   ),
                   label: Text(
-                    lang == 'ar'
-                        ? 'موجودة'
-                        : lang == 'en'
-                            ? 'Existing'
-                            : 'Existante',
-                    style: GoogleFonts.outfit(fontSize: 12, fontWeight: FontWeight.w600),
+                    l10n.albumExistingCapsule,
+                    style: Theme.of(context).textTheme.labelMedium?.copyWith(
+                      fontWeight: FontWeight.w600,
+                    ),
                   ),
                   style: OutlinedButton.styleFrom(
                     foregroundColor: accentColor,
@@ -458,13 +430,8 @@ class _EmptySlotCard extends ConsumerWidget {
                     color: Colors.white,
                   ),
                   label: Text(
-                    lang == 'ar'
-                        ? 'جديدة'
-                        : lang == 'en'
-                            ? 'New'
-                            : 'Nouvelle',
-                    style: GoogleFonts.outfit(
-                      fontSize: 12,
+                    l10n.albumNewCapsule,
+                    style: Theme.of(context).textTheme.labelMedium?.copyWith(
                       fontWeight: FontWeight.w600,
                       color: Colors.white,
                     ),

@@ -130,8 +130,8 @@ class _LuckymamAppState extends ConsumerState<LuckymamApp> {
       debugShowCheckedModeBanner: false,
 
       // Theming
-      theme: AppTheme.lightTheme,
-      darkTheme: AppTheme.darkTheme,
+      theme: AppTheme.lightTheme(activeLocale),
+      darkTheme: AppTheme.darkTheme(activeLocale),
       themeMode: themeMode,
 
       // Localization

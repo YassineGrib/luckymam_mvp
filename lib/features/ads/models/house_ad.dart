@@ -11,14 +11,35 @@ enum AdPlacement {
   /// Native item inserted inside the Reels vertical feed.
   reel;
 
-  String get labelFr {
-    switch (this) {
-      case AdPlacement.splash:
-        return 'Ouverture de l\'app';
-      case AdPlacement.interstitial:
-        return 'Transition (interstitiel)';
-      case AdPlacement.reel:
-        return 'Flux Reels';
+  String getLabel(String locale) {
+    switch (locale) {
+      case 'ar':
+        switch (this) {
+          case AdPlacement.splash:
+            return 'فتح التطبيق';
+          case AdPlacement.interstitial:
+            return 'انتقال (ملء الشاشة)';
+          case AdPlacement.reel:
+            return 'تدفق Reels';
+        }
+      case 'en':
+        switch (this) {
+          case AdPlacement.splash:
+            return 'App open';
+          case AdPlacement.interstitial:
+            return 'Transition (interstitial)';
+          case AdPlacement.reel:
+            return 'Reels feed';
+        }
+      default:
+        switch (this) {
+          case AdPlacement.splash:
+            return 'Ouverture de l\'app';
+          case AdPlacement.interstitial:
+            return 'Transition (interstitiel)';
+          case AdPlacement.reel:
+            return 'Flux Reels';
+        }
     }
   }
 }
@@ -28,9 +49,15 @@ enum AdPlacement {
 class HouseAd {
   final String id;
   final AdPlacement placement;
-  final String sponsorName;
-  final String title;
-  final String subtitle;
+  final String sponsorNameFr;
+  final String sponsorNameAr;
+  final String sponsorNameEn;
+  final String titleFr;
+  final String titleAr;
+  final String titleEn;
+  final String subtitleFr;
+  final String subtitleAr;
+  final String subtitleEn;
   final String emoji;
   final List<Color> gradientColors;
 
@@ -42,21 +69,45 @@ class HouseAd {
 
   /// Optional in-app destination route (GoRouter path), e.g. '/marketplace'.
   final String? ctaRoute;
-  final String? ctaLabel;
+  final String? ctaLabelFr;
+  final String? ctaLabelAr;
+  final String? ctaLabelEn;
 
   const HouseAd({
     required this.id,
     required this.placement,
-    required this.sponsorName,
-    required this.title,
-    required this.subtitle,
+    required this.sponsorNameFr,
+    required this.sponsorNameAr,
+    required this.sponsorNameEn,
+    required this.titleFr,
+    required this.titleAr,
+    required this.titleEn,
+    required this.subtitleFr,
+    required this.subtitleAr,
+    required this.subtitleEn,
     required this.emoji,
     required this.gradientColors,
     this.assetPath,
     this.imageUrl,
     this.ctaRoute,
-    this.ctaLabel,
+    this.ctaLabelFr,
+    this.ctaLabelAr,
+    this.ctaLabelEn,
   });
+
+  String getTitle(String locale) => _pick(locale, titleFr, titleAr, titleEn);
+
+  String getSubtitle(String locale) =>
+      _pick(locale, subtitleFr, subtitleAr, subtitleEn);
+
+  String getSponsorName(String locale) =>
+      _pick(locale, sponsorNameFr, sponsorNameAr, sponsorNameEn);
+
+  String? getCtaLabel(String locale) {
+    final fr = ctaLabelFr;
+    if (fr == null) return null;
+    return _pick(locale, fr, ctaLabelAr ?? fr, ctaLabelEn ?? fr);
+  }
 
   /// https-only remote images — same validation policy as the marketplace.
   String? get safeImageUrl {
@@ -65,5 +116,21 @@ class HouseAd {
     final uri = Uri.tryParse(url);
     if (uri == null || !uri.isAbsolute || uri.scheme != 'https') return null;
     return url;
+  }
+
+  static String _pick(
+    String locale,
+    String fr,
+    String ar,
+    String en,
+  ) {
+    switch (locale) {
+      case 'ar':
+        return ar;
+      case 'en':
+        return en;
+      default:
+        return fr;
+    }
   }
 }

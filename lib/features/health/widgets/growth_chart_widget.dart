@@ -1,9 +1,10 @@
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 
+import '../../../core/extensions/l10n_extension.dart';
 import '../../../core/theme/app_colors.dart';
 import '../models/growth_entry.dart';
+import '../../../core/theme/app_typography.dart';
 
 /// WHO weight-for-age reference data (p50, boys, 0-60 months).
 /// Source: WHO Child Growth Standards.
@@ -181,6 +182,7 @@ class GrowthChartWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = context.l10n;
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final primary = isDark ? AppColors.primaryDark : AppColors.primaryLight;
     final gridColor = isDark ? Colors.white12 : Colors.black12;
@@ -201,7 +203,7 @@ class GrowthChartWidget extends StatelessWidget {
     }).toList()..sort((a, b) => a.x.compareTo(b.x));
 
     if (userSpots.isEmpty && entries.isEmpty) {
-      return _buildEmpty(primary);
+      return _buildEmpty(context, primary);
     }
 
     final maxY = _computeMaxY(userSpots);
@@ -234,8 +236,8 @@ class GrowthChartWidget extends StatelessWidget {
                   // Hide the max label to avoid overlap with top edge
                   if (v == maxY) return const SizedBox.shrink();
                   return Text(
-                    '${v.toInt()} kg',
-                    style: GoogleFonts.outfit(fontSize: 10, color: labelColor),
+                    l10n.healthChartAxisKg('${v.toInt()}'),
+                    style: AppTypography.fromContext(context, fontSize: 10, color: labelColor),
                   );
                 },
               ),
@@ -245,8 +247,8 @@ class GrowthChartWidget extends StatelessWidget {
                 showTitles: true,
                 interval: xInterval,
                 getTitlesWidget: (v, _) => Text(
-                  '${v.toInt()}m',
-                  style: GoogleFonts.outfit(fontSize: 10, color: labelColor),
+                  l10n.healthChartAxisMonths('${v.toInt()}'),
+                  style: AppTypography.fromContext(context, fontSize: 10, color: labelColor),
                 ),
               ),
             ),
@@ -291,9 +293,14 @@ class GrowthChartWidget extends StatelessWidget {
               getTooltipItems: (spots) => spots
                   .map(
                     (s) => LineTooltipItem(
-                      '${s.y.toStringAsFixed(1)} kg\n${s.x.toStringAsFixed(0)}m',
-                      GoogleFonts.outfit(
+                      l10n.healthChartTooltip(
+                        s.y.toStringAsFixed(1),
+                        s.x.toStringAsFixed(0),
+                      ),
+                      AppTypography.fromContext(
+                        context,
                         fontSize: 11,
+                        fontWeight: FontWeight.w500,
                         color: isDark ? Colors.white : AppColors.onSurfaceLight,
                       ),
                     ),
@@ -306,7 +313,14 @@ class GrowthChartWidget extends StatelessWidget {
     );
   }
 
-  Widget _buildEmpty(Color primary) => Center(
+  Widget _buildEmpty(BuildContext context, Color primary) {
+    final l10n = context.l10n;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final secondary = isDark
+        ? AppColors.textSecondaryDark
+        : AppColors.textSecondaryLight;
+
+    return Center(
     child: Column(
       mainAxisSize: MainAxisSize.min,
       children: [
@@ -317,14 +331,12 @@ class GrowthChartWidget extends StatelessWidget {
         ),
         const SizedBox(height: 8),
         Text(
-          'Ajoutez une mesure\npour voir la courbe',
+          l10n.healthChartEmptyHint,
           textAlign: TextAlign.center,
-          style: GoogleFonts.outfit(
-            fontSize: 13,
-            color: AppColors.textSecondaryLight,
-          ),
+          style: AppTypography.fromContext(context, fontSize: 13, color: secondary),
         ),
       ],
     ),
   );
+  }
 }

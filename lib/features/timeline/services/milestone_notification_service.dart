@@ -2,6 +2,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../../../core/services/notification_l10n.dart';
 import '../../../core/services/notification_service.dart';
 import '../../profile/models/profile_models.dart';
 import '../services/timeline_service.dart';
@@ -36,6 +37,11 @@ class MilestoneNotificationService {
 
   const MilestoneNotificationService(this._notifications);
 
+  Future<String> _localeCode() async {
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getString(kAppLocaleKey) ?? 'fr';
+  }
+
   /// Schedules reminders for all upcoming, non-completed milestones.
   ///
   /// Fires a notification 7 days before each milestone's [dueDate].
@@ -45,6 +51,8 @@ class MilestoneNotificationService {
     required List<MilestoneWithDueDate> milestones,
   }) async {
     final now = DateTime.now();
+    final l10n = await loadStoredL10n();
+    final locale = await _localeCode();
 
     for (final m in milestones) {
       if (m.dueDate == null) continue;
@@ -55,12 +63,15 @@ class MilestoneNotificationService {
       if (reminderDate.isBefore(now)) continue;
 
       final id = _stableId(child.id, m.milestone.id);
+      final milestoneTitle = m.milestone.getTitle(locale);
 
       await _notifications.scheduleMilestoneReminder(
         id: id,
-        childName: child.name,
-        milestoneTitle: m.milestone.titleFr,
+        title: l10n.notifMilestoneUpcomingTitle(child.name),
+        body: l10n.notifMilestoneUpcomingBody(milestoneTitle),
         dueDate: m.dueDate!,
+        channelName: l10n.notifMilestoneChannelName,
+        channelDesc: l10n.notifMilestoneChannelDesc,
       );
     }
 
@@ -100,14 +111,19 @@ class MilestoneNotificationService {
     required DateTime scheduledFor,
   }) async {
     final id = _stableId(child.id, '${milestone.milestone.id}_manual');
+    final l10n = await loadStoredL10n();
+    final locale = await _localeCode();
+    final milestoneTitle = milestone.milestone.getTitle(locale);
 
     await _notifications.scheduleMilestoneCustomReminder(
       id: id,
       childId: child.id,
       milestoneId: milestone.milestone.id,
-      childName: child.name,
-      milestoneTitle: milestone.milestone.titleFr,
+      title: l10n.notifMilestoneCustomTitle(child.name),
+      body: l10n.notifMilestoneCustomBody(milestoneTitle),
       scheduledFor: scheduledFor,
+      channelName: l10n.notifMilestoneChannelName,
+      channelDesc: l10n.notifMilestoneChannelDesc,
     );
 
     final prefs = await SharedPreferences.getInstance();

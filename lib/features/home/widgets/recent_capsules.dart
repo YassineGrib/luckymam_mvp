@@ -1,13 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:google_fonts/google_fonts.dart';
 
+import '../../../core/extensions/l10n_extension.dart';
 import '../../../core/theme/app_colors.dart';
+import '../../../l10n/app_localizations.dart';
 import '../../capsules/screens/capsule_detail_screen.dart';
 import '../../capsules/screens/create_capsule_screen.dart';
 import '../../profile/models/profile_models.dart';
 import '../../profile/providers/profile_providers.dart';
 import '../providers/home_providers.dart';
+import '../../../core/theme/app_typography.dart';
 
 /// Horizontal scroll section for recent capsules preview.
 class RecentCapsules extends ConsumerWidget {
@@ -15,6 +17,7 @@ class RecentCapsules extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = context.l10n;
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final primary = isDark ? AppColors.primaryDark : AppColors.primaryLight;
 
@@ -29,14 +32,14 @@ class RecentCapsules extends ConsumerWidget {
         SizedBox(
           height: 100,
           child: capsules.isEmpty
-              ? _buildEmptyState(context, isDark, primary)
+              ? _buildEmptyState(context, isDark, primary, l10n)
               : ListView.builder(
                   scrollDirection: Axis.horizontal,
                   padding: const EdgeInsets.symmetric(horizontal: 16),
                   itemCount: capsules.length + 1, // +1 for add button
                   itemBuilder: (context, index) {
                     if (index == 0) {
-                      return _buildAddButton(context, isDark, primary);
+                      return _buildAddButton(context, isDark, primary, l10n);
                     }
                     final capsule = capsules[index - 1];
                     final child = children.firstWhere(
@@ -56,7 +59,12 @@ class RecentCapsules extends ConsumerWidget {
     );
   }
 
-  Widget _buildEmptyState(BuildContext context, bool isDark, Color primary) {
+  Widget _buildEmptyState(
+    BuildContext context,
+    bool isDark,
+    Color primary,
+    AppLocalizations l10n,
+  ) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 20),
       child: GestureDetector(
@@ -83,12 +91,8 @@ class RecentCapsules extends ConsumerWidget {
                 Icon(Icons.add_a_photo_rounded, size: 32, color: primary),
                 const SizedBox(height: 8),
                 Text(
-                  'Créez votre première capsule!',
-                  style: GoogleFonts.outfit(
-                    fontSize: 14,
-                    fontWeight: FontWeight.w600,
-                    color: primary,
-                  ),
+                  l10n.homeRecentCapsulesEmpty,
+                  style: Theme.of(context).textTheme.titleSmall?.copyWith(fontWeight: FontWeight.w600, color: primary),
                 ),
               ],
             ),
@@ -114,7 +118,7 @@ class RecentCapsules extends ConsumerWidget {
       },
       child: Container(
         width: 90,
-        margin: const EdgeInsets.only(right: 12),
+        margin: const EdgeInsetsDirectional.only(end: 12),
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(14),
           boxShadow: [
@@ -153,11 +157,7 @@ class RecentCapsules extends ConsumerWidget {
                   ),
                   child: Text(
                     child.name,
-                    style: GoogleFonts.outfit(
-                      fontSize: 10,
-                      color: Colors.white,
-                      fontWeight: FontWeight.w600,
-                    ),
+                    style: AppTypography.fromContext(context, fontSize: 10, fontWeight: FontWeight.w600, color: Colors.white),
                   ),
                 ),
               ),
@@ -193,7 +193,12 @@ class RecentCapsules extends ConsumerWidget {
     );
   }
 
-  Widget _buildAddButton(BuildContext context, bool isDark, Color primary) {
+  Widget _buildAddButton(
+    BuildContext context,
+    bool isDark,
+    Color primary,
+    AppLocalizations l10n,
+  ) {
     return GestureDetector(
       onTap: () {
         Navigator.of(
@@ -202,7 +207,7 @@ class RecentCapsules extends ConsumerWidget {
       },
       child: Container(
         width: 90,
-        margin: const EdgeInsets.only(right: 12),
+        margin: const EdgeInsetsDirectional.only(end: 12),
         decoration: BoxDecoration(
           color: isDark ? AppColors.surfaceDark : AppColors.surfaceLight,
           borderRadius: BorderRadius.circular(14),
@@ -215,12 +220,8 @@ class RecentCapsules extends ConsumerWidget {
               Icon(Icons.add_rounded, size: 28, color: primary),
               const SizedBox(height: 4),
               Text(
-                'Ajouter',
-                style: GoogleFonts.outfit(
-                  fontSize: 11,
-                  fontWeight: FontWeight.w600,
-                  color: primary,
-                ),
+                l10n.timeline_add,
+                style: Theme.of(context).textTheme.labelSmall?.copyWith(fontWeight: FontWeight.w600, color: primary),
               ),
             ],
           ),

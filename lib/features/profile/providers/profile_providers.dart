@@ -2,6 +2,7 @@ import 'dart:io';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../core/providers/auth_provider.dart';
 import '../../../core/services/cycle_notification_service.dart';
+import '../../../l10n/app_localizations.dart';
 import '../models/profile_models.dart';
 import '../services/profile_service.dart';
 
@@ -62,26 +63,67 @@ final profileActionsProvider =
       );
     });
 
+/// Snackbar success message keys resolved in the UI layer.
+enum ProfileSnackMessage {
+  personalInfoUpdated,
+  photoUpdated,
+  statusUpdated,
+  medicalUpdated,
+  cycleUpdated,
+  periodLogged,
+  pregnancyLmpSaved,
+  childAdded,
+  childUpdated,
+  childDeleted,
+}
+
+extension ProfileSnackMessageL10n on ProfileSnackMessage {
+  String localize(AppLocalizations l10n) {
+    switch (this) {
+      case ProfileSnackMessage.personalInfoUpdated:
+        return l10n.profileSnackPersonalInfoUpdated;
+      case ProfileSnackMessage.photoUpdated:
+        return l10n.profileSnackPhotoUpdated;
+      case ProfileSnackMessage.statusUpdated:
+        return l10n.profileSnackStatusUpdated;
+      case ProfileSnackMessage.medicalUpdated:
+        return l10n.profileSnackMedicalUpdated;
+      case ProfileSnackMessage.cycleUpdated:
+        return l10n.profileSnackCycleUpdated;
+      case ProfileSnackMessage.periodLogged:
+        return l10n.profileSnackPeriodLogged;
+      case ProfileSnackMessage.pregnancyLmpSaved:
+        return l10n.profileSnackPregnancyLmpSaved;
+      case ProfileSnackMessage.childAdded:
+        return l10n.profileSnackChildAdded;
+      case ProfileSnackMessage.childUpdated:
+        return l10n.profileSnackChildUpdated;
+      case ProfileSnackMessage.childDeleted:
+        return l10n.profileSnackChildDeleted;
+    }
+  }
+}
+
 /// State for profile actions (loading, error handling).
 class ProfileActionsState {
   final bool isLoading;
-  final String? error;
-  final String? successMessage;
+  final String? errorDetails;
+  final ProfileSnackMessage? successMessage;
 
   const ProfileActionsState({
     this.isLoading = false,
-    this.error,
+    this.errorDetails,
     this.successMessage,
   });
 
   ProfileActionsState copyWith({
     bool? isLoading,
-    String? error,
-    String? successMessage,
+    String? errorDetails,
+    ProfileSnackMessage? successMessage,
   }) {
     return ProfileActionsState(
       isLoading: isLoading ?? this.isLoading,
-      error: error,
+      errorDetails: errorDetails,
       successMessage: successMessage,
     );
   }
@@ -97,7 +139,7 @@ class ProfileActionsNotifier extends StateNotifier<ProfileActionsState> {
 
   /// Clear messages.
   void clearMessages() {
-    state = state.copyWith(error: null, successMessage: null);
+    state = state.copyWith(errorDetails: null, successMessage: null);
   }
 
   /// Update personal info.
@@ -117,12 +159,12 @@ class ProfileActionsNotifier extends StateNotifier<ProfileActionsState> {
       );
       state = state.copyWith(
         isLoading: false,
-        successMessage: 'Informations mises à jour',
+        successMessage: ProfileSnackMessage.personalInfoUpdated,
       );
     } catch (e) {
       state = state.copyWith(
         isLoading: false,
-        error: 'Erreur: ${e.toString()}',
+        errorDetails: e.toString(),
       );
     }
   }
@@ -135,12 +177,12 @@ class ProfileActionsNotifier extends StateNotifier<ProfileActionsState> {
       await _service.updatePersonalInfo(photoUrl: photoUrl);
       state = state.copyWith(
         isLoading: false,
-        successMessage: 'Photo de profil mise à jour',
+        successMessage: ProfileSnackMessage.photoUpdated,
       );
     } catch (e) {
       state = state.copyWith(
         isLoading: false,
-        error: 'Erreur: ${e.toString()}',
+        errorDetails: e.toString(),
       );
     }
   }
@@ -155,12 +197,12 @@ class ProfileActionsNotifier extends StateNotifier<ProfileActionsState> {
       await _service.updateStatus(status, pregnancyDate: pregnancyDate);
       state = state.copyWith(
         isLoading: false,
-        successMessage: 'Statut mis à jour',
+        successMessage: ProfileSnackMessage.statusUpdated,
       );
     } catch (e) {
       state = state.copyWith(
         isLoading: false,
-        error: 'Erreur: ${e.toString()}',
+        errorDetails: e.toString(),
       );
     }
   }
@@ -172,12 +214,12 @@ class ProfileActionsNotifier extends StateNotifier<ProfileActionsState> {
       await _service.updateMedicalInfo(info);
       state = state.copyWith(
         isLoading: false,
-        successMessage: 'Informations médicales mises à jour',
+        successMessage: ProfileSnackMessage.medicalUpdated,
       );
     } catch (e) {
       state = state.copyWith(
         isLoading: false,
-        error: 'Erreur: ${e.toString()}',
+        errorDetails: e.toString(),
       );
     }
   }
@@ -189,12 +231,12 @@ class ProfileActionsNotifier extends StateNotifier<ProfileActionsState> {
       await _service.updateCycleInfo(info);
       state = state.copyWith(
         isLoading: false,
-        successMessage: 'Cycle mis à jour',
+        successMessage: ProfileSnackMessage.cycleUpdated,
       );
     } catch (e) {
       state = state.copyWith(
         isLoading: false,
-        error: 'Erreur: ${e.toString()}',
+        errorDetails: e.toString(),
       );
     }
   }
@@ -213,12 +255,12 @@ class ProfileActionsNotifier extends StateNotifier<ProfileActionsState> {
 
       state = state.copyWith(
         isLoading: false,
-        successMessage: 'Règles enregistrées',
+        successMessage: ProfileSnackMessage.periodLogged,
       );
     } catch (e) {
       state = state.copyWith(
         isLoading: false,
-        error: 'Erreur: ${e.toString()}',
+        errorDetails: e.toString(),
       );
     }
   }
@@ -230,12 +272,12 @@ class ProfileActionsNotifier extends StateNotifier<ProfileActionsState> {
       await _service.savePregnancyLmp(lmpDate);
       state = state.copyWith(
         isLoading: false,
-        successMessage: 'Date de début de grossesse enregistrée',
+        successMessage: ProfileSnackMessage.pregnancyLmpSaved,
       );
     } catch (e) {
       state = state.copyWith(
         isLoading: false,
-        error: 'Erreur: ${e.toString()}',
+        errorDetails: e.toString(),
       );
     }
   }
@@ -261,11 +303,14 @@ class ProfileActionsNotifier extends StateNotifier<ProfileActionsState> {
         await _service.addChild(child);
       }
 
-      state = state.copyWith(isLoading: false, successMessage: 'Enfant ajouté');
+      state = state.copyWith(
+        isLoading: false,
+        successMessage: ProfileSnackMessage.childAdded,
+      );
     } catch (e) {
       state = state.copyWith(
         isLoading: false,
-        error: 'Erreur: ${e.toString()}',
+        errorDetails: e.toString(),
       );
     }
   }
@@ -283,12 +328,12 @@ class ProfileActionsNotifier extends StateNotifier<ProfileActionsState> {
       await _service.updateChild(child.copyWith(photoUrl: photoUrl));
       state = state.copyWith(
         isLoading: false,
-        successMessage: 'Enfant mis à jour',
+        successMessage: ProfileSnackMessage.childUpdated,
       );
     } catch (e) {
       state = state.copyWith(
         isLoading: false,
-        error: 'Erreur: ${e.toString()}',
+        errorDetails: e.toString(),
       );
     }
   }
@@ -300,12 +345,12 @@ class ProfileActionsNotifier extends StateNotifier<ProfileActionsState> {
       await _service.deleteChild(childId);
       state = state.copyWith(
         isLoading: false,
-        successMessage: 'Enfant supprimé',
+        successMessage: ProfileSnackMessage.childDeleted,
       );
     } catch (e) {
       state = state.copyWith(
         isLoading: false,
-        error: 'Erreur: ${e.toString()}',
+        errorDetails: e.toString(),
       );
     }
   }

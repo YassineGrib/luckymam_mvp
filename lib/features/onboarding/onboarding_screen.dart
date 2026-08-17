@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:lukymam_mvp/l10n/app_localizations.dart';
 import 'package:go_router/go_router.dart';
-import 'package:google_fonts/google_fonts.dart';
 import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../shared/widgets/app_logo.dart';
+import '../../core/theme/app_typography.dart';
 
 /// Onboarding screen with hero image, brand text, and swipe-to-start.
 /// Matches the reference design with dark gradient overlay.
@@ -59,19 +59,14 @@ class OnboardingScreen extends StatelessWidget {
                   // Title with highlighted phrase
                   RichText(
                     text: TextSpan(
-                      style: GoogleFonts.outfit(
-                        fontSize: 30,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.white,
-                        height: 1.3,
-                      ),
+                      style: AppTypography.fromContext(context, fontSize: 30, fontWeight: FontWeight.bold, color: Colors.white, height: 1.3),
                       children: [
                         TextSpan(
-                          text: 'Des souvenirs \u00e0 transmettre,\n',
+                          text: '${l10n.onboardingTitleLine1}\n',
                           style: TextStyle(color: AppColors.magentaPink),
                         ),
-                        const TextSpan(
-                          text: 'des \u00e9motions \u00e0 revivre',
+                        TextSpan(
+                          text: l10n.onboardingTitleLine2,
                         ),
                       ],
                     ),
@@ -82,11 +77,7 @@ class OnboardingScreen extends StatelessWidget {
                   // Subtitle
                   Text(
                     l10n.welcomeSubtitle,
-                    style: GoogleFonts.outfit(
-                      fontSize: 14,
-                      color: Colors.white.withValues(alpha: 0.7),
-                      height: 1.5,
-                    ),
+                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: Colors.white.withValues(alpha: 0.7), height: 1.5),
                   ),
 
                   const SizedBox(height: AppSpacing.xxl),
@@ -143,11 +134,7 @@ class _SwipeToStartButtonState extends State<_SwipeToStartButton> {
           Center(
             child: Text(
               l10n.swipeToGetStarted,
-              style: GoogleFonts.outfit(
-                fontSize: 14,
-                fontWeight: FontWeight.w500,
-                color: Colors.white.withValues(alpha: 0.7),
-              ),
+              style: AppTypography.fromContext(context, fontSize: 14, fontWeight: FontWeight.w500, color: Colors.white.withValues(alpha: 0.7)),
             ),
           ),
 

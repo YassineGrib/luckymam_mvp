@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'package:flutter/services.dart';
 
+import '../../core/extensions/l10n_extension.dart';
 import '../../core/services/analytics_service.dart';
 import '../../core/services/notification_service.dart';
 import '../../core/theme/app_colors.dart';
@@ -92,10 +92,11 @@ class NotificationsScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final lang = Localizations.localeOf(context).languageCode;
+    final l10n = context.l10n;
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final prefs = ref.watch(notificationPrefsProvider);
     final notifier = ref.read(notificationPrefsProvider.notifier);
+    final textTheme = Theme.of(context).textTheme;
 
     final bg = isDark ? AppColors.backgroundDark : AppColors.backgroundLight;
     final cardColor = isDark ? AppColors.surfaceDark : Colors.white;
@@ -112,20 +113,19 @@ class NotificationsScreen extends ConsumerWidget {
         elevation: 0,
         surfaceTintColor: Colors.transparent,
         leading: IconButton(
-          icon: Icon(Icons.arrow_back_ios_new_rounded, color: textColor),
+          icon: Icon(Icons.arrow_back, color: textColor),
           onPressed: () => Navigator.of(context).pop(),
         ),
         title: Text(
-          lang == 'ar' ? 'التنبيهات' : 'Notifications',
-          style: GoogleFonts.outfit(
-            fontSize: 20,
+          l10n.notificationsTitle,
+          style: textTheme.titleLarge?.copyWith(
             fontWeight: FontWeight.bold,
             color: textColor,
           ),
         ),
       ),
       body: ListView(
-        padding: const EdgeInsets.fromLTRB(16, 8, 16, 40),
+        padding: const EdgeInsetsDirectional.fromSTEB(16, 8, 16, 40),
         children: [
           // ── Header banner ────────────────────────────────────────
           Container(
@@ -166,39 +166,24 @@ class NotificationsScreen extends ConsumerWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        lang == 'ar'
-                            ? 'التذكيرات الذكية'
-                            : lang == 'en'
-                                ? 'Smart Reminders'
-                                : 'Rappels intelligents',
-                        style: GoogleFonts.outfit(
-                          fontSize: 16,
+                        l10n.notificationsSmartReminders,
+                        style: textTheme.titleMedium?.copyWith(
                           fontWeight: FontWeight.bold,
                           color: Colors.white,
                         ),
                       ),
                       const SizedBox(height: 4),
                       Text(
-                        lang == 'ar'
-                            ? 'إدارة التنبيهات المخصصة لكِ'
-                            : lang == 'en'
-                                ? 'Manage your personalized reminders'
-                                : 'Gérez vos rappels personnalisés',
-                        style: GoogleFonts.outfit(
-                          fontSize: 13,
+                        l10n.notificationsSmartRemindersSubtitle,
+                        style: textTheme.bodySmall?.copyWith(
                           color: Colors.white.withValues(alpha: 0.85),
                         ),
                       ),
                     ],
                   ),
                 ),
-                // ── Raccourci: paramètres système ──────────────
                 Tooltip(
-                  message: lang == 'ar'
-                      ? 'إعدادات النظام'
-                      : lang == 'en'
-                          ? 'System settings'
-                          : 'Paramètres système',
+                  message: l10n.notificationsSystemSettings,
                   child: GestureDetector(
                     onTap: () async {
                       AnalyticsService().logEvent('notif_shortcut_opened');
@@ -235,16 +220,8 @@ class NotificationsScreen extends ConsumerWidget {
             icon: Icons.vaccines_rounded,
             iconBg: const Color(0xFFE8F5E9),
             iconColor: Colors.green,
-            title: lang == 'ar'
-                ? 'تذكيرات اللقاحات'
-                : lang == 'en'
-                    ? 'Vaccination Reminders'
-                    : 'Rappels Vaccination',
-            subtitle: lang == 'ar'
-                ? 'قبل يومين من موعد اللقاح، عند الساعة 09:00 صباحاً'
-                : lang == 'en'
-                    ? '2 days before vaccine date, at 09:00 AM'
-                    : '2 jours avant la date du vaccin, à 09h00',
+            title: l10n.notificationsVaccineTitle,
+            subtitle: l10n.notificationsVaccineSubtitle,
             value: prefs.vaccine,
             onChanged: (v) async {
               await notifier.setVaccine(v);
@@ -261,16 +238,8 @@ class NotificationsScreen extends ConsumerWidget {
             icon: Icons.star_rounded,
             iconBg: const Color(0xFFFFF3E0),
             iconColor: Colors.orange,
-            title: lang == 'ar'
-                ? 'مراحل التطور والنمو'
-                : lang == 'en'
-                    ? 'Developmental Milestones'
-                    : 'Jalons de Développement',
-            subtitle: lang == 'ar'
-                ? 'قبل 7 أيام من كل مرحلة رئيسية، عند الساعة 09:00 صباحاً'
-                : lang == 'en'
-                    ? '7 days before each milestone, at 09:00 AM'
-                    : '7 jours avant chaque étape clé, à 09h00',
+            title: l10n.notificationsMilestoneTitle,
+            subtitle: l10n.notificationsMilestoneSubtitle,
             value: prefs.milestone,
             onChanged: (v) async {
               await notifier.setMilestone(v);
@@ -287,16 +256,8 @@ class NotificationsScreen extends ConsumerWidget {
             icon: Icons.favorite_rounded,
             iconBg: const Color(0xFFF8E8FF),
             iconColor: Colors.deepPurpleAccent,
-            title: lang == 'ar'
-                ? 'الدورة النسائية'
-                : lang == 'en'
-                    ? 'Female Cycle'
-                    : 'Cycle Féminin',
-            subtitle: lang == 'ar'
-                ? 'الحيض خلال يومين • فترة التبويض — عند الساعة 08:00 صباحاً'
-                : lang == 'en'
-                    ? 'Period in 2 days • Ovulation phase — at 08:00 AM'
-                    : 'Règles dans 2 jours • Phase ovulatoire — à 08h00',
+            title: l10n.notificationsCycleTitle,
+            subtitle: l10n.notificationsCycleSubtitle,
             value: prefs.cycle,
             onChanged: (v) async {
               await notifier.setCycle(v);
@@ -323,13 +284,8 @@ class NotificationsScreen extends ConsumerWidget {
                 const SizedBox(width: 10),
                 Expanded(
                   child: Text(
-                    lang == 'ar'
-                        ? 'تتم جدولة التذكيرات تلقائياً وتتكيف مع بياناتكِ الشخصية وبيانات طفلكِ.'
-                        : lang == 'en'
-                            ? 'Reminders are scheduled automatically and adapt to your personal data and your child\'s.'
-                            : 'Les rappels sont planifiés automatiquement. Ils s\'adaptent à vos données personnelles et celles de votre enfant.',
-                    style: GoogleFonts.outfit(
-                      fontSize: 13,
+                    l10n.notificationsInfoNote,
+                    style: textTheme.bodySmall?.copyWith(
                       color: secondaryColor,
                       height: 1.5,
                     ),
@@ -375,6 +331,8 @@ class _NotifCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final textTheme = Theme.of(context).textTheme;
+
     return AnimatedContainer(
       duration: const Duration(milliseconds: 200),
       padding: const EdgeInsets.all(16),
@@ -410,8 +368,7 @@ class _NotifCard extends StatelessWidget {
               children: [
                 Text(
                   title,
-                  style: GoogleFonts.outfit(
-                    fontSize: 15,
+                  style: textTheme.titleSmall?.copyWith(
                     fontWeight: FontWeight.w600,
                     color: textColor,
                   ),
@@ -419,8 +376,7 @@ class _NotifCard extends StatelessWidget {
                 const SizedBox(height: 3),
                 Text(
                   subtitle,
-                  style: GoogleFonts.outfit(
-                    fontSize: 12,
+                  style: textTheme.labelSmall?.copyWith(
                     color: secondaryColor,
                     height: 1.4,
                   ),

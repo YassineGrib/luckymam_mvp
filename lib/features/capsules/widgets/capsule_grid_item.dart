@@ -1,6 +1,5 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:shimmer/shimmer.dart';
 
 import '../../../core/theme/app_colors.dart';
@@ -83,9 +82,9 @@ class CapsuleGridItem extends StatelessWidget {
                   ),
                 ),
 
-                // Emotion badge (bottom-left)
-                Positioned(
-                  left: 8,
+                // Emotion badge (bottom-start)
+                PositionedDirectional(
+                  start: 8,
                   bottom: 8,
                   child: Container(
                     padding: const EdgeInsets.all(4),
@@ -101,10 +100,10 @@ class CapsuleGridItem extends StatelessWidget {
                   ),
                 ),
 
-                // Audio indicator (top-left)
+                // Audio indicator (top-start)
                 if (capsule.hasAudio)
-                  Positioned(
-                    left: 8,
+                  PositionedDirectional(
+                    start: 8,
                     top: 8,
                     child: Container(
                       padding: const EdgeInsets.symmetric(
@@ -126,21 +125,22 @@ class CapsuleGridItem extends StatelessWidget {
                           const SizedBox(width: 4),
                           Text(
                             capsule.durationString,
-                            style: GoogleFonts.outfit(
-                              fontSize: 11,
-                              color: Colors.white,
-                              fontWeight: FontWeight.w500,
-                            ),
+                            style: Theme.of(context).textTheme.labelSmall
+                                ?.copyWith(
+                                  fontSize: 11,
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.w500,
+                                ),
                           ),
                         ],
                       ),
                     ),
                   ),
 
-                // Favorite badge (top-right)
+                // Favorite badge (top-end)
                 if (capsule.isFavorite)
-                  Positioned(
-                    right: 8,
+                  PositionedDirectional(
+                    end: 8,
                     top: 8,
                     child: Container(
                       padding: const EdgeInsets.all(4),

@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 
+import '../../../core/extensions/l10n_extension.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_spacing.dart';
 import '../models/marketplace_order.dart';
+import '../providers/marketplace_providers.dart';
 import '../providers/order_providers.dart';
 
 /// Order history — every marketplace order with its live status.
@@ -14,6 +15,7 @@ class MyOrdersScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = context.l10n;
     final lang = Localizations.localeOf(context).languageCode;
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final bgColor = isDark
@@ -36,14 +38,8 @@ class MyOrdersScreen extends ConsumerWidget {
           onPressed: () => Navigator.pop(context),
         ),
         title: Text(
-          lang == 'ar'
-              ? 'طلباتي'
-              : lang == 'en'
-                  ? 'My Orders'
-                  : 'Mes Commandes',
-          style: GoogleFonts.outfit(
-            fontSize: 18,
-            fontWeight: FontWeight.w600,
+          l10n.myOrdersTitle,
+          style: Theme.of(context).textTheme.titleMedium?.copyWith(
             color: textColor,
           ),
         ),
@@ -52,12 +48,10 @@ class MyOrdersScreen extends ConsumerWidget {
         loading: () => const Center(child: CircularProgressIndicator()),
         error: (e, _) => Center(
           child: Text(
-            lang == 'ar'
-                ? 'خطأ في التحميل'
-                : lang == 'en'
-                    ? 'Failed to load'
-                    : 'Erreur de chargement',
-            style: GoogleFonts.outfit(color: secondaryText),
+            l10n.myOrdersLoadError,
+            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+              color: secondaryText,
+            ),
           ),
         ),
         data: (orders) {
@@ -73,26 +67,15 @@ class MyOrdersScreen extends ConsumerWidget {
                   ),
                   const SizedBox(height: AppSpacing.md),
                   Text(
-                    lang == 'ar'
-                        ? 'لا توجد طلبات حالياً'
-                        : lang == 'en'
-                            ? 'No orders yet'
-                            : 'Aucune commande pour le moment',
-                    style: GoogleFonts.outfit(
-                      fontSize: 16,
-                      fontWeight: FontWeight.w600,
+                    l10n.myOrdersEmptyTitle,
+                    style: Theme.of(context).textTheme.titleMedium?.copyWith(
                       color: textColor,
                     ),
                   ),
                   const SizedBox(height: 6),
                   Text(
-                    lang == 'ar'
-                        ? 'ستظهر طلبات المتجر الخاصة بك هنا'
-                        : lang == 'en'
-                            ? 'Your marketplace orders will appear here'
-                            : 'Vos commandes marketplace apparaîtront ici',
-                    style: GoogleFonts.outfit(
-                      fontSize: 13,
+                    l10n.myOrdersEmptySubtitle,
+                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                       color: secondaryText,
                     ),
                   ),
@@ -101,7 +84,7 @@ class MyOrdersScreen extends ConsumerWidget {
             );
           }
           return ListView.separated(
-            padding: const EdgeInsets.fromLTRB(
+            padding: const EdgeInsetsDirectional.fromSTEB(
               AppSpacing.screenPaddingH,
               AppSpacing.sm,
               AppSpacing.screenPaddingH,
@@ -124,7 +107,7 @@ class MyOrdersScreen extends ConsumerWidget {
   }
 }
 
-class _OrderCard extends StatelessWidget {
+class _OrderCard extends ConsumerWidget {
   const _OrderCard({
     required this.order,
     required this.isDark,
@@ -140,7 +123,9 @@ class _OrderCard extends StatelessWidget {
   final String lang;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = context.l10n;
+    final catalog = ref.watch(marketplaceProductsProvider);
     final status = order.status;
     final dateLabel = DateFormat(
       'd MMM yyyy · HH:mm',
@@ -157,14 +142,12 @@ class _OrderCard extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Header: date + status chip
           Row(
             children: [
               Expanded(
                 child: Text(
                   dateLabel,
-                  style: GoogleFonts.outfit(
-                    fontSize: 12,
+                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
                     color: secondaryText,
                   ),
                 ),
@@ -184,10 +167,8 @@ class _OrderCard extends StatelessWidget {
                     Icon(status.icon, size: 13, color: status.color),
                     const SizedBox(width: 4),
                     Text(
-                      status.getLabel(lang),
-                      style: GoogleFonts.outfit(
-                        fontSize: 12,
-                        fontWeight: FontWeight.w600,
+                      status.label(context.l10n),
+                      style: Theme.of(context).textTheme.labelMedium?.copyWith(
                         color: status.color,
                       ),
                     ),
@@ -197,8 +178,6 @@ class _OrderCard extends StatelessWidget {
             ],
           ),
           const SizedBox(height: 10),
-
-          // Lines
           ...order.lines.map(
             (line) => Padding(
               padding: const EdgeInsets.only(bottom: 4),
@@ -206,9 +185,8 @@ class _OrderCard extends StatelessWidget {
                 children: [
                   Expanded(
                     child: Text(
-                      '${line.productName} ×${line.quantity}',
-                      style: GoogleFonts.outfit(
-                        fontSize: 13,
+                      '${line.displayName(lang, catalog)} ×${line.quantity}',
+                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                         color: textColor,
                       ),
                       maxLines: 1,
@@ -217,8 +195,7 @@ class _OrderCard extends StatelessWidget {
                   ),
                   Text(
                     _formatDZD(line.lineTotalDZD),
-                    style: GoogleFonts.outfit(
-                      fontSize: 13,
+                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                       color: secondaryText,
                     ),
                   ),
@@ -227,23 +204,18 @@ class _OrderCard extends StatelessWidget {
             ),
           ),
           const Divider(height: 16),
-
-          // Total
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
-                lang == 'ar'
-                    ? '${order.itemCount} منتج'
-                    : lang == 'en'
-                        ? '${order.itemCount} item${order.itemCount > 1 ? 's' : ''}'
-                        : '${order.itemCount} article${order.itemCount > 1 ? 's' : ''}',
-                style: GoogleFonts.outfit(fontSize: 12, color: secondaryText),
+                l10n.orderItemCount(order.itemCount),
+                style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                  color: secondaryText,
+                ),
               ),
               Text(
                 order.formattedTotal,
-                style: GoogleFonts.outfit(
-                  fontSize: 16,
+                style: Theme.of(context).textTheme.titleMedium?.copyWith(
                   fontWeight: FontWeight.bold,
                   color: AppColors.magentaPink,
                 ),

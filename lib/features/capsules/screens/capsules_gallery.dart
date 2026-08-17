@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:shimmer/shimmer.dart';
 
+import '../../../core/extensions/l10n_extension.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_spacing.dart';
 import '../../profile/models/profile_models.dart';
@@ -21,6 +21,7 @@ class CapsulesGallery extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = context.l10n;
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final bgColor = isDark
         ? AppColors.backgroundDark
@@ -51,12 +52,12 @@ class CapsulesGallery extends ConsumerWidget {
                 final canMake = canCreate.valueOrNull ?? true;
 
                 return PageHeaderWithFilter(
-                  title: 'Mes Capsules',
+                  title: l10n.capsulesGalleryTitle,
                   subtitleWidget: Row(
                     children: [
                       Text(
-                        '$rem restantes',
-                        style: GoogleFonts.outfit(
+                        l10n.capsulesRemaining(rem),
+                        style: Theme.of(context).textTheme.bodySmall?.copyWith(
                           fontSize: 13,
                           color: rem > 5 ? secondaryText : AppColors.warning,
                           fontWeight: rem <= 5
@@ -107,12 +108,13 @@ class CapsulesGallery extends ConsumerWidget {
                           ),
                           const SizedBox(width: 4),
                           Text(
-                            'Capturer',
-                            style: GoogleFonts.outfit(
-                              fontSize: 13,
-                              fontWeight: FontWeight.w600,
-                              color: Colors.white,
-                            ),
+                            l10n.milestone_capture,
+                            style: Theme.of(context).textTheme.labelLarge
+                                ?.copyWith(
+                                  fontSize: 13,
+                                  fontWeight: FontWeight.w600,
+                                  color: Colors.white,
+                                ),
                           ),
                         ],
                       ),
@@ -140,11 +142,16 @@ class CapsulesGallery extends ConsumerWidget {
             Expanded(
               child: capsulesAsync.when(
                 loading: () => _buildLoadingGrid(isDark),
-                error: (error, _) =>
-                    _buildErrorState(ref, textColor, secondaryText, primary),
+                error: (error, _) => _buildErrorState(
+                  context,
+                  ref,
+                  textColor,
+                  secondaryText,
+                  primary,
+                ),
                 data: (capsules) {
                   if (capsules.isEmpty) {
-                    return _buildEmptyState(primary, textColor, secondaryText);
+                    return _buildEmptyState(context, textColor, secondaryText);
                   }
                   return _buildGrid(context, capsules);
                 },
@@ -157,6 +164,7 @@ class CapsulesGallery extends ConsumerWidget {
   }
 
   void _showQuotaExceededDialog(BuildContext context) {
+    final l10n = context.l10n;
     final isDark = Theme.of(context).brightness == Brightness.dark;
     showDialog(
       context: context,
@@ -170,8 +178,8 @@ class CapsulesGallery extends ConsumerWidget {
             Icon(Icons.warning_amber_rounded, color: AppColors.warning),
             const SizedBox(width: 8),
             Text(
-              'Limite atteinte',
-              style: GoogleFonts.outfit(
+              l10n.capsulesQuotaLimitTitle,
+              style: Theme.of(context).textTheme.titleMedium?.copyWith(
                 fontWeight: FontWeight.bold,
                 color: isDark ? Colors.white : AppColors.onSurfaceLight,
               ),
@@ -179,8 +187,8 @@ class CapsulesGallery extends ConsumerWidget {
           ],
         ),
         content: Text(
-          'Vous avez atteint la limite de $freemiumCapsuleLimit capsules pour le forfait gratuit. Passez à Premium pour un stockage illimité!',
-          style: GoogleFonts.outfit(
+          l10n.capsulesQuotaLimitMessage(freemiumCapsuleLimit),
+          style: Theme.of(context).textTheme.bodyMedium?.copyWith(
             color: isDark
                 ? AppColors.textSecondaryDark
                 : AppColors.textSecondaryLight,
@@ -190,8 +198,8 @@ class CapsulesGallery extends ConsumerWidget {
           TextButton(
             onPressed: () => Navigator.pop(context),
             child: Text(
-              'Compris',
-              style: GoogleFonts.outfit(
+              l10n.capsulesUnderstood,
+              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                 color: isDark ? Colors.white70 : AppColors.textSecondaryLight,
               ),
             ),
@@ -202,8 +210,8 @@ class CapsulesGallery extends ConsumerWidget {
               // TODO: Navigate to premium upgrade screen
             },
             child: Text(
-              'Voir Premium',
-              style: GoogleFonts.outfit(
+              l10n.capsulesViewPremium,
+              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                 color: AppColors.goldenrod,
                 fontWeight: FontWeight.w600,
               ),
@@ -216,7 +224,7 @@ class CapsulesGallery extends ConsumerWidget {
 
   Widget _buildGrid(BuildContext context, List<Capsule> capsules) {
     return GridView.builder(
-      padding: const EdgeInsets.fromLTRB(
+      padding: const EdgeInsetsDirectional.fromSTEB(
         AppSpacing.screenPaddingH,
         AppSpacing.sm,
         AppSpacing.screenPaddingH,
@@ -264,7 +272,16 @@ class CapsulesGallery extends ConsumerWidget {
     );
   }
 
-  Widget _buildEmptyState(Color primary, Color textColor, Color secondaryText) {
+  Widget _buildEmptyState(
+    BuildContext context,
+    Color textColor,
+    Color secondaryText,
+  ) {
+    final l10n = context.l10n;
+    final primary = Theme.of(context).brightness == Brightness.dark
+        ? AppColors.primaryDark
+        : AppColors.primaryLight;
+
     return Center(
       child: Padding(
         padding: const EdgeInsets.all(AppSpacing.screenPaddingH),
@@ -282,8 +299,8 @@ class CapsulesGallery extends ConsumerWidget {
             ),
             const SizedBox(height: AppSpacing.lg),
             Text(
-              'Aucune capsule',
-              style: GoogleFonts.outfit(
+              l10n.capsulesEmptyTitle,
+              style: Theme.of(context).textTheme.titleMedium?.copyWith(
                 fontSize: 20,
                 fontWeight: FontWeight.bold,
                 color: textColor,
@@ -292,8 +309,10 @@ class CapsulesGallery extends ConsumerWidget {
             ),
             const SizedBox(height: AppSpacing.sm),
             Text(
-              'Capturez vos premiers souvenirs\nen appuyant sur le bouton ci-dessous',
-              style: GoogleFonts.outfit(fontSize: 14, color: secondaryText),
+              l10n.capsulesEmptySubtitle,
+              style: Theme.of(
+                context,
+              ).textTheme.bodyMedium?.copyWith(fontSize: 14, color: secondaryText),
               textAlign: TextAlign.center,
             ),
           ],
@@ -303,11 +322,14 @@ class CapsulesGallery extends ConsumerWidget {
   }
 
   Widget _buildErrorState(
+    BuildContext context,
     WidgetRef ref,
     Color textColor,
     Color secondaryText,
     Color primary,
   ) {
+    final l10n = context.l10n;
+
     return Center(
       child: Padding(
         padding: const EdgeInsets.all(AppSpacing.screenPaddingH),
@@ -321,8 +343,8 @@ class CapsulesGallery extends ConsumerWidget {
             ),
             const SizedBox(height: AppSpacing.md),
             Text(
-              'Erreur de chargement',
-              style: GoogleFonts.outfit(
+              l10n.myOrdersLoadError,
+              style: Theme.of(context).textTheme.titleMedium?.copyWith(
                 fontSize: 18,
                 fontWeight: FontWeight.bold,
                 color: textColor,
@@ -330,12 +352,13 @@ class CapsulesGallery extends ConsumerWidget {
             ),
             const SizedBox(height: AppSpacing.xs),
             Text(
-              'Impossible de charger les capsules',
-              style: GoogleFonts.outfit(fontSize: 14, color: secondaryText),
+              l10n.capsulesLoadErrorSubtitle,
+              style: Theme.of(
+                context,
+              ).textTheme.bodyMedium?.copyWith(fontSize: 14, color: secondaryText),
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: AppSpacing.lg),
-            // Retry button
             ElevatedButton.icon(
               onPressed: () {
                 ref.invalidate(filteredCapsulesProvider);
@@ -353,8 +376,10 @@ class CapsulesGallery extends ConsumerWidget {
               ),
               icon: const Icon(Icons.refresh_rounded, size: 18),
               label: Text(
-                'Réessayer',
-                style: GoogleFonts.outfit(fontWeight: FontWeight.w600),
+                l10n.retry,
+                style: Theme.of(
+                  context,
+                ).textTheme.labelLarge?.copyWith(fontWeight: FontWeight.w600),
               ),
             ),
           ],

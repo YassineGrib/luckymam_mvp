@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
+import '../../core/extensions/l10n_extension.dart';
 import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_spacing.dart';
+import '../../core/theme/app_typography.dart';
 
 /// Full Privacy Policy & Terms of Use screen.
 /// Accessible from the signup consent mention and from profile settings.
@@ -10,6 +11,7 @@ class PrivacyPolicyScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = context.l10n;
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final bgColor = isDark
         ? AppColors.backgroundDark
@@ -32,12 +34,8 @@ class PrivacyPolicyScreen extends StatelessWidget {
           onPressed: () => Navigator.pop(context),
         ),
         title: Text(
-          'Confidentialité & CGU',
-          style: GoogleFonts.outfit(
-            fontSize: 18,
-            fontWeight: FontWeight.w600,
-            color: textColor,
-          ),
+          l10n.authPrivacyTitle,
+          style: AppTypography.fromContext(context, fontSize: 18, fontWeight: FontWeight.w600, color: textColor),
         ),
       ),
       body: SingleChildScrollView(
@@ -63,20 +61,13 @@ class PrivacyPolicyScreen extends StatelessWidget {
                   ),
                   const SizedBox(height: AppSpacing.sm),
                   Text(
-                    'Vos données nous tiennent à cœur',
-                    style: GoogleFonts.outfit(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.white,
-                    ),
+                    l10n.authPrivacyHeroTitle,
+                    style: AppTypography.fromContext(context, fontSize: 18, fontWeight: FontWeight.bold, color: Colors.white),
                   ),
                   const SizedBox(height: 4),
                   Text(
-                    'Dernière mise à jour : 1er mars 2026',
-                    style: GoogleFonts.outfit(
-                      fontSize: 12,
-                      color: Colors.white.withValues(alpha: 0.8),
-                    ),
+                    l10n.authPrivacyLastUpdated,
+                    style: Theme.of(context).textTheme.bodySmall?.copyWith(color: Colors.white.withValues(alpha: 0.8)),
                   ),
                 ],
               ),
@@ -87,7 +78,7 @@ class PrivacyPolicyScreen extends StatelessWidget {
             // ── POLITIQUE DE CONFIDENTIALITÉ ─────────────────────────────
             _SectionTitle(
               icon: Icons.lock_outline_rounded,
-              title: 'Politique de Confidentialité',
+              title: l10n.authPrivacyPolicyTitle,
               color: AppColors.magentaPink,
               textColor: textColor,
             ),
@@ -96,70 +87,40 @@ class PrivacyPolicyScreen extends StatelessWidget {
               cardColor: cardColor,
               secondaryColor: secondaryColor,
               textColor: textColor,
-              title: '1. Données collectées',
-              content:
-                  'Lorsque vous créez un compte Luckymam, nous collectons :\n\n'
-                  '• Votre nom et adresse e-mail\n'
-                  '• Votre date du terme (grossesse)\n'
-                  '• La date de naissance de votre bébé\n'
-                  '• Les informations relatives à vos enfants (prénom, date de naissance)\n'
-                  '• Les capsules photos et moments de vie que vous choisissez de partager\n'
-                  '• Les données de santé saisies volontairement (vaccins, suivi médical)',
+              title: l10n.authPrivacySection1Title,
+              content: l10n.authPrivacySection1Body,
             ),
 
             _PolicyCard(
               cardColor: cardColor,
               secondaryColor: secondaryColor,
               textColor: textColor,
-              title: '2. Utilisation de vos données',
-              content:
-                  'Vos données sont utilisées exclusivement pour :\n\n'
-                  '• Vous fournir les fonctionnalités de l\'application (Timeline, Capsules, Vaccins)\n'
-                  '• Personnaliser votre expérience selon votre profil maternel\n'
-                  '• Vous envoyer des rappels et notifications pertinents\n'
-                  '• Améliorer nos services de manière anonyme et agrégée\n\n'
-                  'Nous ne vendons ni ne partageons jamais vos données personnelles avec des tiers à des fins commerciales.',
+              title: l10n.authPrivacySection2Title,
+              content: l10n.authPrivacySection2Body,
             ),
 
             _PolicyCard(
               cardColor: cardColor,
               secondaryColor: secondaryColor,
               textColor: textColor,
-              title: '3. Stockage & Sécurité',
-              content:
-                  'Vos données sont stockées de manière sécurisée sur des serveurs Firebase '
-                  '(Google Cloud Platform), certifiés ISO 27001 et conformes au RGPD.\n\n'
-                  '• Chiffrement en transit (TLS 1.3) et au repos (AES-256)\n'
-                  '• Accès restreint à votre seul compte via authentification sécurisée\n'
-                  '• Sauvegardes automatiques chiffrées',
+              title: l10n.authPrivacySection3Title,
+              content: l10n.authPrivacySection3Body,
             ),
 
             _PolicyCard(
               cardColor: cardColor,
               secondaryColor: secondaryColor,
               textColor: textColor,
-              title: '4. Vos droits (RGPD)',
-              content:
-                  'Conformément au Règlement Général sur la Protection des Données, vous disposez des droits suivants :\n\n'
-                  '• Droit d\'accès à vos données personnelles\n'
-                  '• Droit de rectification des données inexactes\n'
-                  '• Droit à l\'effacement (« droit à l\'oubli »)\n'
-                  '• Droit à la portabilité de vos données\n'
-                  '• Droit d\'opposition au traitement\n\n'
-                  'Pour exercer ces droits : privacy@Luckymam.com',
+              title: l10n.authPrivacySection4Title,
+              content: l10n.authPrivacySection4Body,
             ),
 
             _PolicyCard(
               cardColor: cardColor,
               secondaryColor: secondaryColor,
               textColor: textColor,
-              title: '5. Conservation des données',
-              content:
-                  'Vos données sont conservées tant que votre compte est actif. '
-                  'En cas de suppression du compte, toutes vos données personnelles sont '
-                  'effacées dans un délai de 30 jours.\n\n'
-                  'Vous pouvez demander la suppression depuis : '
-                  'Profil → Paramètres → Supprimer mon compte.',
+              title: l10n.authPrivacySection5Title,
+              content: l10n.authPrivacySection5Body,
             ),
 
             const SizedBox(height: AppSpacing.xl),
@@ -167,7 +128,7 @@ class PrivacyPolicyScreen extends StatelessWidget {
             // ── CONDITIONS D'UTILISATION ─────────────────────────────────
             _SectionTitle(
               icon: Icons.gavel_rounded,
-              title: "Conditions d'Utilisation",
+              title: l10n.authTermsTitle,
               color: AppColors.smaltBlue,
               textColor: textColor,
             ),
@@ -176,64 +137,40 @@ class PrivacyPolicyScreen extends StatelessWidget {
               cardColor: cardColor,
               secondaryColor: secondaryColor,
               textColor: textColor,
-              title: '1. Acceptation des conditions',
-              content:
-                  'En créant un compte et en utilisant l\'application Luckymam, '
-                  'vous acceptez les présentes conditions d\'utilisation dans leur intégralité. '
-                  'Si vous n\'acceptez pas ces conditions, veuillez ne pas utiliser l\'application.',
+              title: l10n.authTermsSection1Title,
+              content: l10n.authTermsSection1Body,
             ),
 
             _PolicyCard(
               cardColor: cardColor,
               secondaryColor: secondaryColor,
               textColor: textColor,
-              title: '2. Description du service',
-              content:
-                  'Luckymam est une application mobile dédiée à accompagner les mamans '
-                  'dans leur parcours de maternité. Elle propose :\n\n'
-                  '• La création et conservation de capsules photo de vie\n'
-                  '• Le suivi de la Timeline des moments importants\n'
-                  '• Le suivi des vaccinations de l\'enfant\n'
-                  '• L\'accès à des Reels éducatifs sur la grossesse et la maternité\n'
-                  '• Des fonctionnalités premium et VIP sur abonnement',
+              title: l10n.authTermsSection2Title,
+              content: l10n.authTermsSection2Body,
             ),
 
             _PolicyCard(
               cardColor: cardColor,
               secondaryColor: secondaryColor,
               textColor: textColor,
-              title: '3. Responsabilités',
-              content:
-                  'Luckymam n\'est pas un service médical et ne remplace pas l\'avis d\'un professionnel de santé. '
-                  'Les informations fournies (calendrier vaccinal, conseils de grossesse) sont '
-                  'données à titre indicatif uniquement.\n\n'
-                  'Vous êtes responsable de la confidentialité de vos identifiants de connexion '
-                  'et de l\'exactitude des informations que vous saisissez.',
+              title: l10n.authTermsSection3Title,
+              content: l10n.authTermsSection3Body,
             ),
 
             _PolicyCard(
               cardColor: cardColor,
               secondaryColor: secondaryColor,
               textColor: textColor,
-              title: '4. Abonnements & Facturation',
-              content:
-                  'Luckymam propose trois niveaux d\'accès :\n\n'
-                  '• Gratuit : fonctionnalités de base\n'
-                  '• Prémium : 2 490 DA/an — accès à toutes les fonctionnalités avancées\n'
-                  '• VIP : 9 890 DA/an — carte VIP personnalisée + partenaires exclusifs\n\n'
-                  'Les abonnements sont renouvelés automatiquement. '
-                  'Vous pouvez annuler à tout moment depuis votre espace abonnement.',
+              title: l10n.authTermsSection4Title,
+              content: l10n.authTermsSection4Body,
             ),
 
             _PolicyCard(
               cardColor: cardColor,
               secondaryColor: secondaryColor,
               textColor: textColor,
-              title: '5. Modifications',
-              content:
-                  'Luckymam se réserve le droit de modifier ces conditions à tout moment. '
-                  'Toute modification sera notifiée par e-mail et dans l\'application. '
-                  'L\'utilisation continue de l\'application après notification vaut acceptation des nouvelles conditions.',
+              title: l10n.authTermsSection5Title,
+              content: l10n.authTermsSection5Body,
             ),
 
             const SizedBox(height: AppSpacing.xl),
@@ -260,20 +197,13 @@ class PrivacyPolicyScreen extends StatelessWidget {
                   ),
                   const SizedBox(height: AppSpacing.sm),
                   Text(
-                    'Des questions ?',
-                    style: GoogleFonts.outfit(
-                      fontSize: 16,
-                      fontWeight: FontWeight.w600,
-                      color: textColor,
-                    ),
+                    l10n.authPrivacyQuestionsTitle,
+                    style: Theme.of(context).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w600, color: textColor),
                   ),
                   const SizedBox(height: 4),
                   Text(
-                    'Contactez-nous à privacy@Luckymam.com',
-                    style: GoogleFonts.outfit(
-                      fontSize: 13,
-                      color: secondaryColor,
-                    ),
+                    l10n.authPrivacyContactEmail,
+                    style: AppTypography.fromContext(context, fontSize: 13, color: secondaryColor),
                     textAlign: TextAlign.center,
                   ),
                 ],
@@ -319,11 +249,7 @@ class _SectionTitle extends StatelessWidget {
           const SizedBox(width: AppSpacing.sm),
           Text(
             title,
-            style: GoogleFonts.outfit(
-              fontSize: 18,
-              fontWeight: FontWeight.bold,
-              color: textColor,
-            ),
+            style: AppTypography.fromContext(context, fontSize: 18, fontWeight: FontWeight.bold, color: textColor),
           ),
         ],
       ),
@@ -368,20 +294,12 @@ class _PolicyCard extends StatelessWidget {
         children: [
           Text(
             title,
-            style: GoogleFonts.outfit(
-              fontSize: 14,
-              fontWeight: FontWeight.w700,
-              color: textColor,
-            ),
+            style: Theme.of(context).textTheme.titleSmall?.copyWith(fontWeight: FontWeight.w700, color: textColor),
           ),
           const SizedBox(height: AppSpacing.sm),
           Text(
             content,
-            style: GoogleFonts.outfit(
-              fontSize: 13,
-              color: secondaryColor,
-              height: 1.6,
-            ),
+            style: AppTypography.fromContext(context, fontSize: 13, color: secondaryColor, height: 1.6),
           ),
         ],
       ),

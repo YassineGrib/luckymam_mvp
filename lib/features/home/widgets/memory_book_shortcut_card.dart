@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:google_fonts/google_fonts.dart';
 
+import '../../../core/extensions/l10n_extension.dart';
 import '../../memory_book/providers/memory_book_providers.dart';
 import '../../memory_book/screens/memory_book_screen.dart';
 
@@ -11,6 +11,7 @@ class MemoryBookShortcutCard extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = context.l10n;
     final albumCount = ref.watch(albumCountProvider);
 
     return Padding(
@@ -60,22 +61,15 @@ class MemoryBookShortcutCard extends ConsumerWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'Livre de Mémoires',
-                      style: GoogleFonts.outfit(
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.white,
-                      ),
+                      l10n.memoryBookTitle,
+                      style: Theme.of(context).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold, color: Colors.white),
                     ),
                     const SizedBox(height: 2),
                     Text(
                       albumCount > 0
-                          ? '$albumCount albums auto-générés'
-                          : 'Vos souvenirs en albums',
-                      style: GoogleFonts.outfit(
-                        fontSize: 12,
-                        color: Colors.white.withValues(alpha: 0.85),
-                      ),
+                          ? l10n.homeMemoryBookAlbumsCount(albumCount)
+                          : l10n.homeMemoryBookEmptySubtitle,
+                      style: Theme.of(context).textTheme.bodySmall?.copyWith(color: Colors.white.withValues(alpha: 0.85)),
                     ),
                   ],
                 ),

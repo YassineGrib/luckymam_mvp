@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 
+import '../../../core/extensions/l10n_extension.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_spacing.dart';
 import '../models/emotion.dart';
@@ -18,6 +18,8 @@ class EmotionPicker extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = context.l10n;
+    final lang = Localizations.localeOf(context).languageCode;
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final textColor = isDark ? Colors.white : AppColors.onSurfaceLight;
 
@@ -29,8 +31,8 @@ class EmotionPicker extends StatelessWidget {
             Icon(Icons.mood_rounded, size: 16, color: textColor),
             const SizedBox(width: 4),
             Text(
-              'Émotion',
-              style: GoogleFonts.outfit(
+              l10n.capsuleEmotion,
+              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                 fontSize: 14,
                 fontWeight: FontWeight.w500,
                 color: textColor,
@@ -84,8 +86,8 @@ class EmotionPicker extends StatelessWidget {
                     ),
                     const SizedBox(width: 6),
                     Text(
-                      emotion.labelFr,
-                      style: GoogleFonts.outfit(
+                      emotion.getLabel(lang),
+                      style: Theme.of(context).textTheme.bodySmall?.copyWith(
                         fontSize: 13,
                         fontWeight: isSelected
                             ? FontWeight.w600
@@ -121,30 +123,30 @@ class EmotionFilterChips extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = context.l10n;
+    final lang = Localizations.localeOf(context).languageCode;
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return SingleChildScrollView(
       scrollDirection: Axis.horizontal,
       child: Row(
         children: [
-          // "All" chip
           _buildChip(
             context,
             icon: Icons.auto_awesome_rounded,
-            label: 'Tous',
+            label: l10n.marketplaceAllCategories,
             isSelected: selectedEmotion == null,
             onTap: () => onEmotionSelected(null),
             isDark: isDark,
           ),
           const SizedBox(width: AppSpacing.xs),
-          // Emotion chips
           ...Emotion.values.map(
             (emotion) => Padding(
-              padding: const EdgeInsets.only(right: AppSpacing.xs),
+              padding: const EdgeInsetsDirectional.only(end: AppSpacing.xs),
               child: _buildChip(
                 context,
                 icon: emotion.icon,
-                label: emotion.labelFr,
+                label: emotion.getLabel(lang),
                 isSelected: selectedEmotion == emotion,
                 onTap: () => onEmotionSelected(emotion),
                 isDark: isDark,
@@ -195,7 +197,7 @@ class EmotionFilterChips extends StatelessWidget {
             const SizedBox(width: 4),
             Text(
               label,
-              style: GoogleFonts.outfit(
+              style: Theme.of(context).textTheme.labelSmall?.copyWith(
                 fontSize: 12,
                 fontWeight: isSelected ? FontWeight.w600 : FontWeight.w400,
                 color: isSelected

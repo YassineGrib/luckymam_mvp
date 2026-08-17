@@ -1,120 +1,21 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:google_fonts/google_fonts.dart';
+import '../../../core/theme/app_typography.dart';
 import 'package:shimmer/shimmer.dart';
 
+import '../../../core/extensions/l10n_extension.dart';
 import '../../../core/services/analytics_service.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_spacing.dart';
-import '../../../l10n/app_localizations.dart';
 import '../../capsules/models/capsule.dart';
 import '../../capsules/providers/capsule_providers.dart';
 import '../../capsules/screens/capsule_detail_screen.dart';
 import '../../capsules/screens/create_capsule_screen.dart';
 import '../../reels/screens/reels_screen.dart';
+import '../data/vaccine_education_data.dart';
 import '../models/vaccine.dart';
 import '../providers/vaccine_providers.dart';
-
-/// Static rich info for known vaccine codes.
-const _vaccineInfo = <String, _VaccineDetail>{
-  'BCG': _VaccineDetail(
-    description:
-        'Le BCG (Bacille Calmette-Guérin) est un vaccin vivant atténué qui protège contre les formes graves de tuberculose, notamment la méningite tuberculeuse chez les nourrissons et les jeunes enfants.',
-    howItWorks:
-        'Le vaccin stimule le système immunitaire à produire des lymphocytes T spécifiques qui reconnaissent et combattent la bactérie Mycobacterium tuberculosis.',
-    sideEffects:
-        'Réaction locale au site d\'injection (rougeur, petite plaie), ganglion sous-axillaire bénin. Réactions sévères rares.',
-    icon: Icons.medical_services_rounded,
-    color: Color(0xFF4CAF50),
-  ),
-  'HBV': _VaccineDetail(
-    description:
-        'Le vaccin contre l\'Hépatite B protège contre une infection virale grave du foie pouvant évoluer vers la cirrhose ou le cancer hépatique. Transmissible par le sang et les fluides corporels.',
-    howItWorks:
-        'Contient des protéines de surface du virus (Ag HBs). L\'organisme développe des anticorps protecteurs (anti-HBs) sans contact avec le virus vivant.',
-    sideEffects:
-        'Douleur légère au site d\'injection, légère fièvre possible. Effets graves très rares.',
-    icon: Icons.biotech_rounded,
-    color: Color(0xFF2196F3),
-  ),
-  'DTCaVPI-Hib-HBV': _VaccineDetail(
-    description:
-        'Le vaccin hexavalent protège contre 6 maladies en une seule injection : Diphtérie, Tétanos, Coqueluche acellulaire, Poliomyélite inactivée, Haemophilus influenzae type b, et Hépatite B.',
-    howItWorks:
-        'Combine plusieurs antigènes et toxoïdes pour générer une immunité simultanée contre 6 agents pathogènes, réduisant le nombre total d\'injections requises.',
-    sideEffects:
-        'Fièvre (fréquente), rougeur et gonflement au site d\'injection. Compresses froides et paracétamol pour soulager.',
-    icon: Icons.vaccines_rounded,
-    color: Color(0xFFE91E63),
-  ),
-  'VPOb': _VaccineDetail(
-    description:
-        'Le vaccin antipoliomyélitique oral (bivalent) protège contre la poliomyélite, maladie paralysante causée par un entérovirus. L\'Algérie vise l\'éradication totale.',
-    howItWorks:
-        'Virus atténués administrés oralement. Ils se répliquent dans l\'intestin, induisant une immunité mucosale et systémique.',
-    sideEffects:
-        'Excellente tolérance. Très rarement, poliomyélite associée au vaccin (PVDAV) chez les immunodéprimés.',
-    icon: Icons.medication_liquid_rounded,
-    color: Color(0xFF9C27B0),
-  ),
-  'VPC': _VaccineDetail(
-    description:
-        'Le vaccin pneumococcique conjugué prévient les infections à Streptococcus pneumoniae, cause majeure de pneumonie, méningite et septicémie chez les enfants de moins de 2 ans.',
-    howItWorks:
-        'Les antigènes polysaccharidiques sont conjugués à une protéine porteuse pour induire une réponse immunologique robuste chez le nourrisson.',
-    sideEffects:
-        'Irritabilité, somnolence, perte d\'appétit, fièvre légère. Symptômes transitoires resolving en 1-2 jours.',
-    icon: Icons.air_rounded,
-    color: Color(0xFF00BCD4),
-  ),
-  'ROR': _VaccineDetail(
-    description:
-        'Le vaccin ROR (Rougeole-Oreillons-Rubéole) est un vaccin trivalent vivant atténué contre trois maladies virales très contagieuses. La rougeole peut causer des complications sévères chez les jeunes enfants.',
-    howItWorks:
-        'Contient des virus vivants atténués des trois maladies. Induit une immunité durable en un minimum de 2 doses.',
-    sideEffects:
-        'Légère éruption cutanée, fièvre, gonflement des glandes 5-12 jours après. Réactions allergiques sévères très rares.',
-    icon: Icons.coronavirus_rounded,
-    color: Color(0xFFFF5722),
-  ),
-  'DTCa-VPI': _VaccineDetail(
-    description:
-        'Le rappel scolaire tétravalent renforce l\'immunité acquise dans l\'enfance contre Diphtérie, Tétanos, Coqueluche et Poliomyélite, avant l\'entrée à l\'école primaire.',
-    howItWorks:
-        'Dose de rappel qui booste les anticorps existants. Particulièrement important car l\'immunité de la petite enfance peut diminuer avec le temps.',
-    sideEffects:
-        'Réaction locale au site d\'injection, légère fatigue. Très bien toléré.',
-    icon: Icons.school_rounded,
-    color: Color(0xFF607D8B),
-  ),
-  'dT': _VaccineDetail(
-    description:
-        'Le vaccin bivalent adulte renforce la protection contre le Tétanos et la Diphtérie, deux maladies potentiellement mortelles. Le rappel décennal maintient une immunité optimale tout au long de la vie.',
-    howItWorks:
-        'Contient des toxoïdes tétanique et diphtérique — formes inactivées des toxines — qui stimulent la production d\'anticorps neutralisants.',
-    sideEffects:
-        'Rougeur et sensibilité au point d\'injection, légère fatigue. Effets systémiques rares.',
-    icon: Icons.shield_rounded,
-    color: Color(0xFF795548),
-  ),
-};
-
-class _VaccineDetail {
-  const _VaccineDetail({
-    required this.description,
-    required this.howItWorks,
-    required this.sideEffects,
-    required this.icon,
-    required this.color,
-  });
-
-  final String description;
-  final String howItWorks;
-  final String sideEffects;
-  final IconData icon;
-  final Color color;
-}
 
 /// Detail screen for a single vaccine, showing rich educational content.
 class VaccineDetailScreen extends ConsumerWidget {
@@ -131,6 +32,8 @@ class VaccineDetailScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = context.l10n;
+    final lang = Localizations.localeOf(context).languageCode;
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final bgColor = isDark
         ? AppColors.backgroundDark
@@ -141,7 +44,7 @@ class VaccineDetailScreen extends ConsumerWidget {
         ? AppColors.textSecondaryDark
         : AppColors.textSecondaryLight;
 
-    final info = _vaccineInfo[vaccine.code];
+    final info = vaccineEducationFor(vaccine.code);
     final accentColor = info?.color ?? AppColors.primaryLight;
     final headerIcon = info?.icon ?? Icons.vaccines_rounded;
 
@@ -187,8 +90,10 @@ class VaccineDetailScreen extends ConsumerWidget {
                         const SizedBox(width: 8),
                         Flexible(
                           child: Text(
-                            'Protège contre : ${vaccine.protectsFr}',
-                            style: GoogleFonts.outfit(
+                            l10n.vaccineDetailProtectsAgainst(
+                              vaccine.getProtects(lang),
+                            ),
+                            style: AppTypography.fromContext(context,
                               fontSize: 13,
                               fontWeight: FontWeight.w600,
                               color: accentColor,
@@ -204,8 +109,8 @@ class VaccineDetailScreen extends ConsumerWidget {
                   if (info != null) ...[
                     _InfoSection(
                       icon: Icons.info_outline_rounded,
-                      title: 'À quoi sert ce vaccin ?',
-                      content: info.description,
+                      title: l10n.vaccineDetailPurposeTitle,
+                      content: info.getDescription(lang),
                       accentColor: accentColor,
                       surface: surface,
                       textColor: textColor,
@@ -215,8 +120,8 @@ class VaccineDetailScreen extends ConsumerWidget {
                     const SizedBox(height: 16),
                     _InfoSection(
                       icon: Icons.biotech_rounded,
-                      title: 'Comment fonctionne-t-il ?',
-                      content: info.howItWorks,
+                      title: l10n.vaccineDetailHowItWorks,
+                      content: info.getHowItWorks(lang),
                       accentColor: accentColor,
                       surface: surface,
                       textColor: textColor,
@@ -226,8 +131,8 @@ class VaccineDetailScreen extends ConsumerWidget {
                     const SizedBox(height: 16),
                     _InfoSection(
                       icon: Icons.healing_rounded,
-                      title: 'Effets secondaires possibles',
-                      content: info.sideEffects,
+                      title: l10n.vaccineDetailSideEffects,
+                      content: info.getSideEffects(lang),
                       accentColor: accentColor,
                       surface: surface,
                       textColor: textColor,
@@ -243,8 +148,8 @@ class VaccineDetailScreen extends ConsumerWidget {
                         borderRadius: BorderRadius.circular(16),
                       ),
                       child: Text(
-                        'Ce vaccin fait partie du calendrier vaccinal national algérien. Consultez votre pédiatre pour plus d\'informations.',
-                        style: GoogleFonts.outfit(
+                        l10n.vaccineDetailFallback,
+                        style: AppTypography.fromContext(context,
                           fontSize: 14,
                           color: secondaryText,
                           height: 1.5,
@@ -285,8 +190,8 @@ class VaccineDetailScreen extends ConsumerWidget {
                         const SizedBox(width: 8),
                         Expanded(
                           child: Text(
-                            'Ces informations sont à titre éducatif uniquement. Consultez toujours votre médecin ou pédiatre avant toute décision médicale.',
-                            style: GoogleFonts.outfit(
+                            l10n.vaccineDetailDisclaimer,
+                            style: AppTypography.fromContext(context,
                               fontSize: 12,
                               color: isDark
                                   ? Colors.amber.shade200
@@ -385,12 +290,8 @@ class VaccineDetailScreen extends ConsumerWidget {
               ),
               const SizedBox(width: 10),
               Text(
-                lang == 'ar'
-                    ? 'ذكرى مرتبطة'
-                    : lang == 'en'
-                        ? 'Linked Memory'
-                        : 'Souvenir lié',
-                style: GoogleFonts.outfit(
+                context.l10n.vaccineLinkedMemory,
+                style: AppTypography.fromContext(context,
                   fontSize: 15,
                   fontWeight: FontWeight.bold,
                   color: textColor,
@@ -449,12 +350,8 @@ class VaccineDetailScreen extends ConsumerWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      lang == 'ar'
-                          ? 'كبسولة اللقاح'
-                          : lang == 'en'
-                              ? 'Vaccination Capsule'
-                              : 'Capsule de vaccination',
-                      style: GoogleFonts.outfit(
+                      context.l10n.vaccineCapsuleTitle,
+                      style: AppTypography.fromContext(context,
                         fontSize: 14,
                         fontWeight: FontWeight.w600,
                         color: textColor,
@@ -463,7 +360,7 @@ class VaccineDetailScreen extends ConsumerWidget {
                     const SizedBox(height: 4),
                     Text(
                       '${capsule.emotion.emoji} ${capsule.emotion.getLabel(lang)}',
-                      style: GoogleFonts.outfit(
+                      style: AppTypography.fromContext(context,
                         fontSize: 13,
                         color: secondaryText,
                       ),
@@ -506,8 +403,7 @@ class VaccineDetailScreen extends ConsumerWidget {
     Color secondaryText,
     bool isDark,
   ) {
-    final lang = Localizations.localeOf(context).languageCode;
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = context.l10n;
     return Container(
       padding: const EdgeInsets.all(AppSpacing.md),
       decoration: BoxDecoration(
@@ -533,12 +429,8 @@ class VaccineDetailScreen extends ConsumerWidget {
               ),
               const SizedBox(width: 10),
               Text(
-                lang == 'ar'
-                    ? 'الذكرى'
-                    : lang == 'en'
-                        ? 'Memory'
-                        : 'Souvenir',
-                style: GoogleFonts.outfit(
+                l10n.vaccineMemorySection,
+                style: AppTypography.fromContext(context,
                   fontSize: 15,
                   fontWeight: FontWeight.bold,
                   color: textColor,
@@ -548,12 +440,8 @@ class VaccineDetailScreen extends ConsumerWidget {
           ),
           const SizedBox(height: 12),
           Text(
-            lang == 'ar'
-                ? 'أضيفي صورة أو تسجيلاً صوتياً للاحتفاظ بذكرى هذه اللحظة.'
-                : lang == 'en'
-                    ? 'Add a photo or a voice recording to keep this moment in memory.'
-                    : 'Ajoutez une photo ou un enregistrement pour garder en mémoire ce moment.',
-            style: GoogleFonts.outfit(
+            l10n.vaccineMemoryPrompt,
+            style: AppTypography.fromContext(context,
               fontSize: 13,
               color: secondaryText,
               height: 1.5,
@@ -576,7 +464,7 @@ class VaccineDetailScreen extends ConsumerWidget {
               icon: Icon(Icons.add_rounded, size: 18, color: accentColor),
               label: Text(
                 l10n.capsule,
-                style: GoogleFonts.outfit(fontWeight: FontWeight.w600),
+                style: AppTypography.fromContext(context, fontSize: 14, fontWeight: FontWeight.w600),
               ),
               style: OutlinedButton.styleFrom(
                 foregroundColor: accentColor,
@@ -600,7 +488,7 @@ class VaccineDetailScreen extends ConsumerWidget {
     Color secondaryText,
     Color accentColor,
   ) {
-    final lang = Localizations.localeOf(context).languageCode;
+    final l10n = context.l10n;
     final isDark = Theme.of(context).brightness == Brightness.dark;
     return Container(
       padding: const EdgeInsets.all(AppSpacing.md),
@@ -631,8 +519,8 @@ class VaccineDetailScreen extends ConsumerWidget {
               ),
               const SizedBox(width: 10),
               Text(
-                'Reels éducatifs',
-                style: GoogleFonts.outfit(
+                l10n.vaccineReelsTitle,
+                style: AppTypography.fromContext(context,
                   fontSize: 15,
                   fontWeight: FontWeight.bold,
                   color: textColor,
@@ -642,8 +530,8 @@ class VaccineDetailScreen extends ConsumerWidget {
           ),
           const SizedBox(height: 12),
           Text(
-            'Regardez des vidéos courtes sur ce vaccin réalisées par des professionnels de santé.',
-            style: GoogleFonts.outfit(
+            l10n.vaccineReelsSubtitle,
+            style: AppTypography.fromContext(context,
               fontSize: 13,
               color: secondaryText,
               height: 1.5,
@@ -676,8 +564,8 @@ class VaccineDetailScreen extends ConsumerWidget {
                 color: accentColor,
               ),
               label: Text(
-                lang == 'ar' ? 'فيديوهات' : 'Reels',
-                style: GoogleFonts.outfit(fontWeight: FontWeight.w600),
+                l10n.vaccineReelsButton,
+                style: AppTypography.fromContext(context, fontSize: 14, fontWeight: FontWeight.w600),
               ),
               style: OutlinedButton.styleFrom(
                 foregroundColor: accentColor,
@@ -770,7 +658,7 @@ class _VaccineDetailHeader extends StatelessWidget {
                               children: [
                                 Text(
                                   vaccine.code,
-                                  style: GoogleFonts.outfit(
+                                  style: AppTypography.fromContext(context,
                                     fontSize: 26,
                                     fontWeight: FontWeight.bold,
                                     color: Colors.white,
@@ -780,7 +668,7 @@ class _VaccineDetailHeader extends StatelessWidget {
                                 const SizedBox(height: 4),
                                 Text(
                                   vaccine.nameFr,
-                                  style: GoogleFonts.outfit(
+                                  style: AppTypography.fromContext(context,
                                     fontSize: 14,
                                     fontWeight: FontWeight.w500,
                                     color: Colors.white.withValues(alpha: 0.88),
@@ -853,7 +741,7 @@ class _InfoSection extends StatelessWidget {
               const SizedBox(width: 10),
               Text(
                 title,
-                style: GoogleFonts.outfit(
+                style: AppTypography.fromContext(context,
                   fontSize: 15,
                   fontWeight: FontWeight.bold,
                   color: textColor,
@@ -864,7 +752,7 @@ class _InfoSection extends StatelessWidget {
           const SizedBox(height: 12),
           Text(
             content,
-            style: GoogleFonts.outfit(
+            style: AppTypography.fromContext(context,
               fontSize: 13,
               color: secondaryText,
               height: 1.6,

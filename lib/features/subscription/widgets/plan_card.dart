@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
+import '../../../core/theme/app_typography.dart';
 
+import '../../../core/extensions/l10n_extension.dart';
+import '../subscription_plan_l10n.dart';
 import '../models/subscription_models.dart';
 
 /// Reusable plan card showing tier details, features, and CTA.
@@ -18,6 +20,7 @@ class PlanCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = context.l10n;
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final cardBg = isDark ? const Color(0xFF1E1E2E) : Colors.white;
     final textColor = isDark ? Colors.white : const Color(0xFF1A1A1A);
@@ -81,8 +84,8 @@ class PlanCard extends StatelessWidget {
                       Row(
                         children: [
                           Text(
-                            plan.title,
-                            style: GoogleFonts.outfit(
+                            plan.localizedTitle(l10n),
+                            style: AppTypography.fromContext(context, 
                               fontSize: 20,
                               fontWeight: FontWeight.bold,
                               color: Colors.white,
@@ -100,8 +103,8 @@ class PlanCard extends StatelessWidget {
                                 borderRadius: BorderRadius.circular(8),
                               ),
                               child: Text(
-                                'Actuel',
-                                style: GoogleFonts.outfit(
+                                l10n.subscriptionPlanCurrentBadge,
+                                style: AppTypography.fromContext(context, 
                                   fontSize: 11,
                                   fontWeight: FontWeight.bold,
                                   color: Colors.white,
@@ -112,8 +115,8 @@ class PlanCard extends StatelessWidget {
                         ],
                       ),
                       Text(
-                        plan.subtitle,
-                        style: GoogleFonts.outfit(
+                        plan.localizedSubtitle(l10n),
+                        style: AppTypography.fromContext(context, 
                           fontSize: 13,
                           color: Colors.white.withValues(alpha: 0.85),
                         ),
@@ -133,19 +136,19 @@ class PlanCard extends StatelessWidget {
               textBaseline: TextBaseline.alphabetic,
               children: [
                 Text(
-                  plan.priceLabel,
-                  style: GoogleFonts.outfit(
+                  plan.localizedPriceLabel(l10n),
+                  style: AppTypography.fromContext(context, 
                     fontSize: 32,
                     fontWeight: FontWeight.bold,
                     color: plan.accentColor,
                   ),
                 ),
-                if (plan.billingCycle.isNotEmpty)
+                if (plan.localizedBillingCycle(l10n).isNotEmpty)
                   Padding(
                     padding: const EdgeInsets.only(left: 4),
                     child: Text(
-                      plan.billingCycle,
-                      style: GoogleFonts.outfit(
+                      plan.localizedBillingCycle(l10n),
+                      style: AppTypography.fromContext(context, 
                         fontSize: 14,
                         color: subTextColor,
                       ),
@@ -159,7 +162,7 @@ class PlanCard extends StatelessWidget {
           Padding(
             padding: const EdgeInsets.fromLTRB(20, 4, 20, 4),
             child: Column(
-              children: plan.features.map((f) {
+              children: plan.localizedFeatures(l10n).map((f) {
                 return Padding(
                   padding: const EdgeInsets.symmetric(vertical: 5),
                   child: Row(
@@ -173,7 +176,7 @@ class PlanCard extends StatelessWidget {
                       Expanded(
                         child: Text(
                           f,
-                          style: GoogleFonts.outfit(
+                          style: AppTypography.fromContext(context, 
                             fontSize: 14,
                             color: textColor,
                           ),
@@ -204,8 +207,8 @@ class PlanCard extends StatelessWidget {
                         ),
                       ),
                       child: Text(
-                        'Votre forfait actuel',
-                        style: GoogleFonts.outfit(
+                        l10n.subscriptionPlanCurrentButton,
+                        style: AppTypography.fromContext(context, 
                           fontSize: 15,
                           fontWeight: FontWeight.w600,
                           color: subTextColor,
@@ -224,9 +227,9 @@ class PlanCard extends StatelessWidget {
                       ),
                       child: Text(
                         plan.priceDZD == 0
-                            ? 'Sélectionner'
-                            : 'Choisir ce forfait',
-                        style: GoogleFonts.outfit(
+                            ? l10n.subscriptionPlanSelect
+                            : l10n.subscriptionPlanChoose,
+                        style: AppTypography.fromContext(context, 
                           fontSize: 15,
                           fontWeight: FontWeight.bold,
                         ),

@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 
+import '../../../core/extensions/l10n_extension.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_spacing.dart';
 import '../models/growth_entry.dart';
+
+String _healthDateLocale(String languageCode) =>
+    languageCode == 'fr' ? 'fr_FR' : languageCode;
 
 /// A single measurement row with date, weight, height and delete action.
 class GrowthEntryCard extends StatelessWidget {
@@ -19,6 +22,7 @@ class GrowthEntryCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = context.l10n;
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final primary = isDark ? AppColors.primaryDark : AppColors.primaryLight;
     final surface = isDark ? AppColors.surfaceDark : AppColors.surfaceLight;
@@ -60,19 +64,22 @@ class GrowthEntryCard extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  DateFormat('d MMMM yyyy', 'fr').format(entry.date),
-                  style: GoogleFonts.outfit(
-                    fontSize: 14,
-                    fontWeight: FontWeight.w600,
-                    color: textColor,
-                  ),
+                  DateFormat(
+                    'd MMMM yyyy',
+                    _healthDateLocale(
+                      Localizations.localeOf(context).languageCode,
+                    ),
+                  ).format(entry.date),
+                  style: Theme.of(context).textTheme.titleSmall?.copyWith(fontWeight: FontWeight.w600, color: textColor),
                 ),
                 const SizedBox(height: 4),
                 Row(
                   children: [
                     if (entry.weightKg != null)
                       _Chip(
-                        label: '${entry.weightKg!.toStringAsFixed(1)} kg',
+                        label: l10n.healthWeightValue(
+                          entry.weightKg!.toStringAsFixed(1),
+                        ),
                         icon: Icons.monitor_weight_outlined,
                         primary: primary,
                       ),
@@ -80,7 +87,9 @@ class GrowthEntryCard extends StatelessWidget {
                       const SizedBox(width: 6),
                     if (entry.heightCm != null)
                       _Chip(
-                        label: '${entry.heightCm!.toStringAsFixed(1)} cm',
+                        label: l10n.healthHeightValue(
+                          entry.heightCm!.toStringAsFixed(1),
+                        ),
                         icon: Icons.height_rounded,
                         primary: AppColors.smaltBlue,
                       ),
@@ -90,7 +99,7 @@ class GrowthEntryCard extends StatelessWidget {
                   const SizedBox(height: 4),
                   Text(
                     entry.notes!,
-                    style: GoogleFonts.outfit(fontSize: 12, color: secondary),
+                    style: Theme.of(context).textTheme.bodySmall?.copyWith(color: secondary),
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                   ),
@@ -134,11 +143,7 @@ class _Chip extends StatelessWidget {
         const SizedBox(width: 4),
         Text(
           label,
-          style: GoogleFonts.outfit(
-            fontSize: 12,
-            fontWeight: FontWeight.w600,
-            color: primary,
-          ),
+          style: Theme.of(context).textTheme.bodySmall?.copyWith(fontWeight: FontWeight.w600, color: primary),
         ),
       ],
     ),

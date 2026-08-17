@@ -123,9 +123,7 @@ service cloud.firestore {
     }
 
     // Marketplace catalogue - public read (authenticated users), admin-only
-    // write. Populated by the backoffice; the mobile app streams these
-    // collections once Phase 2's provider swap lands (currently static
-    // Dart data in lib/features/marketplace/data/marketplace_data.dart).
+    // Populated by luckymam_admin; the mobile app streams this collection.
     match /marketplace_products/{productId} {
       allow read: if request.auth != null;
       allow write: if isAdmin();

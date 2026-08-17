@@ -1,15 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:google_fonts/google_fonts.dart';
 
+import '../../../core/extensions/l10n_extension.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_spacing.dart';
+import '../../../l10n/app_localizations.dart';
 import '../providers/order_providers.dart';
 import 'my_orders_screen.dart';
 
 /// Checkout — order summary, delivery details, confirmation.
-/// V1 without integrated payment: the order is created "à confirmer"
-/// and settled at delivery (per ticket note, PSP arrives with LM2-044).
 class CheckoutScreen extends ConsumerStatefulWidget {
   const CheckoutScreen({super.key});
 
@@ -36,6 +35,7 @@ class _CheckoutScreenState extends ConsumerState<CheckoutScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = context.l10n;
     final lang = Localizations.localeOf(context).languageCode;
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final bgColor = isDark
@@ -50,11 +50,12 @@ class _CheckoutScreenState extends ConsumerState<CheckoutScreen> {
         : AppColors.inputBackgroundLight;
 
     final cart = ref.watch(cartProvider);
-    final total = ref.watch(cartTotalProvider);
+    final subtotal = ref.watch(cartTotalProvider);
+    final grandTotal = ref.watch(cartGrandTotalProvider);
     final actionsState = ref.watch(orderActionsProvider);
 
     if (_confirmedOrderId != null) {
-      return _buildConfirmedView(context, textColor, subTextColor, lang);
+      return _buildConfirmedView(context, textColor, subTextColor);
     }
 
     return Scaffold(
@@ -67,14 +68,8 @@ class _CheckoutScreenState extends ConsumerState<CheckoutScreen> {
           onPressed: () => Navigator.pop(context),
         ),
         title: Text(
-          lang == 'ar'
-              ? 'إتمام الطلب'
-              : lang == 'en'
-                  ? 'Finalize Order'
-                  : 'Finaliser la commande',
-          style: GoogleFonts.outfit(
-            fontSize: 17,
-            fontWeight: FontWeight.w600,
+          l10n.checkoutTitle,
+          style: Theme.of(context).textTheme.titleMedium?.copyWith(
             color: textColor,
           ),
         ),
@@ -85,13 +80,12 @@ class _CheckoutScreenState extends ConsumerState<CheckoutScreen> {
             if (actionsState.isLoading) const LinearProgressIndicator(),
             Expanded(
               child: SingleChildScrollView(
-                padding: const EdgeInsets.fromLTRB(20, 8, 20, 40),
+                padding: const EdgeInsetsDirectional.fromSTEB(20, 8, 20, 40),
                 child: Form(
                   key: _formKey,
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      // ── Order summary ────────────────────────────────
                       Container(
                         padding: const EdgeInsets.all(AppSpacing.md),
                         decoration: BoxDecoration(
@@ -118,22 +112,24 @@ class _CheckoutScreenState extends ConsumerState<CheckoutScreen> {
                                     const SizedBox(width: 8),
                                     Expanded(
                                       child: Text(
-                                        '${item.product.name} ×${item.quantity}',
-                                        style: GoogleFonts.outfit(
-                                          fontSize: 13,
-                                          color: textColor,
-                                        ),
+                                        '${item.product.displayName(lang)} ×${item.quantity}',
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .bodyMedium
+                                            ?.copyWith(color: textColor),
                                         maxLines: 1,
                                         overflow: TextOverflow.ellipsis,
                                       ),
                                     ),
                                     Text(
                                       _formatDZD(item.lineTotalDZD),
-                                      style: GoogleFonts.outfit(
-                                        fontSize: 13,
-                                        fontWeight: FontWeight.w600,
-                                        color: textColor,
-                                      ),
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .bodyMedium
+                                          ?.copyWith(
+                                            fontWeight: FontWeight.w600,
+                                            color: textColor,
+                                          ),
                                     ),
                                   ],
                                 ),
@@ -141,28 +137,70 @@ class _CheckoutScreenState extends ConsumerState<CheckoutScreen> {
                             ),
                             const Divider(height: 16),
                             Row(
-                              mainAxisAlignment:
-                                  MainAxisAlignment.spaceBetween,
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
                                 Text(
-                                  lang == 'ar'
-                                      ? 'المجموع'
-                                      : lang == 'en'
-                                          ? 'Total'
-                                          : 'Total',
-                                  style: GoogleFonts.outfit(
-                                    fontSize: 15,
-                                    fontWeight: FontWeight.w600,
-                                    color: textColor,
-                                  ),
+                                  l10n.checkoutSubtotal,
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .bodyMedium
+                                      ?.copyWith(color: subTextColor),
                                 ),
                                 Text(
-                                  _formatDZD(total),
-                                  style: GoogleFonts.outfit(
-                                    fontSize: 18,
-                                    fontWeight: FontWeight.bold,
-                                    color: AppColors.magentaPink,
-                                  ),
+                                  _formatDZD(subtotal),
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .bodyMedium
+                                      ?.copyWith(
+                                        fontWeight: FontWeight.w600,
+                                        color: textColor,
+                                      ),
+                                ),
+                              ],
+                            ),
+                            const SizedBox(height: 8),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text(
+                                  l10n.checkoutShipping,
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .bodyMedium
+                                      ?.copyWith(color: subTextColor),
+                                ),
+                                Text(
+                                  _formatDZD(marketplaceShippingDZD),
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .bodyMedium
+                                      ?.copyWith(
+                                        fontWeight: FontWeight.w600,
+                                        color: textColor,
+                                      ),
+                                ),
+                              ],
+                            ),
+                            const Divider(height: 16),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text(
+                                  l10n.labelTotal,
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .titleSmall
+                                      ?.copyWith(color: textColor),
+                                ),
+                                Text(
+                                  _formatDZD(grandTotal),
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .titleLarge
+                                      ?.copyWith(
+                                        fontWeight: FontWeight.bold,
+                                        color: AppColors.magentaPink,
+                                      ),
                                 ),
                               ],
                             ),
@@ -170,8 +208,6 @@ class _CheckoutScreenState extends ConsumerState<CheckoutScreen> {
                         ),
                       ),
                       const SizedBox(height: 14),
-
-                      // ── Payment note (V1: on confirmation) ───────────
                       Container(
                         padding: const EdgeInsets.all(14),
                         decoration: BoxDecoration(
@@ -187,67 +223,41 @@ class _CheckoutScreenState extends ConsumerState<CheckoutScreen> {
                             const SizedBox(width: 12),
                             Expanded(
                               child: Text(
-                                lang == 'ar'
-                                    ? 'الدفع عند التسليم. سيتصل بك الشريك لتأكيد الطلب.'
-                                    : lang == 'en'
-                                        ? 'Payment on delivery. The partner will call you to confirm the order.'
-                                        : 'Paiement à la livraison. Le partenaire vous appellera pour confirmer la commande.',
-                                style: GoogleFonts.outfit(
-                                  fontSize: 13,
-                                  color: textColor,
-                                ),
+                                l10n.checkoutPaymentNote,
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .bodyMedium
+                                    ?.copyWith(color: textColor),
                               ),
                             ),
                           ],
                         ),
                       ),
-
                       const SizedBox(height: 24),
                       Text(
-                        lang == 'ar'
-                            ? 'معلومات التسليم'
-                            : lang == 'en'
-                                ? 'Shipping Information'
-                                : 'Informations de livraison',
-                        style: GoogleFonts.outfit(
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
+                        l10n.checkoutDeliveryInfo,
+                        style: Theme.of(context).textTheme.titleMedium?.copyWith(
                           color: textColor,
                         ),
                       ),
                       const SizedBox(height: 12),
-
                       _buildFormField(
-                        label: lang == 'ar'
-                            ? 'الاسم الكامل'
-                            : lang == 'en'
-                                ? 'Full Name'
-                                : 'Nom complet',
-                        hint: lang == 'ar'
-                            ? 'الاسم واللقب'
-                            : lang == 'en'
-                                ? 'Your full name'
-                                : 'Votre nom et prénom',
+                        context: context,
+                        label: l10n.name,
+                        hint: l10n.checkoutFullNameHint,
                         controller: _nameCtrl,
                         icon: Icons.person_outline_rounded,
                         inputBg: inputBg,
                         textColor: textColor,
                         subTextColor: subTextColor,
                         validator: (v) => v == null || v.trim().isEmpty
-                            ? (lang == 'ar'
-                                ? 'حقل مطلوب'
-                                : lang == 'en'
-                                    ? 'Field required'
-                                    : 'Champ requis')
+                            ? l10n.errorRequired
                             : null,
                       ),
                       const SizedBox(height: 12),
                       _buildFormField(
-                        label: lang == 'ar'
-                            ? 'رقم الهاتف'
-                            : lang == 'en'
-                                ? 'Phone Number'
-                                : 'Téléphone',
+                        context: context,
+                        label: l10n.checkoutPhone,
                         hint: '0550 00 00 00',
                         controller: _phoneCtrl,
                         icon: Icons.phone_outlined,
@@ -255,45 +265,27 @@ class _CheckoutScreenState extends ConsumerState<CheckoutScreen> {
                         textColor: textColor,
                         subTextColor: subTextColor,
                         keyboardType: TextInputType.phone,
-                        validator: (v) => _validatePhone(v, lang),
+                        validator: (v) => _validatePhone(v, l10n),
                       ),
                       const SizedBox(height: 12),
                       _buildFormField(
-                        label: lang == 'ar'
-                            ? 'الولاية'
-                            : lang == 'en'
-                                ? 'Wilaya'
-                                : 'Wilaya',
-                        hint: lang == 'ar'
-                            ? 'الولاية الخاصة بك'
-                            : lang == 'en'
-                                ? 'Your province'
-                                : 'Votre wilaya',
+                        context: context,
+                        label: l10n.checkoutWilaya,
+                        hint: l10n.checkoutWilayaHint,
                         controller: _wilayaCtrl,
                         icon: Icons.location_city_rounded,
                         inputBg: inputBg,
                         textColor: textColor,
                         subTextColor: subTextColor,
                         validator: (v) => v == null || v.trim().isEmpty
-                            ? (lang == 'ar'
-                                ? 'حقل مطلوب'
-                                : lang == 'en'
-                                    ? 'Field required'
-                                    : 'Champ requis')
+                            ? l10n.errorRequired
                             : null,
                       ),
                       const SizedBox(height: 12),
                       _buildFormField(
-                        label: lang == 'ar'
-                            ? 'العنوان الكامل'
-                            : lang == 'en'
-                                ? 'Full Address'
-                                : 'Adresse complète',
-                        hint: lang == 'ar'
-                            ? 'الشارع، رقم الباب، الحي...'
-                            : lang == 'en'
-                                ? 'Street, number, neighborhood...'
-                                : 'Rue, numéro, quartier...',
+                        context: context,
+                        label: l10n.checkoutAddress,
+                        hint: l10n.checkoutAddressHint,
                         controller: _addressCtrl,
                         icon: Icons.home_outlined,
                         inputBg: inputBg,
@@ -301,14 +293,9 @@ class _CheckoutScreenState extends ConsumerState<CheckoutScreen> {
                         subTextColor: subTextColor,
                         maxLines: 2,
                         validator: (v) => v == null || v.trim().isEmpty
-                            ? (lang == 'ar'
-                                ? 'حقل مطلوب'
-                                : lang == 'en'
-                                    ? 'Field required'
-                                    : 'Champ requis')
+                            ? l10n.errorRequired
                             : null,
                       ),
-
                       const SizedBox(height: 28),
                       SizedBox(
                         width: double.infinity,
@@ -325,18 +312,7 @@ class _CheckoutScreenState extends ConsumerState<CheckoutScreen> {
                               Icons.check_circle_rounded,
                               color: Colors.white,
                             ),
-                            label: Text(
-                              lang == 'ar'
-                                  ? 'تأكيد الطلب'
-                                  : lang == 'en'
-                                      ? 'Confirm Order'
-                                      : 'Confirmer la commande',
-                              style: GoogleFonts.outfit(
-                                fontSize: 16,
-                                fontWeight: FontWeight.bold,
-                                color: Colors.white,
-                              ),
-                            ),
+                            label: Text(l10n.checkoutConfirm),
                             style: ElevatedButton.styleFrom(
                               backgroundColor: Colors.transparent,
                               shadowColor: Colors.transparent,
@@ -358,23 +334,13 @@ class _CheckoutScreenState extends ConsumerState<CheckoutScreen> {
     );
   }
 
-  /// Basic Algerian mobile/landline sanity check: digits (spaces allowed),
-  /// starting with 0, 9-10 digits total.
-  String? _validatePhone(String? value, String lang) {
+  String? _validatePhone(String? value, AppLocalizations l10n) {
     if (value == null || value.trim().isEmpty) {
-      return lang == 'ar'
-          ? 'حقل مطلوب'
-          : lang == 'en'
-              ? 'Field required'
-              : 'Champ requis';
+      return l10n.errorRequired;
     }
     final digits = value.replaceAll(RegExp(r'\s+'), '');
     if (!RegExp(r'^0\d{8,9}$').hasMatch(digits)) {
-      return lang == 'ar'
-          ? 'رقم غير صحيح (مثال: 0550 00 00 00)'
-          : lang == 'en'
-              ? 'Invalid number (ex: 0550 00 00 00)'
-              : 'Numéro invalide (ex : 0550 00 00 00)';
+      return l10n.checkoutPhoneInvalid;
     }
     return null;
   }
@@ -383,6 +349,7 @@ class _CheckoutScreenState extends ConsumerState<CheckoutScreen> {
     if (!_formKey.currentState!.validate()) return;
 
     final lang = Localizations.localeOf(context).languageCode;
+    final l10n = context.l10n;
 
     final orderId = await ref
         .read(orderActionsProvider.notifier)
@@ -392,6 +359,7 @@ class _CheckoutScreenState extends ConsumerState<CheckoutScreen> {
           phone: _phoneCtrl.text.trim(),
           wilaya: _wilayaCtrl.text.trim(),
           address: _addressCtrl.text.trim(),
+          locale: lang,
         );
 
     if (!mounted) return;
@@ -403,14 +371,7 @@ class _CheckoutScreenState extends ConsumerState<CheckoutScreen> {
       final error = ref.read(orderActionsProvider).error;
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text(
-            error ??
-                (lang == 'ar'
-                    ? 'حدث خطأ أثناء إرسال الطلب'
-                    : lang == 'en'
-                        ? 'An error occurred while placing the order'
-                        : 'Erreur lors de la commande'),
-          ),
+          content: Text(error ?? l10n.checkoutErrorGeneric),
           backgroundColor: AppColors.error,
         ),
       );
@@ -421,126 +382,108 @@ class _CheckoutScreenState extends ConsumerState<CheckoutScreen> {
     BuildContext context,
     Color textColor,
     Color subTextColor,
-    String lang,
   ) {
+    final l10n = context.l10n;
+
     return Scaffold(
       backgroundColor: Theme.of(context).brightness == Brightness.dark
           ? AppColors.backgroundDark
           : AppColors.backgroundLight,
       body: SafeArea(
-        child: Center(
-          child: Padding(
-            padding: const EdgeInsets.all(40),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Container(
-                  width: 100,
-                  height: 100,
-                  decoration: BoxDecoration(
-                    color: AppColors.success.withValues(alpha: 0.15),
-                    shape: BoxShape.circle,
-                  ),
-                  child: const Icon(
-                    Icons.check_circle_rounded,
-                    size: 60,
-                    color: AppColors.success,
-                  ),
-                ),
-                const SizedBox(height: 28),
-                Text(
-                  lang == 'ar'
-                      ? 'تم تأكيد الطلب!'
-                      : lang == 'en'
-                          ? 'Order confirmed!'
-                          : 'Commande confirmée !',
-                  style: GoogleFonts.outfit(
-                    fontSize: 26,
-                    fontWeight: FontWeight.bold,
-                    color: textColor,
-                  ),
-                ),
-                const SizedBox(height: 12),
-                Text(
-                  lang == 'ar'
-                      ? 'سيتصل بك الشريك هاتفياً لتأكيد التسليم والدفع.'
-                      : lang == 'en'
-                          ? 'The partner will contact you by phone to confirm delivery and payment.'
-                          : 'Le partenaire vous contactera par téléphone pour confirmer la livraison et le paiement.',
-                  style: GoogleFonts.outfit(
-                    fontSize: 15,
-                    color: subTextColor,
-                  ),
-                  textAlign: TextAlign.center,
-                ),
-                const SizedBox(height: 36),
-                SizedBox(
-                  width: double.infinity,
-                  height: 52,
-                  child: Container(
-                    decoration: BoxDecoration(
-                      gradient: AppColors.primaryGradient,
-                      borderRadius: BorderRadius.circular(16),
+        child: LayoutBuilder(
+          builder: (context, constraints) {
+            return SingleChildScrollView(
+              padding: const EdgeInsets.all(40),
+              child: ConstrainedBox(
+                constraints: BoxConstraints(minHeight: constraints.maxHeight),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Container(
+                      width: 100,
+                      height: 100,
+                      decoration: BoxDecoration(
+                        color: AppColors.success.withValues(alpha: 0.15),
+                        shape: BoxShape.circle,
+                      ),
+                      child: const Icon(
+                        Icons.check_circle_rounded,
+                        size: 60,
+                        color: AppColors.success,
+                      ),
                     ),
-                    child: ElevatedButton.icon(
-                      onPressed: () {
-                        Navigator.of(context).pushReplacement(
-                          MaterialPageRoute(
-                            builder: (_) => const MyOrdersScreen(),
-                          ),
-                        );
-                      },
-                      icon: const Icon(
-                        Icons.receipt_long_rounded,
-                        color: Colors.white,
+                    const SizedBox(height: 28),
+                    Text(
+                      l10n.checkoutConfirmedTitle,
+                      style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                        fontWeight: FontWeight.bold,
+                        color: textColor,
                       ),
-                      label: Text(
-                        lang == 'ar'
-                            ? 'عرض طلباتي'
-                            : lang == 'en'
-                                ? 'View my orders'
-                                : 'Voir mes commandes',
-                        style: GoogleFonts.outfit(
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.white,
-                        ),
+                      textAlign: TextAlign.center,
+                    ),
+                    const SizedBox(height: 12),
+                    Text(
+                      l10n.checkoutConfirmedSubtitle,
+                      style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                        color: subTextColor,
                       ),
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.transparent,
-                        shadowColor: Colors.transparent,
-                        shape: RoundedRectangleBorder(
+                      textAlign: TextAlign.center,
+                    ),
+                    const SizedBox(height: 36),
+                    SizedBox(
+                      width: double.infinity,
+                      height: 52,
+                      child: Container(
+                        decoration: BoxDecoration(
+                          gradient: AppColors.primaryGradient,
                           borderRadius: BorderRadius.circular(16),
                         ),
+                        child: ElevatedButton.icon(
+                          onPressed: () {
+                            Navigator.of(context).pushReplacement(
+                              MaterialPageRoute(
+                                builder: (_) => const MyOrdersScreen(),
+                              ),
+                            );
+                          },
+                          icon: const Icon(
+                            Icons.receipt_long_rounded,
+                            color: Colors.white,
+                          ),
+                          label: Text(l10n.checkoutViewOrders),
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.transparent,
+                            shadowColor: Colors.transparent,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(16),
+                            ),
+                          ),
+                        ),
                       ),
                     ),
-                  ),
-                ),
-                const SizedBox(height: 10),
-                TextButton(
-                  onPressed: () =>
-                      Navigator.of(context).popUntil((r) => r.isFirst),
-                  child: Text(
-                    lang == 'ar'
-                        ? 'العودة إلى الرئيسية'
-                        : lang == 'en'
-                            ? 'Back to home'
-                            : 'Retour à l\'accueil',
-                    style: GoogleFonts.outfit(
-                      fontSize: 14,
-                      color: subTextColor,
+                    const SizedBox(height: 10),
+                    TextButton(
+                      onPressed: () =>
+                          Navigator.of(context).popUntil((r) => r.isFirst),
+                      child: Text(
+                        l10n.checkoutBackHome,
+                        style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                          color: subTextColor,
+                        ),
+                      ),
                     ),
-                  ),
+                  ],
                 ),
-              ],
-            ),
-          ),
+              ),
+            );
+          },
         ),
       ),
     );
   }
 
   Widget _buildFormField({
+    required BuildContext context,
     required String label,
     required String hint,
     required TextEditingController controller,
@@ -557,7 +500,9 @@ class _CheckoutScreenState extends ConsumerState<CheckoutScreen> {
       children: [
         Text(
           label,
-          style: GoogleFonts.outfit(fontSize: 12, color: subTextColor),
+          style: Theme.of(context).textTheme.bodySmall?.copyWith(
+            color: subTextColor,
+          ),
         ),
         const SizedBox(height: 6),
         TextFormField(
@@ -565,11 +510,12 @@ class _CheckoutScreenState extends ConsumerState<CheckoutScreen> {
           keyboardType: keyboardType,
           maxLines: maxLines,
           validator: validator,
-          style: GoogleFonts.outfit(fontSize: 15, color: textColor),
+          style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+            color: textColor,
+          ),
           decoration: InputDecoration(
             hintText: hint,
-            hintStyle: GoogleFonts.outfit(
-              fontSize: 15,
+            hintStyle: Theme.of(context).textTheme.bodyLarge?.copyWith(
               color: subTextColor.withValues(alpha: 0.5),
             ),
             prefixIcon: Icon(icon, size: 20, color: subTextColor),

@@ -1,16 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 
+import '../../../core/extensions/l10n_extension.dart';
 import '../../../core/services/analytics_service.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_spacing.dart';
+import '../../../l10n/app_localizations.dart';
 import '../../profile/models/profile_models.dart';
 import '../models/growth_entry.dart';
 import '../providers/health_providers.dart';
 import '../widgets/growth_chart_widget.dart';
 import '../widgets/growth_entry_card.dart';
+import '../../../core/theme/app_typography.dart';
+
+String _healthDateLocale(String languageCode) =>
+    languageCode == 'fr' ? 'fr_FR' : languageCode;
 
 /// Growth chart screen — log weight/height and view against WHO p50 reference.
 class GrowthScreen extends ConsumerStatefulWidget {
@@ -26,6 +31,7 @@ class _GrowthScreenState extends ConsumerState<GrowthScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = context.l10n;
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final primary = isDark ? AppColors.primaryDark : AppColors.primaryLight;
     final bgColor = isDark
@@ -44,8 +50,8 @@ class _GrowthScreenState extends ConsumerState<GrowthScreen> {
         loading: () => const Center(child: CircularProgressIndicator()),
         error: (e, _) => Center(
           child: Text(
-            'Erreur: $e',
-            style: GoogleFonts.outfit(color: AppColors.error),
+            l10n.healthErrorWithDetail('$e'),
+            style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: AppColors.error),
           ),
         ),
         data: (entries) {
@@ -91,12 +97,8 @@ class _GrowthScreenState extends ConsumerState<GrowthScreen> {
                         ),
                         const SizedBox(width: 6),
                         Text(
-                          'Courbe de poids',
-                          style: GoogleFonts.outfit(
-                            fontSize: 14,
-                            fontWeight: FontWeight.w600,
-                            color: textColor,
-                          ),
+                          l10n.healthWeightChartTitle,
+                          style: Theme.of(context).textTheme.titleSmall?.copyWith(fontWeight: FontWeight.w600, color: textColor),
                         ),
                         const Spacer(),
                         // WHO reference legend
@@ -109,11 +111,8 @@ class _GrowthScreenState extends ConsumerState<GrowthScreen> {
                             ),
                             const SizedBox(width: 4),
                             Text(
-                              'OMS p50',
-                              style: GoogleFonts.outfit(
-                                fontSize: 11,
-                                color: secondary,
-                              ),
+                              l10n.healthWhoP50,
+                              style: Theme.of(context).textTheme.labelSmall?.copyWith(color: secondary),
                             ),
                           ],
                         ),
@@ -124,10 +123,7 @@ class _GrowthScreenState extends ConsumerState<GrowthScreen> {
                             const SizedBox(width: 4),
                             Text(
                               widget.child.name,
-                              style: GoogleFonts.outfit(
-                                fontSize: 11,
-                                color: secondary,
-                              ),
+                              style: Theme.of(context).textTheme.labelSmall?.copyWith(color: secondary),
                             ),
                           ],
                         ),
@@ -157,19 +153,15 @@ class _GrowthScreenState extends ConsumerState<GrowthScreen> {
                   AppSpacing.sm,
                 ),
                 child: Text(
-                  'Historique des mesures',
-                  style: GoogleFonts.outfit(
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
-                    color: textColor,
-                  ),
+                  l10n.healthMeasurementHistory,
+                  style: Theme.of(context).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold, color: textColor),
                 ),
               ),
             ),
 
             // Entries list
             if (entries.isEmpty)
-              SliverToBoxAdapter(child: _buildEmpty(primary, secondary))
+              SliverToBoxAdapter(child: _buildEmpty(primary, secondary, l10n))
             else
               SliverPadding(
                 padding: const EdgeInsets.fromLTRB(
@@ -197,15 +189,16 @@ class _GrowthScreenState extends ConsumerState<GrowthScreen> {
         foregroundColor: Colors.white,
         icon: const Icon(Icons.add_rounded),
         label: Text(
-          'Mesure',
-          style: GoogleFonts.outfit(fontWeight: FontWeight.w600),
+          l10n.healthMeasurementFab,
+          style: AppTypography.fromContext(context, fontSize: 14, fontWeight: FontWeight.w600),
         ),
         onPressed: () => _showAddSheet(context, primary, textColor, isDark),
       ),
     );
   }
 
-  Widget _buildEmpty(Color primary, Color secondary) => Center(
+  Widget _buildEmpty(Color primary, Color secondary, AppLocalizations l10n) =>
+      Center(
     child: Padding(
       padding: const EdgeInsets.all(AppSpacing.screenPaddingH),
       child: Column(
@@ -218,17 +211,13 @@ class _GrowthScreenState extends ConsumerState<GrowthScreen> {
           ),
           const SizedBox(height: AppSpacing.md),
           Text(
-            'Aucune mesure enregistrée',
-            style: GoogleFonts.outfit(
-              fontSize: 16,
-              fontWeight: FontWeight.bold,
-              color: secondary,
-            ),
+            l10n.healthNoMeasurementsTitle,
+            style: Theme.of(context).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold, color: secondary),
           ),
           const SizedBox(height: AppSpacing.xs),
           Text(
-            'Appuyez sur + pour ajouter\nune mesure de croissance.',
-            style: GoogleFonts.outfit(fontSize: 13, color: secondary),
+            l10n.healthNoMeasurementsHint,
+            style: AppTypography.fromContext(context, fontSize: 13, color: secondary),
             textAlign: TextAlign.center,
           ),
         ],
@@ -237,22 +226,20 @@ class _GrowthScreenState extends ConsumerState<GrowthScreen> {
   );
 
   void _confirmDelete(GrowthEntry entry) {
+    final l10n = context.l10n;
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final textColor = isDark ? Colors.white : AppColors.onSurfaceLight;
     showDialog(
       context: context,
       builder: (_) => AlertDialog(
         title: Text(
-          'Supprimer cette mesure ?',
-          style: GoogleFonts.outfit(
-            fontWeight: FontWeight.bold,
-            color: textColor,
-          ),
+          l10n.healthDeleteMeasurementTitle,
+          style: AppTypography.fromContext(context, fontSize: 14, fontWeight: FontWeight.bold, color: textColor),
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: Text('Annuler', style: GoogleFonts.outfit()),
+            child: Text(l10n.healthCancel, style: Theme.of(context).textTheme.bodyMedium),
           ),
           TextButton(
             onPressed: () {
@@ -262,8 +249,8 @@ class _GrowthScreenState extends ConsumerState<GrowthScreen> {
                   .deleteEntry(childId: widget.child.id, entryId: entry.id);
             },
             child: Text(
-              'Supprimer',
-              style: GoogleFonts.outfit(color: AppColors.error),
+              l10n.healthDelete,
+              style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: AppColors.error),
             ),
           ),
         ],
@@ -277,6 +264,10 @@ class _GrowthScreenState extends ConsumerState<GrowthScreen> {
     Color textColor,
     bool isDark,
   ) {
+    final l10n = context.l10n;
+    final dateLocale = _healthDateLocale(
+      Localizations.localeOf(context).languageCode,
+    );
     DateTime selectedDate = DateTime.now();
     final weightCtrl = TextEditingController();
     final heightCtrl = TextEditingController();
@@ -315,12 +306,8 @@ class _GrowthScreenState extends ConsumerState<GrowthScreen> {
               ),
               const SizedBox(height: AppSpacing.lg),
               Text(
-                'Nouvelle mesure',
-                style: GoogleFonts.outfit(
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold,
-                  color: textColor,
-                ),
+                l10n.healthNewMeasurement,
+                style: AppTypography.fromContext(context, fontSize: 20, fontWeight: FontWeight.bold, color: textColor),
               ),
               const SizedBox(height: AppSpacing.md),
 
@@ -337,7 +324,9 @@ class _GrowthScreenState extends ConsumerState<GrowthScreen> {
                 },
                 child: _InputTile(
                   icon: Icons.calendar_today_rounded,
-                  label: DateFormat('d MMMM yyyy', 'fr').format(selectedDate),
+                  label: DateFormat('d MMMM yyyy', dateLocale).format(
+                    selectedDate,
+                  ),
                   primary: primary,
                   textColor: textColor,
                   isDark: isDark,
@@ -351,7 +340,7 @@ class _GrowthScreenState extends ConsumerState<GrowthScreen> {
                   Expanded(
                     child: _NumberField(
                       controller: weightCtrl,
-                      label: 'Poids (kg)',
+                      label: l10n.healthWeightKg,
                       hint: '7.5',
                       isDark: isDark,
                       textColor: textColor,
@@ -361,7 +350,7 @@ class _GrowthScreenState extends ConsumerState<GrowthScreen> {
                   Expanded(
                     child: _NumberField(
                       controller: heightCtrl,
-                      label: 'Taille (cm)',
+                      label: l10n.healthHeightCm,
                       hint: '68.0',
                       isDark: isDark,
                       textColor: textColor,
@@ -374,12 +363,10 @@ class _GrowthScreenState extends ConsumerState<GrowthScreen> {
               // Notes
               TextField(
                 controller: notesCtrl,
-                style: GoogleFonts.outfit(color: textColor),
+                style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: textColor),
                 decoration: InputDecoration(
-                  hintText: 'Notes (optionnel)',
-                  hintStyle: GoogleFonts.outfit(
-                    color: textColor.withValues(alpha: 0.4),
-                  ),
+                  hintText: l10n.healthNotesOptional,
+                  hintStyle: Theme.of(context).textTheme.bodyMedium?.copyWith(color: textColor.withValues(alpha: 0.4)),
                   filled: true,
                   fillColor: isDark
                       ? AppColors.inputBackgroundDark
@@ -445,8 +432,8 @@ class _GrowthScreenState extends ConsumerState<GrowthScreen> {
                         ScaffoldMessenger.of(context).showSnackBar(
                           SnackBar(
                             content: Text(
-                              'Mesure enregistrée ✓',
-                              style: GoogleFonts.outfit(),
+                              l10n.healthMeasurementSaved,
+                              style: Theme.of(context).textTheme.bodyMedium,
                             ),
                             backgroundColor: AppColors.success,
                           ),
@@ -454,11 +441,8 @@ class _GrowthScreenState extends ConsumerState<GrowthScreen> {
                       }
                     },
                     child: Text(
-                      'Enregistrer',
-                      style: GoogleFonts.outfit(
-                        fontWeight: FontWeight.w600,
-                        color: Colors.white,
-                      ),
+                      l10n.healthSave,
+                      style: AppTypography.fromContext(context, fontSize: 14, fontWeight: FontWeight.w600, color: Colors.white),
                     ),
                   ),
                 ),
@@ -503,7 +487,7 @@ class _InputTile extends StatelessWidget {
       children: [
         Icon(icon, size: 20, color: primary),
         const SizedBox(width: 8),
-        Text(label, style: GoogleFonts.outfit(color: textColor)),
+        Text(label, style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: textColor)),
       ],
     ),
   );
@@ -527,12 +511,12 @@ class _NumberField extends StatelessWidget {
   Widget build(BuildContext context) => TextField(
     controller: controller,
     keyboardType: const TextInputType.numberWithOptions(decimal: true),
-    style: GoogleFonts.outfit(color: textColor),
+    style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: textColor),
     decoration: InputDecoration(
       labelText: label,
-      labelStyle: GoogleFonts.outfit(color: textColor.withValues(alpha: 0.6)),
+      labelStyle: Theme.of(context).textTheme.bodyMedium?.copyWith(color: textColor.withValues(alpha: 0.6)),
       hintText: hint,
-      hintStyle: GoogleFonts.outfit(color: textColor.withValues(alpha: 0.3)),
+      hintStyle: Theme.of(context).textTheme.bodyMedium?.copyWith(color: textColor.withValues(alpha: 0.3)),
       filled: true,
       fillColor: isDark
           ? AppColors.inputBackgroundDark

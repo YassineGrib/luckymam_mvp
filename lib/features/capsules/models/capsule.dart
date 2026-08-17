@@ -40,6 +40,40 @@ enum CapsuleCategory {
     }
   }
 
+  String get labelAr {
+    switch (this) {
+      case CapsuleCategory.preGestation:
+        return 'ما قبل الحمل';
+      case CapsuleCategory.gestation:
+        return 'الحمل';
+      case CapsuleCategory.postPartum:
+        return 'ما بعد الولادة';
+      case CapsuleCategory.enfance:
+        return 'الطفولة';
+      case CapsuleCategory.adulte:
+        return 'البلوغ';
+    }
+  }
+
+  String getLabel(String locale) {
+    if (locale == 'ar') return labelAr;
+    if (locale == 'en') {
+      switch (this) {
+        case CapsuleCategory.preGestation:
+          return 'Pre-gestation';
+        case CapsuleCategory.gestation:
+          return 'Pregnancy';
+        case CapsuleCategory.postPartum:
+          return 'Postpartum';
+        case CapsuleCategory.enfance:
+          return 'Childhood';
+        case CapsuleCategory.adulte:
+          return 'Adulthood';
+      }
+    }
+    return labelFr;
+  }
+
   static CapsuleCategory? fromString(String? value) {
     if (value == null) return null;
     return CapsuleCategory.values.where((e) => e.name == value).firstOrNull;

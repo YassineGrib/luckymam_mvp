@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
+import '../../../core/theme/app_typography.dart';
 
+import '../../../core/extensions/l10n_extension.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_spacing.dart';
 import '../models/phase.dart';
@@ -31,6 +32,8 @@ class PhaseCarousel extends StatelessWidget {
         ),
         itemCount: Phase.values.length,
         itemBuilder: (context, index) {
+          final l10n = context.l10n;
+          final lang = Localizations.localeOf(context).languageCode;
           final phase = Phase.values[index];
           final isSelected = phase == selectedPhase;
           final isCurrent = phase == currentPhase;
@@ -97,8 +100,8 @@ class PhaseCarousel extends StatelessWidget {
                               borderRadius: BorderRadius.circular(8),
                             ),
                             child: Text(
-                              'Actuel',
-                              style: GoogleFonts.outfit(
+                              l10n.timelinePhaseCurrent,
+                              style: AppTypography.fromContext(context, 
                                 fontSize: 10,
                                 fontWeight: FontWeight.bold,
                                 color: Colors.white,
@@ -109,8 +112,8 @@ class PhaseCarousel extends StatelessWidget {
                     ),
                     // Phase label
                     Text(
-                      phase.labelFr,
-                      style: GoogleFonts.outfit(
+                      phase.getLabel(lang),
+                      style: AppTypography.fromContext(context, 
                         fontSize: 13,
                         fontWeight: isSelected
                             ? FontWeight.bold

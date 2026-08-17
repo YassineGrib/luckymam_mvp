@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+import '../../../core/theme/app_typography.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:google_fonts/google_fonts.dart';
 
+import '../../../core/extensions/l10n_extension.dart';
 import '../../../core/theme/app_colors.dart';
+import '../subscription_plan_l10n.dart';
 import '../models/subscription_models.dart';
 import '../providers/subscription_providers.dart';
 import '../widgets/plan_card.dart';
@@ -14,6 +16,7 @@ class SubscriptionPlansScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = context.l10n;
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final bgColor = isDark
         ? AppColors.backgroundDark
@@ -41,9 +44,12 @@ class SubscriptionPlansScreen extends ConsumerWidget {
         );
         ref.read(subscriptionActionsProvider.notifier).clearMessages();
       }
-      if (next.error != null) {
+      if (next.errorDetails != null) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(next.error!), backgroundColor: Colors.red),
+          SnackBar(
+            content: Text(l10n.subscriptionSnackError(next.errorDetails!)),
+            backgroundColor: Colors.red,
+          ),
         );
         ref.read(subscriptionActionsProvider.notifier).clearMessages();
       }
@@ -72,16 +78,16 @@ class SubscriptionPlansScreen extends ConsumerWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          'Choisir un forfait',
-                          style: GoogleFonts.outfit(
+                          l10n.subscriptionPlansTitle,
+                          style: AppTypography.fromContext(context, 
                             fontSize: 22,
                             fontWeight: FontWeight.bold,
                             color: textColor,
                           ),
                         ),
                         Text(
-                          'Débloquez toutes les fonctionnalités',
-                          style: GoogleFonts.outfit(
+                          l10n.subscriptionPlansSubtitle,
+                          style: AppTypography.fromContext(context, 
                             fontSize: 13,
                             color: subTextColor,
                           ),
@@ -125,10 +131,13 @@ class SubscriptionPlansScreen extends ConsumerWidget {
     SubscriptionPlan plan,
   ) {
     if (plan.tier == SubscriptionTier.free) {
-      // Downgrade to free
-      ref
-          .read(subscriptionActionsProvider.notifier)
-          .upgradeTo(SubscriptionTier.free);
+      final l10n = context.l10n;
+      ref.read(subscriptionActionsProvider.notifier).upgradeTo(
+            SubscriptionTier.free,
+            successMessage: l10n.subscriptionSnackUpgradeSuccess(
+              SubscriptionTier.free.localizedLabel(l10n),
+            ),
+          );
     } else {
       // Navigate to payment screen
       Navigator.of(context).push(

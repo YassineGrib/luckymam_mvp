@@ -1,15 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 
+import '../../../core/extensions/l10n_extension.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_spacing.dart';
+import '../../../l10n/app_localizations.dart';
 import '../../profile/models/profile_models.dart';
 import '../../profile/providers/profile_providers.dart';
 import '../../vaccines/providers/vaccine_providers.dart';
 import '../../vaccines/widgets/vaccine_card.dart';
 import '../../../shared/widgets/page_header_with_filter.dart';
+import '../../../core/theme/app_typography.dart';
 
 /// Vaccinations tab - vaccine calendar with child selector.
 class VaccinationsTab extends ConsumerStatefulWidget {
@@ -24,6 +26,7 @@ class _VaccinationsTabState extends ConsumerState<VaccinationsTab> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = context.l10n;
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final primary = isDark ? AppColors.primaryDark : AppColors.primaryLight;
     final textColor = isDark ? Colors.white : AppColors.onSurfaceLight;
@@ -42,10 +45,10 @@ class _VaccinationsTabState extends ConsumerState<VaccinationsTab> {
       body: SafeArea(
         child: childrenAsync.when(
           loading: () => const Center(child: CircularProgressIndicator()),
-          error: (error, _) => _buildErrorState(textColor, secondaryText),
+          error: (error, _) => _buildErrorState(l10n, textColor, secondaryText),
           data: (children) {
             if (children.isEmpty) {
-              return _buildNoChildrenState(primary, textColor, secondaryText);
+              return _buildNoChildrenState(l10n, primary, textColor, secondaryText);
             }
 
             // Auto-select first child if none selected
@@ -59,8 +62,8 @@ class _VaccinationsTabState extends ConsumerState<VaccinationsTab> {
             return Column(
               children: [
                 PageHeaderWithFilter(
-                  title: 'Calendrier Vaccinal',
-                  subtitle: 'Programme National Algérien',
+                  title: l10n.homeVaccineCalendarTitle,
+                  subtitle: l10n.homeVaccineCalendarSubtitle,
                   icon: Icons.vaccines_rounded,
                   childrenList: children,
                   selectedChildId: _selectedChild?.id,
@@ -79,7 +82,7 @@ class _VaccinationsTabState extends ConsumerState<VaccinationsTab> {
 
                 // Vaccine list
                 Expanded(
-                  child: _buildVaccineList(_selectedChild!, isDark, textColor),
+                  child: _buildVaccineList(l10n, _selectedChild!, isDark, textColor),
                 ),
               ],
             );
@@ -89,7 +92,12 @@ class _VaccinationsTabState extends ConsumerState<VaccinationsTab> {
     );
   }
 
-  Widget _buildVaccineList(Child child, bool isDark, Color textColor) {
+  Widget _buildVaccineList(
+    AppLocalizations l10n,
+    Child child,
+    bool isDark,
+    Color textColor,
+  ) {
     final vaccinesAsync = ref.watch(
       vaccineGroupsWithStatusProvider((
         childId: child.id,
@@ -101,13 +109,13 @@ class _VaccinationsTabState extends ConsumerState<VaccinationsTab> {
       loading: () => const Center(child: CircularProgressIndicator()),
       error: (error, _) => Center(
         child: Text(
-          'Erreur: $error',
-          style: GoogleFonts.outfit(color: AppColors.error),
+          l10n.healthErrorWithDetail('$error'),
+          style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: AppColors.error),
         ),
       ),
       data: (vaccineGroups) {
         return ListView.builder(
-          padding: const EdgeInsets.fromLTRB(
+          padding: const EdgeInsetsDirectional.fromSTEB(
             AppSpacing.screenPaddingH,
             AppSpacing.sm,
             AppSpacing.screenPaddingH,
@@ -129,6 +137,7 @@ class _VaccinationsTabState extends ConsumerState<VaccinationsTab> {
   }
 
   void _showMarkCompleteDialog(Child child, VaccineGroupWithStatus group) {
+    final l10n = context.l10n;
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final surface = isDark ? AppColors.surfaceDark : AppColors.surfaceLight;
     final textColor = isDark ? Colors.white : AppColors.onSurfaceLight;
@@ -145,7 +154,7 @@ class _VaccinationsTabState extends ConsumerState<VaccinationsTab> {
       ),
       builder: (context) => StatefulBuilder(
         builder: (context, setModalState) => Padding(
-          padding: EdgeInsets.fromLTRB(
+          padding: EdgeInsetsDirectional.fromSTEB(
             AppSpacing.screenPaddingH,
             AppSpacing.lg,
             AppSpacing.screenPaddingH,
@@ -167,31 +176,20 @@ class _VaccinationsTabState extends ConsumerState<VaccinationsTab> {
               ),
               const SizedBox(height: AppSpacing.lg),
               Text(
-                'Marquer comme fait',
-                style: GoogleFonts.outfit(
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold,
-                  color: textColor,
-                ),
+                l10n.homeVaccineMarkComplete,
+                style: AppTypography.fromContext(context, fontSize: 20, fontWeight: FontWeight.bold, color: textColor),
               ),
               const SizedBox(height: AppSpacing.xs),
               Text(
                 '${group.group.ageFr} - ${group.group.vaccineCodesLabel}',
-                style: GoogleFonts.outfit(
-                  fontSize: 14,
-                  color: textColor.withValues(alpha: 0.7),
-                ),
+                style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: textColor.withValues(alpha: 0.7)),
               ),
               const SizedBox(height: AppSpacing.lg),
 
               // Date picker
               Text(
-                'Date de vaccination',
-                style: GoogleFonts.outfit(
-                  fontSize: 14,
-                  fontWeight: FontWeight.w500,
-                  color: textColor,
-                ),
+                l10n.homeVaccineDateLabel,
+                style: AppTypography.fromContext(context, fontSize: 14, fontWeight: FontWeight.w500, color: textColor),
               ),
               const SizedBox(height: AppSpacing.xs),
               GestureDetector(
@@ -241,10 +239,7 @@ class _VaccinationsTabState extends ConsumerState<VaccinationsTab> {
                       const SizedBox(width: AppSpacing.sm),
                       Text(
                         DateFormat('d MMMM yyyy', 'fr').format(selectedDate),
-                        style: GoogleFonts.outfit(
-                          fontSize: 15,
-                          color: textColor,
-                        ),
+                        style: AppTypography.fromContext(context, fontSize: 15, color: textColor),
                       ),
                     ],
                   ),
@@ -254,23 +249,17 @@ class _VaccinationsTabState extends ConsumerState<VaccinationsTab> {
 
               // Notes field
               Text(
-                'Notes (optionnel)',
-                style: GoogleFonts.outfit(
-                  fontSize: 14,
-                  fontWeight: FontWeight.w500,
-                  color: textColor,
-                ),
+                l10n.healthNotesOptional,
+                style: AppTypography.fromContext(context, fontSize: 14, fontWeight: FontWeight.w500, color: textColor),
               ),
               const SizedBox(height: AppSpacing.xs),
               TextField(
                 controller: notesController,
                 maxLines: 2,
-                style: GoogleFonts.outfit(color: textColor),
+                style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: textColor),
                 decoration: InputDecoration(
-                  hintText: 'Ex: Docteur Martin, clinique...',
-                  hintStyle: GoogleFonts.outfit(
-                    color: textColor.withValues(alpha: 0.4),
-                  ),
+                  hintText: l10n.homeVaccineNotesHint,
+                  hintStyle: Theme.of(context).textTheme.bodyMedium?.copyWith(color: textColor.withValues(alpha: 0.4)),
                   filled: true,
                   fillColor: isDark
                       ? AppColors.inputBackgroundDark
@@ -308,8 +297,8 @@ class _VaccinationsTabState extends ConsumerState<VaccinationsTab> {
                         ),
                       ),
                       child: Text(
-                        'Annuler',
-                        style: GoogleFonts.outfit(fontWeight: FontWeight.w600),
+                        l10n.healthCancel,
+                        style: AppTypography.fromContext(context, fontSize: 14, fontWeight: FontWeight.w600),
                       ),
                     ),
                   ),
@@ -336,8 +325,8 @@ class _VaccinationsTabState extends ConsumerState<VaccinationsTab> {
                           ScaffoldMessenger.of(context).showSnackBar(
                             SnackBar(
                               content: Text(
-                                'Vaccin marqué comme fait ✓',
-                                style: GoogleFonts.outfit(),
+                                l10n.homeVaccineMarkedComplete,
+                                style: Theme.of(context).textTheme.bodyMedium,
                               ),
                               backgroundColor: AppColors.success,
                             ),
@@ -352,11 +341,8 @@ class _VaccinationsTabState extends ConsumerState<VaccinationsTab> {
                           ),
                         ),
                         child: Text(
-                          'Confirmer',
-                          style: GoogleFonts.outfit(
-                            fontWeight: FontWeight.w600,
-                            color: Colors.white,
-                          ),
+                          l10n.confirm,
+                          style: AppTypography.fromContext(context, fontSize: 14, fontWeight: FontWeight.w600, color: Colors.white),
                         ),
                       ),
                     ),
@@ -371,6 +357,7 @@ class _VaccinationsTabState extends ConsumerState<VaccinationsTab> {
   }
 
   void _showMarkIncompleteDialog(Child child, VaccineGroupWithStatus group) {
+    final l10n = context.l10n;
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final textColor = isDark ? Colors.white : AppColors.onSurfaceLight;
 
@@ -378,22 +365,19 @@ class _VaccinationsTabState extends ConsumerState<VaccinationsTab> {
       context: context,
       builder: (context) => AlertDialog(
         title: Text(
-          'Annuler le vaccin ?',
-          style: GoogleFonts.outfit(
-            fontWeight: FontWeight.bold,
-            color: textColor,
-          ),
+          l10n.homeVaccineCancelTitle,
+          style: AppTypography.fromContext(context, fontSize: 14, fontWeight: FontWeight.bold, color: textColor),
         ),
         content: Text(
-          'Voulez-vous marquer "${group.group.ageFr}" comme non fait ?',
-          style: GoogleFonts.outfit(color: textColor.withValues(alpha: 0.8)),
+          l10n.homeVaccineCancelMessage(group.group.ageFr),
+          style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: textColor.withValues(alpha: 0.8)),
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
             child: Text(
-              'Non',
-              style: GoogleFonts.outfit(fontWeight: FontWeight.w600),
+              l10n.homeVaccineNo,
+              style: AppTypography.fromContext(context, fontSize: 14, fontWeight: FontWeight.w600),
             ),
           ),
           TextButton(
@@ -407,11 +391,8 @@ class _VaccinationsTabState extends ConsumerState<VaccinationsTab> {
               Navigator.pop(context);
             },
             child: Text(
-              'Oui, annuler',
-              style: GoogleFonts.outfit(
-                fontWeight: FontWeight.w600,
-                color: AppColors.error,
-              ),
+              l10n.homeVaccineYesCancel,
+              style: AppTypography.fromContext(context, fontSize: 14, fontWeight: FontWeight.w600, color: AppColors.error),
             ),
           ),
         ],
@@ -420,6 +401,7 @@ class _VaccinationsTabState extends ConsumerState<VaccinationsTab> {
   }
 
   Widget _buildNoChildrenState(
+    AppLocalizations l10n,
     Color primary,
     Color textColor,
     Color secondaryText,
@@ -441,18 +423,14 @@ class _VaccinationsTabState extends ConsumerState<VaccinationsTab> {
             ),
             const SizedBox(height: AppSpacing.lg),
             Text(
-              'Aucun enfant enregistré',
-              style: GoogleFonts.outfit(
-                fontSize: 20,
-                fontWeight: FontWeight.bold,
-                color: textColor,
-              ),
+              l10n.noChildrenTitle,
+              style: AppTypography.fromContext(context, fontSize: 20, fontWeight: FontWeight.bold, color: textColor),
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: AppSpacing.sm),
             Text(
-              'Ajoutez un enfant dans votre profil pour voir son calendrier vaccinal.',
-              style: GoogleFonts.outfit(fontSize: 14, color: secondaryText),
+              l10n.homeVaccineNoChildrenHint,
+              style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: secondaryText),
               textAlign: TextAlign.center,
             ),
           ],
@@ -461,7 +439,11 @@ class _VaccinationsTabState extends ConsumerState<VaccinationsTab> {
     );
   }
 
-  Widget _buildErrorState(Color textColor, Color secondaryText) {
+  Widget _buildErrorState(
+    AppLocalizations l10n,
+    Color textColor,
+    Color secondaryText,
+  ) {
     return Center(
       child: Padding(
         padding: const EdgeInsets.all(AppSpacing.screenPaddingH),
@@ -471,17 +453,13 @@ class _VaccinationsTabState extends ConsumerState<VaccinationsTab> {
             Icon(Icons.error_outline_rounded, size: 60, color: AppColors.error),
             const SizedBox(height: AppSpacing.md),
             Text(
-              'Erreur de chargement',
-              style: GoogleFonts.outfit(
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
-                color: textColor,
-              ),
+              l10n.healthLoadingError,
+              style: AppTypography.fromContext(context, fontSize: 18, fontWeight: FontWeight.bold, color: textColor),
             ),
             const SizedBox(height: AppSpacing.xs),
             Text(
-              'Impossible de charger les données',
-              style: GoogleFonts.outfit(fontSize: 14, color: secondaryText),
+              l10n.homeLoadDataError,
+              style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: secondaryText),
             ),
           ],
         ),

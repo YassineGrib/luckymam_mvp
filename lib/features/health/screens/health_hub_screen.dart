@@ -1,14 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:google_fonts/google_fonts.dart';
 
+import '../../../core/extensions/l10n_extension.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_spacing.dart';
+import '../../../l10n/app_localizations.dart';
 import '../../profile/models/profile_models.dart';
 import '../../profile/providers/profile_providers.dart';
 import '../screens/growth_screen.dart';
 import '../screens/appointments_screen.dart';
 import '../../../shared/widgets/page_header_with_filter.dart';
+import '../../../core/theme/app_typography.dart';
 
 /// Standalone "Santé enfant" screen — Growth + Appointments with child selector.
 /// Accessed via a shortcut card on the Dashboard, not the bottom nav.
@@ -38,6 +40,7 @@ class _HealthHubScreenState extends ConsumerState<HealthHubScreen>
 
   @override
   Widget build(BuildContext context) {
+    final l10n = context.l10n;
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final primary = isDark ? AppColors.primaryDark : AppColors.primaryLight;
     final textColor = isDark ? Colors.white : AppColors.onSurfaceLight;
@@ -60,13 +63,18 @@ class _HealthHubScreenState extends ConsumerState<HealthHubScreen>
           loading: () => const Center(child: CircularProgressIndicator()),
           error: (_, _) => Center(
             child: Text(
-              'Erreur de chargement',
-              style: GoogleFonts.outfit(color: AppColors.error),
+              l10n.healthLoadingError,
+              style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: AppColors.error),
             ),
           ),
           data: (children) {
             if (children.isEmpty) {
-              return _buildNoChildren(primary, textColor, secondaryText);
+              return _buildNoChildren(
+                primary,
+                textColor,
+                secondaryText,
+                l10n,
+              );
             }
 
             // Auto-select first child
@@ -79,8 +87,8 @@ class _HealthHubScreenState extends ConsumerState<HealthHubScreen>
               children: [
                 // ── Header & Child Selector ─────────────────────────────
                 PageHeaderWithFilter(
-                  title: 'Santé',
-                  subtitle: 'Croissance & Rendez-vous',
+                  title: l10n.navHealth,
+                  subtitle: l10n.healthHubSubtitle,
                   icon: Icons.monitor_heart_rounded,
                   showBackButton: true,
                   childrenList: children,
@@ -99,7 +107,7 @@ class _HealthHubScreenState extends ConsumerState<HealthHubScreen>
                 ),
 
                 // ── Tab bar ─────────────────────────────────────────────
-                _buildTabBar(primary, textColor, isDark, surfaceColor),
+                _buildTabBar(primary, textColor, isDark, surfaceColor, l10n),
 
                 // ── Tab views ───────────────────────────────────────────
                 Expanded(
@@ -126,6 +134,7 @@ class _HealthHubScreenState extends ConsumerState<HealthHubScreen>
     Color textColor,
     bool isDark,
     Color surfaceColor,
+    AppLocalizations l10n,
   ) => Padding(
     padding: const EdgeInsets.fromLTRB(
       AppSpacing.screenPaddingH,
@@ -147,18 +156,15 @@ class _HealthHubScreenState extends ConsumerState<HealthHubScreen>
           borderRadius: BorderRadius.circular(14),
         ),
         indicatorSize: TabBarIndicatorSize.tab,
-        labelStyle: GoogleFonts.outfit(
-          fontSize: 13,
-          fontWeight: FontWeight.w600,
-        ),
-        unselectedLabelStyle: GoogleFonts.outfit(fontSize: 13),
+        labelStyle: AppTypography.fromContext(context, fontSize: 13, fontWeight: FontWeight.w600),
+        unselectedLabelStyle: AppTypography.fromContext(context, fontSize: 13),
         labelColor: Colors.white,
         unselectedLabelColor: textColor.withValues(alpha: 0.6),
         dividerColor: Colors.transparent,
         padding: const EdgeInsets.all(4),
-        tabs: const [
-          Tab(text: '📈 Croissance'),
-          Tab(text: '🗓 Rendez-vous'),
+        tabs: [
+          Tab(text: l10n.healthTabGrowth),
+          Tab(text: l10n.healthTabAppointments),
         ],
       ),
     ),
@@ -170,6 +176,7 @@ class _HealthHubScreenState extends ConsumerState<HealthHubScreen>
     Color primary,
     Color textColor,
     Color secondaryText,
+    AppLocalizations l10n,
   ) => Center(
     child: Column(
       mainAxisAlignment: MainAxisAlignment.center,
@@ -181,17 +188,13 @@ class _HealthHubScreenState extends ConsumerState<HealthHubScreen>
         ),
         const SizedBox(height: AppSpacing.md),
         Text(
-          'Aucun enfant enregistré',
-          style: GoogleFonts.outfit(
-            fontSize: 18,
-            fontWeight: FontWeight.bold,
-            color: textColor,
-          ),
+          l10n.healthNoChildTitle,
+          style: AppTypography.fromContext(context, fontSize: 18, fontWeight: FontWeight.bold, color: textColor),
         ),
         const SizedBox(height: AppSpacing.xs),
         Text(
-          'Ajoutez un enfant dans votre profil.',
-          style: GoogleFonts.outfit(color: secondaryText),
+          l10n.healthNoChildHint,
+          style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: secondaryText),
         ),
       ],
     ),

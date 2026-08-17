@@ -1,10 +1,11 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import '../../../core/theme/app_typography.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:google_fonts/google_fonts.dart';
 
+import '../../../core/extensions/l10n_extension.dart';
 import '../../../core/theme/app_colors.dart';
-
+import '../../../l10n/app_localizations.dart';
 import '../../profile/providers/profile_providers.dart';
 import '../models/subscription_models.dart';
 import '../providers/subscription_providers.dart';
@@ -38,6 +39,7 @@ class _AlbumClaimScreenState extends ConsumerState<AlbumClaimScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = context.l10n;
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final bgColor = isDark
         ? AppColors.backgroundDark
@@ -63,16 +65,19 @@ class _AlbumClaimScreenState extends ConsumerState<AlbumClaimScreen> {
         setState(() => _submitted = true);
         ref.read(subscriptionActionsProvider.notifier).clearMessages();
       }
-      if (next.error != null) {
+      if (next.errorDetails != null) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(next.error!), backgroundColor: Colors.red),
+          SnackBar(
+            content: Text(l10n.subscriptionSnackError(next.errorDetails!)),
+            backgroundColor: Colors.red,
+          ),
         );
         ref.read(subscriptionActionsProvider.notifier).clearMessages();
       }
     });
 
     if (_submitted || albumClaimed) {
-      return _buildSubmittedView(context, textColor);
+      return _buildSubmittedView(context, textColor, l10n);
     }
 
     return Scaffold(
@@ -114,16 +119,16 @@ class _AlbumClaimScreenState extends ConsumerState<AlbumClaimScreen> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          'Album Imprimé Gratuit',
-                          style: GoogleFonts.outfit(
+                          l10n.subscriptionAlbumClaimTitle,
+                          style: AppTypography.fromContext(context, 
                             fontSize: 20,
                             fontWeight: FontWeight.bold,
                             color: textColor,
                           ),
                         ),
                         Text(
-                          'Votre cadeau VIP 🎁',
-                          style: GoogleFonts.outfit(
+                          l10n.subscriptionAlbumClaimSubtitle,
+                          style: AppTypography.fromContext(context, 
                             fontSize: 13,
                             color: const Color(0xFFFF6F00),
                           ),
@@ -163,8 +168,8 @@ class _AlbumClaimScreenState extends ConsumerState<AlbumClaimScreen> {
                             const SizedBox(width: 12),
                             Expanded(
                               child: Text(
-                                'En tant que membre VIP, vous recevez un album photo imprimé de vos plus beaux souvenirs. Remplissez le formulaire ci-dessous.',
-                                style: GoogleFonts.outfit(
+                                l10n.subscriptionAlbumClaimInfo,
+                                style: AppTypography.fromContext(context, 
                                   fontSize: 13,
                                   color: textColor,
                                 ),
@@ -178,8 +183,8 @@ class _AlbumClaimScreenState extends ConsumerState<AlbumClaimScreen> {
 
                       // Child selection
                       Text(
-                        'Pour quel enfant ?',
-                        style: GoogleFonts.outfit(
+                        l10n.albumForWhichChild,
+                        style: AppTypography.fromContext(context, 
                           fontSize: 16,
                           fontWeight: FontWeight.bold,
                           color: textColor,
@@ -190,8 +195,8 @@ class _AlbumClaimScreenState extends ConsumerState<AlbumClaimScreen> {
                       childrenAsync.when(
                         loading: () => const CircularProgressIndicator(),
                         error: (_, _) => Text(
-                          'Erreur de chargement',
-                          style: GoogleFonts.outfit(color: AppColors.error),
+                          l10n.albumLoadingError,
+                          style: AppTypography.fromContext(context, fontSize: 14, color: AppColors.error),
                         ),
                         data: (children) => Wrap(
                           spacing: 10,
@@ -225,7 +230,7 @@ class _AlbumClaimScreenState extends ConsumerState<AlbumClaimScreen> {
                                 ),
                                 child: Text(
                                   c.name,
-                                  style: GoogleFonts.outfit(
+                                  style: AppTypography.fromContext(context, 
                                     fontSize: 14,
                                     fontWeight: FontWeight.w600,
                                     color: isSelected
@@ -243,8 +248,8 @@ class _AlbumClaimScreenState extends ConsumerState<AlbumClaimScreen> {
 
                       // Delivery details
                       Text(
-                        'Informations de livraison',
-                        style: GoogleFonts.outfit(
+                        l10n.checkoutDeliveryInfo,
+                        style: AppTypography.fromContext(context, 
                           fontSize: 16,
                           fontWeight: FontWeight.bold,
                           color: textColor,
@@ -253,21 +258,21 @@ class _AlbumClaimScreenState extends ConsumerState<AlbumClaimScreen> {
                       const SizedBox(height: 12),
 
                       _buildFormField(
-                        label: 'Nom complet',
-                        hint: 'Votre nom et prénom',
+                        label: l10n.name,
+                        hint: l10n.checkoutFullNameHint,
                         controller: _nameCtrl,
                         icon: Icons.person_outline_rounded,
                         inputBg: inputBg,
                         textColor: textColor,
                         subTextColor: subTextColor,
                         validator: (v) =>
-                            v == null || v.isEmpty ? 'Champ requis' : null,
+                            v == null || v.isEmpty ? l10n.errorRequired : null,
                       ),
                       const SizedBox(height: 12),
 
                       _buildFormField(
-                        label: 'Téléphone',
-                        hint: '0550 00 00 00',
+                        label: l10n.checkoutPhone,
+                        hint: l10n.paymentPhoneHint,
                         controller: _phoneCtrl,
                         icon: Icons.phone_outlined,
                         inputBg: inputBg,
@@ -275,26 +280,26 @@ class _AlbumClaimScreenState extends ConsumerState<AlbumClaimScreen> {
                         subTextColor: subTextColor,
                         keyboardType: TextInputType.phone,
                         validator: (v) =>
-                            v == null || v.isEmpty ? 'Champ requis' : null,
+                            v == null || v.isEmpty ? l10n.errorRequired : null,
                       ),
                       const SizedBox(height: 12),
 
                       _buildFormField(
-                        label: 'Wilaya',
-                        hint: 'Votre wilaya',
+                        label: l10n.checkoutWilaya,
+                        hint: l10n.checkoutWilayaHint,
                         controller: _wilayaCtrl,
                         icon: Icons.location_city_rounded,
                         inputBg: inputBg,
                         textColor: textColor,
                         subTextColor: subTextColor,
                         validator: (v) =>
-                            v == null || v.isEmpty ? 'Champ requis' : null,
+                            v == null || v.isEmpty ? l10n.errorRequired : null,
                       ),
                       const SizedBox(height: 12),
 
                       _buildFormField(
-                        label: 'Adresse complète',
-                        hint: 'Rue, numéro, quartier...',
+                        label: l10n.checkoutAddress,
+                        hint: l10n.checkoutAddressHint,
                         controller: _addressCtrl,
                         icon: Icons.home_outlined,
                         inputBg: inputBg,
@@ -302,7 +307,7 @@ class _AlbumClaimScreenState extends ConsumerState<AlbumClaimScreen> {
                         subTextColor: subTextColor,
                         maxLines: 2,
                         validator: (v) =>
-                            v == null || v.isEmpty ? 'Champ requis' : null,
+                            v == null || v.isEmpty ? l10n.errorRequired : null,
                       ),
 
                       const SizedBox(height: 28),
@@ -315,8 +320,8 @@ class _AlbumClaimScreenState extends ConsumerState<AlbumClaimScreen> {
                           onPressed: actionsState.isLoading ? null : _onSubmit,
                           icon: const Icon(Icons.send_rounded),
                           label: Text(
-                            'Envoyer ma demande',
-                            style: GoogleFonts.outfit(
+                            l10n.subscriptionAlbumClaimSubmit,
+                            style: AppTypography.fromContext(context, 
                               fontSize: 16,
                               fontWeight: FontWeight.bold,
                             ),
@@ -359,7 +364,7 @@ class _AlbumClaimScreenState extends ConsumerState<AlbumClaimScreen> {
       children: [
         Text(
           label,
-          style: GoogleFonts.outfit(fontSize: 12, color: subTextColor),
+          style: AppTypography.fromContext(context, fontSize: 12, color: subTextColor),
         ),
         const SizedBox(height: 6),
         TextFormField(
@@ -367,10 +372,10 @@ class _AlbumClaimScreenState extends ConsumerState<AlbumClaimScreen> {
           keyboardType: keyboardType,
           maxLines: maxLines,
           validator: validator,
-          style: GoogleFonts.outfit(fontSize: 15, color: textColor),
+          style: AppTypography.fromContext(context, fontSize: 15, color: textColor),
           decoration: InputDecoration(
             hintText: hint,
-            hintStyle: GoogleFonts.outfit(
+            hintStyle: AppTypography.fromContext(context, 
               fontSize: 15,
               color: subTextColor.withValues(alpha: 0.5),
             ),
@@ -392,11 +397,12 @@ class _AlbumClaimScreenState extends ConsumerState<AlbumClaimScreen> {
   }
 
   void _onSubmit() {
+    final l10n = context.l10n;
     if (!_formKey.currentState!.validate()) return;
     if (_selectedChildId == null) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Veuillez sélectionner un enfant'),
+        SnackBar(
+          content: Text(l10n.subscriptionAlbumClaimSelectChildError),
           backgroundColor: Colors.orange,
         ),
       );
@@ -419,10 +425,17 @@ class _AlbumClaimScreenState extends ConsumerState<AlbumClaimScreen> {
       createdAt: DateTime.now(),
     );
 
-    ref.read(subscriptionActionsProvider.notifier).submitAlbumClaim(claim);
+    ref.read(subscriptionActionsProvider.notifier).submitAlbumClaim(
+          claim,
+          successMessage: l10n.subscriptionSnackAlbumClaimSuccess,
+        );
   }
 
-  Widget _buildSubmittedView(BuildContext context, Color textColor) {
+  Widget _buildSubmittedView(
+    BuildContext context,
+    Color textColor,
+    AppLocalizations l10n,
+  ) {
     return Scaffold(
       backgroundColor: Theme.of(context).brightness == Brightness.dark
           ? AppColors.backgroundDark
@@ -449,8 +462,8 @@ class _AlbumClaimScreenState extends ConsumerState<AlbumClaimScreen> {
                 ),
                 const SizedBox(height: 28),
                 Text(
-                  'Demande envoyée !',
-                  style: GoogleFonts.outfit(
+                  l10n.subscriptionAlbumClaimSubmittedTitle,
+                  style: AppTypography.fromContext(context, 
                     fontSize: 26,
                     fontWeight: FontWeight.bold,
                     color: textColor,
@@ -458,8 +471,8 @@ class _AlbumClaimScreenState extends ConsumerState<AlbumClaimScreen> {
                 ),
                 const SizedBox(height: 12),
                 Text(
-                  'Votre album imprimé sera préparé et expédié à l\'adresse indiquée. Nous vous contacterons par téléphone pour confirmer.',
-                  style: GoogleFonts.outfit(
+                  l10n.subscriptionAlbumClaimSubmittedMessage,
+                  style: AppTypography.fromContext(context, 
                     fontSize: 15,
                     color: textColor.withValues(alpha: 0.7),
                   ),
@@ -481,8 +494,8 @@ class _AlbumClaimScreenState extends ConsumerState<AlbumClaimScreen> {
                       ),
                       const SizedBox(width: 10),
                       Text(
-                        'Délai estimé : 7-14 jours',
-                        style: GoogleFonts.outfit(
+                        l10n.printEstimatedDelay,
+                        style: AppTypography.fromContext(context, 
                           fontSize: 14,
                           fontWeight: FontWeight.w600,
                           color: const Color(0xFFFF6F00),
@@ -505,8 +518,8 @@ class _AlbumClaimScreenState extends ConsumerState<AlbumClaimScreen> {
                       ),
                     ),
                     child: Text(
-                      'Retour',
-                      style: GoogleFonts.outfit(
+                      l10n.subscriptionBack,
+                      style: AppTypography.fromContext(context, 
                         fontSize: 16,
                         fontWeight: FontWeight.bold,
                       ),

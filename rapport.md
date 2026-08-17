@@ -2,18 +2,18 @@
 
 **المشروع:** `luckymam-app-dv` · **المجلد:** `luckymam_admin/`  
 **تاريخ التدقيق:** 2026-08-16  
-**آخر تحديث:** 2026-08-16 (deploy rules + hosting)  
-**الجاهزية الإجمالية:** ~85% — **قريبة من الإنتاج، ليست 100%**
+**آخر تحديث:** 2026-08-17 (seed + hosting index fix)  
+**الجاهزية الإجمالية:** ~88% — **قريبة من الإنتاج**
 
 | المحور | التقييم | النسبة التقريبية |
 |--------|---------|------------------|
 | الواجهة + ربط Firebase | ✅ جيد | ~90% |
-| الأمان للإنتاج | ⚠️ متوسط | ~55% |
+| الأمان للإنتاج | ✅ جيد | ~80% |
 | المنطق الأعمال | ⚠️ متوسط | ~70% |
 | السلاسة (UX) | ✅ جيد | ~85% |
-| جاهزية Deploy | ✅ جيد | ~80% |
+| جاهزية Deploy | ✅ جيد | ~85% |
 
-**الحكم:** اللوحة **منشورة** على [https://luckymam-app-dv.web.app](https://luckymam-app-dv.web.app) — usable للإنتاج المحدود. قبل launch كامل: تدوير Service Account + FCM + smoke test + seed بيانات.
+**الحكم:** اللوحة على [https://luckymam-app-dv.web.app](https://luckymam-app-dv.web.app) — **⚠️ 404 حتى redeploy** (fix `index.html` جاهز في build). usable للإنتاج بعد redeploy + smoke test.
 
 **CLI:** Firebase + gcloud على `gribyassinefb@gmail.com` · project `luckymam-app-dv`
 
@@ -34,7 +34,23 @@
 - [x] Storage `products/` — **منشورة**
 - [x] تغيير كلمة المرور: reauth + `updatePassword`
 - [x] ملفات `.mock.ts` — types/labels فقط، ليست مصدر بيانات UI
-- [x] **Hosting prod:** `https://luckymam-app-dv.web.app`
+- [x] **تدوير Service Account** — مفاتيح قديمة حُذفت، مفتاح جديد محلي *(2026-08-17)*
+
+- [x] **Git push** — commit `4fc9695` على `origin/main` *(2026-08-17)*
+- [x] **Seed Firestore** — products (9), orders (3), print+claims, notifications *(2026-08-17)*
+- [x] **Hosting index fix** — `scripts/generateHostingIndex.mjs` + `npm run build` *(2026-08-17)*
+
+---
+
+## A.1 — Auth users (prod)
+
+| UID | Email | admin claim |
+|-----|-------|-------------|
+| `bsOKvrjp5yM1JEsHZ19TeEHPw1h2` | admin@luckymam.app | ✅ |
+| `rakWLhCvYfhQ7jZ9fEpmaDbzHQG2` | gribyassine@gmail.com | ❌ — `npm run set-admin-claim -- rakWLhCvYfhQ7jZ9fEpmaDbzHQG2` |
+| `Kb25k6i11YbrSzrvcOEWsGqpeR13` | sarasaid@luckymam.dz | ❌ |
+
+`npm run list-auth-users` — list accounts + claims
 
 ---
 
@@ -46,7 +62,7 @@
 
 - [x] إزالة `scripts/service-account.json` من Git *(تم `git rm --cached` — يلزم commit)*
 - [x] إضافة `scripts/service-account.json` إلى `.gitignore`
-- [ ] **تدوير** مفتاح Service Account *(CLI: `gcloud iam service-accounts keys` — لم يُنفَّذ بعد)*
+- [x] **تدوير** مفتاح Service Account *(2026-08-17 — 3 مفاتيح قديمة حُذفت)*
 - [x] تقييد قراءة `notifications` للأدmin فقط في `firestore.rules`
 - [x] إضافة قاعدة Storage لمسار `products/` في `storage.rules`:
 
@@ -220,11 +236,11 @@ match /products/{fileName} {
 | `reels` | [x] 4 | [x] | متزامن |
 | `settings/global` | [x] | [x] | |
 | `settings/reels_config` | [x] | [x] | |
-| `marketplace_products` | [ ] فارغ | [x] | seed مطلوب |
-| `marketplace_orders` | [ ] فارغ | [x] | seed مطلوب |
-| `print_orders` | [ ] فارغ | [x] | seed مطلوب |
-| `album_claims` | [ ] فارغ | [x] | seed مطلوب |
-| `notifications` | [ ] فارغ | [x] | seed مطلوب |
+| `marketplace_products` | [x] 9 | [x] | seeded 2026-08-17 |
+| `marketplace_orders` | [x] 3 | [x] | seeded 2026-08-17 |
+| `print_orders` | [x] 2 | [x] | seeded 2026-08-17 |
+| `album_claims` | [x] 1 | [x] | seeded 2026-08-17 |
+| `notifications` | [x] 4 | [x] | seeded 2026-08-17 |
 
 ### أوامر التعبئة (اختياري — dev/staging)
 
@@ -243,7 +259,7 @@ node scripts/syncReelsFirestore.mjs   # reels من Storage
 
 ### 🔴 حرج
 
-- [ ] `service-account.json` خارج Git + مفتاح مُدوَّر *(gitignore ✅ — يلزم commit + تدوير via gcloud)*
+- [x] `service-account.json` خارج Git + مفتاح مُدوَّر *(gitignore ✅ · push ✅ · rotation 2026-08-17)*
 - [x] Storage rule `products/` — **منشورة**
 - [x] `notifications` read → admin only — **منشورة**
 - [ ] تقييد حقول كتابة admin على `users/{uid}` (optional hardening)
@@ -267,11 +283,12 @@ node scripts/syncReelsFirestore.mjs   # reels من Storage
 
 ## G — Checklist Deploy للإنتاج
 
-- [x] Phase B — blockers *(عدا تدوير SA + git commit)*
+- [x] Phase B — blockers ✅
 - [x] `firebase deploy --only firestore:rules,storage` *(2026-08-16)*
 - [x] `firebase target:apply hosting admin luckymam-app-dv` *(2026-08-16)*
 - [x] `npm run build` → deploy `.output/public` *(2026-08-16)*
-- [ ] Admin user + `setAdminClaim.mjs` على prod UID *(إذا لم يُمنَح بعد)*
+- [ ] **Redeploy hosting** — بعد fix `index.html`: `firebase deploy --only hosting:admin`
+- [ ] Admin claim لـ `gribyassine@gmail.com` *(admin@luckymam.app جاهز)*
 - [ ] Smoke test: login → reels → users → settings → catalog upload
 - [ ] Phase C منطق الأعمال — FCM + E2E marketplace
 - [ ] Phase D UX polish
@@ -284,7 +301,7 @@ node scripts/syncReelsFirestore.mjs   # reels من Storage
 
 اللوحة **جاهزة 100%** عندما:
 
-- [ ] **جميع** بنود المرحلة B (Blockers) ✅ *(تدوير SA + git commit متبقيان)*
+- [x] **جميع** بنود المرحلة B (Blockers) ✅
 - [ ] **جميع** بنود المرحلة C (منطق أعمال حرج) ✅ *(FCM + scheduled + E2E marketplace)*
 - [x] Storage + Firestore rules منشورة ومختبرة
 - [x] Deploy prod ناجح — hosting live
@@ -292,7 +309,7 @@ node scripts/syncReelsFirestore.mjs   # reels من Storage
 - [ ] التنبيهات: إرسال حقيقي أو UI يعكس الواقع
 - [x] الاشتراكات: Admin ↔ Flutter متزامنان
 - [x] Flutter marketplace يقرأ `marketplace_products` *(fallback static إذا فارغ)*
-- [ ] لا أسرار في Git *(commit مطلوب)*
+- [x] لا أسرار في Git *(squash push 2026-08-17)*
 - [ ] ESLint / build CI clean
 
 ---
@@ -319,5 +336,6 @@ firebase deploy --only hosting:admin --project luckymam-app-dv
 
 ---
 
-> **ملخص:** اللوحة ~85% جاهزة و**منشورة** على [luckymam-app-dv.web.app](https://luckymam-app-dv.web.app).  
-> **متبقٍ للـ 100%:** تدوير Service Account + git commit + FCM + smoke test + seed بيانات (اختياري).
+> **ملخص:** اللوحة ~88% جاهزة. **Seed** مكتمل. **Hosting fix** جاهز — يلزم `firebase deploy --only hosting:admin`.  
+> **Login prod:** `admin@luckymam.app` (admin ✅) أو grant claim لـ `gribyassine@gmail.com`.  
+> **متبقٍ:** redeploy hosting + smoke test + FCM + E2E marketplace.

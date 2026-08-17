@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 
 import '../../../core/theme/app_colors.dart';
 
@@ -27,7 +26,7 @@ class SectionHeader extends StatelessWidget {
     final primary = isDark ? AppColors.primaryDark : AppColors.primaryLight;
 
     return Padding(
-      padding: const EdgeInsets.fromLTRB(20, 24, 20, 8),
+      padding: const EdgeInsetsDirectional.fromSTEB(20, 24, 20, 8),
       child: Row(
         children: [
           if (icon != null) ...[
@@ -36,7 +35,7 @@ class SectionHeader extends StatelessWidget {
           ],
           Text(
             title.toUpperCase(),
-            style: GoogleFonts.outfit(
+            style: Theme.of(context).textTheme.labelLarge?.copyWith(
               fontSize: 13,
               fontWeight: FontWeight.w700,
               color: secondaryColor,
@@ -52,9 +51,8 @@ class SectionHeader extends StatelessWidget {
                 padding: const EdgeInsets.symmetric(vertical: 4),
                 child: Text(
                   trailing!,
-                  style: GoogleFonts.outfit(
+                  style: Theme.of(context).textTheme.labelLarge?.copyWith(
                     fontSize: 13,
-                    fontWeight: FontWeight.w600,
                     color: primary,
                   ),
                 ),

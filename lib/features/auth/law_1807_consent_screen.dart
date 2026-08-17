@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:go_router/go_router.dart';
 import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_spacing.dart';
@@ -7,6 +6,7 @@ import '../../core/services/compliance_service.dart';
 import '../../core/services/analytics_service.dart';
 import '../../l10n/app_localizations.dart';
 import '../../shared/widgets/buttons/primary_button.dart';
+import '../../core/theme/app_typography.dart';
 
 /// Screen requiring the user to consent to Algerian Law 18-07 on personal data protection.
 class Law1807ConsentScreen extends StatefulWidget {
@@ -75,7 +75,7 @@ class _Law1807ConsentScreenState extends State<Law1807ConsentScreen> {
         SnackBar(
           content: Text(
             l10n.law1807Error,
-            style: GoogleFonts.outfit(fontWeight: FontWeight.w500),
+            style: AppTypography.fromContext(context, fontSize: 14, fontWeight: FontWeight.w500),
           ),
           backgroundColor: AppColors.error,
           behavior: SnackBarBehavior.floating,
@@ -106,7 +106,7 @@ class _Law1807ConsentScreenState extends State<Law1807ConsentScreen> {
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text('Error: ${e.toString()}'),
+          content: Text(l10n.errorWithMessage(e.toString())),
           backgroundColor: AppColors.error,
         ),
       );
@@ -159,11 +159,7 @@ class _Law1807ConsentScreenState extends State<Law1807ConsentScreen> {
                   Expanded(
                     child: Text(
                       l10n.law1807Title,
-                      style: GoogleFonts.outfit(
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold,
-                        color: titleColor,
-                      ),
+                      style: AppTypography.fromContext(context, fontSize: 20, fontWeight: FontWeight.bold, color: titleColor),
                     ),
                   ),
                 ],
@@ -201,26 +197,14 @@ class _Law1807ConsentScreenState extends State<Law1807ConsentScreen> {
                           Text(
                             l10n.law1807Text,
                             textAlign: TextAlign.justify,
-                            style: GoogleFonts.outfit(
-                              fontSize: 14.5,
-                              height: 1.7,
-                              color: bodyColor,
-                            ),
+                            style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: bodyColor, height: 1.7),
                           ),
                           const SizedBox(height: AppSpacing.md),
                           Divider(color: isDark ? AppColors.dividerDark : AppColors.dividerLight),
                           const SizedBox(height: AppSpacing.sm),
                           Text(
-                            Localizations.localeOf(context).languageCode == 'ar'
-                              ? 'مرجع الامتثال القانوني: القانون الجزائري رقم 18-07 المتعلق بحماية الأشخاص الطبيعيين في مجال معالجة المعطيات ذات الطابع الشخصي.'
-                              : Localizations.localeOf(context).languageCode == 'fr'
-                                  ? 'Référence d\'alignement légal : Loi Algérienne n° 18-07 relative à la protection des personnes physiques dans le traitement des données à caractère personnel.'
-                                  : 'Legal compliance reference: Algerian Law n° 18-07 relative to the protection of physical persons in the treatment of personal data.',
-                            style: GoogleFonts.outfit(
-                              fontSize: 11,
-                              color: secondaryTextColor,
-                              fontStyle: FontStyle.italic,
-                            ),
+                            l10n.authLaw1807LegalRef,
+                            style: Theme.of(context).textTheme.labelSmall?.copyWith(color: secondaryTextColor),
                           ),
                         ],
                       ),
@@ -234,18 +218,12 @@ class _Law1807ConsentScreenState extends State<Law1807ConsentScreen> {
               // Checkbox row (Target at least 48px high for accessibility)
               GestureDetector(
                 onTap: () {
-                  final scrollWarning = Localizations.localeOf(context).languageCode == 'ar'
-                      ? 'يرجى قراءة النص بالكامل وتمريره إلى الأسفل لتفعيل زر القبول.'
-                      : Localizations.localeOf(context).languageCode == 'fr'
-                          ? 'Veuillez faire défiler tout le texte vers le bas pour activer l\'acceptation.'
-                          : 'Please scroll down the entire text to enable acceptance.';
-
                   if (!_hasScrolledToBottom) {
                     ScaffoldMessenger.of(context).showSnackBar(
                       SnackBar(
                         content: Text(
-                          scrollWarning,
-                          style: GoogleFonts.outfit(fontWeight: FontWeight.w500),
+                          l10n.authLaw1807ScrollWarning,
+                          style: AppTypography.fromContext(context, fontSize: 14, fontWeight: FontWeight.w500),
                         ),
                         backgroundColor: AppColors.magentaPink,
                         behavior: SnackBarBehavior.floating,
@@ -291,13 +269,9 @@ class _Law1807ConsentScreenState extends State<Law1807ConsentScreen> {
                       Expanded(
                         child: Text(
                           l10n.law1807Checkbox,
-                          style: GoogleFonts.outfit(
-                            fontSize: 15,
-                            fontWeight: FontWeight.w600,
-                            color: _hasScrolledToBottom
+                          style: AppTypography.fromContext(context, fontSize: 15, fontWeight: FontWeight.w600, color: _hasScrolledToBottom
                                 ? titleColor
-                                : (isDark ? Colors.white38 : Colors.black38),
-                          ),
+                                : (isDark ? Colors.white38 : Colors.black38)),
                         ),
                       ),
                     ],

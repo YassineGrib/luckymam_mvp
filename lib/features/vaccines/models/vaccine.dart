@@ -31,7 +31,10 @@ class Vaccine {
   String getName(String locale) => locale == 'ar' ? nameAr : nameFr;
 
   /// Get localized protection info based on locale
-  String getProtects(String locale) => locale == 'ar' ? protectsAr : protectsFr;
+  String getProtects(String locale) {
+    if (locale == 'ar' && protectsAr.isNotEmpty) return protectsAr;
+    return protectsFr;
+  }
 
   String get nameShort => code;
 }

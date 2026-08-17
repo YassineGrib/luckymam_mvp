@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:google_fonts/google_fonts.dart';
 
+import '../../../core/extensions/l10n_extension.dart';
 import '../../../core/theme/app_colors.dart';
+import '../../../l10n/app_localizations.dart';
 import '../../notifications/notifications_screen.dart';
 import '../../profile/models/profile_models.dart';
 import '../../profile/providers/profile_providers.dart';
@@ -25,7 +26,7 @@ class PersonalHeader extends ConsumerWidget {
     final profileAsync = ref.watch(profileProvider);
 
     return Padding(
-      padding: const EdgeInsets.fromLTRB(20, 16, 20, 8),
+      padding: const EdgeInsetsDirectional.fromSTEB(20, 16, 20, 8),
       child: profileAsync.when(
         loading: () => _buildSkeleton(textColor),
         error: (_, _) =>
@@ -68,9 +69,10 @@ class PersonalHeader extends ConsumerWidget {
     Color secondaryColor,
     UserProfile? profile,
   ) {
-    final greeting = getTimeBasedGreeting();
-    final name = profile?.displayName ?? 'Maman';
-    final status = profile?.statusLabel ?? 'Bienvenue';
+    final l10n = context.l10n;
+    final greeting = getTimeBasedGreeting(l10n);
+    final name = profile?.displayName ?? l10n.defaultMotherName;
+    final status = _statusLabel(l10n, profile);
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final primary = isDark ? AppColors.primaryDark : AppColors.primaryLight;
     final cardColor = isDark ? AppColors.surfaceDark : Colors.white;
@@ -119,18 +121,17 @@ class PersonalHeader extends ConsumerWidget {
                         // Greeting
                         Text(
                           '$greeting,',
-                          style: GoogleFonts.outfit(
-                            fontSize: 16,
+                          style: Theme.of(context).textTheme.bodyLarge?.copyWith(
                             color: secondaryColor,
                           ),
                         ),
                         Text(
                           '$name! 👋',
-                          style: GoogleFonts.outfit(
-                            fontSize: 26,
-                            fontWeight: FontWeight.bold,
-                            color: textColor,
-                          ),
+                          style: Theme.of(context).textTheme.headlineSmall
+                              ?.copyWith(
+                                fontWeight: FontWeight.bold,
+                                color: textColor,
+                              ),
                         ),
                         const SizedBox(height: 8),
                         // Profile Status
@@ -175,11 +176,11 @@ class PersonalHeader extends ConsumerWidget {
                                 const SizedBox(width: 6),
                                 Text(
                                   status,
-                                  style: GoogleFonts.outfit(
-                                    fontSize: 12,
-                                    color: textColor.withValues(alpha: 0.8),
-                                    fontWeight: FontWeight.w600,
-                                  ),
+                                  style: Theme.of(context).textTheme.labelMedium
+                                      ?.copyWith(
+                                        color: textColor.withValues(alpha: 0.8),
+                                        fontWeight: FontWeight.w600,
+                                      ),
                                 ),
                                 const SizedBox(width: 4),
                                 Icon(
@@ -236,11 +237,11 @@ class PersonalHeader extends ConsumerWidget {
                                 alignment: Alignment.center,
                                 child: Text(
                                   name.isNotEmpty ? name[0].toUpperCase() : 'M',
-                                  style: GoogleFonts.outfit(
-                                    fontSize: 30,
-                                    fontWeight: FontWeight.bold,
-                                    color: Colors.white,
-                                  ),
+                                  style: Theme.of(context).textTheme.headlineMedium
+                                      ?.copyWith(
+                                        fontWeight: FontWeight.bold,
+                                        color: Colors.white,
+                                      ),
                                 ),
                               ),
                       ),
@@ -253,6 +254,18 @@ class PersonalHeader extends ConsumerWidget {
         ),
       ),
     );
+  }
+
+  String _statusLabel(AppLocalizations l10n, UserProfile? profile) {
+    if (profile == null) return l10n.statusWelcome;
+    switch (profile.status) {
+      case UserStatus.pregnant:
+        return l10n.statusPregnant;
+      case UserStatus.hope:
+        return l10n.statusHope;
+      case UserStatus.mom:
+        return l10n.statusMom;
+    }
   }
 }
 

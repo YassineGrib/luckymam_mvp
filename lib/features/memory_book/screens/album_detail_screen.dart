@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
+import '../../../core/theme/app_typography.dart';
 
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_spacing.dart';
@@ -49,7 +49,7 @@ class AlbumDetailScreen extends StatelessWidget {
               ),
               title: Text(
                 album.title,
-                style: GoogleFonts.outfit(
+                style: AppTypography.fromContext(context, 
                   fontSize: 18,
                   fontWeight: FontWeight.bold,
                   color: Colors.white,
@@ -106,7 +106,7 @@ class AlbumDetailScreen extends StatelessWidget {
                         const SizedBox(width: 12),
                         Text(
                           album.subtitle,
-                          style: GoogleFonts.outfit(
+                          style: AppTypography.fromContext(context, 
                             fontSize: 14,
                             color: Colors.white70,
                           ),
@@ -139,6 +139,7 @@ class AlbumDetailScreen extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: [
                   _buildStat(
+                    context,
                     Icons.photo_rounded,
                     '${album.count}',
                     'Photos',
@@ -151,6 +152,7 @@ class AlbumDetailScreen extends StatelessWidget {
                     color: secondaryText.withValues(alpha: 0.2),
                   ),
                   _buildStat(
+                    context,
                     Icons.mic_rounded,
                     '${album.capsules.where((c) => c.hasAudio).length}',
                     'Audios',
@@ -163,6 +165,7 @@ class AlbumDetailScreen extends StatelessWidget {
                     color: secondaryText.withValues(alpha: 0.2),
                   ),
                   _buildStat(
+                    context,
                     Icons.favorite_rounded,
                     '${album.capsules.where((c) => c.isFavorite).length}',
                     'Favoris',
@@ -201,6 +204,7 @@ class AlbumDetailScreen extends StatelessWidget {
   }
 
   Widget _buildStat(
+    BuildContext context,
     IconData icon,
     String value,
     String label,
@@ -217,7 +221,7 @@ class AlbumDetailScreen extends StatelessWidget {
             const SizedBox(width: 4),
             Text(
               value,
-              style: GoogleFonts.outfit(
+              style: AppTypography.fromContext(context, 
                 fontSize: 16,
                 fontWeight: FontWeight.bold,
                 color: textColor,
@@ -228,7 +232,7 @@ class AlbumDetailScreen extends StatelessWidget {
         const SizedBox(height: 2),
         Text(
           label,
-          style: GoogleFonts.outfit(fontSize: 11, color: secondaryText),
+          style: AppTypography.fromContext(context, fontSize: 11, color: secondaryText),
         ),
       ],
     );

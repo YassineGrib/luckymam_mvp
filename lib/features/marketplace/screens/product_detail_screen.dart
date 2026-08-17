@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
+import '../../../core/theme/app_typography.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:google_fonts/google_fonts.dart';
 
+import '../../../core/extensions/l10n_extension.dart';
 import '../../../core/services/analytics_service.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_spacing.dart';
-import '../models/marketplace_order.dart';
 import '../models/marketplace_product.dart';
 import '../providers/marketplace_providers.dart';
 import '../providers/order_providers.dart';
@@ -38,6 +38,7 @@ class _ProductDetailScreenState extends ConsumerState<ProductDetailScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = context.l10n;
     final lang = Localizations.localeOf(context).languageCode;
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final bgColor = isDark
@@ -51,6 +52,7 @@ class _ProductDetailScreenState extends ConsumerState<ProductDetailScreen> {
     final product = widget.product;
     final categoryColor = product.category.color;
     final partner = ref.watch(partnerByIdProvider(product.partnerId));
+    final vendorLabel = ref.watch(productVendorLabelProvider(product));
     final imageUrl = product.safeImageUrl;
 
     return Scaffold(
@@ -108,7 +110,7 @@ class _ProductDetailScreenState extends ConsumerState<ProductDetailScreen> {
                             const SizedBox(width: 5),
                             Text(
                               product.category.getLabel(lang),
-                              style: GoogleFonts.outfit(
+                              style: AppTypography.fromContext(context, 
                                 fontSize: 12,
                                 fontWeight: FontWeight.w600,
                                 color: categoryColor,
@@ -120,7 +122,7 @@ class _ProductDetailScreenState extends ConsumerState<ProductDetailScreen> {
                       const Spacer(),
                       Text(
                         product.formattedPrice,
-                        style: GoogleFonts.outfit(
+                        style: AppTypography.fromContext(context, 
                           fontSize: 22,
                           fontWeight: FontWeight.bold,
                           color: categoryColor,
@@ -132,8 +134,8 @@ class _ProductDetailScreenState extends ConsumerState<ProductDetailScreen> {
 
                   // Name
                   Text(
-                    product.name,
-                    style: GoogleFonts.outfit(
+                    product.displayName(lang),
+                    style: AppTypography.fromContext(context, 
                       fontSize: 22,
                       fontWeight: FontWeight.bold,
                       color: textColor,
@@ -144,8 +146,8 @@ class _ProductDetailScreenState extends ConsumerState<ProductDetailScreen> {
 
                   // Description
                   Text(
-                    product.description,
-                    style: GoogleFonts.outfit(
+                    product.displayDescription(lang),
+                    style: AppTypography.fromContext(context, 
                       fontSize: 14,
                       color: secondaryText,
                       height: 1.55,
@@ -153,22 +155,16 @@ class _ProductDetailScreenState extends ConsumerState<ProductDetailScreen> {
                   ),
 
                   // Highlights
-                  if (product.highlights.isNotEmpty) ...[
+                  if (product.displayHighlights(lang).isNotEmpty) ...[
                     const SizedBox(height: AppSpacing.lg),
                     Text(
-                      lang == 'ar'
-                          ? 'النقاط الرئيسية'
-                          : lang == 'en'
-                              ? 'Highlights'
-                              : 'Points clés',
-                      style: GoogleFonts.outfit(
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
+                      l10n.productHighlights,
+                      style: Theme.of(context).textTheme.titleMedium?.copyWith(
                         color: textColor,
                       ),
                     ),
                     const SizedBox(height: AppSpacing.xs),
-                    ...product.highlights.map(
+                    ...product.displayHighlights(lang).map(
                       (point) => Padding(
                         padding: const EdgeInsets.only(bottom: 6),
                         child: Row(
@@ -186,7 +182,7 @@ class _ProductDetailScreenState extends ConsumerState<ProductDetailScreen> {
                             Expanded(
                               child: Text(
                                 point,
-                                style: GoogleFonts.outfit(
+                                style: AppTypography.fromContext(context, 
                                   fontSize: 13.5,
                                   color: textColor,
                                   height: 1.4,
@@ -199,84 +195,76 @@ class _ProductDetailScreenState extends ConsumerState<ProductDetailScreen> {
                     ),
                   ],
 
-                  // Partner card
-                  if (partner != null) ...[
-                    const SizedBox(height: AppSpacing.lg),
-                    Container(
-                      padding: const EdgeInsets.all(AppSpacing.md),
-                      decoration: BoxDecoration(
-                        color: isDark ? AppColors.surfaceDark : Colors.white,
-                        borderRadius: BorderRadius.circular(16),
-                        border: Border.all(
-                          color: partner.color.withValues(alpha: 0.3),
-                        ),
-                      ),
-                      child: Row(
-                        children: [
-                          Container(
-                            width: 46,
-                            height: 46,
-                            decoration: BoxDecoration(
-                              color: partner.color.withValues(alpha: 0.12),
-                              borderRadius: BorderRadius.circular(12),
-                            ),
-                            child: Center(
-                              child: Icon(
-                                partner.icon,
-                                size: 22,
-                                color: partner.color,
-                              ),
-                            ),
-                          ),
-                          const SizedBox(width: AppSpacing.sm),
-                          Expanded(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  partner.name,
-                                  style: GoogleFonts.outfit(
-                                    fontSize: 15,
-                                    fontWeight: FontWeight.w700,
-                                    color: textColor,
-                                  ),
-                                ),
-                                Text(
-                                  partner.tagline,
-                                  style: GoogleFonts.outfit(
-                                    fontSize: 12,
-                                    color: secondaryText,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                          Container(
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 8,
-                              vertical: 4,
-                            ),
-                            decoration: BoxDecoration(
-                              color: partner.color.withValues(alpha: 0.1),
-                              borderRadius: BorderRadius.circular(8),
-                            ),
-                            child: Text(
-                              lang == 'ar'
-                                  ? 'شريك'
-                                  : lang == 'en'
-                                      ? 'Partner'
-                                      : 'Partenaire',
-                              style: GoogleFonts.outfit(
-                                fontSize: 11,
-                                fontWeight: FontWeight.w600,
-                                color: partner.color,
-                              ),
-                            ),
-                          ),
-                        ],
+                  // Partner / vendor card
+                  const SizedBox(height: AppSpacing.lg),
+                  Container(
+                    padding: const EdgeInsets.all(AppSpacing.md),
+                    decoration: BoxDecoration(
+                      color: isDark ? AppColors.surfaceDark : Colors.white,
+                      borderRadius: BorderRadius.circular(16),
+                      border: Border.all(
+                        color: categoryColor.withValues(alpha: 0.3),
                       ),
                     ),
-                  ],
+                    child: Row(
+                      children: [
+                        Container(
+                          width: 46,
+                          height: 46,
+                          decoration: BoxDecoration(
+                            color: categoryColor.withValues(alpha: 0.12),
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          child: Center(
+                            child: Icon(
+                              partner?.icon ?? product.category.icon,
+                              size: 22,
+                              color: partner?.color ?? categoryColor,
+                            ),
+                          ),
+                        ),
+                        const SizedBox(width: AppSpacing.sm),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                vendorLabel,
+                                style: AppTypography.fromContext(context, 
+                                  fontSize: 15,
+                                  fontWeight: FontWeight.w700,
+                                  color: textColor,
+                                ),
+                              ),
+                              Text(
+                                partner?.tagline ?? l10n.productPartnerDefault,
+                                style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                                  color: secondaryText,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        Container(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 8,
+                            vertical: 4,
+                          ),
+                          decoration: BoxDecoration(
+                            color: categoryColor.withValues(alpha: 0.1),
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          child: Text(
+                            l10n.productPartnerBadge,
+                            style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                              fontWeight: FontWeight.w600,
+                              color: categoryColor,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
 
                   const SizedBox(height: 120),
                 ],
@@ -290,7 +278,7 @@ class _ProductDetailScreenState extends ConsumerState<ProductDetailScreen> {
       bottomNavigationBar: SafeArea(
         top: false,
         child: Padding(
-          padding: const EdgeInsets.fromLTRB(20, 8, 20, 12),
+          padding: const EdgeInsetsDirectional.fromSTEB(20, 8, 20, 12),
           child: Container(
             decoration: BoxDecoration(
               gradient: AppColors.primaryGradient,
@@ -304,18 +292,18 @@ class _ProductDetailScreenState extends ConsumerState<ProductDetailScreen> {
               ],
             ),
             child: ElevatedButton.icon(
-              onPressed: () => _onCommander(context, partner),
+              onPressed: product.isInStock
+                  ? () => _onCommander(context)
+                  : null,
               icon: const Icon(
                 Icons.shopping_bag_rounded,
                 color: Colors.white,
               ),
               label: Text(
-                lang == 'ar'
-                    ? 'طلب'
-                    : lang == 'en'
-                        ? 'Order'
-                        : 'Commander',
-                style: GoogleFonts.outfit(
+                product.isInStock
+                    ? l10n.productOrder
+                    : l10n.productOutOfStock,
+                style: AppTypography.fromContext(context, 
                   fontSize: 16,
                   fontWeight: FontWeight.bold,
                   color: Colors.white,
@@ -357,7 +345,8 @@ class _ProductDetailScreenState extends ConsumerState<ProductDetailScreen> {
 
   /// Opens the add-to-cart sheet: quantity picker + running total, then
   /// adds the line to the session cart (LM2-139 order flow).
-  void _onCommander(BuildContext context, MarketplacePartner? partner) {
+  void _onCommander(BuildContext context) {
+    final l10n = context.l10n;
     final lang = Localizations.localeOf(context).languageCode;
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final textColor = isDark ? Colors.white : AppColors.onSurfaceLight;
@@ -365,8 +354,11 @@ class _ProductDetailScreenState extends ConsumerState<ProductDetailScreen> {
         ? AppColors.textSecondaryDark
         : AppColors.textSecondaryLight;
     final product = widget.product;
+    if (!product.isInStock) return;
+
     final categoryColor = product.category.color;
     var quantity = 1;
+    final maxQty = product.maxOrderQuantity;
 
     showModalBottomSheet(
       context: context,
@@ -406,8 +398,8 @@ class _ProductDetailScreenState extends ConsumerState<ProductDetailScreen> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          product.name,
-                          style: GoogleFonts.outfit(
+                          product.displayName(lang),
+                          style: AppTypography.fromContext(context, 
                             fontSize: 14,
                             fontWeight: FontWeight.w600,
                             color: textColor,
@@ -417,7 +409,7 @@ class _ProductDetailScreenState extends ConsumerState<ProductDetailScreen> {
                         ),
                         Text(
                           product.formattedPrice,
-                          style: GoogleFonts.outfit(
+                          style: AppTypography.fromContext(context, 
                             fontSize: 13,
                             fontWeight: FontWeight.w700,
                             color: categoryColor,
@@ -435,13 +427,8 @@ class _ProductDetailScreenState extends ConsumerState<ProductDetailScreen> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text(
-                    lang == 'ar'
-                        ? 'الكمية'
-                        : lang == 'en'
-                            ? 'Quantity'
-                            : 'Quantité',
-                    style: GoogleFonts.outfit(
-                      fontSize: 14,
+                    l10n.productQuantity,
+                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                       color: secondaryText,
                     ),
                   ),
@@ -457,7 +444,7 @@ class _ProductDetailScreenState extends ConsumerState<ProductDetailScreen> {
                         child: Center(
                           child: Text(
                             '$quantity',
-                            style: GoogleFonts.outfit(
+                            style: AppTypography.fromContext(context, 
                               fontSize: 18,
                               fontWeight: FontWeight.bold,
                               color: textColor,
@@ -467,7 +454,7 @@ class _ProductDetailScreenState extends ConsumerState<ProductDetailScreen> {
                       ),
                       _SheetQtyButton(
                         icon: Icons.add_rounded,
-                        enabled: quantity < CartItem.maxQuantity,
+                        enabled: quantity < maxQty,
                         onTap: () => setSheetState(() => quantity++),
                       ),
                     ],
@@ -493,13 +480,7 @@ class _ProductDetailScreenState extends ConsumerState<ProductDetailScreen> {
                       if (!added) {
                         ScaffoldMessenger.of(context).showSnackBar(
                           SnackBar(
-                            content: Text(
-                              lang == 'ar'
-                                  ? 'تم الوصول إلى الحد الأقصى للكمية لهذا المنتج'
-                                  : lang == 'en'
-                                      ? 'Maximum quantity reached for this product'
-                                      : 'Quantité maximale atteinte pour ce produit',
-                            ),
+                            content: Text(l10n.productMaxQtyReached),
                             behavior: SnackBarBehavior.floating,
                             backgroundColor: AppColors.warning,
                           ),
@@ -516,20 +497,14 @@ class _ProductDetailScreenState extends ConsumerState<ProductDetailScreen> {
                       ScaffoldMessenger.of(context).showSnackBar(
                         SnackBar(
                           content: Text(
-                            lang == 'ar'
-                                ? 'تمت إضافة ${product.name} إلى السلة'
-                                : lang == 'en'
-                                    ? '${product.name} added to cart'
-                                    : '${product.name} ajouté au panier',
+                            l10n.productAddedToCart(
+                              product.displayName(lang),
+                            ),
                           ),
                           behavior: SnackBarBehavior.floating,
                           backgroundColor: AppColors.success,
                           action: SnackBarAction(
-                            label: lang == 'ar'
-                                ? 'عرض السلة'
-                                : lang == 'en'
-                                    ? 'View Cart'
-                                    : 'Voir le panier',
+                            label: l10n.productViewCart,
                             textColor: Colors.white,
                             onPressed: () => Navigator.of(context).push(
                               MaterialPageRoute(
@@ -545,12 +520,8 @@ class _ProductDetailScreenState extends ConsumerState<ProductDetailScreen> {
                       color: Colors.white,
                     ),
                     label: Text(
-                      lang == 'ar'
-                          ? 'إضافة إلى السلة'
-                          : lang == 'en'
-                              ? 'Add to Cart'
-                              : 'Ajouter au panier',
-                      style: GoogleFonts.outfit(
+                      l10n.productAddToCart,
+                      style: AppTypography.fromContext(context, 
                         fontSize: 15,
                         fontWeight: FontWeight.bold,
                         color: Colors.white,

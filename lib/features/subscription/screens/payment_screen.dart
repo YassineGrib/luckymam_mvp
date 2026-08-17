@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
+import '../../../core/theme/app_typography.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:google_fonts/google_fonts.dart';
 
+import '../../../core/extensions/l10n_extension.dart';
 import '../../../core/theme/app_colors.dart';
+import '../../../l10n/app_localizations.dart';
+import '../subscription_plan_l10n.dart';
 import '../models/subscription_models.dart';
 import '../providers/subscription_providers.dart';
 
@@ -36,6 +39,7 @@ class _PaymentScreenState extends ConsumerState<PaymentScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = context.l10n;
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final bgColor = isDark
         ? AppColors.backgroundDark
@@ -60,15 +64,18 @@ class _PaymentScreenState extends ConsumerState<PaymentScreen> {
         setState(() => _showSuccess = true);
         ref.read(subscriptionActionsProvider.notifier).clearMessages();
       }
-      if (next.error != null) {
+      if (next.errorDetails != null) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(next.error!), backgroundColor: Colors.red),
+          SnackBar(
+            content: Text(l10n.subscriptionSnackError(next.errorDetails!)),
+            backgroundColor: Colors.red,
+          ),
         );
         ref.read(subscriptionActionsProvider.notifier).clearMessages();
       }
     });
 
-    if (_showSuccess) return _buildSuccessView(context, textColor, plan);
+    if (_showSuccess) return _buildSuccessView(context, textColor, plan, l10n);
 
     return Scaffold(
       backgroundColor: bgColor,
@@ -90,8 +97,8 @@ class _PaymentScreenState extends ConsumerState<PaymentScreen> {
                   const SizedBox(width: 4),
                   Expanded(
                     child: Text(
-                      'Paiement',
-                      style: GoogleFonts.outfit(
+                      l10n.paymentTitle,
+                      style: AppTypography.fromContext(context, 
                         fontSize: 22,
                         fontWeight: FontWeight.bold,
                         color: textColor,
@@ -109,8 +116,8 @@ class _PaymentScreenState extends ConsumerState<PaymentScreen> {
                       borderRadius: BorderRadius.circular(8),
                     ),
                     child: Text(
-                      'BaridiMob',
-                      style: GoogleFonts.outfit(
+                      l10n.paymentBaridiMob,
+                      style: AppTypography.fromContext(context, 
                         fontSize: 12,
                         fontWeight: FontWeight.bold,
                         color: const Color(0xFF00695C),
@@ -151,16 +158,16 @@ class _PaymentScreenState extends ConsumerState<PaymentScreen> {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Text(
-                                  plan.title,
-                                  style: GoogleFonts.outfit(
+                                  plan.localizedTitle(l10n),
+                                  style: AppTypography.fromContext(context, 
                                     fontSize: 18,
                                     fontWeight: FontWeight.bold,
                                     color: Colors.white,
                                   ),
                                 ),
                                 Text(
-                                  plan.subtitle,
-                                  style: GoogleFonts.outfit(
+                                  plan.localizedSubtitle(l10n),
+                                  style: AppTypography.fromContext(context, 
                                     fontSize: 13,
                                     color: Colors.white70,
                                   ),
@@ -172,16 +179,16 @@ class _PaymentScreenState extends ConsumerState<PaymentScreen> {
                             crossAxisAlignment: CrossAxisAlignment.end,
                             children: [
                               Text(
-                                '${plan.priceDZD} DZD',
-                                style: GoogleFonts.outfit(
+                                l10n.paymentPriceDzd(plan.priceDZD),
+                                style: AppTypography.fromContext(context, 
                                   fontSize: 22,
                                   fontWeight: FontWeight.bold,
                                   color: Colors.white,
                                 ),
                               ),
                               Text(
-                                plan.billingCycle,
-                                style: GoogleFonts.outfit(
+                                plan.localizedBillingCycle(l10n),
+                                style: AppTypography.fromContext(context, 
                                   fontSize: 12,
                                   color: Colors.white60,
                                 ),
@@ -196,8 +203,8 @@ class _PaymentScreenState extends ConsumerState<PaymentScreen> {
 
                     // Payment method selection
                     Text(
-                      'Moyen de paiement',
-                      style: GoogleFonts.outfit(
+                      l10n.paymentMethodTitle,
+                      style: AppTypography.fromContext(context, 
                         fontSize: 16,
                         fontWeight: FontWeight.bold,
                         color: textColor,
@@ -241,8 +248,8 @@ class _PaymentScreenState extends ConsumerState<PaymentScreen> {
                                   ),
                                   const SizedBox(height: 6),
                                   Text(
-                                    method.labelFr,
-                                    style: GoogleFonts.outfit(
+                                    _paymentMethodLabel(method, l10n),
+                                    style: AppTypography.fromContext(context, 
                                       fontSize: 14,
                                       fontWeight: FontWeight.bold,
                                       color: isSelected
@@ -251,8 +258,8 @@ class _PaymentScreenState extends ConsumerState<PaymentScreen> {
                                     ),
                                   ),
                                   Text(
-                                    method.description,
-                                    style: GoogleFonts.outfit(
+                                    _paymentMethodDescription(method, l10n),
+                                    style: AppTypography.fromContext(context, 
                                       fontSize: 11,
                                       color: subTextColor,
                                     ),
@@ -269,8 +276,8 @@ class _PaymentScreenState extends ConsumerState<PaymentScreen> {
 
                     // Card details
                     Text(
-                      'Détails de la carte',
-                      style: GoogleFonts.outfit(
+                      l10n.paymentCardDetailsTitle,
+                      style: AppTypography.fromContext(context, 
                         fontSize: 16,
                         fontWeight: FontWeight.bold,
                         color: textColor,
@@ -280,8 +287,8 @@ class _PaymentScreenState extends ConsumerState<PaymentScreen> {
 
                     // Card holder
                     _buildField(
-                      label: 'Titulaire de la carte',
-                      hint: 'Nom complet',
+                      label: l10n.paymentCardHolderLabel,
+                      hint: l10n.name,
                       controller: _holderCtrl,
                       icon: Icons.person_outline_rounded,
                       inputBg: inputBg,
@@ -292,8 +299,8 @@ class _PaymentScreenState extends ConsumerState<PaymentScreen> {
 
                     // Card number
                     _buildField(
-                      label: 'Numéro de carte',
-                      hint: '0000 0000 0000 0000',
+                      label: l10n.paymentCardNumberLabel,
+                      hint: l10n.paymentCardNumberHint,
                       controller: _cardNumberCtrl,
                       icon: Icons.credit_card_rounded,
                       inputBg: inputBg,
@@ -313,8 +320,8 @@ class _PaymentScreenState extends ConsumerState<PaymentScreen> {
                       children: [
                         Expanded(
                           child: _buildField(
-                            label: 'Expiration',
-                            hint: 'MM/AA',
+                            label: l10n.paymentExpiryLabel,
+                            hint: l10n.paymentExpiryHint,
                             controller: _expiryCtrl,
                             icon: Icons.calendar_today_rounded,
                             inputBg: inputBg,
@@ -331,8 +338,8 @@ class _PaymentScreenState extends ConsumerState<PaymentScreen> {
                         const SizedBox(width: 12),
                         Expanded(
                           child: _buildField(
-                            label: 'CVV',
-                            hint: '***',
+                            label: l10n.paymentCvvLabel,
+                            hint: l10n.paymentCvvHint,
                             controller: _cvvCtrl,
                             icon: Icons.lock_outline_rounded,
                             inputBg: inputBg,
@@ -368,8 +375,8 @@ class _PaymentScreenState extends ConsumerState<PaymentScreen> {
                           const SizedBox(width: 12),
                           Expanded(
                             child: Text(
-                              'Paiement sécurisé via BaridiMob. Vos données bancaires sont protégées.',
-                              style: GoogleFonts.outfit(
+                              l10n.paymentSecurityNotice,
+                              style: AppTypography.fromContext(context, 
                                 fontSize: 12,
                                 color: const Color(0xFF00695C),
                               ),
@@ -396,8 +403,8 @@ class _PaymentScreenState extends ConsumerState<PaymentScreen> {
                           ),
                         ),
                         child: Text(
-                          'Confirmer le paiement • ${plan.priceDZD} DZD',
-                          style: GoogleFonts.outfit(
+                          l10n.paymentConfirmButton(plan.priceDZD),
+                          style: AppTypography.fromContext(context, 
                             fontSize: 16,
                             fontWeight: FontWeight.bold,
                           ),
@@ -412,6 +419,24 @@ class _PaymentScreenState extends ConsumerState<PaymentScreen> {
         ),
       ),
     );
+  }
+
+  String _paymentMethodLabel(PaymentMethod method, AppLocalizations l10n) {
+    switch (method) {
+      case PaymentMethod.cib:
+        return l10n.paymentMethodCib;
+      case PaymentMethod.edahabia:
+        return l10n.paymentMethodEdahabia;
+    }
+  }
+
+  String _paymentMethodDescription(PaymentMethod method, AppLocalizations l10n) {
+    switch (method) {
+      case PaymentMethod.cib:
+        return l10n.paymentMethodCibDescription;
+      case PaymentMethod.edahabia:
+        return l10n.paymentMethodEdahabiaDescription;
+    }
   }
 
   Widget _buildField({
@@ -431,7 +456,7 @@ class _PaymentScreenState extends ConsumerState<PaymentScreen> {
       children: [
         Text(
           label,
-          style: GoogleFonts.outfit(fontSize: 12, color: subTextColor),
+          style: AppTypography.fromContext(context, fontSize: 12, color: subTextColor),
         ),
         const SizedBox(height: 6),
         TextField(
@@ -439,10 +464,10 @@ class _PaymentScreenState extends ConsumerState<PaymentScreen> {
           obscureText: obscure,
           keyboardType: keyboardType,
           inputFormatters: formatters,
-          style: GoogleFonts.outfit(fontSize: 15, color: textColor),
+          style: AppTypography.fromContext(context, fontSize: 15, color: textColor),
           decoration: InputDecoration(
             hintText: hint,
-            hintStyle: GoogleFonts.outfit(
+            hintStyle: AppTypography.fromContext(context, 
               fontSize: 15,
               color: subTextColor.withValues(alpha: 0.5),
             ),
@@ -464,16 +489,21 @@ class _PaymentScreenState extends ConsumerState<PaymentScreen> {
   }
 
   void _onConfirm() {
-    // Simulate payment → upgrade tier
-    ref
-        .read(subscriptionActionsProvider.notifier)
-        .upgradeTo(widget.selectedPlan.tier);
+    final l10n = context.l10n;
+    final plan = widget.selectedPlan;
+    ref.read(subscriptionActionsProvider.notifier).upgradeTo(
+          plan.tier,
+          successMessage: l10n.subscriptionSnackUpgradeSuccess(
+            plan.localizedTitle(l10n),
+          ),
+        );
   }
 
   Widget _buildSuccessView(
     BuildContext context,
     Color textColor,
     SubscriptionPlan plan,
+    AppLocalizations l10n,
   ) {
     return Scaffold(
       backgroundColor: Theme.of(context).brightness == Brightness.dark
@@ -501,8 +531,8 @@ class _PaymentScreenState extends ConsumerState<PaymentScreen> {
                 ),
                 const SizedBox(height: 28),
                 Text(
-                  'Paiement réussi !',
-                  style: GoogleFonts.outfit(
+                  l10n.paymentSuccessTitle,
+                  style: AppTypography.fromContext(context, 
                     fontSize: 26,
                     fontWeight: FontWeight.bold,
                     color: textColor,
@@ -510,8 +540,8 @@ class _PaymentScreenState extends ConsumerState<PaymentScreen> {
                 ),
                 const SizedBox(height: 12),
                 Text(
-                  'Votre abonnement ${plan.title} est maintenant actif.',
-                  style: GoogleFonts.outfit(
+                  l10n.paymentSuccessActivePlan(plan.localizedTitle(l10n)),
+                  style: AppTypography.fromContext(context, 
                     fontSize: 15,
                     color: textColor.withValues(alpha: 0.7),
                   ),
@@ -535,8 +565,8 @@ class _PaymentScreenState extends ConsumerState<PaymentScreen> {
                         const SizedBox(width: 12),
                         Expanded(
                           child: Text(
-                            'Votre album imprimé gratuit vous attend ! Rendez-vous dans votre profil.',
-                            style: GoogleFonts.outfit(
+                            l10n.paymentSuccessAlbumPerk,
+                            style: AppTypography.fromContext(context, 
                               fontSize: 13,
                               color: const Color(0xFFFF6F00),
                             ),
@@ -562,8 +592,8 @@ class _PaymentScreenState extends ConsumerState<PaymentScreen> {
                       ),
                     ),
                     child: Text(
-                      'Retour à l\'accueil',
-                      style: GoogleFonts.outfit(
+                      l10n.checkoutBackHome,
+                      style: AppTypography.fromContext(context, 
                         fontSize: 16,
                         fontWeight: FontWeight.bold,
                       ),

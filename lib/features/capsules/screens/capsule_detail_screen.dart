@@ -2,12 +2,12 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gal/gal.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:shimmer/shimmer.dart';
 
+import '../../../core/extensions/l10n_extension.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_spacing.dart';
 import '../../profile/providers/profile_providers.dart';
@@ -34,6 +34,8 @@ class _CapsuleDetailScreenState extends ConsumerState<CapsuleDetailScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = context.l10n;
+    final lang = Localizations.localeOf(context).languageCode;
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final isPremium = ref.watch(isPremiumProvider);
 
@@ -135,8 +137,8 @@ class _CapsuleDetailScreenState extends ConsumerState<CapsuleDetailScreen> {
                                     : Colors.black26,
                               ),
                               tooltip: isPremium
-                                  ? 'Partager'
-                                  : 'Premium requis',
+                                  ? l10n.share
+                                  : l10n.premiumRequired,
                               icon: Stack(
                                 children: [
                                   const Icon(
@@ -144,8 +146,8 @@ class _CapsuleDetailScreenState extends ConsumerState<CapsuleDetailScreen> {
                                     color: Colors.white,
                                   ),
                                   if (!isPremium)
-                                    Positioned(
-                                      right: 0,
+                                    PositionedDirectional(
+                                      end: 0,
                                       top: 0,
                                       child: Container(
                                         width: 8,
@@ -170,8 +172,8 @@ class _CapsuleDetailScreenState extends ConsumerState<CapsuleDetailScreen> {
                                     : Colors.black26,
                               ),
                               tooltip: isPremium
-                                  ? 'Enregistrer'
-                                  : 'Premium requis',
+                                  ? l10n.albumSave
+                                  : l10n.premiumRequired,
                               icon: Stack(
                                 children: [
                                   const Icon(
@@ -179,8 +181,8 @@ class _CapsuleDetailScreenState extends ConsumerState<CapsuleDetailScreen> {
                                     color: Colors.white,
                                   ),
                                   if (!isPremium)
-                                    Positioned(
-                                      right: 0,
+                                    PositionedDirectional(
+                                      end: 0,
                                       top: 0,
                                       child: Container(
                                         width: 8,
@@ -231,10 +233,11 @@ class _CapsuleDetailScreenState extends ConsumerState<CapsuleDetailScreen> {
                                       ),
                                       const SizedBox(width: 8),
                                       Text(
-                                        'Supprimer',
-                                        style: GoogleFonts.outfit(
-                                          color: AppColors.error,
-                                        ),
+                                        l10n.delete,
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .bodyMedium
+                                            ?.copyWith(color: AppColors.error),
                                       ),
                                     ],
                                   ),
@@ -276,19 +279,25 @@ class _CapsuleDetailScreenState extends ConsumerState<CapsuleDetailScreen> {
                                         CrossAxisAlignment.start,
                                     children: [
                                       Text(
-                                        capsule.emotion.labelFr,
-                                        style: GoogleFonts.outfit(
-                                          fontSize: 18,
-                                          fontWeight: FontWeight.bold,
-                                          color: Colors.white,
-                                        ),
+                                        capsule.emotion.getLabel(lang),
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .titleMedium
+                                            ?.copyWith(
+                                              fontSize: 18,
+                                              fontWeight: FontWeight.bold,
+                                              color: Colors.white,
+                                            ),
                                       ),
                                       Text(
-                                        _formatDetails(childName),
-                                        style: GoogleFonts.outfit(
-                                          fontSize: 13,
-                                          color: Colors.white70,
-                                        ),
+                                        _formatDetails(context, childName),
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .bodySmall
+                                            ?.copyWith(
+                                              fontSize: 13,
+                                              color: Colors.white70,
+                                            ),
                                       ),
                                     ],
                                   ),
@@ -306,12 +315,12 @@ class _CapsuleDetailScreenState extends ConsumerState<CapsuleDetailScreen> {
                                   if (capsule.category != null)
                                     _InfoBadge(
                                       label:
-                                          '${capsule.category!.emoji} ${capsule.category!.labelFr}',
+                                          '${capsule.category!.emoji} ${capsule.category!.getLabel(lang)}',
                                     ),
                                   if (capsule.capturedAt != null)
                                     _InfoBadge(
                                       label:
-                                          '📅 ${DateFormat('d MMM yyyy', 'fr_FR').format(capsule.capturedAt!)}',
+                                          '📅 ${DateFormat('d MMM yyyy', lang).format(capsule.capturedAt!)}',
                                     ),
                                 ],
                               ),
@@ -349,10 +358,10 @@ class _CapsuleDetailScreenState extends ConsumerState<CapsuleDetailScreen> {
                                         ),
                                         child: Text(
                                           '#$tag',
-                                          style: GoogleFonts.outfit(
-                                            fontSize: 12,
-                                            color: Colors.white70,
-                                          ),
+                                          style: Theme.of(context)
+                                              .textTheme
+                                              .labelSmall
+                                              ?.copyWith(color: Colors.white70),
                                         ),
                                       ),
                                     )
@@ -383,8 +392,9 @@ class _CapsuleDetailScreenState extends ConsumerState<CapsuleDetailScreen> {
     );
   }
 
-  String _formatDetails(String? childName) {
-    final dateStr = DateFormat('d MMM yyyy', 'fr_FR').format(capsule.createdAt);
+  String _formatDetails(BuildContext context, String? childName) {
+    final lang = Localizations.localeOf(context).languageCode;
+    final dateStr = DateFormat('d MMM yyyy', lang).format(capsule.createdAt);
     if (childName != null) {
       return '$dateStr • $childName';
     }
@@ -403,12 +413,14 @@ class _CapsuleDetailScreenState extends ConsumerState<CapsuleDetailScreen> {
 
   /// Share the capsule image + title via system share sheet.
   Future<void> _shareCapsule(BuildContext context) async {
+    final l10n = context.l10n;
+    final lang = Localizations.localeOf(context).languageCode;
     try {
       final snack = ScaffoldMessenger.of(context);
       snack.showSnackBar(
-        const SnackBar(
-          content: Text('Préparation du partage…'),
-          duration: Duration(seconds: 2),
+        SnackBar(
+          content: Text(l10n.capsuleSharePreparing),
+          duration: const Duration(seconds: 2),
         ),
       );
       // Download image bytes
@@ -419,21 +431,23 @@ class _CapsuleDetailScreenState extends ConsumerState<CapsuleDetailScreen> {
         mimeType: 'image/jpeg',
       );
 
-      final text =
-          '✨ Un souvenir précieux via Luckymam\n${capsule.emotion.labelFr}';
+      final text = l10n.capsuleShareText(
+        capsule.emotion.getLabel(lang),
+      );
 
       await SharePlus.instance.share(ShareParams(files: [file], text: text));
     } catch (e) {
       if (context.mounted) {
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(SnackBar(content: Text('Erreur de partage: $e')));
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(l10n.capsuleShareError(e.toString()))),
+        );
       }
     }
   }
 
   /// Save the capsule image to the device gallery.
   Future<void> _saveCapsule(BuildContext context) async {
+    final l10n = context.l10n;
     try {
       // Request permission
       final hasAccess = await Gal.hasAccess(toAlbum: true);
@@ -442,7 +456,7 @@ class _CapsuleDetailScreenState extends ConsumerState<CapsuleDetailScreen> {
         if (!granted) {
           if (context.mounted) {
             ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(content: Text('Permission galerie refusée')),
+              SnackBar(content: Text(l10n.capsuleGalleryPermissionDenied)),
             );
           }
           return;
@@ -466,8 +480,10 @@ class _CapsuleDetailScreenState extends ConsumerState<CapsuleDetailScreen> {
                 ),
                 const SizedBox(width: 8),
                 Text(
-                  'Enregistré dans l\'album Luckymam 📸',
-                  style: GoogleFonts.outfit(color: Colors.white),
+                  l10n.capsuleSavedToGallery,
+                  style: Theme.of(
+                    context,
+                  ).textTheme.bodyMedium?.copyWith(color: Colors.white),
                 ),
               ],
             ),
@@ -478,15 +494,16 @@ class _CapsuleDetailScreenState extends ConsumerState<CapsuleDetailScreen> {
       }
     } catch (e) {
       if (context.mounted) {
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(SnackBar(content: Text('Erreur d\'enregistrement: $e')));
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(l10n.capsuleSaveError(e.toString()))),
+        );
       }
     }
   }
 
   /// Show upgrade prompt for free users.
   void _showUpgradePrompt(BuildContext context) {
+    final l10n = context.l10n;
     final isDark = Theme.of(context).brightness == Brightness.dark;
     showModalBottomSheet(
       context: context,
@@ -529,8 +546,8 @@ class _CapsuleDetailScreenState extends ConsumerState<CapsuleDetailScreen> {
             ),
             const SizedBox(height: AppSpacing.md),
             Text(
-              'Fonctionnalité Premium',
-              style: GoogleFonts.outfit(
+              l10n.capsulePremiumFeatureTitle,
+              style: Theme.of(context).textTheme.titleMedium?.copyWith(
                 fontSize: 18,
                 fontWeight: FontWeight.bold,
                 color: isDark ? Colors.white : AppColors.onSurfaceLight,
@@ -538,9 +555,9 @@ class _CapsuleDetailScreenState extends ConsumerState<CapsuleDetailScreen> {
             ),
             const SizedBox(height: 8),
             Text(
-              'Le partage et l\'enregistrement de capsules\nsont réservés aux abonnés Premium et VIP.',
+              l10n.capsulePremiumFeatureDesc,
               textAlign: TextAlign.center,
-              style: GoogleFonts.outfit(
+              style: Theme.of(context).textTheme.bodySmall?.copyWith(
                 fontSize: 13,
                 color: isDark
                     ? AppColors.textSecondaryDark
@@ -561,9 +578,9 @@ class _CapsuleDetailScreenState extends ConsumerState<CapsuleDetailScreen> {
                   borderRadius: BorderRadius.circular(14),
                 ),
                 child: Text(
-                  '🌟 Passer à Premium — 2 490 DA/an',
+                  l10n.capsulePremiumUpgradeCta,
                   textAlign: TextAlign.center,
-                  style: GoogleFonts.outfit(
+                  style: Theme.of(context).textTheme.labelLarge?.copyWith(
                     fontSize: 14,
                     fontWeight: FontWeight.bold,
                     color: Colors.white,
@@ -575,8 +592,8 @@ class _CapsuleDetailScreenState extends ConsumerState<CapsuleDetailScreen> {
             TextButton(
               onPressed: () => Navigator.pop(context),
               child: Text(
-                'Plus tard',
-                style: GoogleFonts.outfit(
+                l10n.later,
+                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                   color: isDark
                       ? AppColors.textSecondaryDark
                       : AppColors.textSecondaryLight,
@@ -591,6 +608,7 @@ class _CapsuleDetailScreenState extends ConsumerState<CapsuleDetailScreen> {
   }
 
   void _showDeleteConfirmation(BuildContext context, WidgetRef ref) {
+    final l10n = context.l10n;
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
     showDialog(
@@ -601,15 +619,15 @@ class _CapsuleDetailScreenState extends ConsumerState<CapsuleDetailScreen> {
             : AppColors.surfaceLight,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
         title: Text(
-          'Supprimer la capsule ?',
-          style: GoogleFonts.outfit(
+          l10n.capsuleDeleteTitle,
+          style: Theme.of(context).textTheme.titleMedium?.copyWith(
             fontWeight: FontWeight.bold,
             color: isDark ? Colors.white : AppColors.onSurfaceLight,
           ),
         ),
         content: Text(
-          'Cette action est irréversible. Le souvenir sera supprimé définitivement.',
-          style: GoogleFonts.outfit(
+          l10n.capsuleDeleteMessage,
+          style: Theme.of(context).textTheme.bodyMedium?.copyWith(
             color: isDark
                 ? AppColors.textSecondaryDark
                 : AppColors.textSecondaryLight,
@@ -619,8 +637,8 @@ class _CapsuleDetailScreenState extends ConsumerState<CapsuleDetailScreen> {
           TextButton(
             onPressed: () => Navigator.pop(context),
             child: Text(
-              'Annuler',
-              style: GoogleFonts.outfit(
+              l10n.albumCancel,
+              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                 color: isDark ? Colors.white70 : AppColors.textSecondaryLight,
               ),
             ),
@@ -636,8 +654,8 @@ class _CapsuleDetailScreenState extends ConsumerState<CapsuleDetailScreen> {
               }
             },
             child: Text(
-              'Supprimer',
-              style: GoogleFonts.outfit(
+              l10n.delete,
+              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                 color: AppColors.error,
                 fontWeight: FontWeight.w600,
               ),
@@ -738,8 +756,7 @@ class _InfoBadge extends StatelessWidget {
       ),
       child: Text(
         label,
-        style: GoogleFonts.outfit(
-          fontSize: 12,
+        style: Theme.of(context).textTheme.labelSmall?.copyWith(
           color: Colors.white,
           fontWeight: FontWeight.w500,
         ),

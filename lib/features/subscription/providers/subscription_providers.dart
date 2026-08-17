@@ -108,22 +108,22 @@ final albumClaimedProvider = StreamProvider<bool>((ref) {
 class SubscriptionActionsState {
   final bool isLoading;
   final String? successMessage;
-  final String? error;
+  final String? errorDetails;
 
   const SubscriptionActionsState({
     this.isLoading = false,
     this.successMessage,
-    this.error,
+    this.errorDetails,
   });
 
   SubscriptionActionsState copyWith({
     bool? isLoading,
     String? successMessage,
-    String? error,
+    String? errorDetails,
   }) => SubscriptionActionsState(
     isLoading: isLoading ?? this.isLoading,
     successMessage: successMessage,
-    error: error,
+    errorDetails: errorDetails,
   );
 }
 
@@ -133,7 +133,10 @@ class SubscriptionActionsNotifier
   SubscriptionActionsNotifier() : super(const SubscriptionActionsState());
 
   /// Simulate upgrading to a paid tier (stores in Firestore).
-  Future<void> upgradeTo(SubscriptionTier tier) async {
+  Future<void> upgradeTo(
+    SubscriptionTier tier, {
+    required String successMessage,
+  }) async {
     state = state.copyWith(isLoading: true);
     try {
       final uid = FirebaseAuth.instance.currentUser?.uid;
@@ -144,27 +147,25 @@ class SubscriptionActionsNotifier
         'subscriptionUpdatedAt': FieldValue.serverTimestamp(),
       }, SetOptions(merge: true));
 
-      state = SubscriptionActionsState(
-        successMessage: 'Abonnement ${tier.labelFr} activé !',
-      );
+      state = SubscriptionActionsState(successMessage: successMessage);
     } catch (e) {
-      state = SubscriptionActionsState(error: 'Erreur: $e');
+      state = SubscriptionActionsState(errorDetails: e.toString());
     }
   }
 
   /// Submit a VIP album claim.
-  Future<void> submitAlbumClaim(AlbumClaim claim) async {
+  Future<void> submitAlbumClaim(
+    AlbumClaim claim, {
+    required String successMessage,
+  }) async {
     state = state.copyWith(isLoading: true);
     try {
       await FirebaseFirestore.instance
           .collection('album_claims')
           .add(claim.toFirestore());
-      state = const SubscriptionActionsState(
-        successMessage:
-            'Demande d\'album envoyée ! Nous vous contacterons bientôt.',
-      );
+      state = SubscriptionActionsState(successMessage: successMessage);
     } catch (e) {
-      state = SubscriptionActionsState(error: 'Erreur: $e');
+      state = SubscriptionActionsState(errorDetails: e.toString());
     }
   }
 

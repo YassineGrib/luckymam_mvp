@@ -3,17 +3,13 @@ import 'dart:convert';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:intl/intl.dart';
 import 'package:timezone/data/latest.dart' as tz;
 import 'package:timezone/timezone.dart' as tz;
 
-// ─── Channel constants ────────────────────────────────────────────────────────
-const _vaccineChannelId = 'vaccine_channel';
-const _vaccineChannelName = 'Vaccinations';
-const _milestoneChannelId = 'milestone_channel';
-const _milestoneChannelName = 'Milestones';
-const _cycleChannelId = 'cycle_channel';
-const _cycleChannelName = 'Cycle Féminin';
+// ─── Channel IDs (stable; names/descriptions are localized at schedule time) ─
+const vaccineChannelId = 'vaccine_channel';
+const milestoneChannelId = 'milestone_channel';
+const cycleChannelId = 'cycle_channel';
 
 // ─── ID ranges (to avoid collisions) ─────────────────────────────────────────
 // Vaccine IDs:   any hashCode (from childId+groupId)
@@ -98,9 +94,11 @@ class NotificationService {
   /// Schedules a vaccine reminder 2 days before [dueDate] at 09:00.
   Future<void> scheduleVaccineReminder({
     required int id,
-    required String childName,
-    required String vaccineLabel,
+    required String title,
+    required String body,
     required DateTime dueDate,
+    required String channelName,
+    required String channelDesc,
   }) async {
     await _ensure();
     final scheduledDate = dueDate.subtract(const Duration(days: 2));
@@ -109,13 +107,12 @@ class NotificationService {
 
     await _zonedSchedule(
       id: id,
-      title: '💉 Rappel Vaccin – $childName',
-      body:
-          '$vaccineLabel prévu le ${DateFormat('dd/MM/yyyy').format(dueDate)}',
+      title: title,
+      body: body,
       scheduledDate: notify,
-      channelId: _vaccineChannelId,
-      channelName: _vaccineChannelName,
-      channelDesc: 'Rappels de vaccination',
+      channelId: vaccineChannelId,
+      channelName: channelName,
+      channelDesc: channelDesc,
       payload: 'vaccine',
     );
   }
@@ -125,9 +122,11 @@ class NotificationService {
   /// Schedules a milestone reminder 7 days before [dueDate] at 09:00.
   Future<void> scheduleMilestoneReminder({
     required int id,
-    required String childName,
-    required String milestoneTitle,
+    required String title,
+    required String body,
     required DateTime dueDate,
+    required String channelName,
+    required String channelDesc,
   }) async {
     await _ensure();
     final scheduledDate = dueDate.subtract(const Duration(days: 7));
@@ -136,12 +135,12 @@ class NotificationService {
 
     await _zonedSchedule(
       id: id,
-      title: '⭐ Étape à venir – $childName',
-      body: '"$milestoneTitle" dans 7 jours',
+      title: title,
+      body: body,
       scheduledDate: notify,
-      channelId: _milestoneChannelId,
-      channelName: _milestoneChannelName,
-      channelDesc: 'Alertes étapes de développement',
+      channelId: milestoneChannelId,
+      channelName: channelName,
+      channelDesc: channelDesc,
       payload: 'milestone',
     );
   }
@@ -153,9 +152,11 @@ class NotificationService {
     required int id,
     required String childId,
     required String milestoneId,
-    required String childName,
-    required String milestoneTitle,
+    required String title,
+    required String body,
     required DateTime scheduledFor,
+    required String channelName,
+    required String channelDesc,
   }) async {
     await _ensure();
     final now = tz.TZDateTime.now(tz.local);
@@ -177,12 +178,12 @@ class NotificationService {
 
     await _zonedSchedule(
       id: id,
-      title: '⏰ Rappel – $childName',
-      body: '"$milestoneTitle" — Appuyez pour ouvrir',
+      title: title,
+      body: body,
       scheduledDate: notify,
-      channelId: _milestoneChannelId,
-      channelName: _milestoneChannelName,
-      channelDesc: 'Alertes étapes de développement',
+      channelId: milestoneChannelId,
+      channelName: channelName,
+      channelDesc: channelDesc,
       payload: payload,
     );
   }
@@ -190,11 +191,17 @@ class NotificationService {
   // ─── Cycle Reminders ─────────────────────────────────────────────────────────
 
   /// Schedules 2 cycle notifications:
-  ///  - "Règles dans 2 jours" (2 days before [nextPeriodDate] at 08:00)
-  ///  - "Phase ovulatoire demain" (13 days after [lastPeriodDate] at 08:00)
+  ///  - period approaching (2 days before [nextPeriodDate] at 08:00)
+  ///  - ovulation window (13 days after [lastPeriodDate] at 08:00)
   Future<void> scheduleCycleReminders({
     required DateTime lastPeriodDate,
     required DateTime nextPeriodDate,
+    required String periodTitle,
+    required String periodBody,
+    required String ovulationTitle,
+    required String ovulationBody,
+    required String channelName,
+    required String channelDesc,
   }) async {
     await _ensure();
     final now = tz.TZDateTime.now(tz.local);
@@ -210,12 +217,12 @@ class NotificationService {
     if (periodAlert.isAfter(now)) {
       await _zonedSchedule(
         id: cycleNextPeriodId,
-        title: '🌸 Règles dans 2 jours',
-        body: 'Pensez à vous préparer pour votre prochain cycle.',
+        title: periodTitle,
+        body: periodBody,
         scheduledDate: periodAlert,
-        channelId: _cycleChannelId,
-        channelName: _cycleChannelName,
-        channelDesc: 'Rappels du cycle féminin',
+        channelId: cycleChannelId,
+        channelName: channelName,
+        channelDesc: channelDesc,
         payload: 'cycle_period',
       );
     }
@@ -227,12 +234,12 @@ class NotificationService {
     if (ovulationAlert.isAfter(now)) {
       await _zonedSchedule(
         id: cycleOvulationId,
-        title: '🌿 Phase Ovulatoire demain',
-        body: 'Votre période de fertilité maximale commence demain.',
+        title: ovulationTitle,
+        body: ovulationBody,
         scheduledDate: ovulationAlert,
-        channelId: _cycleChannelId,
-        channelName: _cycleChannelName,
-        channelDesc: 'Rappels du cycle féminin',
+        channelId: cycleChannelId,
+        channelName: channelName,
+        channelDesc: channelDesc,
         payload: 'cycle_ovulation',
       );
     }
@@ -246,6 +253,8 @@ class NotificationService {
     required String title,
     required String body,
     required DateTime scheduledDate,
+    required String channelName,
+    required String channelDesc,
   }) async {
     await _ensure();
     final notify = _atNineAm(scheduledDate);
@@ -255,9 +264,9 @@ class NotificationService {
       title: title,
       body: body,
       scheduledDate: notify,
-      channelId: _vaccineChannelId,
-      channelName: _vaccineChannelName,
-      channelDesc: 'Rappels de vaccination',
+      channelId: vaccineChannelId,
+      channelName: channelName,
+      channelDesc: channelDesc,
       payload: 'vaccine',
     );
   }

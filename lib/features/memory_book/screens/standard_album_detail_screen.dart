@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:google_fonts/google_fonts.dart';
 
+import '../../../core/extensions/l10n_extension.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_spacing.dart';
 import '../../capsules/models/capsule.dart';
@@ -48,7 +48,7 @@ class _StandardAlbumDetailScreenState
 
   @override
   Widget build(BuildContext context) {
-    final lang = Localizations.localeOf(context).languageCode;
+    final l10n = context.l10n;
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final bgColor = isDark
         ? AppColors.backgroundDark
@@ -65,24 +65,12 @@ class _StandardAlbumDetailScreenState
       body: albumAsync.when(
         loading: () => const Center(child: CircularProgressIndicator()),
         error: (e, _) => Center(
-          child: Text(
-            lang == 'ar'
-                ? 'خطأ: $e'
-                : lang == 'en'
-                    ? 'Error: $e'
-                    : 'Erreur : $e',
-          ),
+          child: Text(l10n.albumErrorWithMessage(e.toString())),
         ),
         data: (album) {
           if (album == null) {
             return Center(
-              child: Text(
-                lang == 'ar'
-                    ? 'الألبوم غير موجود'
-                    : lang == 'en'
-                        ? 'Album not found'
-                        : 'Album introuvable',
-              ),
+              child: Text(l10n.albumNotFound),
             );
           }
           return _StandardAlbumBody(
@@ -114,8 +102,8 @@ class _StandardAlbumBody extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = context.l10n;
     final capsulesAsync = ref.watch(capsulesByChildProvider(album.childId));
-    final lang = Localizations.localeOf(context).languageCode;
     final childrenAsync = ref.watch(childrenProvider);
     final childName = childrenAsync
         .whenOrNull(
@@ -134,7 +122,7 @@ class _StandardAlbumBody extends ConsumerWidget {
         printPages.add(
           AlbumPdfPage(
             imageUrl: capsule.photoUrl,
-            caption: lang == 'ar' ? 'الصفحة ${i + 1}' : 'Page ${i + 1}',
+            caption: l10n.albumPageCaption(i + 1),
           ),
         );
       }
@@ -147,15 +135,14 @@ class _StandardAlbumBody extends ConsumerWidget {
           backgroundColor: isDark ? AppColors.surfaceDark : Colors.white,
           foregroundColor: textColor,
           title: GestureDetector(
-            onTap: () => _renameAlbum(context, ref, lang),
+            onTap: () => _renameAlbum(context, ref),
             child: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
                 Flexible(
                   child: Text(
                     album.title,
-                    style: GoogleFonts.outfit(
-                      fontSize: 16,
+                    style: Theme.of(context).textTheme.titleMedium?.copyWith(
                       fontWeight: FontWeight.w600,
                       color: textColor,
                     ),
@@ -177,12 +164,10 @@ class _StandardAlbumBody extends ConsumerWidget {
           ),
           sliver: SliverToBoxAdapter(
             child: Text(
-              lang == 'ar'
-                  ? 'تم ملء ${album.filledCount}/${album.pageCount} صفحة · مسودة'
-                  : lang == 'en'
-                      ? '${album.filledCount}/${album.pageCount} pages filled · Draft'
-                      : '${album.filledCount}/${album.pageCount} pages remplies · Brouillon',
-              style: GoogleFonts.outfit(fontSize: 12, color: secondaryText),
+              l10n.albumPagesFilledDraft(album.filledCount, album.pageCount),
+              style: Theme.of(context).textTheme.labelMedium?.copyWith(
+                color: secondaryText,
+              ),
             ),
           ),
         ),
@@ -247,39 +232,24 @@ class _StandardAlbumBody extends ConsumerWidget {
     );
   }
 
-  void _renameAlbum(BuildContext context, WidgetRef ref, String lang) {
+  void _renameAlbum(BuildContext context, WidgetRef ref) {
+    final l10n = context.l10n;
     final controller = TextEditingController(text: album.title);
     showDialog(
       context: context,
       builder: (ctx) => AlertDialog(
-        title: Text(
-          lang == 'ar'
-              ? 'إعادة تسمية الألبوم'
-              : lang == 'en'
-                  ? 'Rename Album'
-                  : 'Renommer l\'album',
-        ),
+        title: Text(l10n.albumRenameTitle),
         content: TextField(
           controller: controller,
           autofocus: true,
           decoration: InputDecoration(
-            hintText: lang == 'ar'
-                ? 'عنوان الألبوم'
-                : lang == 'en'
-                    ? 'Album title'
-                    : 'Titre de l\'album',
+            hintText: l10n.albumTitleHint,
           ),
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(ctx),
-            child: Text(
-              lang == 'ar'
-                  ? 'إلغاء'
-                  : lang == 'en'
-                      ? 'Cancel'
-                      : 'Annuler',
-            ),
+            child: Text(l10n.albumCancel),
           ),
           FilledButton(
             onPressed: () {
@@ -291,13 +261,7 @@ class _StandardAlbumBody extends ConsumerWidget {
               }
               Navigator.pop(ctx);
             },
-            child: Text(
-              lang == 'ar'
-                  ? 'حفظ'
-                  : lang == 'en'
-                      ? 'Save'
-                      : 'Enregistrer',
-            ),
+            child: Text(l10n.albumSave),
           ),
         ],
       ),
@@ -362,7 +326,7 @@ class _EmptyPageTile extends ConsumerWidget {
   }
 
   void _showAddOptions(BuildContext context, WidgetRef ref) {
-    final lang = Localizations.localeOf(context).languageCode;
+    final l10n = context.l10n;
     showModalBottomSheet(
       context: context,
       backgroundColor: Colors.transparent,
@@ -379,13 +343,7 @@ class _EmptyPageTile extends ConsumerWidget {
               const SizedBox(height: 8),
               ListTile(
                 leading: Icon(Icons.photo_library_outlined, color: accent),
-                title: Text(
-                  lang == 'ar'
-                      ? 'اختيار كبسولة موجودة'
-                      : lang == 'en'
-                          ? 'Choose an existing capsule'
-                          : 'Choisir une capsule existante',
-                ),
+                title: Text(l10n.albumChooseExistingCapsule),
                 onTap: () {
                   Navigator.pop(ctx);
                   showModalBottomSheet(
@@ -410,13 +368,7 @@ class _EmptyPageTile extends ConsumerWidget {
               ),
               ListTile(
                 leading: Icon(Icons.add_a_photo_rounded, color: accent),
-                title: Text(
-                  lang == 'ar'
-                      ? 'إنشاء كبسولة جديدة'
-                      : lang == 'en'
-                          ? 'Create a new capsule'
-                          : 'Créer une nouvelle capsule',
-                ),
+                title: Text(l10n.albumCreateNewCapsule),
                 onTap: () {
                   Navigator.pop(ctx);
                   Navigator.of(context).push(

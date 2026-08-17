@@ -2,8 +2,9 @@
 // it now lives in the cupertino library.
 import 'package:flutter/cupertino.dart' show CupertinoPageTransitionsBuilder;
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
+
 import 'app_colors.dart';
+import 'app_typography.dart';
 
 /// App theme with dark-first design matching the reference UI.
 /// Features soft rounded corners, premium feel, and accessibility-compliant contrasts.
@@ -25,10 +26,11 @@ class AppTheme {
   // DARK THEME
   // ═══════════════════════════════════════════════════════════════════════════
 
-  static ThemeData get darkTheme {
+  static ThemeData darkTheme(Locale locale) {
     return ThemeData(
       useMaterial3: true,
       brightness: Brightness.dark,
+      fontFamily: AppTypography.familyFor(locale),
       colorScheme: const ColorScheme.dark(
         primary: AppColors.primaryDark,
         onPrimary: AppColors.onPrimaryDark,
@@ -39,13 +41,13 @@ class AppTheme {
         error: AppColors.error,
       ),
       scaffoldBackgroundColor: AppColors.backgroundDark,
-      textTheme: _buildTextTheme(isDark: true),
-      appBarTheme: _buildAppBarTheme(isDark: true),
+      textTheme: AppTypography.textTheme(locale: locale, isDark: true),
+      appBarTheme: _buildAppBarTheme(locale: locale, isDark: true),
       cardTheme: _buildCardTheme(isDark: true),
-      elevatedButtonTheme: _buildElevatedButtonTheme(),
-      outlinedButtonTheme: _buildOutlinedButtonTheme(isDark: true),
-      textButtonTheme: _buildTextButtonTheme(isDark: true),
-      inputDecorationTheme: _buildInputDecorationTheme(isDark: true),
+      elevatedButtonTheme: _buildElevatedButtonTheme(locale),
+      outlinedButtonTheme: _buildOutlinedButtonTheme(locale: locale, isDark: true),
+      textButtonTheme: _buildTextButtonTheme(locale: locale, isDark: true),
+      inputDecorationTheme: _buildInputDecorationTheme(locale: locale, isDark: true),
       dividerTheme: const DividerThemeData(
         color: AppColors.dividerDark,
         thickness: 1,
@@ -59,10 +61,11 @@ class AppTheme {
   // LIGHT THEME
   // ═══════════════════════════════════════════════════════════════════════════
 
-  static ThemeData get lightTheme {
+  static ThemeData lightTheme(Locale locale) {
     return ThemeData(
       useMaterial3: true,
       brightness: Brightness.light,
+      fontFamily: AppTypography.familyFor(locale),
       colorScheme: const ColorScheme.light(
         primary: AppColors.primaryLight,
         onPrimary: AppColors.onPrimaryLight,
@@ -73,13 +76,13 @@ class AppTheme {
         error: AppColors.error,
       ),
       scaffoldBackgroundColor: AppColors.backgroundLight,
-      textTheme: _buildTextTheme(isDark: false),
-      appBarTheme: _buildAppBarTheme(isDark: false),
+      textTheme: AppTypography.textTheme(locale: locale, isDark: false),
+      appBarTheme: _buildAppBarTheme(locale: locale, isDark: false),
       cardTheme: _buildCardTheme(isDark: false),
-      elevatedButtonTheme: _buildElevatedButtonTheme(),
-      outlinedButtonTheme: _buildOutlinedButtonTheme(isDark: false),
-      textButtonTheme: _buildTextButtonTheme(isDark: false),
-      inputDecorationTheme: _buildInputDecorationTheme(isDark: false),
+      elevatedButtonTheme: _buildElevatedButtonTheme(locale),
+      outlinedButtonTheme: _buildOutlinedButtonTheme(locale: locale, isDark: false),
+      textButtonTheme: _buildTextButtonTheme(locale: locale, isDark: false),
+      inputDecorationTheme: _buildInputDecorationTheme(locale: locale, isDark: false),
       dividerTheme: const DividerThemeData(
         color: AppColors.dividerLight,
         thickness: 1,
@@ -106,116 +109,20 @@ class AppTheme {
   }
 
   // ═══════════════════════════════════════════════════════════════════════════
-  // TEXT THEME
-  // ═══════════════════════════════════════════════════════════════════════════
-
-  static TextTheme _buildTextTheme({required bool isDark}) {
-    final Color textColor = isDark
-        ? AppColors.onSurfaceDark
-        : AppColors.onSurfaceLight;
-    final Color secondaryColor = isDark
-        ? AppColors.textSecondaryDark
-        : AppColors.textSecondaryLight;
-
-    return TextTheme(
-      displayLarge: GoogleFonts.outfit(
-        fontSize: 57,
-        fontWeight: FontWeight.bold,
-        color: textColor,
-        letterSpacing: -0.25,
-      ),
-      displayMedium: GoogleFonts.outfit(
-        fontSize: 45,
-        fontWeight: FontWeight.bold,
-        color: textColor,
-      ),
-      displaySmall: GoogleFonts.outfit(
-        fontSize: 36,
-        fontWeight: FontWeight.w600,
-        color: textColor,
-      ),
-      headlineLarge: GoogleFonts.outfit(
-        fontSize: 32,
-        fontWeight: FontWeight.w600,
-        color: textColor,
-      ),
-      headlineMedium: GoogleFonts.outfit(
-        fontSize: 28,
-        fontWeight: FontWeight.w600,
-        color: textColor,
-      ),
-      headlineSmall: GoogleFonts.outfit(
-        fontSize: 24,
-        fontWeight: FontWeight.w600,
-        color: textColor,
-      ),
-      titleLarge: GoogleFonts.outfit(
-        fontSize: 22,
-        fontWeight: FontWeight.w600,
-        color: textColor,
-      ),
-      titleMedium: GoogleFonts.outfit(
-        fontSize: 16,
-        fontWeight: FontWeight.w600,
-        color: textColor,
-        letterSpacing: 0.15,
-      ),
-      titleSmall: GoogleFonts.outfit(
-        fontSize: 14,
-        fontWeight: FontWeight.w600,
-        color: textColor,
-        letterSpacing: 0.1,
-      ),
-      bodyLarge: GoogleFonts.outfit(
-        fontSize: 16,
-        fontWeight: FontWeight.normal,
-        color: textColor,
-        letterSpacing: 0.5,
-      ),
-      bodyMedium: GoogleFonts.outfit(
-        fontSize: 14,
-        fontWeight: FontWeight.normal,
-        color: textColor,
-        letterSpacing: 0.25,
-      ),
-      bodySmall: GoogleFonts.outfit(
-        fontSize: 12,
-        fontWeight: FontWeight.normal,
-        color: secondaryColor,
-        letterSpacing: 0.4,
-      ),
-      labelLarge: GoogleFonts.outfit(
-        fontSize: 14,
-        fontWeight: FontWeight.w600,
-        color: textColor,
-        letterSpacing: 0.1,
-      ),
-      labelMedium: GoogleFonts.outfit(
-        fontSize: 12,
-        fontWeight: FontWeight.w500,
-        color: textColor,
-        letterSpacing: 0.5,
-      ),
-      labelSmall: GoogleFonts.outfit(
-        fontSize: 11,
-        fontWeight: FontWeight.w500,
-        color: secondaryColor,
-        letterSpacing: 0.5,
-      ),
-    );
-  }
-
-  // ═══════════════════════════════════════════════════════════════════════════
   // APP BAR THEME
   // ═══════════════════════════════════════════════════════════════════════════
 
-  static AppBarTheme _buildAppBarTheme({required bool isDark}) {
+  static AppBarTheme _buildAppBarTheme({
+    required Locale locale,
+    required bool isDark,
+  }) {
     return AppBarTheme(
       centerTitle: true,
       backgroundColor: Colors.transparent,
       elevation: 0,
       scrolledUnderElevation: 0,
-      titleTextStyle: GoogleFonts.outfit(
+      titleTextStyle: AppTypography.style(
+        locale,
         fontSize: 18,
         fontWeight: FontWeight.w600,
         color: isDark ? AppColors.onSurfaceDark : AppColors.onSurfaceLight,
@@ -244,7 +151,7 @@ class AppTheme {
   // BUTTON THEMES
   // ═══════════════════════════════════════════════════════════════════════════
 
-  static ElevatedButtonThemeData _buildElevatedButtonTheme() {
+  static ElevatedButtonThemeData _buildElevatedButtonTheme(Locale locale) {
     return ElevatedButtonThemeData(
       style: ElevatedButton.styleFrom(
         backgroundColor: AppColors.magentaPink,
@@ -255,7 +162,8 @@ class AppTheme {
           borderRadius: BorderRadius.circular(borderRadius),
         ),
         elevation: 0,
-        textStyle: GoogleFonts.outfit(
+        textStyle: AppTypography.style(
+          locale,
           fontSize: 16,
           fontWeight: FontWeight.w600,
         ),
@@ -264,6 +172,7 @@ class AppTheme {
   }
 
   static OutlinedButtonThemeData _buildOutlinedButtonTheme({
+    required Locale locale,
     required bool isDark,
   }) {
     return OutlinedButtonThemeData(
@@ -281,7 +190,8 @@ class AppTheme {
               ? AppColors.inputBorderDark
               : AppColors.inputBorderLight,
         ),
-        textStyle: GoogleFonts.outfit(
+        textStyle: AppTypography.style(
+          locale,
           fontSize: 16,
           fontWeight: FontWeight.w500,
         ),
@@ -289,13 +199,17 @@ class AppTheme {
     );
   }
 
-  static TextButtonThemeData _buildTextButtonTheme({required bool isDark}) {
+  static TextButtonThemeData _buildTextButtonTheme({
+    required Locale locale,
+    required bool isDark,
+  }) {
     return TextButtonThemeData(
       style: TextButton.styleFrom(
         foregroundColor: isDark
             ? AppColors.primaryDark
             : AppColors.primaryLight,
-        textStyle: GoogleFonts.outfit(
+        textStyle: AppTypography.style(
+          locale,
           fontSize: 14,
           fontWeight: FontWeight.w600,
         ),
@@ -308,6 +222,7 @@ class AppTheme {
   // ═══════════════════════════════════════════════════════════════════════════
 
   static InputDecorationTheme _buildInputDecorationTheme({
+    required Locale locale,
     required bool isDark,
   }) {
     final fillColor = isDark
@@ -323,9 +238,10 @@ class AppTheme {
     return InputDecorationTheme(
       filled: true,
       fillColor: fillColor,
-      hintStyle: GoogleFonts.outfit(fontSize: 14, color: hintColor),
-      labelStyle: GoogleFonts.outfit(fontSize: 14, color: hintColor),
-      floatingLabelStyle: GoogleFonts.outfit(
+      hintStyle: AppTypography.style(locale, fontSize: 14, color: hintColor),
+      labelStyle: AppTypography.style(locale, fontSize: 14, color: hintColor),
+      floatingLabelStyle: AppTypography.style(
+        locale,
         fontSize: 12,
         color: isDark ? AppColors.primaryDark : AppColors.primaryLight,
       ),

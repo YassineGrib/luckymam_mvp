@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
+import '../../../core/theme/app_typography.dart';
 
 import '../models/album_suggestion.dart';
 
@@ -75,7 +75,7 @@ class AlbumCoverCard extends StatelessWidget {
                       const SizedBox(width: 4),
                       Text(
                         '${album.count}',
-                        style: GoogleFonts.outfit(
+                        style: AppTypography.fromContext(context, 
                           fontSize: 11,
                           fontWeight: FontWeight.bold,
                           color: Colors.white,
@@ -118,7 +118,7 @@ class AlbumCoverCard extends StatelessWidget {
                     children: [
                       Text(
                         album.title,
-                        style: GoogleFonts.outfit(
+                        style: AppTypography.fromContext(context, 
                           fontSize: 15,
                           fontWeight: FontWeight.bold,
                           color: Colors.white,
@@ -130,7 +130,7 @@ class AlbumCoverCard extends StatelessWidget {
                       const SizedBox(height: 2),
                       Text(
                         album.subtitle,
-                        style: GoogleFonts.outfit(
+                        style: AppTypography.fromContext(context, 
                           fontSize: 11,
                           color: Colors.white70,
                         ),

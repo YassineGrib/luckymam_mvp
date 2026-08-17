@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../l10n/app_localizations.dart';
+import '../../core/theme/app_typography.dart';
 
 /// Privacy policy screen.
 class PrivacyScreen extends StatelessWidget {
@@ -21,10 +21,10 @@ class PrivacyScreen extends StatelessWidget {
       appBar: AppBar(
         title: Text(
           l10n.privacy,
-          style: GoogleFonts.outfit(fontWeight: FontWeight.w600),
+          style: AppTypography.fromContext(context, fontSize: 14, fontWeight: FontWeight.w600),
         ),
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios, size: 20),
+          icon: const Icon(Icons.arrow_back, size: 20),
           onPressed: () => Navigator.of(context).pop(),
         ),
       ),
@@ -71,8 +71,8 @@ class PrivacyScreen extends StatelessWidget {
             const SizedBox(height: AppSpacing.xl),
             Center(
               child: Text(
-                'MVP - ${l10n.appName} 2026',
-                style: GoogleFonts.outfit(fontSize: 12, color: secondaryColor),
+                l10n.profileMvpFooter(l10n.appName, 2026),
+                style: Theme.of(context).textTheme.bodySmall?.copyWith(color: secondaryColor),
               ),
             ),
           ],
@@ -123,20 +123,12 @@ class PrivacyScreen extends StatelessWidget {
               children: [
                 Text(
                   title,
-                  style: GoogleFonts.outfit(
-                    fontSize: 16,
-                    fontWeight: FontWeight.w600,
-                    color: textColor,
-                  ),
+                  style: Theme.of(context).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w600, color: textColor),
                 ),
                 const SizedBox(height: 6),
                 Text(
                   content,
-                  style: GoogleFonts.outfit(
-                    fontSize: 14,
-                    color: secondaryColor,
-                    height: 1.5,
-                  ),
+                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: secondaryColor, height: 1.5),
                 ),
               ],
             ),

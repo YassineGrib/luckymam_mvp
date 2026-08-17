@@ -1,13 +1,16 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../../core/providers/locale_provider.dart';
+import '../../../l10n/app_localizations.dart';
 import '../../capsules/models/capsule.dart';
 import '../../capsules/providers/capsule_providers.dart';
-import '../../profile/providers/profile_providers.dart';
 import '../../profile/models/profile_models.dart';
+import '../../profile/providers/profile_providers.dart';
 import '../../timeline/services/timeline_service.dart';
 import '../../vaccines/models/vaccine_status.dart';
 import '../../vaccines/providers/vaccine_providers.dart';
+import '../data/home_tips_data.dart';
 
 /// Summary data for a child card
 class ChildSummary {
@@ -33,7 +36,6 @@ final childrenSummaryProvider = FutureProvider<List<ChildSummary>>((ref) async {
     for (final child in children) {
       VaccineGroupWithStatus? nextVaccine;
       try {
-        // Use ref.read instead of ref.watch to avoid async gap tracking issues in Riverpod
         final vaccines = await ref.read(
           vaccineGroupsWithStatusProvider((
             childId: child.id,
@@ -59,7 +61,6 @@ final childrenSummaryProvider = FutureProvider<List<ChildSummary>>((ref) async {
 
       MilestoneWithDueDate? nextMilestone;
       try {
-        // Use ref.read instead of ref.watch to avoid async gap tracking issues in Riverpod
         final milestones = await ref.read(
           upcomingMilestonesProvider(child.id).future,
         );
@@ -88,7 +89,6 @@ final childrenSummaryProvider = FutureProvider<List<ChildSummary>>((ref) async {
 final recentCapsulesProvider = Provider<List<Capsule>>((ref) {
   final capsulesAsync = ref.watch(capsulesProvider);
   return capsulesAsync.whenData((capsules) {
-        // Sort by date and take last 10 (already sorted by service, but good to be sure)
         final sorted = List<Capsule>.from(capsules)
           ..sort((a, b) => b.createdAt.compareTo(a.createdAt));
         return sorted.take(10).toList();
@@ -96,65 +96,22 @@ final recentCapsulesProvider = Provider<List<Capsule>>((ref) {
       [];
 });
 
-/// Daily tips by status
-const List<String> _tipsHope = [
-  "Prenez soin de vous : une alimentation équilibrée prépare votre corps à accueillir la vie.",
-  "Le stress peut influencer la fertilité. Accordez-vous des moments de sérénité.",
-  "Tenez un journal de votre cycle — chaque donnée compte.",
-  "L'acide folique est essentiel dès maintenant. Parlez-en à votre médecin.",
-  "Votre chemin est unique. Célébrez chaque étape, aussi petite soit-elle.",
-  "La patience est une force. Votre moment viendra 💜",
-];
-
-const List<String> _tipsPregnant = [
-  "Parlez à votre bébé ! Il reconnaît déjà votre voix dès le 6ème mois.",
-  "Une promenade quotidienne de 20 minutes est bénéfique pour vous deux.",
-  "Hydratez-vous bien — votre corps travaille double en ce moment.",
-  "Notez vos ressentis aujourd'hui. Ce journal sera précieux plus tard.",
-  "Chaque coup de pied est un message d'amour 🩷",
-  "Reposez-vous sans culpabilité. C'est du travail, accoucher !",
-];
-
-const List<String> _tipsMom = [
-  "Parlez à votre bébé ! Il reconnaît déjà votre voix.",
-  "Prenez du temps pour vous. Une maman heureuse = un bébé heureux.",
-  "Chaque moment est précieux. Capturez-le dans une capsule !",
-  "La musique calme peut aider votre bébé à s'apaiser.",
-  "Les câlins libèrent de l'ocytocine, l'hormone du bonheur.",
-  "Votre bébé apprend en vous observant. Souriez souvent !",
-  "N'oubliez pas de boire beaucoup d'eau.",
-  "Faites des pauses. Le repos est essentiel.",
-  "Célébrez chaque petit progrès de votre enfant.",
-  "Respirez profondément. Vous êtes une super maman !",
-];
-
-/// Provider for daily tip adapted to user status
+/// Provider for daily tip adapted to user status and locale
 final dailyTipProvider = Provider<String>((ref) {
-  final dayOfYear = DateTime.now()
-      .difference(DateTime(DateTime.now().year, 1, 1))
-      .inDays;
-
+  final locale = ref.watch(localeProvider).languageCode;
   final profile = ref.watch(profileProvider).valueOrNull;
   final status = profile?.status ?? UserStatus.mom;
-
-  switch (status) {
-    case UserStatus.hope:
-      return _tipsHope[dayOfYear % _tipsHope.length];
-    case UserStatus.pregnant:
-      return _tipsPregnant[dayOfYear % _tipsPregnant.length];
-    case UserStatus.mom:
-      return _tipsMom[dayOfYear % _tipsMom.length];
-  }
+  return HomeTipsData.tipFor(locale, status);
 });
 
-/// Greeting based on time of day
-String getTimeBasedGreeting() {
+/// Greeting based on time of day and locale
+String getTimeBasedGreeting(AppLocalizations l10n) {
   final hour = DateTime.now().hour;
   if (hour < 12) {
-    return 'Bonjour';
+    return l10n.greetingMorning;
   } else if (hour < 18) {
-    return 'Bon après-midi';
+    return l10n.greetingAfternoon;
   } else {
-    return 'Bonsoir';
+    return l10n.greetingEvening;
   }
 }

@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
+import '../../../core/theme/app_typography.dart';
 import 'package:intl/intl.dart';
 
+import '../../../core/extensions/l10n_extension.dart';
 import '../../../core/services/analytics_service.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_spacing.dart';
@@ -91,7 +92,7 @@ class MilestoneCard extends StatelessWidget {
                 children: [
                   Text(
                     m.getTitle(lang),
-                    style: GoogleFonts.outfit(
+                    style: AppTypography.fromContext(context, 
                       fontSize: 15,
                       fontWeight: FontWeight.w600,
                       color: isDark
@@ -104,7 +105,7 @@ class MilestoneCard extends StatelessWidget {
                   const SizedBox(height: 2),
                   Text(
                     m.getDescription(lang),
-                    style: GoogleFonts.outfit(
+                    style: AppTypography.fromContext(context, 
                       fontSize: 13,
                       color: isDark
                           ? AppColors.textSecondaryDark
@@ -140,8 +141,8 @@ class MilestoneCard extends StatelessWidget {
                     ),
                     const SizedBox(width: 4),
                     Text(
-                      lang == 'ar' ? 'توثيق' : lang == 'en' ? 'Capture' : 'Capturer',
-                      style: GoogleFonts.outfit(
+                      context.l10n.milestone_capture,
+                      style: AppTypography.fromContext(context, 
                         fontSize: 12,
                         fontWeight: FontWeight.w600,
                         color: Colors.white,
@@ -208,7 +209,7 @@ class MilestoneCard extends StatelessWidget {
             Expanded(
               child: Text(
                 m.getTitle(lang),
-                style: GoogleFonts.outfit(
+                style: AppTypography.fromContext(context, 
                   fontSize: 14,
                   fontWeight: FontWeight.w500,
                   color: isDark
@@ -231,7 +232,7 @@ class MilestoneCard extends StatelessWidget {
                 milestone.daysUntilDue > 0
                     ? 'J+${milestone.daysUntilDue}'
                     : dueText,
-                style: GoogleFonts.outfit(
+                style: AppTypography.fromContext(context, 
                   fontSize: 12,
                   fontWeight: FontWeight.w500,
                   color: category.color,
@@ -335,12 +336,8 @@ class _MilestoneThumbnailState extends State<_MilestoneThumbnail> {
               color: AppColors.success, size: 15),
           const SizedBox(width: 4),
           Text(
-            Localizations.localeOf(context).languageCode == 'ar'
-                ? 'ذكرى'
-                : Localizations.localeOf(context).languageCode == 'en'
-                    ? 'Memory'
-                    : 'Souvenir',
-            style: GoogleFonts.outfit(
+            context.l10n.milestone_memory,
+            style: AppTypography.fromContext(context, 
               fontSize: 12,
               fontWeight: FontWeight.w600,
               color: AppColors.success,

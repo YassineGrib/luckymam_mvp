@@ -1,11 +1,26 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 
+import '../../../core/extensions/l10n_extension.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_spacing.dart';
+import '../../../l10n/app_localizations.dart';
 import '../models/appointment.dart';
+import '../../../core/theme/app_typography.dart';
+
+String healthAppointmentTypeLabel(AppLocalizations l10n, AppointmentType type) =>
+    switch (type) {
+      AppointmentType.generaliste => l10n.healthApptTypeGeneraliste,
+      AppointmentType.pediatre => l10n.healthApptTypePediatre,
+      AppointmentType.dentiste => l10n.healthApptTypeDentiste,
+      AppointmentType.ophtalmologue => l10n.healthApptTypeOphtalmologue,
+      AppointmentType.cardiologue => l10n.healthApptTypeCardiologue,
+      AppointmentType.autre => l10n.healthApptTypeAutre,
+    };
+
+String _healthDateLocale(String languageCode) =>
+    languageCode == 'fr' ? 'fr_FR' : languageCode;
 
 /// Card displaying an appointment with doctor info, type chip, and file thumbnails.
 class AppointmentCard extends StatelessWidget {
@@ -40,6 +55,7 @@ class AppointmentCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = context.l10n;
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final surface = isDark ? AppColors.surfaceDark : AppColors.surfaceLight;
     final textColor = isDark ? Colors.white : AppColors.onSurfaceLight;
@@ -102,11 +118,7 @@ class AppointmentCard extends StatelessWidget {
                       children: [
                         Text(
                           appointment.doctorName,
-                          style: GoogleFonts.outfit(
-                            fontSize: 15,
-                            fontWeight: FontWeight.w600,
-                            color: textColor,
-                          ),
+                          style: AppTypography.fromContext(context, fontSize: 15, fontWeight: FontWeight.w600, color: textColor),
                         ),
                         Row(
                           children: [
@@ -120,24 +132,22 @@ class AppointmentCard extends StatelessWidget {
                                 borderRadius: BorderRadius.circular(20),
                               ),
                               child: Text(
-                                appointment.type.labelFr,
-                                style: GoogleFonts.outfit(
-                                  fontSize: 11,
-                                  fontWeight: FontWeight.w600,
-                                  color: typeColor,
+                                healthAppointmentTypeLabel(
+                                  l10n,
+                                  appointment.type,
                                 ),
+                                style: Theme.of(context).textTheme.labelSmall?.copyWith(fontWeight: FontWeight.w600, color: typeColor),
                               ),
                             ),
                             const SizedBox(width: 8),
                             Text(
                               DateFormat(
                                 'd MMM yyyy',
-                                'fr',
+                                _healthDateLocale(
+                                  Localizations.localeOf(context).languageCode,
+                                ),
                               ).format(appointment.date),
-                              style: GoogleFonts.outfit(
-                                fontSize: 12,
-                                color: secondary,
-                              ),
+                              style: Theme.of(context).textTheme.bodySmall?.copyWith(color: secondary),
                             ),
                           ],
                         ),
@@ -169,7 +179,7 @@ class AppointmentCard extends StatelessWidget {
                 ),
                 child: Text(
                   appointment.notes!,
-                  style: GoogleFonts.outfit(fontSize: 13, color: secondary),
+                  style: AppTypography.fromContext(context, fontSize: 13, color: secondary),
                   maxLines: 2,
                   overflow: TextOverflow.ellipsis,
                 ),

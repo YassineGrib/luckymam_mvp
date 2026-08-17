@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:google_fonts/google_fonts.dart';
 
+import '../../../core/extensions/l10n_extension.dart';
 import '../../subscription/providers/subscription_providers.dart';
 import '../../subscription/screens/subscription_plans_screen.dart';
 
@@ -11,9 +11,9 @@ class UpgradePromptBanner extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = context.l10n;
     final isPremium = ref.watch(isPremiumProvider);
 
-    // Don't show for premium/VIP users
     if (isPremium) return const SizedBox.shrink();
 
     return Padding(
@@ -60,18 +60,17 @@ class UpgradePromptBanner extends ConsumerWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'Passez à Premium',
-                      style: GoogleFonts.outfit(
-                        fontSize: 15,
-                        fontWeight: FontWeight.bold,
+                      l10n.upgradePremiumTitle,
+                      style: Theme.of(context).textTheme.titleSmall?.copyWith(
                         color: Colors.white,
+                        fontWeight: FontWeight.bold,
                       ),
                     ),
                     Text(
-                      'Capsules illimitées • Sans pubs',
-                      style: GoogleFonts.outfit(
-                        fontSize: 11,
+                      l10n.upgradePremiumSubtitle,
+                      style: Theme.of(context).textTheme.bodySmall?.copyWith(
                         color: Colors.white.withValues(alpha: 0.85),
+                        fontSize: 11,
                       ),
                     ),
                   ],
@@ -88,10 +87,9 @@ class UpgradePromptBanner extends ConsumerWidget {
                 ),
                 child: Text(
                   '2490 DZD',
-                  style: GoogleFonts.outfit(
-                    fontSize: 12,
-                    fontWeight: FontWeight.bold,
+                  style: Theme.of(context).textTheme.labelMedium?.copyWith(
                     color: Colors.white,
+                    fontWeight: FontWeight.bold,
                   ),
                 ),
               ),

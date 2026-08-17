@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
+import '../../../core/extensions/l10n_extension.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_spacing.dart';
+import '../../../core/theme/app_typography.dart';
 
 /// Expandable profile section card with animated expansion.
 class ProfileSectionCard extends StatefulWidget {
@@ -122,11 +123,7 @@ class _ProfileSectionCardState extends State<ProfileSectionCard>
                   Expanded(
                     child: Text(
                       widget.title,
-                      style: GoogleFonts.outfit(
-                        fontSize: 16,
-                        fontWeight: FontWeight.w600,
-                        color: textColor,
-                      ),
+                      style: Theme.of(context).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w600, color: textColor),
                     ),
                   ),
                   if (widget.trailing != null) ...[
@@ -156,7 +153,7 @@ class _ProfileSectionCardState extends State<ProfileSectionCard>
                 );
               },
               child: Padding(
-                padding: const EdgeInsets.fromLTRB(
+                padding: const EdgeInsetsDirectional.fromSTEB(
                   AppSpacing.md,
                   0,
                   AppSpacing.md,
@@ -218,19 +215,12 @@ class ProfileInfoRow extends StatelessWidget {
               children: [
                 Text(
                   label,
-                  style: GoogleFonts.outfit(
-                    fontSize: 12,
-                    color: secondaryColor,
-                  ),
+                  style: Theme.of(context).textTheme.bodySmall?.copyWith(color: secondaryColor),
                 ),
                 const SizedBox(height: 2),
                 Text(
                   value,
-                  style: GoogleFonts.outfit(
-                    fontSize: 14,
-                    fontWeight: FontWeight.w500,
-                    color: valueColor ?? textColor,
-                  ),
+                  style: AppTypography.fromContext(context, fontSize: 14, fontWeight: FontWeight.w500, color: valueColor ?? textColor),
                 ),
               ],
             ),
@@ -307,18 +297,11 @@ class ChildCard extends StatelessWidget {
                 children: [
                   Text(
                     name,
-                    style: GoogleFonts.outfit(
-                      fontSize: 15,
-                      fontWeight: FontWeight.w600,
-                      color: textColor,
-                    ),
+                    style: AppTypography.fromContext(context, fontSize: 15, fontWeight: FontWeight.w600, color: textColor),
                   ),
                   Text(
                     birthDate,
-                    style: GoogleFonts.outfit(
-                      fontSize: 12,
-                      color: secondaryColor,
-                    ),
+                    style: Theme.of(context).textTheme.bodySmall?.copyWith(color: secondaryColor),
                   ),
                 ],
               ),
@@ -331,11 +314,7 @@ class ChildCard extends StatelessWidget {
               ),
               child: Text(
                 gender,
-                style: GoogleFonts.outfit(
-                  fontSize: 11,
-                  fontWeight: FontWeight.w600,
-                  color: genderColor,
-                ),
+                style: Theme.of(context).textTheme.labelSmall?.copyWith(fontWeight: FontWeight.w600, color: genderColor),
               ),
             ),
             const SizedBox(width: 8),
@@ -364,6 +343,7 @@ class CycleDayIndicator extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = context.l10n;
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final textColor = isDark ? Colors.white : AppColors.onSurfaceLight;
     final progress = currentDay / cycleLength;
@@ -393,19 +373,12 @@ class CycleDayIndicator extends StatelessWidget {
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     Text(
-                      'Jour',
-                      style: GoogleFonts.outfit(
-                        fontSize: 11,
-                        color: textColor.withValues(alpha: 0.7),
-                      ),
+                      l10n.cycleDayLabel,
+                      style: Theme.of(context).textTheme.labelSmall?.copyWith(color: textColor.withValues(alpha: 0.7)),
                     ),
                     Text(
                       '$currentDay',
-                      style: GoogleFonts.outfit(
-                        fontSize: 28,
-                        fontWeight: FontWeight.bold,
-                        color: phaseColor,
-                      ),
+                      style: Theme.of(context).textTheme.headlineMedium?.copyWith(fontWeight: FontWeight.bold, color: phaseColor),
                     ),
                   ],
                 ),
@@ -427,11 +400,7 @@ class CycleDayIndicator extends StatelessWidget {
                     ),
                     child: Text(
                       phase,
-                      style: GoogleFonts.outfit(
-                        fontSize: 13,
-                        fontWeight: FontWeight.w600,
-                        color: phaseColor,
-                      ),
+                      style: AppTypography.fromContext(context, fontSize: 13, fontWeight: FontWeight.w600, color: phaseColor),
                     ),
                   ),
                   const SizedBox(height: 8),
@@ -446,11 +415,8 @@ class CycleDayIndicator extends StatelessWidget {
                   ),
                   const SizedBox(height: 4),
                   Text(
-                    'Cycle de $cycleLength jours',
-                    style: GoogleFonts.outfit(
-                      fontSize: 12,
-                      color: textColor.withValues(alpha: 0.6),
-                    ),
+                    l10n.profileCycleDays(cycleLength),
+                    style: Theme.of(context).textTheme.bodySmall?.copyWith(color: textColor.withValues(alpha: 0.6)),
                   ),
                 ],
               ),

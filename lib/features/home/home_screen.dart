@@ -1,13 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+
+import '../../core/extensions/l10n_extension.dart';
 import '../../shared/widgets/navigation/app_bottom_nav.dart';
 import '../ads/providers/ads_providers.dart';
 import '../ads/screens/interstitial_ad_screen.dart';
-import 'tabs/dashboard_tab.dart';
-import 'tabs/timeline_tab.dart';
 import 'tabs/capsules_tab.dart';
-import 'tabs/vaccinations_tab.dart';
+import 'tabs/dashboard_tab.dart';
 import 'tabs/profile_tab.dart';
+import 'tabs/timeline_tab.dart';
+import 'tabs/vaccinations_tab.dart';
 
 /// Main home screen with bottom navigation and tab switching.
 class HomeScreen extends ConsumerStatefulWidget {
@@ -38,34 +40,36 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     ProfileTab(),
   ];
 
-  // Navigation items
-  final List<NavItem> _navItems = const [
-    NavItem(
-      icon: Icons.home_outlined,
-      activeIcon: Icons.home_rounded,
-      label: 'Accueil',
-    ),
-    NavItem(
-      icon: Icons.timeline_outlined,
-      activeIcon: Icons.timeline_rounded,
-      label: 'Timeline',
-    ),
-    NavItem(
-      icon: Icons.camera_alt_outlined,
-      activeIcon: Icons.camera_alt_rounded,
-      label: 'Capsules',
-    ),
-    NavItem(
-      icon: Icons.vaccines_outlined,
-      activeIcon: Icons.vaccines_rounded,
-      label: 'Santé',
-    ),
-    NavItem(
-      icon: Icons.person_outline_rounded,
-      activeIcon: Icons.person_rounded,
-      label: 'Profil',
-    ),
-  ];
+  List<NavItem> _navItems(BuildContext context) {
+    final l10n = context.l10n;
+    return [
+      NavItem(
+        icon: Icons.home_outlined,
+        activeIcon: Icons.home_rounded,
+        label: l10n.navHome,
+      ),
+      NavItem(
+        icon: Icons.timeline_outlined,
+        activeIcon: Icons.timeline_rounded,
+        label: l10n.navTimeline,
+      ),
+      NavItem(
+        icon: Icons.camera_alt_outlined,
+        activeIcon: Icons.camera_alt_rounded,
+        label: l10n.navCapsules,
+      ),
+      NavItem(
+        icon: Icons.vaccines_outlined,
+        activeIcon: Icons.vaccines_rounded,
+        label: l10n.navHealth,
+      ),
+      NavItem(
+        icon: Icons.person_outline_rounded,
+        activeIcon: Icons.person_rounded,
+        label: l10n.navProfile,
+      ),
+    ];
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -78,7 +82,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
           if (index != _currentIndex) _maybeShowInterstitial();
           setState(() => _currentIndex = index);
         },
-        items: _navItems,
+        items: _navItems(context),
       ),
     );
   }

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 
+import '../../../core/extensions/l10n_extension.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../reels/screens/reels_screen.dart';
 
@@ -20,8 +20,8 @@ class ReelsShortcutCard extends StatelessWidget {
           decoration: BoxDecoration(
             gradient: const LinearGradient(
               colors: [AppColors.smaltBlue, Color(0xFF3A6B72)],
-              begin: Alignment.centerLeft,
-              end: Alignment.centerRight,
+              begin: AlignmentDirectional.centerStart,
+              end: AlignmentDirectional.centerEnd,
             ),
             borderRadius: BorderRadius.circular(20),
             boxShadow: [
@@ -58,20 +58,13 @@ class ReelsShortcutCard extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        'Reels Éducatifs',
-                        style: GoogleFonts.outfit(
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.white,
-                        ),
+                        context.l10n.vaccineReelsTitle,
+                        style: Theme.of(context).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold, color: Colors.white),
                       ),
                       const SizedBox(height: 2),
                       Text(
-                        'Vidéos courtes · Conseils parentaux',
-                        style: GoogleFonts.outfit(
-                          fontSize: 12,
-                          color: Colors.white.withValues(alpha: 0.8),
-                        ),
+                        context.l10n.homeReelsSubtitle,
+                        style: Theme.of(context).textTheme.bodySmall?.copyWith(color: Colors.white.withValues(alpha: 0.8)),
                       ),
                     ],
                   ),

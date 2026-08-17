@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../l10n/app_localizations.dart';
+import '../../core/theme/app_typography.dart';
 
 /// Help and support screen with FAQ and contact options.
 class HelpScreen extends StatelessWidget {
@@ -22,10 +22,10 @@ class HelpScreen extends StatelessWidget {
       appBar: AppBar(
         title: Text(
           l10n.helpAndSupport,
-          style: GoogleFonts.outfit(fontWeight: FontWeight.w600),
+          style: AppTypography.fromContext(context, fontSize: 14, fontWeight: FontWeight.w600),
         ),
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios, size: 20),
+          icon: const Icon(Icons.arrow_back, size: 20),
           onPressed: () => Navigator.of(context).pop(),
         ),
       ),
@@ -37,11 +37,7 @@ class HelpScreen extends StatelessWidget {
             // FAQ Section
             Text(
               l10n.faqTitle,
-              style: GoogleFonts.outfit(
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
-                color: textColor,
-              ),
+              style: AppTypography.fromContext(context, fontSize: 18, fontWeight: FontWeight.bold, color: textColor),
             ),
             const SizedBox(height: AppSpacing.md),
             _FaqItem(
@@ -77,11 +73,7 @@ class HelpScreen extends StatelessWidget {
             // Contact Section
             Text(
               l10n.contactUs,
-              style: GoogleFonts.outfit(
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
-                color: textColor,
-              ),
+              style: AppTypography.fromContext(context, fontSize: 18, fontWeight: FontWeight.bold, color: textColor),
             ),
             const SizedBox(height: AppSpacing.md),
             _ContactTile(
@@ -125,19 +117,12 @@ class HelpScreen extends StatelessWidget {
                 children: [
                   Text(
                     '${l10n.appName} MVP',
-                    style: GoogleFonts.outfit(
-                      fontSize: 14,
-                      fontWeight: FontWeight.w600,
-                      color: textColor,
-                    ),
+                    style: Theme.of(context).textTheme.titleSmall?.copyWith(fontWeight: FontWeight.w600, color: textColor),
                   ),
                   const SizedBox(height: 4),
                   Text(
                     l10n.appVersion,
-                    style: GoogleFonts.outfit(
-                      fontSize: 12,
-                      color: secondaryColor,
-                    ),
+                    style: Theme.of(context).textTheme.bodySmall?.copyWith(color: secondaryColor),
                   ),
                 ],
               ),
@@ -199,11 +184,7 @@ class _FaqItemState extends State<_FaqItem> {
                   Expanded(
                     child: Text(
                       widget.question,
-                      style: GoogleFonts.outfit(
-                        fontSize: 14,
-                        fontWeight: FontWeight.w600,
-                        color: widget.textColor,
-                      ),
+                      style: Theme.of(context).textTheme.titleSmall?.copyWith(fontWeight: FontWeight.w600, color: widget.textColor),
                     ),
                   ),
                   Icon(
@@ -218,11 +199,7 @@ class _FaqItemState extends State<_FaqItem> {
                 const SizedBox(height: AppSpacing.sm),
                 Text(
                   widget.answer,
-                  style: GoogleFonts.outfit(
-                    fontSize: 13,
-                    color: widget.secondaryColor,
-                    height: 1.5,
-                  ),
+                  style: AppTypography.fromContext(context, fontSize: 13, color: widget.secondaryColor, height: 1.5),
                 ),
               ],
             ],
@@ -287,18 +264,11 @@ class _ContactTile extends StatelessWidget {
                 children: [
                   Text(
                     title,
-                    style: GoogleFonts.outfit(
-                      fontSize: 14,
-                      fontWeight: FontWeight.w600,
-                      color: textColor,
-                    ),
+                    style: Theme.of(context).textTheme.titleSmall?.copyWith(fontWeight: FontWeight.w600, color: textColor),
                   ),
                   Text(
                     subtitle,
-                    style: GoogleFonts.outfit(
-                      fontSize: 12,
-                      color: secondaryColor,
-                    ),
+                    style: Theme.of(context).textTheme.bodySmall?.copyWith(color: secondaryColor),
                   ),
                 ],
               ),

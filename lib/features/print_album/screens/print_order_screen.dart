@@ -1,8 +1,9 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import '../../../core/theme/app_typography.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:google_fonts/google_fonts.dart';
 
+import '../../../core/extensions/l10n_extension.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_spacing.dart';
 import '../../subscription/providers/subscription_providers.dart';
@@ -53,6 +54,7 @@ class _PrintOrderScreenState extends ConsumerState<PrintOrderScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = context.l10n;
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final bgColor = isDark
         ? AppColors.backgroundDark
@@ -68,9 +70,7 @@ class _PrintOrderScreenState extends ConsumerState<PrintOrderScreen> {
     final isVip = ref.watch(isVipProvider);
     final actionsState = ref.watch(printOrderActionsProvider);
 
-    final lang = Localizations.localeOf(context).languageCode;
-
-    if (_submitted) return _buildSubmittedView(context, textColor, lang);
+    if (_submitted) return _buildSubmittedView(context, textColor);
 
     return Scaffold(
       backgroundColor: bgColor,
@@ -82,12 +82,8 @@ class _PrintOrderScreenState extends ConsumerState<PrintOrderScreen> {
           onPressed: () => Navigator.pop(context),
         ),
         title: Text(
-          lang == 'ar'
-              ? 'إتمام الطلب'
-              : lang == 'en'
-                  ? 'Finalize Order'
-                  : 'Finaliser la commande',
-          style: GoogleFonts.outfit(
+          l10n.checkoutTitle,
+          style: AppTypography.fromContext(context, 
             fontSize: 17,
             fontWeight: FontWeight.w600,
             color: textColor,
@@ -134,7 +130,7 @@ class _PrintOrderScreenState extends ConsumerState<PrintOrderScreen> {
                                 children: [
                                   Text(
                                     widget.albumTitle,
-                                    style: GoogleFonts.outfit(
+                                    style: AppTypography.fromContext(context, 
                                       fontSize: 15,
                                       fontWeight: FontWeight.bold,
                                       color: Colors.white,
@@ -143,12 +139,11 @@ class _PrintOrderScreenState extends ConsumerState<PrintOrderScreen> {
                                     overflow: TextOverflow.ellipsis,
                                   ),
                                   Text(
-                                    lang == 'ar'
-                                        ? '${widget.pageCount} صفحات · ${widget.childName}'
-                                        : lang == 'en'
-                                            ? '${widget.pageCount} pages · ${widget.childName}'
-                                            : '${widget.pageCount} pages · ${widget.childName}',
-                                    style: GoogleFonts.outfit(
+                                    l10n.printAlbumSummary(
+                                      widget.pageCount,
+                                      widget.childName,
+                                    ),
+                                    style: AppTypography.fromContext(context, 
                                       fontSize: 12,
                                       color: Colors.white.withValues(
                                         alpha: 0.85,
@@ -185,17 +180,9 @@ class _PrintOrderScreenState extends ConsumerState<PrintOrderScreen> {
                             Expanded(
                               child: Text(
                                 isVip
-                                    ? (lang == 'ar'
-                                        ? 'مجانًا مع اشتراك VIP الخاص بك 🎁'
-                                        : lang == 'en'
-                                            ? 'Free with your VIP subscription 🎁'
-                                            : 'Offert avec votre abonnement VIP 🎁')
-                                    : (lang == 'ar'
-                                        ? 'سيتواصل معك فريقنا لتأكيد تكلفة الطباعة والتسليم.'
-                                        : lang == 'en'
-                                            ? 'Our team will contact you to confirm printing and shipping fees.'
-                                            : 'Nos équipes vous contacteront pour confirmer le tarif d\'impression.'),
-                                style: GoogleFonts.outfit(
+                                    ? l10n.printVipFreeNote
+                                    : l10n.printPricingNote,
+                                style: AppTypography.fromContext(context, 
                                   fontSize: 13,
                                   color: textColor,
                                 ),
@@ -207,12 +194,8 @@ class _PrintOrderScreenState extends ConsumerState<PrintOrderScreen> {
 
                       const SizedBox(height: 24),
                       Text(
-                        lang == 'ar'
-                            ? 'معلومات التسليم'
-                            : lang == 'en'
-                                ? 'Shipping Information'
-                                : 'Informations de livraison',
-                        style: GoogleFonts.outfit(
+                        l10n.checkoutDeliveryInfo,
+                        style: AppTypography.fromContext(context, 
                           fontSize: 16,
                           fontWeight: FontWeight.bold,
                           color: textColor,
@@ -221,37 +204,21 @@ class _PrintOrderScreenState extends ConsumerState<PrintOrderScreen> {
                       const SizedBox(height: 12),
 
                       _buildFormField(
-                        label: lang == 'ar'
-                            ? 'الاسم الكامل'
-                            : lang == 'en'
-                                ? 'Full Name'
-                                : 'Nom complet',
-                        hint: lang == 'ar'
-                            ? 'الاسم واللقب'
-                            : lang == 'en'
-                                ? 'Your full name'
-                                : 'Votre nom et prénom',
+                        label: l10n.name,
+                        hint: l10n.checkoutFullNameHint,
                         controller: _nameCtrl,
                         icon: Icons.person_outline_rounded,
                         inputBg: inputBg,
                         textColor: textColor,
                         subTextColor: subTextColor,
                         validator: (v) => v == null || v.isEmpty
-                            ? (lang == 'ar'
-                                ? 'حقل مطلوب'
-                                : lang == 'en'
-                                    ? 'Field required'
-                                    : 'Champ requis')
+                            ? l10n.errorRequired
                             : null,
                       ),
                       const SizedBox(height: 12),
 
                       _buildFormField(
-                        label: lang == 'ar'
-                            ? 'رقم الهاتف'
-                            : lang == 'en'
-                                ? 'Phone Number'
-                                : 'Téléphone',
+                        label: l10n.checkoutPhone,
                         hint: '0550 00 00 00',
                         controller: _phoneCtrl,
                         icon: Icons.phone_outlined,
@@ -260,52 +227,28 @@ class _PrintOrderScreenState extends ConsumerState<PrintOrderScreen> {
                         subTextColor: subTextColor,
                         keyboardType: TextInputType.phone,
                         validator: (v) => v == null || v.isEmpty
-                            ? (lang == 'ar'
-                                ? 'حقل مطلوب'
-                                : lang == 'en'
-                                    ? 'Field required'
-                                    : 'Champ requis')
+                            ? l10n.errorRequired
                             : null,
                       ),
                       const SizedBox(height: 12),
 
                       _buildFormField(
-                        label: lang == 'ar'
-                            ? 'الولاية'
-                            : lang == 'en'
-                                ? 'Wilaya'
-                                : 'Wilaya',
-                        hint: lang == 'ar'
-                            ? 'الولاية الخاصة بك'
-                            : lang == 'en'
-                                ? 'Your province'
-                                : 'Votre wilaya',
+                        label: l10n.checkoutWilaya,
+                        hint: l10n.checkoutWilayaHint,
                         controller: _wilayaCtrl,
                         icon: Icons.location_city_rounded,
                         inputBg: inputBg,
                         textColor: textColor,
                         subTextColor: subTextColor,
                         validator: (v) => v == null || v.isEmpty
-                            ? (lang == 'ar'
-                                ? 'حقل مطلوب'
-                                : lang == 'en'
-                                    ? 'Field required'
-                                    : 'Champ requis')
+                            ? l10n.errorRequired
                             : null,
                       ),
                       const SizedBox(height: 12),
 
                       _buildFormField(
-                        label: lang == 'ar'
-                            ? 'العنوان الكامل'
-                            : lang == 'en'
-                                ? 'Full Address'
-                                : 'Adresse complète',
-                        hint: lang == 'ar'
-                            ? 'الشارع، رقم الباب، الحي...'
-                            : lang == 'en'
-                                ? 'Street, number, neighborhood...'
-                                : 'Rue, numéro, quartier...',
+                        label: l10n.checkoutAddress,
+                        hint: l10n.checkoutAddressHint,
                         controller: _addressCtrl,
                         icon: Icons.home_outlined,
                         inputBg: inputBg,
@@ -313,11 +256,7 @@ class _PrintOrderScreenState extends ConsumerState<PrintOrderScreen> {
                         subTextColor: subTextColor,
                         maxLines: 2,
                         validator: (v) => v == null || v.isEmpty
-                            ? (lang == 'ar'
-                                ? 'حقل مطلوب'
-                                : lang == 'en'
-                                    ? 'Field required'
-                                    : 'Champ requis')
+                            ? l10n.errorRequired
                             : null,
                       ),
 
@@ -339,12 +278,8 @@ class _PrintOrderScreenState extends ConsumerState<PrintOrderScreen> {
                               color: Colors.white,
                             ),
                             label: Text(
-                              lang == 'ar'
-                                  ? 'تأكيد الطلب'
-                                  : lang == 'en'
-                                      ? 'Confirm Order'
-                                      : 'Confirmer la commande',
-                              style: GoogleFonts.outfit(
+                              l10n.checkoutConfirm,
+                              style: AppTypography.fromContext(context, 
                                 fontSize: 16,
                                 fontWeight: FontWeight.bold,
                                 color: Colors.white,
@@ -388,7 +323,7 @@ class _PrintOrderScreenState extends ConsumerState<PrintOrderScreen> {
       children: [
         Text(
           label,
-          style: GoogleFonts.outfit(fontSize: 12, color: subTextColor),
+          style: AppTypography.fromContext(context, fontSize: 12, color: subTextColor),
         ),
         const SizedBox(height: 6),
         TextFormField(
@@ -396,10 +331,10 @@ class _PrintOrderScreenState extends ConsumerState<PrintOrderScreen> {
           keyboardType: keyboardType,
           maxLines: maxLines,
           validator: validator,
-          style: GoogleFonts.outfit(fontSize: 15, color: textColor),
+          style: AppTypography.fromContext(context, fontSize: 15, color: textColor),
           decoration: InputDecoration(
             hintText: hint,
-            hintStyle: GoogleFonts.outfit(
+            hintStyle: AppTypography.fromContext(context, 
               fontSize: 15,
               color: subTextColor.withValues(alpha: 0.5),
             ),
@@ -426,7 +361,7 @@ class _PrintOrderScreenState extends ConsumerState<PrintOrderScreen> {
     final uid = FirebaseAuth.instance.currentUser?.uid;
     if (uid == null) return;
 
-    final lang = Localizations.localeOf(context).languageCode;
+    final l10n = context.l10n;
     final isVip = ref.read(isVipProvider);
 
     final order = PrintOrder(
@@ -458,14 +393,7 @@ class _PrintOrderScreenState extends ConsumerState<PrintOrderScreen> {
       final error = ref.read(printOrderActionsProvider).error;
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text(
-            error ??
-                (lang == 'ar'
-                    ? 'حدث خطأ أثناء إرسال الطلب'
-                    : lang == 'en'
-                        ? 'An error occurred while placing the order'
-                        : 'Erreur lors de la commande'),
-          ),
+          content: Text(error ?? l10n.checkoutErrorGeneric),
           backgroundColor: AppColors.error,
         ),
       );
@@ -473,7 +401,9 @@ class _PrintOrderScreenState extends ConsumerState<PrintOrderScreen> {
     }
   }
 
-  Widget _buildSubmittedView(BuildContext context, Color textColor, String lang) {
+  Widget _buildSubmittedView(BuildContext context, Color textColor) {
+    final l10n = context.l10n;
+
     return Scaffold(
       backgroundColor: Theme.of(context).brightness == Brightness.dark
           ? AppColors.backgroundDark
@@ -500,12 +430,8 @@ class _PrintOrderScreenState extends ConsumerState<PrintOrderScreen> {
                 ),
                 const SizedBox(height: 28),
                 Text(
-                  lang == 'ar'
-                      ? 'تم إرسال الطلب!'
-                      : lang == 'en'
-                          ? 'Order sent!'
-                          : 'Commande envoyée !',
-                  style: GoogleFonts.outfit(
+                  l10n.printOrderSentTitle,
+                  style: AppTypography.fromContext(context, 
                     fontSize: 26,
                     fontWeight: FontWeight.bold,
                     color: textColor,
@@ -513,12 +439,8 @@ class _PrintOrderScreenState extends ConsumerState<PrintOrderScreen> {
                 ),
                 const SizedBox(height: 12),
                 Text(
-                  lang == 'ar'
-                      ? 'سيتم طباعة ألبوم « ${widget.albumTitle} » وشحنه إلى العنوان المحدد. سنتصل بك هاتفياً للتأكيد.'
-                      : lang == 'en'
-                          ? '“${widget.albumTitle}” will be printed and shipped to the address provided. We will contact you by phone to confirm.'
-                          : '« ${widget.albumTitle} » sera imprimé et expédié à l\'adresse indiquée. Nous vous contacterons par téléphone pour confirmer.',
-                  style: GoogleFonts.outfit(
+                  l10n.printOrderSentMessage(widget.albumTitle),
+                  style: AppTypography.fromContext(context, 
                     fontSize: 15,
                     color: textColor.withValues(alpha: 0.7),
                   ),
@@ -540,12 +462,8 @@ class _PrintOrderScreenState extends ConsumerState<PrintOrderScreen> {
                       ),
                       const SizedBox(width: 10),
                       Text(
-                        lang == 'ar'
-                            ? 'الوقت المتوقع: 7-14 يوم'
-                            : lang == 'en'
-                                ? 'Estimated delay: 7-14 days'
-                                : 'Délai estimé : 7-14 jours',
-                        style: GoogleFonts.outfit(
+                        l10n.printEstimatedDelay,
+                        style: AppTypography.fromContext(context, 
                           fontSize: 14,
                           fontWeight: FontWeight.w600,
                           color: AppColors.magentaPink,
@@ -580,12 +498,8 @@ class _PrintOrderScreenState extends ConsumerState<PrintOrderScreen> {
                         ),
                       ),
                       child: Text(
-                        lang == 'ar'
-                            ? 'العودة إلى الألبوم'
-                            : lang == 'en'
-                                ? 'Back to album'
-                                : 'Retour à l\'album',
-                        style: GoogleFonts.outfit(
+                        l10n.printBackToAlbum,
+                        style: AppTypography.fromContext(context, 
                           fontSize: 16,
                           fontWeight: FontWeight.bold,
                         ),

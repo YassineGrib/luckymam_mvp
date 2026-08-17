@@ -6,17 +6,6 @@ enum SubscriptionTier {
   premium,
   vip;
 
-  String get labelFr {
-    switch (this) {
-      case SubscriptionTier.free:
-        return 'Gratuit';
-      case SubscriptionTier.premium:
-        return 'Premium';
-      case SubscriptionTier.vip:
-        return 'VIP Annuel';
-    }
-  }
-
   IconData get icon {
     switch (this) {
       case SubscriptionTier.free:
@@ -67,11 +56,7 @@ enum PaymentMethod {
 /// Subscription plan definition.
 class SubscriptionPlan {
   final SubscriptionTier tier;
-  final String title;
-  final String subtitle;
   final int priceDZD;
-  final String billingCycle;
-  final List<String> features;
   final int capsuleLimit;
   final int childLimit;
   final Color accentColor;
@@ -79,11 +64,7 @@ class SubscriptionPlan {
 
   const SubscriptionPlan({
     required this.tier,
-    required this.title,
-    required this.subtitle,
     required this.priceDZD,
-    required this.billingCycle,
-    required this.features,
     required this.capsuleLimit,
     required this.childLimit,
     required this.accentColor,
@@ -91,59 +72,29 @@ class SubscriptionPlan {
   });
 
   bool get isUnlimited => capsuleLimit == -1;
-  String get priceLabel => priceDZD == 0 ? 'Gratuit' : '$priceDZD DZD';
 
   static const List<SubscriptionPlan> allPlans = [
     SubscriptionPlan(
       tier: SubscriptionTier.free,
-      title: 'Gratuit',
-      subtitle: 'Pour commencer',
       priceDZD: 0,
-      billingCycle: '',
       capsuleLimit: 25,
       childLimit: 1,
       accentColor: Color(0xFF78909C),
-      features: [
-        '25 capsules maximum',
-        '1 enfant',
-        'Jalons de développement',
-        'Vaccinations',
-      ],
     ),
     SubscriptionPlan(
       tier: SubscriptionTier.premium,
-      title: 'Prémium',
-      subtitle: 'Pour les mamans actives',
       priceDZD: 2490,
-      billingCycle: '/an',
       capsuleLimit: -1,
       childLimit: -1,
       accentColor: Color(0xFFE85A71),
-      features: [
-        'Capsules illimitées',
-        'Tous les enfants',
-        'Livre de Mémoires',
-        'Suivi de santé complet',
-        'Sans publicités',
-      ],
     ),
     SubscriptionPlan(
       tier: SubscriptionTier.vip,
-      title: 'VIP Annuel',
-      subtitle: 'L\'expérience complète',
       priceDZD: 9890,
-      billingCycle: '/an',
       capsuleLimit: -1,
       childLimit: -1,
       accentColor: Color(0xFFFF6F00),
       hasAlbumPerk: true,
-      features: [
-        'Tout Prémium inclus',
-        'Album imprimé OFFERT 🎁',
-        'Support prioritaire',
-        'Carte VIP personnalisée',
-        'Utilisation de la carte VIP avec nos partenaires*',
-      ],
     ),
   ];
 }

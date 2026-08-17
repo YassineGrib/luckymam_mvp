@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:shimmer/shimmer.dart';
 
+import '../../../core/extensions/l10n_extension.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_spacing.dart';
 import '../../profile/models/profile_models.dart';
@@ -22,6 +22,7 @@ class MemoryBookScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = context.l10n;
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final bgColor = isDark
         ? AppColors.backgroundDark
@@ -45,18 +46,9 @@ class MemoryBookScreen extends ConsumerWidget {
               loading: () => const SizedBox(height: 50),
               error: (_, _) => const SizedBox.shrink(),
               data: (children) {
-                final lang = Localizations.localeOf(context).languageCode;
                 return PageHeaderWithFilter(
-                  title: lang == 'ar'
-                      ? 'دفتر الذكريات'
-                      : lang == 'en'
-                          ? 'Memory Book'
-                          : 'Livre de Mémoires',
-                  subtitle: lang == 'ar'
-                      ? 'ألبومات مصممة تلقائياً'
-                      : lang == 'en'
-                          ? 'Auto-generated albums'
-                          : 'Albums auto-générés',
+                  title: l10n.memoryBookTitle,
+                  subtitle: l10n.memoryBookSubtitle,
                   icon: Icons.auto_stories_rounded,
                   iconGradient: const LinearGradient(
                     colors: [Color(0xFFFF6F00), Color(0xFFFFAB00)],
@@ -79,7 +71,6 @@ class MemoryBookScreen extends ConsumerWidget {
               loading: () => const SizedBox.shrink(),
               error: (_, _) => const SizedBox.shrink(),
               data: (children) {
-                final lang = Localizations.localeOf(context).languageCode;
                 return Padding(
                   padding: const EdgeInsets.symmetric(
                     horizontal: AppSpacing.screenPaddingH,
@@ -89,16 +80,8 @@ class MemoryBookScreen extends ConsumerWidget {
                       Expanded(
                         child: _AlbumEntryBanner(
                           icon: Icons.auto_awesome_rounded,
-                          title: lang == 'ar'
-                              ? 'ألبوم مسبق الصنع'
-                              : lang == 'en'
-                                  ? 'Predefined Album'
-                                  : 'Album prédéfini',
-                          subtitle: lang == 'ar'
-                              ? 'الولادة، السنة الأولى…'
-                              : lang == 'en'
-                                  ? 'Birth, 1st year…'
-                                  : 'Naissance, 1ère année…',
+                          title: l10n.albumPredefinedTitle,
+                          subtitle: l10n.albumPredefinedSubtitle,
                           gradientColors: const [
                             Color(0xFFFF6F91),
                             Color(0xFF7C4DFF),
@@ -113,16 +96,8 @@ class MemoryBookScreen extends ConsumerWidget {
                       Expanded(
                         child: _AlbumEntryBanner(
                           icon: Icons.dashboard_customize_rounded,
-                          title: lang == 'ar'
-                              ? 'ألبوم حر'
-                              : lang == 'en'
-                                  ? 'Free Album'
-                                  : 'Album libre',
-                          subtitle: lang == 'ar'
-                              ? 'صفحات فارغة لملئها'
-                              : lang == 'en'
-                                  ? 'Blank pages to fill'
-                                  : 'Pages vierges à remplir',
+                          title: l10n.albumFreeTitle,
+                          subtitle: l10n.albumFreeSubtitle,
                           gradientColors: const [
                             Color(0xFF00BFA5),
                             Color(0xFF448AFF),
@@ -191,17 +166,11 @@ class MemoryBookScreen extends ConsumerWidget {
     List<Child> children,
     ValueChanged<Child> onResolved,
   ) {
-    final lang = Localizations.localeOf(context).languageCode;
+    final l10n = context.l10n;
     if (children.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text(
-            lang == 'ar'
-                ? 'أضيفي طفلاً أولاً لإنشاء ألبوم'
-                : lang == 'en'
-                    ? 'Add a child first to create an album'
-                    : 'Ajoutez d\'abord un enfant pour créer un album',
-          ),
+          content: Text(l10n.albumAddChildFirst),
           behavior: SnackBarBehavior.floating,
         ),
       );
@@ -222,13 +191,8 @@ class MemoryBookScreen extends ConsumerWidget {
             Padding(
               padding: const EdgeInsets.all(AppSpacing.md),
               child: Text(
-                lang == 'ar'
-                    ? 'لأي طفل ؟'
-                    : lang == 'en'
-                        ? 'For which child?'
-                        : 'Pour quel enfant ?',
-                style: GoogleFonts.outfit(
-                  fontSize: 16,
+                l10n.albumForWhichChild,
+                style: Theme.of(context).textTheme.titleMedium?.copyWith(
                   fontWeight: FontWeight.w600,
                 ),
               ),
@@ -254,45 +218,29 @@ class MemoryBookScreen extends ConsumerWidget {
     WidgetRef ref,
     Child child,
   ) {
-    final lang = Localizations.localeOf(context).languageCode;
-    final defaultTitle = lang == 'ar'
-        ? 'ألبوم لـ ${child.name}'
-        : lang == 'en'
-            ? 'Album for ${child.name}'
-            : 'Album de ${child.name}';
+    final l10n = context.l10n;
+    final defaultTitle = l10n.albumDefaultTitleForChild(child.name);
     final controller = TextEditingController(text: defaultTitle);
     showDialog(
       context: context,
       builder: (ctx) => AlertDialog(
         title: Text(
-          lang == 'ar'
-              ? 'ألبوم حر جديد'
-              : lang == 'en'
-                  ? 'New Free Album'
-                  : 'Nouvel album libre',
-          style: GoogleFonts.outfit(fontWeight: FontWeight.bold),
+          l10n.albumNewFreeTitle,
+          style: Theme.of(context).textTheme.titleLarge?.copyWith(
+            fontWeight: FontWeight.bold,
+          ),
         ),
         content: TextField(
           controller: controller,
           autofocus: true,
           decoration: InputDecoration(
-            hintText: lang == 'ar'
-                ? 'عنوان الألبوم'
-                : lang == 'en'
-                    ? 'Album title'
-                    : 'Titre de l\'album',
+            hintText: l10n.albumTitleHint,
           ),
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(ctx),
-            child: Text(
-              lang == 'ar'
-                  ? 'إلغاء'
-                  : lang == 'en'
-                      ? 'Cancel'
-                      : 'Annuler',
-            ),
+            child: Text(l10n.albumCancel),
           ),
           FilledButton(
             onPressed: () async {
@@ -308,13 +256,7 @@ class MemoryBookScreen extends ConsumerWidget {
               if (album == null) {
                 ScaffoldMessenger.of(context).showSnackBar(
                   SnackBar(
-                    content: Text(
-                      lang == 'ar'
-                          ? 'خطأ أثناء إنشاء الألبوم'
-                          : lang == 'en'
-                              ? 'Error creating the album'
-                              : 'Erreur lors de la création de l\'album',
-                    ),
+                    content: Text(l10n.albumCreateError),
                     backgroundColor: AppColors.error,
                   ),
                 );
@@ -330,13 +272,7 @@ class MemoryBookScreen extends ConsumerWidget {
                 ),
               );
             },
-            child: Text(
-              lang == 'ar'
-                  ? 'إنشاء'
-                  : lang == 'en'
-                      ? 'Create'
-                      : 'Créer',
-            ),
+            child: Text(l10n.albumCreate),
           ),
         ],
       ),
@@ -396,6 +332,7 @@ class MemoryBookScreen extends ConsumerWidget {
   }
 
   Widget _buildEmptyState(BuildContext context, Color primary, Color textColor, Color secondaryText) {
+    final l10n = context.l10n;
     return Center(
       child: Padding(
         padding: const EdgeInsets.all(AppSpacing.xl),
@@ -413,13 +350,8 @@ class MemoryBookScreen extends ConsumerWidget {
             ),
             const SizedBox(height: AppSpacing.lg),
             Text(
-              Localizations.localeOf(context).languageCode == 'ar'
-                  ? 'لا توجد ألبومات متاحة'
-                  : Localizations.localeOf(context).languageCode == 'en'
-                      ? 'No albums available'
-                      : 'Aucun album disponible',
-              style: GoogleFonts.outfit(
-                fontSize: 20,
+              l10n.memoryBookNoAlbums,
+              style: Theme.of(context).textTheme.titleLarge?.copyWith(
                 fontWeight: FontWeight.bold,
                 color: textColor,
               ),
@@ -427,12 +359,10 @@ class MemoryBookScreen extends ConsumerWidget {
             ),
             const SizedBox(height: AppSpacing.sm),
             Text(
-              Localizations.localeOf(context).languageCode == 'ar'
-                  ? 'سجلي المزيد من الذكريات\nلفتح الألبومات التلقائية'
-                  : Localizations.localeOf(context).languageCode == 'en'
-                      ? 'Capture more memories\nto unlock automatic albums'
-                      : 'Capturez plus de souvenirs\npour débloquer des albums automatiques',
-              style: GoogleFonts.outfit(fontSize: 14, color: secondaryText),
+              l10n.memoryBookCaptureMore,
+              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                color: secondaryText,
+              ),
               textAlign: TextAlign.center,
             ),
           ],
@@ -442,6 +372,7 @@ class MemoryBookScreen extends ConsumerWidget {
   }
 
   Widget _buildErrorState(BuildContext context, Color textColor, Color secondaryText) {
+    final l10n = context.l10n;
     return Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -453,25 +384,18 @@ class MemoryBookScreen extends ConsumerWidget {
           ),
           const SizedBox(height: AppSpacing.md),
           Text(
-            Localizations.localeOf(context).languageCode == 'ar'
-                ? 'خطأ في التحميل'
-                : Localizations.localeOf(context).languageCode == 'en'
-                    ? 'Loading error'
-                    : 'Erreur de chargement',
-            style: GoogleFonts.outfit(
-              fontSize: 18,
+            l10n.albumLoadingError,
+            style: Theme.of(context).textTheme.titleMedium?.copyWith(
               fontWeight: FontWeight.bold,
               color: textColor,
             ),
           ),
           const SizedBox(height: AppSpacing.xs),
           Text(
-            Localizations.localeOf(context).languageCode == 'ar'
-                ? 'تعذر إنشاء الألبومات'
-                : Localizations.localeOf(context).languageCode == 'en'
-                    ? 'Failed to generate albums'
-                    : 'Impossible de générer les albums',
-            style: GoogleFonts.outfit(fontSize: 14, color: secondaryText),
+            l10n.memoryBookGenerateError,
+            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+              color: secondaryText,
+            ),
           ),
         ],
       ),
@@ -531,8 +455,7 @@ class _AlbumEntryBanner extends StatelessWidget {
             const SizedBox(height: 8),
             Text(
               title,
-              style: GoogleFonts.outfit(
-                fontSize: 13,
+              style: Theme.of(context).textTheme.labelLarge?.copyWith(
                 fontWeight: FontWeight.bold,
                 color: Colors.white,
               ),
@@ -542,8 +465,7 @@ class _AlbumEntryBanner extends StatelessWidget {
             const SizedBox(height: 2),
             Text(
               subtitle,
-              style: GoogleFonts.outfit(
-                fontSize: 11,
+              style: Theme.of(context).textTheme.labelSmall?.copyWith(
                 color: Colors.white.withValues(alpha: 0.85),
               ),
               maxLines: 1,

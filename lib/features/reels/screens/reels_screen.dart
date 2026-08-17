@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:google_fonts/google_fonts.dart';
+import '../../../core/theme/app_typography.dart';
 
+import '../../../core/extensions/l10n_extension.dart';
 import '../../../core/services/analytics_service.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../ads/models/house_ad.dart';
@@ -103,6 +104,7 @@ class _ReelsScreenState extends ConsumerState<ReelsScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = context.l10n;
     final reels = ref.watch(filteredReelsProvider);
     final currentIndex = ref.watch(currentReelIndexProvider);
     final selectedCategory = ref.watch(selectedReelCategoryProvider);
@@ -136,7 +138,7 @@ class _ReelsScreenState extends ConsumerState<ReelsScreen> {
             children: [
             // ── Vertical page view ────────────────────────────────────
             displayItems.isEmpty
-                ? _buildEmptyState()
+                ? _buildEmptyState(context)
                 : PageView.builder(
                     controller: _pageController,
                     scrollDirection: Axis.vertical,
@@ -202,12 +204,8 @@ class _ReelsScreenState extends ConsumerState<ReelsScreen> {
                         ),
                         const SizedBox(width: 12),
                         Text(
-                          Localizations.localeOf(context).languageCode == 'ar'
-                              ? 'مقاطع توعوية'
-                              : Localizations.localeOf(context).languageCode == 'en'
-                                  ? 'Educational Reels'
-                                  : 'Reels Éducatifs',
-                          style: GoogleFonts.outfit(
+                          l10n.reelsTitle,
+                          style: AppTypography.fromContext(context,
                             fontSize: 18,
                             fontWeight: FontWeight.w600,
                             color: Colors.white,
@@ -229,7 +227,7 @@ class _ReelsScreenState extends ConsumerState<ReelsScreen> {
                             ),
                             child: Text(
                               '${currentIndex + 1}/${displayItems.length}',
-                              style: GoogleFonts.outfit(
+                              style: AppTypography.fromContext(context,
                                 fontSize: 12,
                                 fontWeight: FontWeight.w600,
                                 color: Colors.white,
@@ -275,12 +273,8 @@ class _ReelsScreenState extends ConsumerState<ReelsScreen> {
                                 ),
                                 const SizedBox(width: 6),
                                 Text(
-                                  Localizations.localeOf(context).languageCode == 'ar'
-                                      ? 'تصفية: ${widget.initialVaccineLabel}'
-                                      : Localizations.localeOf(context).languageCode == 'en'
-                                          ? 'Filtered: ${widget.initialVaccineLabel}'
-                                          : 'Filtré : ${widget.initialVaccineLabel}',
-                                  style: GoogleFonts.outfit(
+                                  l10n.reelsFiltered(widget.initialVaccineLabel!),
+                                  style: AppTypography.fromContext(context,
                                     fontSize: 12,
                                     fontWeight: FontWeight.w600,
                                     color: Colors.white,
@@ -308,7 +302,8 @@ class _ReelsScreenState extends ConsumerState<ReelsScreen> {
     );
   }
 
-  Widget _buildEmptyState() {
+  Widget _buildEmptyState(BuildContext context) {
+    final l10n = context.l10n;
     return Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -320,8 +315,8 @@ class _ReelsScreenState extends ConsumerState<ReelsScreen> {
           ),
           const SizedBox(height: 16),
           Text(
-            'Aucun reel dans cette catégorie',
-            style: GoogleFonts.outfit(
+            l10n.reelsEmptyCategory,
+            style: AppTypography.fromContext(context,
               color: Colors.white60,
               fontSize: 16,
               fontWeight: FontWeight.w500,
@@ -344,22 +339,22 @@ class _CategoryFilterBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = context.l10n;
     return SizedBox(
       height: 40,
       child: ListView(
         scrollDirection: Axis.horizontal,
         padding: const EdgeInsets.symmetric(horizontal: 8),
         children: [
-          // "Tous" chip
           _CategoryChip(
-            label: 'Tous',
+            label: l10n.reelsAll,
             emoji: '✨',
             isSelected: selected == null,
             onTap: () => onSelected(null),
           ),
           ...ReelCategory.values.map(
             (cat) => _CategoryChip(
-              label: cat.shortLabel,
+              label: cat.shortLabelL10n(l10n),
               emoji: cat.emoji,
               isSelected: selected == cat,
               onTap: () => onSelected(cat),
@@ -419,7 +414,7 @@ class _CategoryChip extends StatelessWidget {
         ),
         child: Text(
           '$emoji $label',
-          style: GoogleFonts.outfit(
+          style: AppTypography.fromContext(context,
             fontSize: 12,
             fontWeight: isSelected ? FontWeight.w700 : FontWeight.w500,
             color: Colors.white,

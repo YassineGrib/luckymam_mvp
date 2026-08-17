@@ -6,6 +6,10 @@ import '../../../core/providers/auth_provider.dart';
 import '../../../core/services/analytics_service.dart';
 import '../models/marketplace_order.dart';
 import '../models/marketplace_product.dart';
+import 'marketplace_providers.dart';
+
+/// Flat shipping fee for marketplace orders (DZD), aligned with admin seed data.
+const int marketplaceShippingDZD = 500;
 
 // ═══════════════════════════════════════════════════════════════════════════
 // CART
@@ -22,10 +26,14 @@ class CartNotifier extends StateNotifier<List<CartItem>> {
   /// Adds [quantity] of [product], merging with an existing line.
   /// Returns false when a cap prevents the add.
   bool add(MarketplaceProduct product, {int quantity = 1}) {
+    if (!product.isInStock) return false;
+    final maxQty = product.maxOrderQuantity;
+    if (maxQty <= 0) return false;
+
     final index = state.indexWhere((i) => i.product.id == product.id);
     if (index >= 0) {
       final newQty = state[index].quantity + quantity;
-      if (newQty > CartItem.maxQuantity) return false;
+      if (newQty > maxQty) return false;
       state = [
         for (final item in state)
           if (item.product.id == product.id)
@@ -36,7 +44,7 @@ class CartNotifier extends StateNotifier<List<CartItem>> {
       return true;
     }
     if (state.length >= maxDistinctItems) return false;
-    if (quantity > CartItem.maxQuantity) return false;
+    if (quantity > maxQty) return false;
     state = [...state, CartItem(product: product, quantity: quantity)];
     return true;
   }
@@ -46,7 +54,10 @@ class CartNotifier extends StateNotifier<List<CartItem>> {
       remove(productId);
       return;
     }
-    if (quantity > CartItem.maxQuantity) return;
+    final item = state.where((i) => i.product.id == productId).firstOrNull;
+    if (item == null) return;
+    final maxQty = item.product.maxOrderQuantity;
+    if (quantity > maxQty) return;
     state = [
       for (final item in state)
         if (item.product.id == productId)
@@ -73,10 +84,17 @@ final cartItemCountProvider = Provider<int>((ref) {
   return cart.fold(0, (acc, i) => acc + i.quantity);
 });
 
-/// Cart total in DZD.
+/// Cart total in DZD (items only).
 final cartTotalProvider = Provider<int>((ref) {
   final cart = ref.watch(cartProvider);
   return cart.fold(0, (acc, i) => acc + i.lineTotalDZD);
+});
+
+/// Cart total including flat shipping fee.
+final cartGrandTotalProvider = Provider<int>((ref) {
+  final cart = ref.watch(cartProvider);
+  if (cart.isEmpty) return 0;
+  return ref.watch(cartTotalProvider) + marketplaceShippingDZD;
 });
 
 // ═══════════════════════════════════════════════════════════════════════════
@@ -109,8 +127,9 @@ class OrderActionsState {
 }
 
 class OrderActionsNotifier extends StateNotifier<OrderActionsState> {
-  OrderActionsNotifier() : super(const OrderActionsState());
+  OrderActionsNotifier(this._ref) : super(const OrderActionsState());
 
+  final Ref _ref;
   DateTime? _lastSubmission;
 
   /// Creates the order document. Returns the created order id, or null on
@@ -121,6 +140,7 @@ class OrderActionsNotifier extends StateNotifier<OrderActionsState> {
     required String phone,
     required String wilaya,
     required String address,
+    required String locale,
   }) async {
     // Basic anti-fraud: block empty carts, over-cap quantities, and
     // rapid duplicate submissions (double-tap / retry spam).
@@ -128,8 +148,12 @@ class OrderActionsNotifier extends StateNotifier<OrderActionsState> {
       state = const OrderActionsState(error: 'Le panier est vide');
       return null;
     }
-    if (items.any((i) => i.quantity < 1 || i.quantity > CartItem.maxQuantity)) {
+    if (items.any((i) => i.quantity < 1 || i.quantity > i.product.maxOrderQuantity)) {
       state = const OrderActionsState(error: 'Quantité invalide');
+      return null;
+    }
+    if (items.any((i) => !i.product.isInStock)) {
+      state = const OrderActionsState(error: 'Produit indisponible');
       return null;
     }
     final now = DateTime.now();
@@ -146,19 +170,49 @@ class OrderActionsNotifier extends StateNotifier<OrderActionsState> {
       final uid = FirebaseAuth.instance.currentUser?.uid;
       if (uid == null) throw Exception('Non connectée');
 
-      final total = items.fold(0, (acc, i) => acc + i.lineTotalDZD);
+      final subtotal = items.fold(0, (acc, i) => acc + i.lineTotalDZD);
+      final total = subtotal + marketplaceShippingDZD;
+      final createdAt = now.toIso8601String();
+      final historyAt = createdAt.substring(0, 16).replaceFirst('T', ' ');
+
+      final adminItems = items
+          .map(
+            (i) => i.toAdminItem(
+              vendorLabel: _ref.read(
+                productVendorLabelProvider(i.product),
+              ),
+              locale: locale,
+            ),
+          )
+          .toList();
+
       final doc = await FirebaseFirestore.instance
           .collection('marketplace_orders')
           .add({
             'userId': uid,
-            'lines': items.map((i) => i.toFirestore()).toList(),
+            'customer': {
+              'name': fullName,
+              'initials': _initialsFromName(fullName),
+              'phone': phone,
+              'wilaya': wilaya,
+              'address': address,
+            },
+            'items': adminItems,
+            'lines': items.map((i) => i.toFirestore(locale: locale)).toList(),
+            'subtotal': subtotal,
+            'shipping': marketplaceShippingDZD,
+            'total': total,
             'totalDZD': total,
             'fullName': fullName,
             'phone': phone,
             'wilaya': wilaya,
             'address': address,
+            'payment': {'method': 'cod', 'status': 'pending'},
             'status': OrderStatus.pending.name,
-            'createdAt': now.toIso8601String(),
+            'createdAt': createdAt,
+            'history': [
+              {'status': 'pending', 'at': historyAt, 'by': 'التطبيق'},
+            ],
           });
 
       _lastSubmission = now;
@@ -179,9 +233,19 @@ class OrderActionsNotifier extends StateNotifier<OrderActionsState> {
       return null;
     }
   }
+
+  static String _initialsFromName(String name) {
+    final parts = name.trim().split(RegExp(r'\s+')).where((p) => p.isNotEmpty).toList();
+    if (parts.isEmpty) return '—';
+    if (parts.length == 1) {
+      final word = parts.first;
+      return word.length >= 2 ? word.substring(0, 2) : word;
+    }
+    return '${parts.first[0]}${parts[1][0]}';
+  }
 }
 
 final orderActionsProvider =
     StateNotifierProvider<OrderActionsNotifier, OrderActionsState>(
-      (ref) => OrderActionsNotifier(),
+      (ref) => OrderActionsNotifier(ref),
     );

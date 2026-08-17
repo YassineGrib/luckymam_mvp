@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
+import '../../../core/theme/app_typography.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:printing/printing.dart';
 
+import '../../../core/extensions/l10n_extension.dart';
 import '../../../core/services/analytics_service.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_spacing.dart';
@@ -50,7 +51,7 @@ class _AlbumPrintPreviewScreenState
 
   @override
   Widget build(BuildContext context) {
-    final lang = Localizations.localeOf(context).languageCode;
+    final l10n = context.l10n;
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final bgColor = isDark
         ? AppColors.backgroundDark
@@ -67,12 +68,8 @@ class _AlbumPrintPreviewScreenState
           onPressed: () => Navigator.pop(context),
         ),
         title: Text(
-          lang == 'ar'
-              ? 'معاينة الألبوم'
-              : lang == 'en'
-                  ? 'Album Preview'
-                  : 'Aperçu de l\'album',
-          style: GoogleFonts.outfit(
+          l10n.printPreviewTitle,
+          style: AppTypography.fromContext(context, 
             fontSize: 17,
             fontWeight: FontWeight.w600,
             color: textColor,
@@ -115,12 +112,8 @@ class _AlbumPrintPreviewScreenState
                     ),
                     const SizedBox(height: AppSpacing.md),
                     Text(
-                      lang == 'ar'
-                          ? 'جاري تجهيز ألبومك...'
-                          : lang == 'en'
-                              ? 'Preparing your album...'
-                              : 'Préparation de votre album...',
-                      style: GoogleFonts.outfit(color: textColor),
+                      l10n.printPreparingAlbum,
+                      style: AppTypography.fromContext(context, fontSize: 14, color: textColor),
                     ),
                   ],
                 ),
@@ -163,12 +156,8 @@ class _AlbumPrintPreviewScreenState
                       color: Colors.white,
                     ),
                     label: Text(
-                      lang == 'ar'
-                          ? 'طلب الطباعة'
-                          : lang == 'en'
-                              ? 'Order printing'
-                              : 'Commander l\'impression',
-                      style: GoogleFonts.outfit(
+                      l10n.printOrderPrinting,
+                      style: AppTypography.fromContext(context, 
                         fontSize: 16,
                         fontWeight: FontWeight.bold,
                         color: Colors.white,
