@@ -61,6 +61,21 @@ class HouseAd {
   final String emoji;
   final List<Color> gradientColors;
 
+  IconData get icon {
+    switch (id) {
+      case 'vip_pass':
+        return Icons.workspace_premium_rounded;
+      case 'marketplace_promo':
+        return Icons.shopping_bag_rounded;
+      case 'predefined_album':
+        return Icons.menu_book_rounded;
+      case 'diamond_sponsor':
+        return Icons.diamond_rounded;
+      default:
+        return Icons.smart_toy_rounded;
+    }
+  }
+
   /// Optional local asset (preferred for V1) — e.g. 'assets/ads/xxx.png'.
   final String? assetPath;
 

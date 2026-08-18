@@ -245,6 +245,18 @@ class AppLocalizationsFr extends AppLocalizations {
   String get dashboardQuickAccess => 'Accès Rapide';
 
   @override
+  String get quickActionCapsule => 'Capsule';
+
+  @override
+  String get quickActionReels => 'Reels';
+
+  @override
+  String get quickActionHealth => 'Santé';
+
+  @override
+  String get quickActionMemories => 'Album';
+
+  @override
   String get dashboardHealthWellbeing => 'Mon Bien-être';
 
   @override
@@ -1059,6 +1071,21 @@ class AppLocalizationsFr extends AppLocalizations {
   String get capsuleAddPhoto => 'Ajouter une photo';
 
   @override
+  String get capsuleCropTitle => 'Recadrer la photo';
+
+  @override
+  String get capsuleCropHint => 'Pincez et déplacez pour ajuster le cadrage';
+
+  @override
+  String get capsuleCropButton => 'Recadrer';
+
+  @override
+  String get capsuleChangePhoto => 'Changer';
+
+  @override
+  String get capsuleCreateCTA => 'Créer la capsule';
+
+  @override
   String get capsulePhotoSourceHint => 'Appareil photo ou galerie';
 
   @override
@@ -1066,22 +1093,22 @@ class AppLocalizationsFr extends AppLocalizations {
       'Ajoutez un enfant dans votre profil pour créer des capsules';
 
   @override
-  String get capsuleWhichChild => '🧒 Pour quel enfant ?';
+  String get capsuleWhichChild => 'Pour quel enfant ?';
 
   @override
-  String get capsuleTagsOptional => '🏷️ Tags (optionnel)';
+  String get capsuleTagsOptional => 'Tags (optionnel)';
 
   @override
   String get capsuleAddTagHint => 'Ajouter un tag...';
 
   @override
-  String get capsuleCategory => '📂 Catégorie';
+  String get capsuleCategory => 'Catégorie';
 
   @override
   String get capsuleRequired => '(obligatoire)';
 
   @override
-  String get capsulePhotoDate => '📅 Date de la photo';
+  String get capsulePhotoDate => 'Date de la photo';
 
   @override
   String get capsuleTodayDefault => 'Aujourd\'hui (par défaut)';
@@ -1428,43 +1455,99 @@ class AppLocalizationsFr extends AppLocalizations {
   String get subscriptionBack => 'Retour';
 
   @override
-  String get subscriptionDiamondSponsorsTitle => 'Sponsors Diamant';
+  String get subscriptionDiamondSponsorsTitle => 'Espaces publicitaires';
 
   @override
-  String get subscriptionDiamondPartnersHero => 'Nos Partenaires Diamant';
+  String get subscriptionDiamondPartnersHero =>
+      'Des emplacements sont disponibles';
 
   @override
   String get subscriptionDiamondPartnersSubtitle =>
-      'Des marques de confiance qui accompagnent\nchaque maman dans son parcours';
+      'Associez votre marque à Luckymam et touchez des milliers de mamans algériennes.';
 
   @override
-  String get subscriptionDiamondPillExclusive => '💎 Exclusif';
+  String get subscriptionDiamondPillExclusive => 'Visibilité';
 
   @override
-  String get subscriptionDiamondPillPremium => '⭐ Premium';
+  String get subscriptionDiamondPillPremium => 'Ciblage';
 
   @override
-  String get subscriptionDiamondPillCertified => '✅ Certifié';
+  String get subscriptionDiamondPillCertified => 'Confiance';
 
   @override
-  String get subscriptionDiamondLogosSection => 'Logos & Partenaires';
+  String get subscriptionDiamondLogosSection => 'Emplacements disponibles';
 
   @override
   String get subscriptionDiamondOfficialPartners =>
-      'Partenaires officiels de l\'application Luckymam';
+      'Chaque espace est prêt à accueillir votre marque.';
 
   @override
-  String get subscriptionDiamondBadge => 'Diamant';
+  String get subscriptionDiamondBadge => 'Disponible';
 
   @override
-  String get subscriptionDiamondJoinTitle => 'Rejoignez nos Sponsors Diamant';
+  String get subscriptionDiamondJoinTitle => 'Réserver un emplacement';
 
   @override
   String get subscriptionDiamondJoinSubtitle =>
-      'Atteignez des milliers de mamans algériennes.\nContactez-nous pour un partenariat Diamant.';
+      'Contactez notre équipe partenariats pour un devis sur mesure.';
 
   @override
-  String get subscriptionDiamondContactEmail => 'sponsors@Luckymam.com';
+  String get subscriptionDiamondContactEmail => 'sponsors@luckymam.com';
+
+  @override
+  String get subscriptionAdSlotSplashTitle => 'Ouverture de l\'app';
+
+  @override
+  String get subscriptionAdSlotSplashDesc =>
+      'Écran d\'accueil au lancement, visibilité maximale.';
+
+  @override
+  String get subscriptionAdSlotReelsTitle => 'Flux Reels';
+
+  @override
+  String get subscriptionAdSlotReelsDesc =>
+      'Annonce native dans le fil vidéo éducatif.';
+
+  @override
+  String get subscriptionAdSlotInterstitialTitle => 'Interstitiel';
+
+  @override
+  String get subscriptionAdSlotInterstitialDesc =>
+      'Plein écran entre les parcours clés de l\'app.';
+
+  @override
+  String get subscriptionAdSlotDiamondTitle => 'Sponsor Diamant';
+
+  @override
+  String get subscriptionAdSlotDiamondDesc =>
+      'Mise en avant premium avec logo et lien direct.';
+
+  @override
+  String get subscriptionAdSpaceWhyTitle => 'Pourquoi Luckymam ?';
+
+  @override
+  String get subscriptionAdSpaceBenefit1Title => 'Audience ciblée';
+
+  @override
+  String get subscriptionAdSpaceBenefit1Desc =>
+      'Mamans et futures mamans en Algérie.';
+
+  @override
+  String get subscriptionAdSpaceBenefit2Title => 'Contexte de confiance';
+
+  @override
+  String get subscriptionAdSpaceBenefit2Desc =>
+      'Santé, souvenirs et conseils au quotidien.';
+
+  @override
+  String get subscriptionAdSpaceBenefit3Title => 'Formats variés';
+
+  @override
+  String get subscriptionAdSpaceBenefit3Desc =>
+      'Splash, Reels, interstitiel et sponsor Diamant.';
+
+  @override
+  String get subscriptionAdSpaceEmailCopied => 'Adresse e-mail copiée';
 
   @override
   String get subscriptionDiamondPartner1Name => 'Partenaire Diamant 1';
@@ -1977,7 +2060,7 @@ class AppLocalizationsFr extends AppLocalizations {
   String get vaccineMark => 'Marquer';
 
   @override
-  String get vaccineLinkedMemoryEmoji => 'Souvenir lié 🌟';
+  String get vaccineLinkedMemoryEmoji => 'Souvenir lié';
 
   @override
   String get authPrivacyTitle => 'Confidentialité & CGU';

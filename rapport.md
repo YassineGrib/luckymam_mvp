@@ -327,7 +327,7 @@ node scripts/syncReelsFirestore.mjs   # reels من Storage
 
 ### أوامر Deploy (مُنفَّذة 2026-08-16)
 
-```bash
+   ```bash
 firebase target:apply hosting admin luckymam-app-dv --project luckymam-app-dv
 firebase deploy --only firestore:rules,storage --project luckymam-app-dv
 cd luckymam_admin && npm run build

@@ -1,317 +1,391 @@
 import 'package:flutter/material.dart';
-import '../../../core/theme/app_typography.dart';
+import 'package:flutter/services.dart';
 
 import '../../../core/extensions/l10n_extension.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_spacing.dart';
+import '../../../core/theme/app_typography.dart';
 import '../../../l10n/app_localizations.dart';
 
-/// Diamond Sponsor showcase page.
-/// Displays logos and information about Luckymam's diamond-tier sponsors.
+/// Inventory page for Luckymam advertising placements.
+/// Shows available sponsor slots and a contact CTA for brands.
 class DiamondSponsorsScreen extends StatelessWidget {
-  const DiamondSponsorsScreen({super.key});
+  const DiamondSponsorsScreen({super.key, this.showAppBar = true});
 
-  List<_SponsorData> _sponsors(AppLocalizations l10n) => [
-    _SponsorData(
-      name: l10n.subscriptionDiamondPartner1Name,
-      category: l10n.subscriptionDiamondPartner1Category,
-      description: l10n.subscriptionDiamondPartner1Description,
-      emoji: '🏥',
-      color: const Color(0xFF2196F3),
+  final bool showAppBar;
+
+  List<_AdSlotData> _slots(AppLocalizations l10n) => [
+    _AdSlotData(
+      icon: Icons.rocket_launch_outlined,
+      title: l10n.subscriptionAdSlotSplashTitle,
+      description: l10n.subscriptionAdSlotSplashDesc,
+      accent: AppColors.magentaPink,
     ),
-    _SponsorData(
-      name: l10n.subscriptionDiamondPartner2Name,
-      category: l10n.subscriptionDiamondPartner2Category,
-      description: l10n.subscriptionDiamondPartner2Description,
-      emoji: '🍼',
-      color: const Color(0xFFFF9800),
+    _AdSlotData(
+      icon: Icons.play_circle_outline_rounded,
+      title: l10n.subscriptionAdSlotReelsTitle,
+      description: l10n.subscriptionAdSlotReelsDesc,
+      accent: AppColors.smaltBlue,
     ),
-    _SponsorData(
-      name: l10n.subscriptionDiamondPartner3Name,
-      category: l10n.subscriptionDiamondPartner3Category,
-      description: l10n.subscriptionDiamondPartner3Description,
-      emoji: '🛍️',
-      color: const Color(0xFF9C27B0),
+    _AdSlotData(
+      icon: Icons.fullscreen_rounded,
+      title: l10n.subscriptionAdSlotInterstitialTitle,
+      description: l10n.subscriptionAdSlotInterstitialDesc,
+      accent: AppColors.casablanca,
+    ),
+    _AdSlotData(
+      icon: Icons.diamond_outlined,
+      title: l10n.subscriptionAdSlotDiamondTitle,
+      description: l10n.subscriptionAdSlotDiamondDesc,
+      accent: const Color(0xFF4FC3F7),
     ),
   ];
 
   @override
   Widget build(BuildContext context) {
     final l10n = context.l10n;
-    final sponsors = _sponsors(l10n);
+    final slots = _slots(l10n);
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final bgColor = isDark
-        ? AppColors.backgroundDark
-        : AppColors.backgroundLight;
-    final textColor = isDark
-        ? AppColors.onSurfaceDark
-        : AppColors.onSurfaceLight;
+    final bgColor =
+        isDark ? AppColors.backgroundDark : AppColors.backgroundLight;
+    final textColor =
+        isDark ? AppColors.onSurfaceDark : AppColors.onSurfaceLight;
     final secondaryColor = isDark
         ? AppColors.textSecondaryDark
         : AppColors.textSecondaryLight;
+    final primary = isDark ? AppColors.primaryDark : AppColors.primaryLight;
 
     return Scaffold(
       backgroundColor: bgColor,
-      appBar: AppBar(
-        backgroundColor: bgColor,
-        elevation: 0,
-        leading: IconButton(
-          icon: Icon(Icons.arrow_back_ios_rounded, color: textColor, size: 20),
-          onPressed: () => Navigator.pop(context),
-        ),
-        title: Text(
-          l10n.subscriptionDiamondSponsorsTitle,
-          style: AppTypography.fromContext(context, 
-            fontSize: 18,
-            fontWeight: FontWeight.w600,
-            color: textColor,
-          ),
-        ),
-      ),
+      appBar: showAppBar
+          ? AppBar(
+              backgroundColor: bgColor,
+              elevation: 0,
+              surfaceTintColor: Colors.transparent,
+              leading: IconButton(
+                icon: Icon(Icons.arrow_back, color: textColor, size: 22),
+                onPressed: () => Navigator.pop(context),
+              ),
+              title: Text(
+                l10n.subscriptionDiamondSponsorsTitle,
+                style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                      fontWeight: FontWeight.w600,
+                      color: textColor,
+                    ),
+              ),
+            )
+          : null,
       body: SingleChildScrollView(
-        padding: const EdgeInsets.all(AppSpacing.screenPaddingH),
+        padding: const EdgeInsets.fromLTRB(
+          AppSpacing.screenPaddingH,
+          AppSpacing.md,
+          AppSpacing.screenPaddingH,
+          AppSpacing.xxl,
+        ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Hero banner
-            Container(
-              width: double.infinity,
-              padding: const EdgeInsets.all(AppSpacing.xl),
-              decoration: BoxDecoration(
-                gradient: const LinearGradient(
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                  colors: [Color(0xFF1A1A2E), Color(0xFF16213E)],
-                ),
-                borderRadius: BorderRadius.circular(20),
-              ),
-              child: Column(
-                children: [
-                  // Diamond icon with shimmer effect
-                  Container(
-                    width: 80,
-                    height: 80,
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      gradient: const LinearGradient(
-                        colors: [Color(0xFFB9F2FF), Color(0xFF4FC3F7)],
-                      ),
-                      boxShadow: [
-                        BoxShadow(
-                          color: const Color(0xFF4FC3F7).withValues(alpha: 0.4),
-                          blurRadius: 20,
-                          spreadRadius: 2,
-                        ),
-                      ],
-                    ),
-                    child: const Icon(
-                      Icons.diamond_rounded,
-                      color: Colors.white,
-                      size: 44,
-                    ),
-                  ),
-                  const SizedBox(height: AppSpacing.md),
-                  Text(
-                    l10n.subscriptionDiamondPartnersHero,
-                    style: AppTypography.fromContext(context, 
-                      fontSize: 22,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.white,
-                    ),
-                    textAlign: TextAlign.center,
-                  ),
-                  const SizedBox(height: 8),
-                  Text(
-                    l10n.subscriptionDiamondPartnersSubtitle,
-                    style: AppTypography.fromContext(context, 
-                      fontSize: 13,
-                      color: Colors.white60,
-                      height: 1.5,
-                    ),
-                    textAlign: TextAlign.center,
-                  ),
-                  const SizedBox(height: AppSpacing.md),
-                  // Diamond pills row
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      _diamondPill(context, l10n.subscriptionDiamondPillExclusive),
-                      const SizedBox(width: 8),
-                      _diamondPill(context, l10n.subscriptionDiamondPillPremium),
-                      const SizedBox(width: 8),
-                      _diamondPill(context, l10n.subscriptionDiamondPillCertified),
-                    ],
-                  ),
-                ],
-              ),
+            _HeroBanner(
+              l10n: l10n,
+              primary: primary,
+              onPill: (label, icon) => _FeaturePill(label: label, icon: icon),
             ),
 
             const SizedBox(height: AppSpacing.xl),
 
-            // Section title
-            Text(
-              l10n.subscriptionDiamondLogosSection,
-              style: AppTypography.fromContext(context, 
-                fontSize: 16,
-                fontWeight: FontWeight.bold,
-                color: textColor,
-              ),
-            ),
-            const SizedBox(height: 4),
-            Text(
-              l10n.subscriptionDiamondOfficialPartners,
-              style: AppTypography.fromContext(context, fontSize: 13, color: secondaryColor),
+            Row(
+              children: [
+                Icon(Icons.grid_view_rounded, size: 20, color: primary),
+                const SizedBox(width: 8),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        l10n.subscriptionDiamondLogosSection,
+                        style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                              fontWeight: FontWeight.bold,
+                              color: textColor,
+                            ),
+                      ),
+                      const SizedBox(height: 2),
+                      Text(
+                        l10n.subscriptionDiamondOfficialPartners,
+                        style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                              color: secondaryColor,
+                              height: 1.4,
+                            ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
             ),
 
             const SizedBox(height: AppSpacing.md),
 
-            // Sponsors grid
-            ...sponsors.map(
-              (sponsor) => _SponsorCard(
-                sponsor: sponsor,
-                diamondBadgeLabel: l10n.subscriptionDiamondBadge,
+            ...slots.map(
+              (slot) => _AvailableSlotCard(
+                slot: slot,
+                availableLabel: l10n.subscriptionDiamondBadge,
                 isDark: isDark,
                 textColor: textColor,
                 secondaryColor: secondaryColor,
               ),
             ),
 
-            const SizedBox(height: AppSpacing.xl),
+            const SizedBox(height: AppSpacing.lg),
 
-            // Become sponsor CTA
-            Container(
-              width: double.infinity,
-              padding: const EdgeInsets.all(AppSpacing.lg),
-              decoration: BoxDecoration(
-                gradient: const LinearGradient(
-                  colors: [Color(0xFFE85A71), Color(0xFFFF8C94)],
-                ),
-                borderRadius: BorderRadius.circular(16),
-              ),
-              child: Column(
-                children: [
-                  const Icon(
-                    Icons.handshake_rounded,
-                    color: Colors.white,
-                    size: 36,
+            Text(
+              l10n.subscriptionAdSpaceWhyTitle,
+              style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                    fontWeight: FontWeight.bold,
+                    color: textColor,
                   ),
-                  const SizedBox(height: AppSpacing.sm),
-                  Text(
-                    l10n.subscriptionDiamondJoinTitle,
-                    style: AppTypography.fromContext(context, 
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.white,
-                    ),
-                    textAlign: TextAlign.center,
-                  ),
-                  const SizedBox(height: 4),
-                  Text(
-                    l10n.subscriptionDiamondJoinSubtitle,
-                    style: AppTypography.fromContext(context, 
-                      fontSize: 12,
-                      color: Colors.white70,
-                      height: 1.5,
-                    ),
-                    textAlign: TextAlign.center,
-                  ),
-                  const SizedBox(height: AppSpacing.md),
-                  Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 24,
-                      vertical: 10,
-                    ),
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    child: Text(
-                      l10n.subscriptionDiamondContactEmail,
-                      style: AppTypography.fromContext(context, 
-                        fontSize: 13,
-                        fontWeight: FontWeight.w600,
-                        color: AppColors.magentaPink,
-                      ),
-                    ),
-                  ),
-                ],
-              ),
+            ),
+            const SizedBox(height: AppSpacing.md),
+
+            _BenefitRow(
+              icon: Icons.groups_outlined,
+              title: l10n.subscriptionAdSpaceBenefit1Title,
+              description: l10n.subscriptionAdSpaceBenefit1Desc,
+              accent: primary,
+              isDark: isDark,
+              textColor: textColor,
+              secondaryColor: secondaryColor,
+            ),
+            const SizedBox(height: AppSpacing.sm),
+            _BenefitRow(
+              icon: Icons.verified_user_outlined,
+              title: l10n.subscriptionAdSpaceBenefit2Title,
+              description: l10n.subscriptionAdSpaceBenefit2Desc,
+              accent: AppColors.smaltBlue,
+              isDark: isDark,
+              textColor: textColor,
+              secondaryColor: secondaryColor,
+            ),
+            const SizedBox(height: AppSpacing.sm),
+            _BenefitRow(
+              icon: Icons.view_carousel_outlined,
+              title: l10n.subscriptionAdSpaceBenefit3Title,
+              description: l10n.subscriptionAdSpaceBenefit3Desc,
+              accent: AppColors.casablanca,
+              isDark: isDark,
+              textColor: textColor,
+              secondaryColor: secondaryColor,
             ),
 
-            const SizedBox(height: AppSpacing.xxl),
-          ],
-        ),
-      ),
-    );
-  }
+            const SizedBox(height: AppSpacing.xl),
 
-  Widget _diamondPill(BuildContext context, String label) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
-      decoration: BoxDecoration(
-        color: Colors.white.withValues(alpha: 0.1),
-        borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: Colors.white24),
-      ),
-      child: Text(
-        label,
-        style: AppTypography.fromContext(context, 
-          fontSize: 11,
-          color: Colors.white,
-          fontWeight: FontWeight.w500,
+            _ContactCta(
+              l10n: l10n,
+              primary: primary,
+            ),
+          ],
         ),
       ),
     );
   }
 }
 
-class _SponsorCard extends StatelessWidget {
-  const _SponsorCard({
-    required this.sponsor,
-    required this.diamondBadgeLabel,
+class _HeroBanner extends StatelessWidget {
+  const _HeroBanner({
+    required this.l10n,
+    required this.primary,
+    required this.onPill,
+  });
+
+  final AppLocalizations l10n;
+  final Color primary;
+  final Widget Function(String label, IconData icon) onPill;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(AppSpacing.lg),
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          begin: AlignmentDirectional.topStart,
+          end: AlignmentDirectional.bottomEnd,
+          colors: [
+            primary.withValues(alpha: 0.92),
+            AppColors.coral.withValues(alpha: 0.88),
+          ],
+        ),
+        borderRadius: BorderRadius.circular(20),
+        boxShadow: [
+          BoxShadow(
+            color: primary.withValues(alpha: 0.25),
+            blurRadius: 24,
+            offset: const Offset(0, 8),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+            decoration: BoxDecoration(
+              color: Colors.white.withValues(alpha: 0.18),
+              borderRadius: BorderRadius.circular(20),
+              border: Border.all(color: Colors.white24),
+            ),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Container(
+                  width: 8,
+                  height: 8,
+                  decoration: const BoxDecoration(
+                    color: Color(0xFF4ADE80),
+                    shape: BoxShape.circle,
+                  ),
+                ),
+                const SizedBox(width: 8),
+                Text(
+                  l10n.subscriptionDiamondBadge,
+                  style: AppTypography.fromContext(
+                    context,
+                    fontSize: 12,
+                    fontWeight: FontWeight.w600,
+                    color: Colors.white,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(height: AppSpacing.md),
+          Text(
+            l10n.subscriptionDiamondPartnersHero,
+            style: AppTypography.fromContext(
+              context,
+              fontSize: 24,
+              fontWeight: FontWeight.bold,
+              color: Colors.white,
+              height: 1.2,
+            ),
+          ),
+          const SizedBox(height: 8),
+          Text(
+            l10n.subscriptionDiamondPartnersSubtitle,
+            style: AppTypography.fromContext(
+              context,
+              fontSize: 14,
+              color: Colors.white.withValues(alpha: 0.88),
+              height: 1.5,
+            ),
+          ),
+          const SizedBox(height: AppSpacing.md),
+          Wrap(
+            spacing: 8,
+            runSpacing: 8,
+            children: [
+              onPill(
+                l10n.subscriptionDiamondPillExclusive,
+                Icons.visibility_outlined,
+              ),
+              onPill(
+                l10n.subscriptionDiamondPillPremium,
+                Icons.ads_click_outlined,
+              ),
+              onPill(
+                l10n.subscriptionDiamondPillCertified,
+                Icons.handshake_outlined,
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _FeaturePill extends StatelessWidget {
+  const _FeaturePill({required this.label, required this.icon});
+
+  final String label;
+  final IconData icon;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+      decoration: BoxDecoration(
+        color: Colors.white.withValues(alpha: 0.14),
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(color: Colors.white24),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(icon, size: 14, color: Colors.white),
+          const SizedBox(width: 6),
+          Text(
+            label,
+            style: AppTypography.fromContext(
+              context,
+              fontSize: 12,
+              fontWeight: FontWeight.w500,
+              color: Colors.white,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _AvailableSlotCard extends StatelessWidget {
+  const _AvailableSlotCard({
+    required this.slot,
+    required this.availableLabel,
     required this.isDark,
     required this.textColor,
     required this.secondaryColor,
   });
 
-  final _SponsorData sponsor;
-  final String diamondBadgeLabel;
+  final _AdSlotData slot;
+  final String availableLabel;
   final bool isDark;
   final Color textColor;
   final Color secondaryColor;
 
   @override
   Widget build(BuildContext context) {
-    final cardColor = isDark ? AppColors.surfaceDark : Colors.white;
+    final surface = isDark ? AppColors.surfaceDark : Colors.white;
 
     return Container(
       margin: const EdgeInsets.only(bottom: AppSpacing.md),
       padding: const EdgeInsets.all(AppSpacing.md),
       decoration: BoxDecoration(
-        color: cardColor,
+        color: surface,
         borderRadius: BorderRadius.circular(16),
+        border: Border.all(
+          color: slot.accent.withValues(alpha: 0.35),
+          width: 1.5,
+          strokeAlign: BorderSide.strokeAlignOutside,
+        ),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.05),
-            blurRadius: 8,
-            offset: const Offset(0, 2),
+            color: Colors.black.withValues(alpha: isDark ? 0.2 : 0.04),
+            blurRadius: 12,
+            offset: const Offset(0, 4),
           ),
         ],
       ),
       child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Logo placeholder
           Container(
-            width: 64,
-            height: 64,
+            width: 56,
+            height: 56,
             decoration: BoxDecoration(
-              color: sponsor.color.withValues(alpha: 0.12),
+              color: slot.accent.withValues(alpha: 0.12),
               borderRadius: BorderRadius.circular(14),
-              border: Border.all(color: sponsor.color.withValues(alpha: 0.3)),
             ),
-            child: Center(
-              child: Text(sponsor.emoji, style: const TextStyle(fontSize: 28)),
-            ),
+            child: Icon(slot.icon, color: slot.accent, size: 28),
           ),
           const SizedBox(width: AppSpacing.md),
           Expanded(
@@ -322,41 +396,41 @@ class _SponsorCard extends StatelessWidget {
                   children: [
                     Expanded(
                       child: Text(
-                        sponsor.name,
-                        style: AppTypography.fromContext(context, 
-                          fontSize: 15,
-                          fontWeight: FontWeight.w700,
-                          color: textColor,
-                        ),
+                        slot.title,
+                        style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                              fontWeight: FontWeight.w700,
+                              color: textColor,
+                            ),
                       ),
                     ),
-                    // Diamond badge
                     Container(
                       padding: const EdgeInsets.symmetric(
-                        horizontal: 6,
-                        vertical: 2,
+                        horizontal: 8,
+                        vertical: 4,
                       ),
                       decoration: BoxDecoration(
-                        gradient: const LinearGradient(
-                          colors: [Color(0xFFB9F2FF), Color(0xFF4FC3F7)],
+                        color: const Color(0xFF4ADE80).withValues(alpha: 0.15),
+                        borderRadius: BorderRadius.circular(8),
+                        border: Border.all(
+                          color: const Color(0xFF4ADE80).withValues(alpha: 0.4),
                         ),
-                        borderRadius: BorderRadius.circular(6),
                       ),
                       child: Row(
                         mainAxisSize: MainAxisSize.min,
                         children: [
-                          const Icon(
-                            Icons.diamond_rounded,
-                            size: 10,
-                            color: Colors.white,
+                          Icon(
+                            Icons.add_circle_outline,
+                            size: 12,
+                            color: const Color(0xFF16A34A),
                           ),
-                          const SizedBox(width: 2),
+                          const SizedBox(width: 4),
                           Text(
-                            diamondBadgeLabel,
-                            style: AppTypography.fromContext(context, 
-                              fontSize: 9,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.white,
+                            availableLabel,
+                            style: AppTypography.fromContext(
+                              context,
+                              fontSize: 10,
+                              fontWeight: FontWeight.w700,
+                              color: const Color(0xFF16A34A),
                             ),
                           ),
                         ],
@@ -364,23 +438,13 @@ class _SponsorCard extends StatelessWidget {
                     ),
                   ],
                 ),
-                const SizedBox(height: 2),
+                const SizedBox(height: 6),
                 Text(
-                  sponsor.category,
-                  style: AppTypography.fromContext(context, 
-                    fontSize: 11,
-                    color: sponsor.color,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-                const SizedBox(height: 4),
-                Text(
-                  sponsor.description,
-                  style: AppTypography.fromContext(context, 
-                    fontSize: 12,
-                    color: secondaryColor,
-                    height: 1.4,
-                  ),
+                  slot.description,
+                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                        color: secondaryColor,
+                        height: 1.45,
+                      ),
                 ),
               ],
             ),
@@ -391,18 +455,196 @@ class _SponsorCard extends StatelessWidget {
   }
 }
 
-class _SponsorData {
-  const _SponsorData({
-    required this.name,
-    required this.category,
+class _BenefitRow extends StatelessWidget {
+  const _BenefitRow({
+    required this.icon,
+    required this.title,
     required this.description,
-    required this.emoji,
-    required this.color,
+    required this.accent,
+    required this.isDark,
+    required this.textColor,
+    required this.secondaryColor,
   });
 
-  final String name;
-  final String category;
+  final IconData icon;
+  final String title;
   final String description;
-  final String emoji;
-  final Color color;
+  final Color accent;
+  final bool isDark;
+  final Color textColor;
+  final Color secondaryColor;
+
+  @override
+  Widget build(BuildContext context) {
+    final surface = isDark ? AppColors.surfaceDark : Colors.white;
+
+    return Container(
+      padding: const EdgeInsets.all(AppSpacing.md),
+      decoration: BoxDecoration(
+        color: surface,
+        borderRadius: BorderRadius.circular(14),
+        border: Border.all(
+          color: isDark ? AppColors.dividerDark : AppColors.dividerLight,
+        ),
+      ),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Container(
+            width: 40,
+            height: 40,
+            decoration: BoxDecoration(
+              color: accent.withValues(alpha: 0.12),
+              borderRadius: BorderRadius.circular(10),
+            ),
+            child: Icon(icon, size: 20, color: accent),
+          ),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  title,
+                  style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                        fontWeight: FontWeight.w600,
+                        color: textColor,
+                      ),
+                ),
+                const SizedBox(height: 2),
+                Text(
+                  description,
+                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                        color: secondaryColor,
+                        height: 1.4,
+                      ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _ContactCta extends StatelessWidget {
+  const _ContactCta({required this.l10n, required this.primary});
+
+  final AppLocalizations l10n;
+  final Color primary;
+
+  Future<void> _copyEmail(BuildContext context) async {
+    await Clipboard.setData(
+      ClipboardData(text: l10n.subscriptionDiamondContactEmail),
+    );
+    if (!context.mounted) return;
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(l10n.subscriptionAdSpaceEmailCopied),
+        behavior: SnackBarBehavior.floating,
+        duration: const Duration(seconds: 2),
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        onTap: () => _copyEmail(context),
+        borderRadius: BorderRadius.circular(18),
+        child: Ink(
+          width: double.infinity,
+          padding: const EdgeInsets.all(AppSpacing.lg),
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              colors: [primary, AppColors.coral],
+            ),
+            borderRadius: BorderRadius.circular(18),
+            boxShadow: [
+              BoxShadow(
+                color: primary.withValues(alpha: 0.3),
+                blurRadius: 16,
+                offset: const Offset(0, 6),
+              ),
+            ],
+          ),
+          child: Column(
+            children: [
+              const Icon(
+                Icons.mail_outline_rounded,
+                color: Colors.white,
+                size: 32,
+              ),
+              const SizedBox(height: AppSpacing.sm),
+              Text(
+                l10n.subscriptionDiamondJoinTitle,
+                style: AppTypography.fromContext(
+                  context,
+                  fontSize: 17,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.white,
+                ),
+                textAlign: TextAlign.center,
+              ),
+              const SizedBox(height: 6),
+              Text(
+                l10n.subscriptionDiamondJoinSubtitle,
+                style: AppTypography.fromContext(
+                  context,
+                  fontSize: 13,
+                  color: Colors.white.withValues(alpha: 0.88),
+                  height: 1.45,
+                ),
+                textAlign: TextAlign.center,
+              ),
+              const SizedBox(height: AppSpacing.md),
+              Container(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 10,
+                ),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text(
+                      l10n.subscriptionDiamondContactEmail,
+                      style: AppTypography.fromContext(
+                        context,
+                        fontSize: 13,
+                        fontWeight: FontWeight.w600,
+                        color: primary,
+                      ),
+                    ),
+                    const SizedBox(width: 8),
+                    Icon(Icons.content_copy_rounded, size: 16, color: primary),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _AdSlotData {
+  const _AdSlotData({
+    required this.icon,
+    required this.title,
+    required this.description,
+    required this.accent,
+  });
+
+  final IconData icon;
+  final String title;
+  final String description;
+  final Color accent;
 }

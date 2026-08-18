@@ -18,6 +18,7 @@ MarketplaceProduct _product(String id, {int price = 1000, String? imageUrl}) {
     priceDZD: price,
     partnerId: 'partner_test',
     category: ProductCategory.puericulture,
+    icon: ProductCategory.puericulture.icon,
     emoji: '🍼',
     imageUrl: imageUrl,
   );

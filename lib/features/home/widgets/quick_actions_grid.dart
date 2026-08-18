@@ -1,66 +1,67 @@
 import 'package:flutter/material.dart';
 
+import '../../../core/extensions/l10n_extension.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../capsules/screens/create_capsule_screen.dart';
 import '../../health/screens/health_hub_screen.dart';
 import '../../memory_book/screens/memory_book_screen.dart';
 import '../../reels/screens/reels_screen.dart';
 
-/// 1×4 quick action grid for common dashboard shortcuts.
+/// Modern 1×4 quick action grid for common dashboard shortcuts with micro-labels and tactile press effects.
 class QuickActionsGrid extends StatelessWidget {
   const QuickActionsGrid({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final l10n = context.l10n;
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final cardColor = isDark ? AppColors.surfaceDark : Colors.white;
 
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 4),
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Expanded(
             child: _QuickActionItem(
+              label: l10n.quickActionCapsule,
               icon: Icons.add_a_photo_rounded,
               color: AppColors.magentaPink,
-              cardColor: cardColor,
               isDark: isDark,
               onTap: () => Navigator.of(context).push(
                 MaterialPageRoute(builder: (_) => const CreateCapsuleScreen()),
               ),
             ),
           ),
-          const SizedBox(width: 12),
+          const SizedBox(width: 8),
           Expanded(
             child: _QuickActionItem(
+              label: l10n.quickActionReels,
               icon: Icons.play_circle_fill_rounded,
               color: AppColors.smaltBlue,
-              cardColor: cardColor,
               isDark: isDark,
               onTap: () => Navigator.of(
                 context,
               ).push(MaterialPageRoute(builder: (_) => const ReelsScreen())),
             ),
           ),
-          const SizedBox(width: 12),
+          const SizedBox(width: 8),
           Expanded(
             child: _QuickActionItem(
+              label: l10n.quickActionHealth,
               icon: Icons.monitor_heart_rounded,
               color: AppColors.success,
-              cardColor: cardColor,
               isDark: isDark,
               onTap: () => Navigator.of(context).push(
                 MaterialPageRoute(builder: (_) => const HealthHubScreen()),
               ),
             ),
           ),
-          const SizedBox(width: 12),
+          const SizedBox(width: 8),
           Expanded(
             child: _QuickActionItem(
+              label: l10n.quickActionMemories,
               icon: Icons.auto_stories_rounded,
               color: AppColors.casablanca,
-              cardColor: cardColor,
               isDark: isDark,
               onTap: () => Navigator.of(context).push(
                 MaterialPageRoute(builder: (_) => const MemoryBookScreen()),
@@ -73,47 +74,87 @@ class QuickActionsGrid extends StatelessWidget {
   }
 }
 
-class _QuickActionItem extends StatelessWidget {
+class _QuickActionItem extends StatefulWidget {
   const _QuickActionItem({
+    required this.label,
     required this.icon,
     required this.color,
-    required this.cardColor,
     required this.isDark,
     required this.onTap,
   });
 
+  final String label;
   final IconData icon;
   final Color color;
-  final Color cardColor;
   final bool isDark;
   final VoidCallback onTap;
 
   @override
+  State<_QuickActionItem> createState() => _QuickActionItemState();
+}
+
+class _QuickActionItemState extends State<_QuickActionItem> {
+  bool _isPressed = false;
+
+  @override
   Widget build(BuildContext context) {
+    final badgeBg = widget.color.withValues(
+      alpha: widget.isDark ? 0.22 : 0.12,
+    );
+
+    final borderColor = widget.color.withValues(
+      alpha: widget.isDark ? 0.35 : 0.25,
+    );
+
+    final textColor = widget.isDark ? AppColors.onSurfaceDark : AppColors.onSurfaceLight;
+
     return GestureDetector(
-      onTap: onTap,
-      child: AspectRatio(
-        aspectRatio: 1.0,
-        child: Container(
-          decoration: BoxDecoration(
-            color: color.withValues(alpha: isDark ? 0.2 : 0.1),
-            borderRadius: BorderRadius.circular(18),
-            border: Border.all(
-              color: isDark
-                  ? color.withValues(alpha: 0.3)
-                  : color.withValues(alpha: 0.2),
-            ),
-            boxShadow: [
-              BoxShadow(
-                color: color.withValues(alpha: isDark ? 0.05 : 0.1),
-                blurRadius: 10,
-                offset: const Offset(0, 4),
+      onTapDown: (_) => setState(() => _isPressed = true),
+      onTapUp: (_) => setState(() => _isPressed = false),
+      onTapCancel: () => setState(() => _isPressed = false),
+      onTap: widget.onTap,
+      child: AnimatedScale(
+        scale: _isPressed ? 0.92 : 1.0,
+        duration: const Duration(milliseconds: 120),
+        curve: Curves.easeOutCubic,
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            // Soft Tinted Circular Icon Badge (No white box background, no shadow glow)
+            Container(
+              width: 52,
+              height: 52,
+              decoration: BoxDecoration(
+                color: badgeBg,
+                shape: BoxShape.circle,
+                border: Border.all(color: borderColor, width: 1.2),
               ),
-            ],
-          ),
-          child: Center(child: Icon(icon, color: color, size: 32)),
+              child: Center(
+                child: Icon(
+                  widget.icon,
+                  color: widget.color,
+                  size: 24,
+                ),
+              ),
+            ),
+            const SizedBox(height: 8),
+            // Clean Micro-Label
+            Text(
+              widget.label,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                fontSize: 11.5,
+                fontWeight: FontWeight.w600,
+                color: textColor,
+                letterSpacing: -0.2,
+              ),
+            ),
+          ],
         ),
       ),
     );
   }
 }
+

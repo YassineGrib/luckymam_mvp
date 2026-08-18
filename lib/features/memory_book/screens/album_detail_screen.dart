@@ -291,9 +291,10 @@ class AlbumDetailScreen extends StatelessWidget {
                   color: Colors.black.withValues(alpha: 0.5),
                   borderRadius: BorderRadius.circular(6),
                 ),
-                child: Text(
-                  capsule.emotion.emoji,
-                  style: const TextStyle(fontSize: 12),
+                child: Icon(
+                  capsule.emotion.icon,
+                  size: 12,
+                  color: Colors.white,
                 ),
               ),
             ),

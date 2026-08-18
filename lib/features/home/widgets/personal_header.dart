@@ -9,7 +9,6 @@ import '../../profile/models/profile_models.dart';
 import '../../profile/providers/profile_providers.dart';
 import '../providers/home_providers.dart';
 import '../../profile/profile_screen.dart';
-import '../../../shared/widgets/app_logo.dart';
 
 /// Personal greeting header with user context.
 class PersonalHeader extends ConsumerWidget {
@@ -115,8 +114,14 @@ class PersonalHeader extends ConsumerWidget {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        // Luckymam logo + brand name
-                        const LuckymamLogo(size: 22, showText: true),
+                        // Brand logo (PNG includes wordmark)
+                        Image.asset(
+                          'assets/logo/herizontal_logo.png',
+                          height: 42,
+                          fit: BoxFit.contain,
+                          alignment: AlignmentDirectional.centerStart,
+                          filterQuality: FilterQuality.high,
+                        ),
                         const SizedBox(height: 8),
                         // Greeting
                         Text(
@@ -210,13 +215,13 @@ class PersonalHeader extends ConsumerWidget {
                       );
                     },
                     child: Container(
-                      width: 72,
-                      height: 72,
+                      width: 92,
+                      height: 92,
                       decoration: BoxDecoration(
                         shape: BoxShape.circle,
                         border: Border.all(
                           color: primary.withValues(alpha: 0.2),
-                          width: 2.5,
+                          width: 3,
                         ),
                         boxShadow: [
                           BoxShadow(

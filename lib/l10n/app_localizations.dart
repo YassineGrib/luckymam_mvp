@@ -538,6 +538,30 @@ abstract class AppLocalizations {
   /// **'Accès Rapide'**
   String get dashboardQuickAccess;
 
+  /// No description provided for @quickActionCapsule.
+  ///
+  /// In fr, this message translates to:
+  /// **'Capsule'**
+  String get quickActionCapsule;
+
+  /// No description provided for @quickActionReels.
+  ///
+  /// In fr, this message translates to:
+  /// **'Reels'**
+  String get quickActionReels;
+
+  /// No description provided for @quickActionHealth.
+  ///
+  /// In fr, this message translates to:
+  /// **'Santé'**
+  String get quickActionHealth;
+
+  /// No description provided for @quickActionMemories.
+  ///
+  /// In fr, this message translates to:
+  /// **'Album'**
+  String get quickActionMemories;
+
   /// No description provided for @dashboardHealthWellbeing.
   ///
   /// In fr, this message translates to:
@@ -1984,6 +2008,36 @@ abstract class AppLocalizations {
   /// **'Ajouter une photo'**
   String get capsuleAddPhoto;
 
+  /// No description provided for @capsuleCropTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Recadrer la photo'**
+  String get capsuleCropTitle;
+
+  /// No description provided for @capsuleCropHint.
+  ///
+  /// In fr, this message translates to:
+  /// **'Pincez et déplacez pour ajuster le cadrage'**
+  String get capsuleCropHint;
+
+  /// No description provided for @capsuleCropButton.
+  ///
+  /// In fr, this message translates to:
+  /// **'Recadrer'**
+  String get capsuleCropButton;
+
+  /// No description provided for @capsuleChangePhoto.
+  ///
+  /// In fr, this message translates to:
+  /// **'Changer'**
+  String get capsuleChangePhoto;
+
+  /// No description provided for @capsuleCreateCTA.
+  ///
+  /// In fr, this message translates to:
+  /// **'Créer la capsule'**
+  String get capsuleCreateCTA;
+
   /// No description provided for @capsulePhotoSourceHint.
   ///
   /// In fr, this message translates to:
@@ -1999,13 +2053,13 @@ abstract class AppLocalizations {
   /// No description provided for @capsuleWhichChild.
   ///
   /// In fr, this message translates to:
-  /// **'🧒 Pour quel enfant ?'**
+  /// **'Pour quel enfant ?'**
   String get capsuleWhichChild;
 
   /// No description provided for @capsuleTagsOptional.
   ///
   /// In fr, this message translates to:
-  /// **'🏷️ Tags (optionnel)'**
+  /// **'Tags (optionnel)'**
   String get capsuleTagsOptional;
 
   /// No description provided for @capsuleAddTagHint.
@@ -2017,7 +2071,7 @@ abstract class AppLocalizations {
   /// No description provided for @capsuleCategory.
   ///
   /// In fr, this message translates to:
-  /// **'📂 Catégorie'**
+  /// **'Catégorie'**
   String get capsuleCategory;
 
   /// No description provided for @capsuleRequired.
@@ -2029,7 +2083,7 @@ abstract class AppLocalizations {
   /// No description provided for @capsulePhotoDate.
   ///
   /// In fr, this message translates to:
-  /// **'📅 Date de la photo'**
+  /// **'Date de la photo'**
   String get capsulePhotoDate;
 
   /// No description provided for @capsuleTodayDefault.
@@ -2659,74 +2713,170 @@ abstract class AppLocalizations {
   /// No description provided for @subscriptionDiamondSponsorsTitle.
   ///
   /// In fr, this message translates to:
-  /// **'Sponsors Diamant'**
+  /// **'Espaces publicitaires'**
   String get subscriptionDiamondSponsorsTitle;
 
   /// No description provided for @subscriptionDiamondPartnersHero.
   ///
   /// In fr, this message translates to:
-  /// **'Nos Partenaires Diamant'**
+  /// **'Des emplacements sont disponibles'**
   String get subscriptionDiamondPartnersHero;
 
   /// No description provided for @subscriptionDiamondPartnersSubtitle.
   ///
   /// In fr, this message translates to:
-  /// **'Des marques de confiance qui accompagnent\nchaque maman dans son parcours'**
+  /// **'Associez votre marque à Luckymam et touchez des milliers de mamans algériennes.'**
   String get subscriptionDiamondPartnersSubtitle;
 
   /// No description provided for @subscriptionDiamondPillExclusive.
   ///
   /// In fr, this message translates to:
-  /// **'💎 Exclusif'**
+  /// **'Visibilité'**
   String get subscriptionDiamondPillExclusive;
 
   /// No description provided for @subscriptionDiamondPillPremium.
   ///
   /// In fr, this message translates to:
-  /// **'⭐ Premium'**
+  /// **'Ciblage'**
   String get subscriptionDiamondPillPremium;
 
   /// No description provided for @subscriptionDiamondPillCertified.
   ///
   /// In fr, this message translates to:
-  /// **'✅ Certifié'**
+  /// **'Confiance'**
   String get subscriptionDiamondPillCertified;
 
   /// No description provided for @subscriptionDiamondLogosSection.
   ///
   /// In fr, this message translates to:
-  /// **'Logos & Partenaires'**
+  /// **'Emplacements disponibles'**
   String get subscriptionDiamondLogosSection;
 
   /// No description provided for @subscriptionDiamondOfficialPartners.
   ///
   /// In fr, this message translates to:
-  /// **'Partenaires officiels de l\'application Luckymam'**
+  /// **'Chaque espace est prêt à accueillir votre marque.'**
   String get subscriptionDiamondOfficialPartners;
 
   /// No description provided for @subscriptionDiamondBadge.
   ///
   /// In fr, this message translates to:
-  /// **'Diamant'**
+  /// **'Disponible'**
   String get subscriptionDiamondBadge;
 
   /// No description provided for @subscriptionDiamondJoinTitle.
   ///
   /// In fr, this message translates to:
-  /// **'Rejoignez nos Sponsors Diamant'**
+  /// **'Réserver un emplacement'**
   String get subscriptionDiamondJoinTitle;
 
   /// No description provided for @subscriptionDiamondJoinSubtitle.
   ///
   /// In fr, this message translates to:
-  /// **'Atteignez des milliers de mamans algériennes.\nContactez-nous pour un partenariat Diamant.'**
+  /// **'Contactez notre équipe partenariats pour un devis sur mesure.'**
   String get subscriptionDiamondJoinSubtitle;
 
   /// No description provided for @subscriptionDiamondContactEmail.
   ///
   /// In fr, this message translates to:
-  /// **'sponsors@Luckymam.com'**
+  /// **'sponsors@luckymam.com'**
   String get subscriptionDiamondContactEmail;
+
+  /// No description provided for @subscriptionAdSlotSplashTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Ouverture de l\'app'**
+  String get subscriptionAdSlotSplashTitle;
+
+  /// No description provided for @subscriptionAdSlotSplashDesc.
+  ///
+  /// In fr, this message translates to:
+  /// **'Écran d\'accueil au lancement, visibilité maximale.'**
+  String get subscriptionAdSlotSplashDesc;
+
+  /// No description provided for @subscriptionAdSlotReelsTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Flux Reels'**
+  String get subscriptionAdSlotReelsTitle;
+
+  /// No description provided for @subscriptionAdSlotReelsDesc.
+  ///
+  /// In fr, this message translates to:
+  /// **'Annonce native dans le fil vidéo éducatif.'**
+  String get subscriptionAdSlotReelsDesc;
+
+  /// No description provided for @subscriptionAdSlotInterstitialTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Interstitiel'**
+  String get subscriptionAdSlotInterstitialTitle;
+
+  /// No description provided for @subscriptionAdSlotInterstitialDesc.
+  ///
+  /// In fr, this message translates to:
+  /// **'Plein écran entre les parcours clés de l\'app.'**
+  String get subscriptionAdSlotInterstitialDesc;
+
+  /// No description provided for @subscriptionAdSlotDiamondTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Sponsor Diamant'**
+  String get subscriptionAdSlotDiamondTitle;
+
+  /// No description provided for @subscriptionAdSlotDiamondDesc.
+  ///
+  /// In fr, this message translates to:
+  /// **'Mise en avant premium avec logo et lien direct.'**
+  String get subscriptionAdSlotDiamondDesc;
+
+  /// No description provided for @subscriptionAdSpaceWhyTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Pourquoi Luckymam ?'**
+  String get subscriptionAdSpaceWhyTitle;
+
+  /// No description provided for @subscriptionAdSpaceBenefit1Title.
+  ///
+  /// In fr, this message translates to:
+  /// **'Audience ciblée'**
+  String get subscriptionAdSpaceBenefit1Title;
+
+  /// No description provided for @subscriptionAdSpaceBenefit1Desc.
+  ///
+  /// In fr, this message translates to:
+  /// **'Mamans et futures mamans en Algérie.'**
+  String get subscriptionAdSpaceBenefit1Desc;
+
+  /// No description provided for @subscriptionAdSpaceBenefit2Title.
+  ///
+  /// In fr, this message translates to:
+  /// **'Contexte de confiance'**
+  String get subscriptionAdSpaceBenefit2Title;
+
+  /// No description provided for @subscriptionAdSpaceBenefit2Desc.
+  ///
+  /// In fr, this message translates to:
+  /// **'Santé, souvenirs et conseils au quotidien.'**
+  String get subscriptionAdSpaceBenefit2Desc;
+
+  /// No description provided for @subscriptionAdSpaceBenefit3Title.
+  ///
+  /// In fr, this message translates to:
+  /// **'Formats variés'**
+  String get subscriptionAdSpaceBenefit3Title;
+
+  /// No description provided for @subscriptionAdSpaceBenefit3Desc.
+  ///
+  /// In fr, this message translates to:
+  /// **'Splash, Reels, interstitiel et sponsor Diamant.'**
+  String get subscriptionAdSpaceBenefit3Desc;
+
+  /// No description provided for @subscriptionAdSpaceEmailCopied.
+  ///
+  /// In fr, this message translates to:
+  /// **'Adresse e-mail copiée'**
+  String get subscriptionAdSpaceEmailCopied;
 
   /// No description provided for @subscriptionDiamondPartner1Name.
   ///
@@ -3637,7 +3787,7 @@ abstract class AppLocalizations {
   /// No description provided for @vaccineLinkedMemoryEmoji.
   ///
   /// In fr, this message translates to:
-  /// **'Souvenir lié 🌟'**
+  /// **'Souvenir lié'**
   String get vaccineLinkedMemoryEmoji;
 
   /// No description provided for @authPrivacyTitle.

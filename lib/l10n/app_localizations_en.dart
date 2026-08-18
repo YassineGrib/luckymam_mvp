@@ -241,6 +241,18 @@ class AppLocalizationsEn extends AppLocalizations {
   String get dashboardQuickAccess => 'Quick Access';
 
   @override
+  String get quickActionCapsule => 'Capsule';
+
+  @override
+  String get quickActionReels => 'Reels';
+
+  @override
+  String get quickActionHealth => 'Health';
+
+  @override
+  String get quickActionMemories => 'Album';
+
+  @override
   String get dashboardHealthWellbeing => 'My Well-being';
 
   @override
@@ -1054,6 +1066,21 @@ class AppLocalizationsEn extends AppLocalizations {
   String get capsuleAddPhoto => 'Add a photo';
 
   @override
+  String get capsuleCropTitle => 'Crop Photo';
+
+  @override
+  String get capsuleCropHint => 'Pinch and drag to adjust crop';
+
+  @override
+  String get capsuleCropButton => 'Crop';
+
+  @override
+  String get capsuleChangePhoto => 'Change';
+
+  @override
+  String get capsuleCreateCTA => 'Create Capsule';
+
+  @override
   String get capsulePhotoSourceHint => 'Camera or gallery';
 
   @override
@@ -1061,22 +1088,22 @@ class AppLocalizationsEn extends AppLocalizations {
       'Add a child in your profile to create capsules';
 
   @override
-  String get capsuleWhichChild => '🧒 Which child?';
+  String get capsuleWhichChild => 'Which child?';
 
   @override
-  String get capsuleTagsOptional => '🏷️ Tags (optional)';
+  String get capsuleTagsOptional => 'Tags (optional)';
 
   @override
   String get capsuleAddTagHint => 'Add a tag...';
 
   @override
-  String get capsuleCategory => '📂 Category';
+  String get capsuleCategory => 'Category';
 
   @override
   String get capsuleRequired => '(required)';
 
   @override
-  String get capsulePhotoDate => '📅 Photo date';
+  String get capsulePhotoDate => 'Photo date';
 
   @override
   String get capsuleTodayDefault => 'Today (default)';
@@ -1420,43 +1447,98 @@ class AppLocalizationsEn extends AppLocalizations {
   String get subscriptionBack => 'Back';
 
   @override
-  String get subscriptionDiamondSponsorsTitle => 'Diamond Sponsors';
+  String get subscriptionDiamondSponsorsTitle => 'Advertising Spaces';
 
   @override
-  String get subscriptionDiamondPartnersHero => 'Our Diamond Partners';
+  String get subscriptionDiamondPartnersHero => 'Spaces are available';
 
   @override
   String get subscriptionDiamondPartnersSubtitle =>
-      'Trusted brands supporting\nevery mother on her journey';
+      'Partner with Luckymam and reach thousands of Algerian mothers.';
 
   @override
-  String get subscriptionDiamondPillExclusive => '💎 Exclusive';
+  String get subscriptionDiamondPillExclusive => 'Visibility';
 
   @override
-  String get subscriptionDiamondPillPremium => '⭐ Premium';
+  String get subscriptionDiamondPillPremium => 'Targeting';
 
   @override
-  String get subscriptionDiamondPillCertified => '✅ Certified';
+  String get subscriptionDiamondPillCertified => 'Trust';
 
   @override
-  String get subscriptionDiamondLogosSection => 'Logos & Partners';
+  String get subscriptionDiamondLogosSection => 'Available placements';
 
   @override
   String get subscriptionDiamondOfficialPartners =>
-      'Official partners of the Luckymam app';
+      'Each slot is ready for your brand.';
 
   @override
-  String get subscriptionDiamondBadge => 'Diamond';
+  String get subscriptionDiamondBadge => 'Available';
 
   @override
-  String get subscriptionDiamondJoinTitle => 'Join our Diamond Sponsors';
+  String get subscriptionDiamondJoinTitle => 'Reserve a placement';
 
   @override
   String get subscriptionDiamondJoinSubtitle =>
-      'Reach thousands of Algerian mothers.\nContact us for a Diamond partnership.';
+      'Contact our partnerships team for a tailored quote.';
 
   @override
-  String get subscriptionDiamondContactEmail => 'sponsors@Luckymam.com';
+  String get subscriptionDiamondContactEmail => 'sponsors@luckymam.com';
+
+  @override
+  String get subscriptionAdSlotSplashTitle => 'App launch';
+
+  @override
+  String get subscriptionAdSlotSplashDesc =>
+      'Full-screen welcome on open, maximum visibility.';
+
+  @override
+  String get subscriptionAdSlotReelsTitle => 'Reels feed';
+
+  @override
+  String get subscriptionAdSlotReelsDesc =>
+      'Native ad inside the educational video feed.';
+
+  @override
+  String get subscriptionAdSlotInterstitialTitle => 'Interstitial';
+
+  @override
+  String get subscriptionAdSlotInterstitialDesc =>
+      'Full-screen between key app journeys.';
+
+  @override
+  String get subscriptionAdSlotDiamondTitle => 'Diamond sponsor';
+
+  @override
+  String get subscriptionAdSlotDiamondDesc =>
+      'Premium showcase with logo and direct link.';
+
+  @override
+  String get subscriptionAdSpaceWhyTitle => 'Why Luckymam?';
+
+  @override
+  String get subscriptionAdSpaceBenefit1Title => 'Targeted audience';
+
+  @override
+  String get subscriptionAdSpaceBenefit1Desc =>
+      'Mothers and moms-to-be in Algeria.';
+
+  @override
+  String get subscriptionAdSpaceBenefit2Title => 'Trusted context';
+
+  @override
+  String get subscriptionAdSpaceBenefit2Desc =>
+      'Health, memories, and daily parenting support.';
+
+  @override
+  String get subscriptionAdSpaceBenefit3Title => 'Flexible formats';
+
+  @override
+  String get subscriptionAdSpaceBenefit3Desc =>
+      'Splash, Reels, interstitial, and Diamond sponsor.';
+
+  @override
+  String get subscriptionAdSpaceEmailCopied => 'Email address copied';
 
   @override
   String get subscriptionDiamondPartner1Name => 'Diamond Partner 1';
@@ -1966,7 +2048,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get vaccineMark => 'Mark';
 
   @override
-  String get vaccineLinkedMemoryEmoji => 'Linked Memory 🌟';
+  String get vaccineLinkedMemoryEmoji => 'Linked Memory';
 
   @override
   String get authPrivacyTitle => 'Privacy & Terms';

@@ -29,81 +29,86 @@ class EmotionPicker extends StatelessWidget {
         Row(
           children: [
             Icon(Icons.mood_rounded, size: 16, color: textColor),
-            const SizedBox(width: 4),
+            const SizedBox(width: 6),
             Text(
               l10n.capsuleEmotion,
               style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                 fontSize: 14,
-                fontWeight: FontWeight.w500,
+                fontWeight: FontWeight.w600,
                 color: textColor,
+              ),
+            ),
+            const SizedBox(width: 4),
+            Text(
+              l10n.capsuleRequired,
+              style: TextStyle(
+                fontSize: 11,
+                color: AppColors.error,
+                fontWeight: FontWeight.w600,
               ),
             ),
           ],
         ),
         const SizedBox(height: AppSpacing.sm),
-        Wrap(
-          spacing: AppSpacing.sm,
-          runSpacing: AppSpacing.sm,
-          children: Emotion.values.map((emotion) {
+        GridView.builder(
+          shrinkWrap: true,
+          physics: const NeverScrollableScrollPhysics(),
+          itemCount: Emotion.values.length,
+          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+            crossAxisCount: 4,
+            crossAxisSpacing: 8,
+            mainAxisSpacing: 8,
+            childAspectRatio: 0.95,
+          ),
+          itemBuilder: (context, index) {
+            final emotion = Emotion.values[index];
             final isSelected = selectedEmotion == emotion;
+            final primary = isDark ? AppColors.primaryDark : AppColors.primaryLight;
+
             return GestureDetector(
               onTap: () => onEmotionSelected(emotion),
               child: AnimatedContainer(
                 duration: const Duration(milliseconds: 200),
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 12,
-                  vertical: 8,
-                ),
+                padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 6),
                 decoration: BoxDecoration(
                   color: isSelected
-                      ? (isDark
-                            ? AppColors.primaryDark.withValues(alpha: 0.2)
-                            : AppColors.primaryLight.withValues(alpha: 0.15))
+                      ? primary.withValues(alpha: 0.15)
                       : (isDark
                             ? AppColors.surfaceContainerDark
                             : AppColors.surfaceContainerLight),
-                  borderRadius: BorderRadius.circular(20),
+                  borderRadius: BorderRadius.circular(14),
                   border: Border.all(
-                    color: isSelected
-                        ? (isDark
-                              ? AppColors.primaryDark
-                              : AppColors.primaryLight)
-                        : Colors.transparent,
-                    width: 2,
+                    color: isSelected ? primary : Colors.transparent,
+                    width: 1.5,
                   ),
                 ),
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Icon(
                       emotion.icon,
-                      size: 20,
-                      color: isSelected
-                          ? (isDark
-                                ? AppColors.primaryDark
-                                : AppColors.primaryLight)
-                          : textColor,
+                      size: 22,
+                      color: isSelected ? primary : textColor,
                     ),
-                    const SizedBox(width: 6),
+                    const SizedBox(height: 4),
                     Text(
                       emotion.getLabel(lang),
+                      textAlign: TextAlign.center,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
                       style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                        fontSize: 13,
+                        fontSize: 11,
                         fontWeight: isSelected
-                            ? FontWeight.w600
-                            : FontWeight.w400,
-                        color: isSelected
-                            ? (isDark
-                                  ? AppColors.primaryDark
-                                  : AppColors.primaryLight)
-                            : textColor,
+                            ? FontWeight.w700
+                            : FontWeight.w500,
+                        color: isSelected ? primary : textColor,
                       ),
                     ),
                   ],
                 ),
               ),
             );
-          }).toList(),
+          },
         ),
       ],
     );

@@ -314,13 +314,13 @@ class _CapsuleDetailScreenState extends ConsumerState<CapsuleDetailScreen> {
                                 children: [
                                   if (capsule.category != null)
                                     _InfoBadge(
-                                      label:
-                                          '${capsule.category!.emoji} ${capsule.category!.getLabel(lang)}',
+                                      icon: capsule.category!.icon,
+                                      label: capsule.category!.getLabel(lang),
                                     ),
                                   if (capsule.capturedAt != null)
                                     _InfoBadge(
-                                      label:
-                                          '📅 ${DateFormat('d MMM yyyy', lang).format(capsule.capturedAt!)}',
+                                      icon: Icons.calendar_today_rounded,
+                                      label: DateFormat('d MMM yyyy', lang).format(capsule.capturedAt!),
                                     ),
                                 ],
                               ),
@@ -741,9 +741,10 @@ class _LivingCoverState extends State<_LivingCover>
 
 /// Small translucent badge used in the detail overlay.
 class _InfoBadge extends StatelessWidget {
-  const _InfoBadge({required this.label});
+  const _InfoBadge({required this.label, this.icon});
 
   final String label;
+  final IconData? icon;
 
   @override
   Widget build(BuildContext context) {
@@ -754,12 +755,21 @@ class _InfoBadge extends StatelessWidget {
         borderRadius: BorderRadius.circular(12),
         border: Border.all(color: Colors.white24),
       ),
-      child: Text(
-        label,
-        style: Theme.of(context).textTheme.labelSmall?.copyWith(
-          color: Colors.white,
-          fontWeight: FontWeight.w500,
-        ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          if (icon != null) ...[
+            Icon(icon, size: 14, color: Colors.white),
+            const SizedBox(width: 5),
+          ],
+          Text(
+            label,
+            style: Theme.of(context).textTheme.labelSmall?.copyWith(
+              color: Colors.white,
+              fontWeight: FontWeight.w500,
+            ),
+          ),
+        ],
       ),
     );
   }

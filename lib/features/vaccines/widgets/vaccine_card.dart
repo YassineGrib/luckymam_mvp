@@ -486,12 +486,18 @@ class _VaccineCardState extends ConsumerState<VaccineCard>
                 ),
               ),
               const SizedBox(height: 2),
-              Text(
-                '${capsule.emotion.emoji} ${capsule.emotion.getLabel(Localizations.localeOf(context).languageCode)}',
-                style: AppTypography.fromContext(context,
-                  fontSize: 12,
-                  color: secondaryText,
-                ),
+              Row(
+                children: [
+                  Icon(capsule.emotion.icon, size: 14, color: secondaryText),
+                  const SizedBox(width: 4),
+                  Text(
+                    capsule.emotion.getLabel(Localizations.localeOf(context).languageCode),
+                    style: AppTypography.fromContext(context,
+                      fontSize: 12,
+                      color: secondaryText,
+                    ),
+                  ),
+                ],
               ),
             ],
           ),

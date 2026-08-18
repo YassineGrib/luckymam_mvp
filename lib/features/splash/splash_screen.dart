@@ -187,7 +187,7 @@ class _SponsorInterstitialState extends State<_SponsorInterstitial> {
         child: Stack(
           children: [
             // Full DiamondSponsorsScreen content (without AppBar)
-            const DiamondSponsorsScreen(),
+            const DiamondSponsorsScreen(showAppBar: false),
             // Top "skip" bar
             Positioned(
               top: 0,

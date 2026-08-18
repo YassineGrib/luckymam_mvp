@@ -20,81 +20,73 @@ class DailyTipCard extends ConsumerWidget {
     final tip = ref.watch(dailyTipProvider);
 
     return Padding(
-      padding: const EdgeInsetsDirectional.fromSTEB(20, 20, 20, 32),
+      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           // Section header
           Row(
             children: [
-              Icon(Icons.lightbulb_rounded, color: secondaryColor, size: 20),
-              const SizedBox(width: 8),
+              Icon(Icons.lightbulb_rounded, color: AppColors.casablanca, size: 18),
+              const SizedBox(width: 6),
               Text(
                 context.l10n.dailyTipSectionTitle,
-                style: Theme.of(context).textTheme.labelLarge?.copyWith(
-                  letterSpacing: 1.2,
+                style: Theme.of(context).textTheme.labelMedium?.copyWith(
+                  letterSpacing: 0.8,
+                  fontWeight: FontWeight.w600,
                   color: secondaryColor,
                 ),
               ),
             ],
           ),
-          const SizedBox(height: 12),
-          // Tip card
+          const SizedBox(height: 6),
+          // Compact Tip card
           Container(
             width: double.infinity,
-            padding: const EdgeInsets.all(20),
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
             decoration: BoxDecoration(
               gradient: LinearGradient(
                 colors: isDark
                     ? [AppColors.surfaceDark, AppColors.surfaceContainerDark]
                     : [
-                        AppColors.negroni.withValues(alpha: 0.3),
-                        AppColors.willowBrook.withValues(alpha: 0.3),
+                        AppColors.negroni.withValues(alpha: 0.25),
+                        AppColors.willowBrook.withValues(alpha: 0.25),
                       ],
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
               ),
-              borderRadius: BorderRadius.circular(16),
+              borderRadius: BorderRadius.circular(14),
               border: Border.all(
                 color: isDark
                     ? AppColors.dividerDark
-                    : AppColors.goldenrod.withValues(alpha: 0.3),
+                    : AppColors.casablanca.withValues(alpha: 0.25),
+                width: 1,
               ),
             ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // Quote icon
-                Text(
-                  '"',
-                  style: Theme.of(context).textTheme.displaySmall?.copyWith(
-                    fontWeight: FontWeight.bold,
-                    color: isDark
-                        ? AppColors.goldenrod.withValues(alpha: 0.6)
-                        : AppColors.goldenrod,
-                    height: 0.5,
-                  ),
-                ),
-                const SizedBox(height: 8),
-                // Tip text
+                // Tip text with justify alignment
                 Text(
                   tip,
-                  style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                  textAlign: TextAlign.justify,
+                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                     fontWeight: FontWeight.w500,
                     color: textColor,
                     fontStyle: FontStyle.italic,
-                    height: 1.5,
+                    height: 1.4,
                   ),
                 ),
-                const SizedBox(height: 16),
+                const SizedBox(height: 6),
                 // Footer
                 Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
                   children: [
-                    const Spacer(),
                     Text(
                       context.l10n.dailyTipFooter,
-                      style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                      style: Theme.of(context).textTheme.labelSmall?.copyWith(
                         color: secondaryColor,
+                        fontStyle: FontStyle.italic,
                       ),
                     ),
                   ],

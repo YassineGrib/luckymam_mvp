@@ -348,14 +348,14 @@ class _CategoryFilterBar extends StatelessWidget {
         children: [
           _CategoryChip(
             label: l10n.reelsAll,
-            emoji: '✨',
+            icon: Icons.auto_awesome_rounded,
             isSelected: selected == null,
             onTap: () => onSelected(null),
           ),
           ...ReelCategory.values.map(
             (cat) => _CategoryChip(
               label: cat.shortLabelL10n(l10n),
-              emoji: cat.emoji,
+              icon: cat.icon,
               isSelected: selected == cat,
               onTap: () => onSelected(cat),
             ),
@@ -369,13 +369,13 @@ class _CategoryFilterBar extends StatelessWidget {
 class _CategoryChip extends StatelessWidget {
   const _CategoryChip({
     required this.label,
-    required this.emoji,
+    required this.icon,
     required this.isSelected,
     required this.onTap,
   });
 
   final String label;
-  final String emoji;
+  final IconData icon;
   final bool isSelected;
   final VoidCallback onTap;
 
@@ -386,7 +386,7 @@ class _CategoryChip extends StatelessWidget {
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 200),
         margin: const EdgeInsets.only(right: 8),
-        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
         decoration: BoxDecoration(
           gradient: isSelected
               ? const LinearGradient(
@@ -412,13 +412,20 @@ class _CategoryChip extends StatelessWidget {
                 ]
               : null,
         ),
-        child: Text(
-          '$emoji $label',
-          style: AppTypography.fromContext(context,
-            fontSize: 12,
-            fontWeight: isSelected ? FontWeight.w700 : FontWeight.w500,
-            color: Colors.white,
-          ),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(icon, size: 14, color: Colors.white),
+            const SizedBox(width: 5),
+            Text(
+              label,
+              style: AppTypography.fromContext(context,
+                fontSize: 12,
+                fontWeight: isSelected ? FontWeight.w700 : FontWeight.w500,
+                color: Colors.white,
+              ),
+            ),
+          ],
         ),
       ),
     );

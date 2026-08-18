@@ -95,29 +95,65 @@ class ChildrenOverview extends ConsumerWidget {
     final primaryColor = isDark
         ? AppColors.primaryDark
         : AppColors.primaryLight;
+    final l10n = context.l10n;
 
     return GestureDetector(
       onTap: () {
-        // Navigate to Add Child screen
-        // For now, go to Profile
         Navigator.of(
           context,
         ).push(MaterialPageRoute(builder: (_) => const ProfileScreen()));
       },
       child: Container(
-        width: 60,
-        margin: const EdgeInsetsDirectional.only(end: 20), // Extra padding at end
+        width: 160,
+        margin: const EdgeInsetsDirectional.only(end: 20),
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 16),
         decoration: BoxDecoration(
           color: cardColor,
-          borderRadius: BorderRadius.circular(16),
+          borderRadius: BorderRadius.circular(20),
           border: Border.all(
-            color: primaryColor.withValues(alpha: 0.3),
-            width: 1,
-            style: BorderStyle.solid,
+            color: primaryColor.withValues(alpha: 0.35),
+            width: 1.5,
           ),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withValues(alpha: isDark ? 0.05 : 0.06),
+              blurRadius: 10,
+              offset: const Offset(0, 4),
+            ),
+          ],
         ),
-        child: Center(
-          child: Icon(Icons.add_rounded, color: primaryColor, size: 32),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Container(
+              width: 52,
+              height: 52,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                color: primaryColor.withValues(alpha: isDark ? 0.2 : 0.1),
+              ),
+              child: Center(
+                child: Icon(
+                  Icons.add_rounded,
+                  color: primaryColor,
+                  size: 28,
+                ),
+              ),
+            ),
+            const SizedBox(height: 12),
+            Text(
+              l10n.addChild,
+              textAlign: TextAlign.center,
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
+              style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                    fontWeight: FontWeight.bold,
+                    color: primaryColor,
+                    letterSpacing: -0.2,
+                  ),
+            ),
+          ],
         ),
       ),
     );

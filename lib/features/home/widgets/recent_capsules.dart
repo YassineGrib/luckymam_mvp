@@ -171,9 +171,10 @@ class RecentCapsules extends ConsumerWidget {
                     color: Colors.black.withValues(alpha: 0.5),
                     borderRadius: BorderRadius.circular(8),
                   ),
-                  child: Text(
-                    capsule.emotion.emoji,
-                    style: const TextStyle(fontSize: 14),
+                  child: Icon(
+                    capsule.emotion.icon,
+                    size: 14,
+                    color: Colors.white,
                   ),
                 ),
               ),

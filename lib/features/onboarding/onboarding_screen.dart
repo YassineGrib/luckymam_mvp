@@ -54,9 +54,10 @@ class OnboardingScreen extends StatelessWidget {
                   // Logo (PNG includes wordmark)
                   Image.asset(
                     'assets/logo/herizontal_logo.png',
-                    height: 44,
+                    width: MediaQuery.sizeOf(context).width * 0.78,
                     fit: BoxFit.contain,
                     alignment: AlignmentDirectional.centerStart,
+                    filterQuality: FilterQuality.high,
                   ),
 
                   const SizedBox(height: AppSpacing.md),

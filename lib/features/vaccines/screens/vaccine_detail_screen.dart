@@ -358,12 +358,18 @@ class VaccineDetailScreen extends ConsumerWidget {
                       ),
                     ),
                     const SizedBox(height: 4),
-                    Text(
-                      '${capsule.emotion.emoji} ${capsule.emotion.getLabel(lang)}',
-                      style: AppTypography.fromContext(context,
-                        fontSize: 13,
-                        color: secondaryText,
-                      ),
+                    Row(
+                      children: [
+                        Icon(capsule.emotion.icon, size: 14, color: secondaryText),
+                        const SizedBox(width: 4),
+                        Text(
+                          capsule.emotion.getLabel(lang),
+                          style: AppTypography.fromContext(context,
+                            fontSize: 13,
+                            color: secondaryText,
+                          ),
+                        ),
+                      ],
                     ),
                   ],
                 ),

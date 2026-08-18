@@ -181,7 +181,7 @@ class _ReelAdItemState extends State<ReelAdItem> {
         ),
       ),
       child: Center(
-        child: Text(ad.emoji, style: const TextStyle(fontSize: 80)),
+        child: Icon(ad.icon, size: 80, color: Colors.white.withValues(alpha: 0.9)),
       ),
     );
   }

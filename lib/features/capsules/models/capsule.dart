@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/material.dart';
 
 import 'emotion.dart';
 
@@ -9,6 +10,21 @@ enum CapsuleCategory {
   postPartum,
   enfance,
   adulte;
+
+  IconData get icon {
+    switch (this) {
+      case CapsuleCategory.preGestation:
+        return Icons.eco_rounded;
+      case CapsuleCategory.gestation:
+        return Icons.pregnant_woman_rounded;
+      case CapsuleCategory.postPartum:
+        return Icons.child_friendly_rounded;
+      case CapsuleCategory.enfance:
+        return Icons.child_care_rounded;
+      case CapsuleCategory.adulte:
+        return Icons.auto_awesome_rounded;
+    }
+  }
 
   String get labelFr {
     switch (this) {

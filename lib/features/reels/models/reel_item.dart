@@ -1,3 +1,5 @@
+import 'package:flutter/material.dart';
+
 import '../../../l10n/app_localizations.dart';
 
 /// Category for educational reels
@@ -14,17 +16,17 @@ extension ReelCategoryExtension on ReelCategory {
   String get labelFr {
     switch (this) {
       case ReelCategory.vaccins:
-        return '🔬 Vaccins';
+        return 'Vaccins';
       case ReelCategory.grossessehta:
-        return '🫀 Grossesse & HTA';
+        return 'Grossesse & HTA';
       case ReelCategory.grossessediabete:
-        return '🩸 Grossesse & Diabète';
+        return 'Grossesse & Diabète';
       case ReelCategory.soutienEnfants:
-        return '👨‍👩‍👧 Soutenir ses enfants';
+        return 'Soutenir ses enfants';
       case ReelCategory.soinsQuotidiens:
-        return '👶 Soins quotidiens';
+        return 'Soins quotidiens';
       case ReelCategory.nutrition:
-        return '🥗 Nutrition';
+        return 'Nutrition';
     }
   }
 
@@ -42,6 +44,23 @@ extension ReelCategoryExtension on ReelCategory {
         return 'Soins';
       case ReelCategory.nutrition:
         return 'Nutrition';
+    }
+  }
+
+  IconData get icon {
+    switch (this) {
+      case ReelCategory.vaccins:
+        return Icons.medical_services_rounded;
+      case ReelCategory.grossessehta:
+        return Icons.favorite_rounded;
+      case ReelCategory.grossessediabete:
+        return Icons.bloodtype_rounded;
+      case ReelCategory.soutienEnfants:
+        return Icons.family_restroom_rounded;
+      case ReelCategory.soinsQuotidiens:
+        return Icons.child_care_rounded;
+      case ReelCategory.nutrition:
+        return Icons.restaurant_rounded;
     }
   }
 

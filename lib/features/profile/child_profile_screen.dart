@@ -237,9 +237,10 @@ class ChildProfileScreen extends ConsumerWidget {
                                       color: Colors.black54,
                                       borderRadius: BorderRadius.circular(6),
                                     ),
-                                    child: Text(
-                                      cap.category!.emoji,
-                                      style: const TextStyle(fontSize: 10),
+                                    child: Icon(
+                                      cap.category!.icon,
+                                      size: 12,
+                                      color: Colors.white,
                                     ),
                                   ),
                                 ),

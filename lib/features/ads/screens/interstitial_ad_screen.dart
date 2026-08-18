@@ -257,7 +257,7 @@ class _InterstitialAdScreenState extends ConsumerState<InterstitialAdScreen> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Text(ad.emoji, style: const TextStyle(fontSize: 72)),
+              Icon(ad.icon, size: 72, color: Colors.white),
               const SizedBox(height: 24),
               Text(
                 ad.getTitle(lang),
