@@ -4,14 +4,12 @@ import {
   Link,
   createRootRouteWithContext,
   useRouter,
-  HeadContent,
-  Scripts,
 } from "@tanstack/react-router";
-import { useEffect, type ReactNode } from "react";
+import { useEffect } from "react";
 
-import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
 import { LanguageProvider } from "@/i18n";
+import { AuthProvider, AuthGuard } from "@/components/admin/AuthProvider";
 
 function NotFoundComponent() {
   return (
@@ -74,63 +72,10 @@ function ErrorComponent({ error, reset }: { error: Error; reset: () => void }) {
 }
 
 export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()({
-  head: () => ({
-    meta: [
-      { charSet: "utf-8" },
-      { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "Luckymam Admin — لوحة تحكم لَكي ماما" },
-      {
-        name: "description",
-        content:
-          "لوحة تحكم Luckymam لإدارة المستخدمين، طلبات الطباعة، ألبومات VIP، المتجر ومحتوى الريلز.",
-      },
-      { name: "author", content: "Luckymam" },
-      { property: "og:title", content: "Luckymam Admin — لوحة تحكم لَكي ماما" },
-      {
-        property: "og:description",
-        content:
-          "منصة الإدارة الرسمية لتطبيق Luckymam — إحصائيات مباشرة، إدارة الطلبات والاشتراكات.",
-      },
-      { property: "og:type", content: "website" },
-      { name: "twitter:card", content: "summary_large_image" },
-      { name: "twitter:site", content: "@Luckymam" },
-    ],
-    links: [
-      { rel: "stylesheet", href: appCss },
-      { rel: "icon", href: "/favicon.ico", type: "image/x-icon" },
-      { rel: "preconnect", href: "https://fonts.googleapis.com" },
-      {
-        rel: "preconnect",
-        href: "https://fonts.gstatic.com",
-        crossOrigin: "anonymous",
-      },
-      {
-        rel: "stylesheet",
-        href: "https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@300;400;500;600;700&family=IBM+Plex+Sans+Arabic:wght@300;400;500;600;700&family=Outfit:wght@300;400;500;600;700;800&display=swap",
-      },
-    ],
-  }),
-  shellComponent: RootShell,
   component: RootComponent,
   notFoundComponent: NotFoundComponent,
   errorComponent: ErrorComponent,
 });
-
-function RootShell({ children }: { children: ReactNode }) {
-  return (
-    <html lang="ar" dir="rtl">
-      <head>
-        <HeadContent />
-      </head>
-      <body>
-        {children}
-        <Scripts />
-      </body>
-    </html>
-  );
-}
-
-import { AuthProvider, AuthGuard } from "@/components/admin/AuthProvider";
 
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
