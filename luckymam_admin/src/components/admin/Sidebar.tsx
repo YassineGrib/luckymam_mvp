@@ -14,6 +14,7 @@ import {
   PanelRightOpen,
   PanelLeftClose,
   PanelLeftOpen,
+  X,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useI18n } from "@/i18n";
@@ -54,11 +55,15 @@ const navGroups = [
 export function Sidebar({
   collapsed,
   onToggle,
+  onNavigate,
   side = "right",
+  isMobile = false,
 }: {
   collapsed: boolean;
   onToggle: () => void;
+  onNavigate?: () => void;
   side?: "left" | "right";
+  isMobile?: boolean;
 }) {
   const pathname = useRouterState({ select: (s) => s.location.pathname });
   const { t } = useI18n();
@@ -81,17 +86,29 @@ export function Sidebar({
       />
 
       <div className="relative z-10 flex flex-col h-full min-h-0">
-      <div className="p-5 flex items-center gap-3">
-        <div className="size-10 rounded-2xl bg-cherry-600 grid place-items-center text-white font-display font-extrabold text-lg shrink-0 shadow-sm shadow-cherry-600/30">
-          L
-        </div>
-        {!collapsed && (
-          <div className="min-w-0">
-            <div className="font-display font-extrabold text-lg tracking-tight text-cherry-600 leading-none">
-              {t("brand.name")}
-            </div>
-            <div className="text-[11px] text-ink-muted mt-1">{t("brand.tag")}</div>
+      <div className="p-4 sm:p-5 flex items-center justify-between gap-3">
+        <div className="flex items-center gap-3 min-w-0">
+          <div className="size-10 rounded-2xl bg-cherry-600 grid place-items-center text-white font-display font-extrabold text-lg shrink-0 shadow-sm shadow-cherry-600/30">
+            L
           </div>
+          {!collapsed && (
+            <div className="min-w-0">
+              <div className="font-display font-extrabold text-lg tracking-tight text-cherry-600 leading-none">
+                {t("brand.name")}
+              </div>
+              <div className="text-[11px] text-ink-muted mt-1">{t("brand.tag")}</div>
+            </div>
+          )}
+        </div>
+        {isMobile && (
+          <button
+            type="button"
+            onClick={onToggle}
+            className="size-8 grid place-items-center rounded-lg text-ink-muted hover:text-cherry-600 hover:bg-cherry-100 transition-colors shrink-0"
+            aria-label="Close"
+          >
+            <X className="size-5" />
+          </button>
         )}
       </div>
 
@@ -113,6 +130,7 @@ export function Sidebar({
                 <Link
                   key={item.to}
                   to={item.to}
+                  onClick={onNavigate}
                   className={cn(
                     "flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition-colors",
                     active
@@ -134,6 +152,7 @@ export function Sidebar({
       <div className="border-t border-border p-3 space-y-1">
         <Link
           to="/settings"
+          onClick={onNavigate}
           className={cn(
             "flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium text-ink-muted hover:bg-white/60 hover:text-cherry-600 transition-colors",
             collapsed && "justify-center",
@@ -167,23 +186,25 @@ export function Sidebar({
           </div>
         )}
 
-        <button
-          onClick={onToggle}
-          className={cn(
-            "w-full mt-2 flex items-center gap-3 rounded-xl px-3 py-2 text-xs font-medium text-ink-muted hover:bg-white/60 hover:text-cherry-600 transition-colors text-start",
-            collapsed && "justify-center",
-          )}
-          aria-label={collapsed ? t("nav.expand") : t("nav.collapse")}
-        >
-          {collapsed ? (
-            isRight ? <PanelLeftOpen className="size-4 shrink-0" /> : <PanelRightOpen className="size-4 shrink-0" />
-          ) : (
-            <>
-              {isRight ? <PanelLeftClose className="size-4 shrink-0" /> : <PanelRightClose className="size-4 shrink-0" />}
-              <span>{t("nav.collapse")}</span>
-            </>
-          )}
-        </button>
+        {!isMobile && (
+          <button
+            onClick={onToggle}
+            className={cn(
+              "w-full mt-2 flex items-center gap-3 rounded-xl px-3 py-2 text-xs font-medium text-ink-muted hover:bg-white/60 hover:text-cherry-600 transition-colors text-start",
+              collapsed && "justify-center",
+            )}
+            aria-label={collapsed ? t("nav.expand") : t("nav.collapse")}
+          >
+            {collapsed ? (
+              isRight ? <PanelLeftOpen className="size-4 shrink-0" /> : <PanelRightOpen className="size-4 shrink-0" />
+            ) : (
+              <>
+                {isRight ? <PanelLeftClose className="size-4 shrink-0" /> : <PanelRightClose className="size-4 shrink-0" />}
+                <span>{t("nav.collapse")}</span>
+              </>
+            )}
+          </button>
+        )}
       </div>
       </div>
     </aside>

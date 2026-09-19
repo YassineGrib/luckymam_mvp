@@ -1,0 +1,1274 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl" data-theme="light">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>دليل الاستخدام الرسمي — لوحة تحكم لَكي ماما | Luckymam Admin Docs</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --primary: #be123c;
+      --primary-hover: #9f1239;
+      --primary-soft: #fff1f2;
+      --primary-border: #fecdd3;
+      
+      /* Light Theme (Default) */
+      --bg-page: #fcfcfd;
+      --bg-surface: #ffffff;
+      --bg-surface-secondary: #f8fafc;
+      --border-color: #e2e8f0;
+      --border-subtle: #f1f5f9;
+      --text-main: #0f172a;
+      --text-muted: #64748b;
+      --text-subtle: #94a3b8;
+      --navbar-bg: rgba(255, 255, 255, 0.94);
+      
+      --admonition-note-bg: #f0fdf4;
+      --admonition-note-border: #22c55e;
+      --admonition-tip-bg: #eff6ff;
+      --admonition-tip-border: #3b82f6;
+      --admonition-warn-bg: #fffbeb;
+      --admonition-warn-border: #f59e0b;
+
+      --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.04);
+      --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.05);
+    }
+
+    [data-theme="dark"] {
+      --bg-page: #0f172a;
+      --bg-surface: #1e293b;
+      --bg-surface-secondary: #334155;
+      --border-color: #334155;
+      --border-subtle: #1e293b;
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+      --text-subtle: #64748b;
+      --navbar-bg: rgba(15, 23, 42, 0.94);
+
+      --admonition-note-bg: rgba(34, 197, 94, 0.12);
+      --admonition-note-border: #22c55e;
+      --admonition-tip-bg: rgba(59, 130, 246, 0.12);
+      --admonition-tip-border: #3b82f6;
+      --admonition-warn-bg: rgba(245, 158, 11, 0.12);
+      --admonition-warn-border: #f59e0b;
+    }
+
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      font-family: "IBM Plex Sans Arabic", system-ui, -apple-system, sans-serif;
+      background-color: var(--bg-page);
+      color: var(--text-main);
+      line-height: 1.75;
+      transition: background-color 0.2s ease, color 0.2s ease;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* Fixed Modern Navbar */
+    .navbar {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      height: 64px;
+      background: var(--navbar-bg);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border-color);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 1.5rem;
+    }
+
+    .navbar-start, .navbar-end {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .navbar-brand {
+      display: flex;
+      align-items: center;
+      gap: 0.65rem;
+      text-decoration: none;
+      color: var(--text-main);
+      font-weight: 700;
+      font-size: 1.1rem;
+      white-space: nowrap;
+    }
+
+    .logo-badge {
+      width: 32px;
+      height: 32px;
+      background: var(--primary);
+      color: #ffffff;
+      border-radius: 9px;
+      display: grid;
+      place-items: center;
+      font-weight: 800;
+      font-size: 1.1rem;
+      box-shadow: 0 2px 8px rgba(190, 18, 60, 0.25);
+      flex-shrink: 0;
+    }
+
+    .version-pill {
+      font-size: 0.75rem;
+      background: var(--primary-soft);
+      color: var(--primary);
+      border: 1px solid var(--primary-border);
+      padding: 0.15rem 0.55rem;
+      border-radius: 9999px;
+      font-weight: 600;
+      white-space: nowrap;
+    }
+
+    /* Search Box */
+    .search-box {
+      position: relative;
+    }
+
+    .search-input {
+      background: var(--bg-surface-secondary);
+      border: 1px solid var(--border-color);
+      color: var(--text-main);
+      padding: 0.4rem 2.2rem 0.4rem 0.85rem;
+      border-radius: 20px;
+      font-size: 0.85rem;
+      font-family: inherit;
+      outline: none;
+      width: 190px;
+      transition: width 0.2s ease, border-color 0.2s ease, background 0.2s ease;
+    }
+
+    .search-input:focus {
+      width: 250px;
+      border-color: var(--primary);
+      background: var(--bg-surface);
+    }
+
+    .search-icon {
+      position: absolute;
+      right: 0.75rem;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--text-muted);
+      pointer-events: none;
+      display: flex;
+      align-items: center;
+    }
+
+    /* Nav Action Buttons */
+    .nav-btn {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-color);
+      color: var(--text-main);
+      padding: 0.4rem 0.85rem;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 0.85rem;
+      font-family: inherit;
+      font-weight: 500;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      text-decoration: none;
+      transition: all 0.15s ease;
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+
+    .nav-btn:hover {
+      background: var(--bg-surface-secondary);
+      border-color: var(--text-subtle);
+    }
+
+    .nav-btn-primary {
+      background: var(--primary);
+      color: #ffffff;
+      border-color: var(--primary);
+    }
+
+    .nav-btn-primary:hover {
+      background: var(--primary-hover);
+      color: #ffffff;
+    }
+
+    /* Mobile Hamburger Menu Button */
+    .mobile-menu-btn {
+      display: none;
+      background: var(--bg-surface);
+      border: 1px solid var(--border-color);
+      color: var(--text-main);
+      padding: 0.45rem;
+      border-radius: 8px;
+      cursor: pointer;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.15s ease;
+      flex-shrink: 0;
+    }
+
+    .mobile-menu-btn:hover {
+      background: var(--bg-surface-secondary);
+      border-color: var(--primary);
+    }
+
+    /* Mobile Drawer */
+    .drawer-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(15, 23, 42, 0.45);
+      backdrop-filter: blur(4px);
+      z-index: 998;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.25s ease;
+    }
+
+    .drawer-backdrop.open {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .mobile-drawer {
+      position: fixed;
+      top: 0;
+      right: 0;
+      bottom: 0;
+      width: min(320px, 86vw);
+      background: var(--bg-surface);
+      z-index: 999;
+      transform: translateX(100%);
+      transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+      display: flex;
+      flex-direction: column;
+      box-shadow: -4px 0 24px rgba(0, 0, 0, 0.15);
+      border-left: 1px solid var(--border-color);
+    }
+
+    .mobile-drawer.open {
+      transform: translateX(0);
+    }
+
+    .drawer-header {
+      padding: 1rem 1.25rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    .close-drawer-btn {
+      background: transparent;
+      border: 1px solid var(--border-color);
+      color: var(--text-muted);
+      cursor: pointer;
+      display: grid;
+      place-items: center;
+      padding: 0.35rem;
+      border-radius: 6px;
+      transition: all 0.15s ease;
+    }
+
+    .close-drawer-btn:hover {
+      background: var(--bg-surface-secondary);
+      color: var(--primary);
+    }
+
+    .drawer-search {
+      padding: 1rem 1.25rem 0.5rem;
+    }
+
+    .drawer-search-input {
+      width: 100%;
+      background: var(--bg-surface-secondary);
+      border: 1px solid var(--border-color);
+      color: var(--text-main);
+      padding: 0.55rem 0.85rem;
+      border-radius: 8px;
+      font-size: 0.88rem;
+      font-family: inherit;
+      outline: none;
+    }
+
+    .drawer-search-input:focus {
+      border-color: var(--primary);
+      background: var(--bg-surface);
+    }
+
+    .drawer-nav {
+      flex: 1;
+      overflow-y: auto;
+      padding: 0.75rem 1.25rem;
+    }
+
+    .drawer-link {
+      display: block;
+      padding: 0.55rem 0.75rem;
+      color: var(--text-muted);
+      text-decoration: none;
+      font-size: 0.92rem;
+      border-radius: 8px;
+      margin-bottom: 3px;
+      transition: all 0.15s ease;
+    }
+
+    .drawer-link:hover, .drawer-link.active {
+      background: var(--primary-soft);
+      color: var(--primary);
+      font-weight: 600;
+    }
+
+    .drawer-footer {
+      padding: 1rem 1.25rem 1.5rem;
+      border-top: 1px solid var(--border-color);
+    }
+
+    /* Layout */
+    .doc-layout {
+      display: flex;
+      max-width: 1400px;
+      margin: 0 auto;
+      min-height: calc(100vh - 64px);
+    }
+
+    /* Right Sidebar (Navigation in RTL) */
+    .sidebar {
+      width: 280px;
+      flex-shrink: 0;
+      border-left: 1px solid var(--border-color);
+      padding: 1.75rem 1rem 3rem;
+      position: sticky;
+      top: 64px;
+      height: calc(100vh - 64px);
+      overflow-y: auto;
+    }
+
+    .sidebar-group {
+      margin-bottom: 1.5rem;
+    }
+
+    .sidebar-group-title {
+      font-size: 0.78rem;
+      font-weight: 700;
+      color: var(--text-subtle);
+      padding: 0.5rem 0.75rem;
+      letter-spacing: 0.02em;
+    }
+
+    .sidebar-link {
+      display: block;
+      padding: 0.45rem 0.75rem;
+      color: var(--text-muted);
+      text-decoration: none;
+      font-size: 0.9rem;
+      border-radius: 8px;
+      transition: all 0.15s ease;
+      margin-bottom: 2px;
+      font-weight: 500;
+    }
+
+    .sidebar-link:hover {
+      background: var(--bg-surface-secondary);
+      color: var(--text-main);
+    }
+
+    .sidebar-link.active {
+      background: var(--primary-soft);
+      color: var(--primary);
+      font-weight: 600;
+    }
+
+    /* Main Content */
+    .main-content {
+      flex: 1;
+      min-width: 0;
+      padding: 2.5rem 4rem 6rem;
+      max-width: 980px;
+      margin: 0 auto;
+    }
+
+    /* Breadcrumbs */
+    .breadcrumbs {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 0.82rem;
+      color: var(--text-muted);
+      margin-bottom: 1.5rem;
+    }
+
+    .breadcrumbs a {
+      color: var(--text-muted);
+      text-decoration: none;
+    }
+
+    .breadcrumbs span.active {
+      color: var(--primary);
+      font-weight: 600;
+    }
+
+    /* Headers */
+    h1.page-title {
+      font-size: 2.25rem;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      margin-bottom: 0.85rem;
+      color: var(--text-main);
+      line-height: 1.35;
+    }
+
+    .lead-text {
+      font-size: 1.08rem;
+      color: var(--text-muted);
+      margin-bottom: 2.5rem;
+      line-height: 1.8;
+    }
+
+    h2 {
+      font-size: 1.5rem;
+      font-weight: 700;
+      margin: 3.5rem 0 1.25rem;
+      padding-bottom: 0.5rem;
+      border-bottom: 1px solid var(--border-color);
+      color: var(--text-main);
+      scroll-margin-top: 80px;
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+    }
+
+    h3 {
+      font-size: 1.15rem;
+      font-weight: 600;
+      margin: 2rem 0 0.85rem;
+      color: var(--text-main);
+      scroll-margin-top: 80px;
+    }
+
+    p {
+      margin-bottom: 1.2rem;
+      color: var(--text-main);
+    }
+
+    /* Docusaurus Minimalist Admonitions */
+    .admonition {
+      margin: 1.5rem 0;
+      padding: 1.1rem 1.35rem;
+      border-radius: 10px;
+      border-right: 4px solid;
+      font-size: 0.92rem;
+    }
+
+    .admonition-title {
+      font-weight: 700;
+      font-size: 0.95rem;
+      margin-bottom: 0.4rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .admonition-tip {
+      background: var(--admonition-tip-bg);
+      border-right-color: var(--admonition-tip-border);
+    }
+    .admonition-tip .admonition-title { color: var(--admonition-tip-border); }
+
+    .admonition-note {
+      background: var(--admonition-note-bg);
+      border-right-color: var(--admonition-note-border);
+    }
+    .admonition-note .admonition-title { color: var(--admonition-note-border); }
+
+    .admonition-warn {
+      background: var(--admonition-warn-bg);
+      border-right-color: var(--admonition-warn-border);
+    }
+    .admonition-warn .admonition-title { color: var(--admonition-warn-border); }
+
+    /* Minimalist Cards Grid */
+    .cards-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 1rem;
+      margin: 1.5rem 0;
+    }
+
+    .card {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      padding: 1.35rem;
+      box-shadow: var(--shadow-sm);
+      transition: all 0.15s ease;
+    }
+
+    .card:hover {
+      border-color: var(--primary);
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-md);
+    }
+
+    .card-icon {
+      margin-bottom: 0.75rem;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 40px;
+      height: 40px;
+      border-radius: 10px;
+      background: var(--primary-soft);
+    }
+
+    .card h4 {
+      font-size: 1rem;
+      font-weight: 600;
+      margin-bottom: 0.35rem;
+    }
+
+    .card p {
+      font-size: 0.88rem;
+      color: var(--text-muted);
+      margin-bottom: 0;
+    }
+
+    /* Minimalist Tables */
+    .table-wrapper {
+      overflow-x: auto;
+      margin: 1.5rem 0;
+      border: 1px solid var(--border-color);
+      border-radius: 10px;
+      background: var(--bg-surface);
+      box-shadow: var(--shadow-sm);
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      text-align: right;
+      font-size: 0.9rem;
+    }
+
+    th {
+      background: var(--bg-surface-secondary);
+      padding: 0.85rem 1.1rem;
+      font-weight: 600;
+      color: var(--text-muted);
+      font-size: 0.82rem;
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    td {
+      padding: 0.9rem 1.1rem;
+      border-bottom: 1px solid var(--border-color);
+      color: var(--text-main);
+      vertical-align: middle;
+    }
+
+    tr:last-child td {
+      border-bottom: none;
+    }
+
+    /* Status Badges */
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      font-size: 0.78rem;
+      font-weight: 600;
+      padding: 0.2rem 0.6rem;
+      border-radius: 6px;
+    }
+
+    .badge-amber { background: #fef3c7; color: #b45309; }
+    .badge-blue  { background: #e0f2fe; color: #0369a1; }
+    .badge-green { background: #dcfce7; color: #15803d; }
+    .badge-rose  { background: #ffe4e6; color: #be123c; }
+
+    /* Code Block */
+    .code-box {
+      background: var(--bg-surface-secondary);
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      padding: 0.85rem 1.1rem;
+      font-family: ui-monospace, Menlo, Consolas, monospace;
+      direction: ltr;
+      text-align: left;
+      font-size: 0.88rem;
+      color: var(--primary);
+      font-weight: 600;
+      margin: 1rem 0;
+    }
+
+    /* Step Guide */
+    .steps {
+      list-style: none;
+      counter-reset: step-counter;
+      margin: 1.5rem 0;
+    }
+
+    .step-item {
+      position: relative;
+      padding-right: 3.25rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .step-item::before {
+      counter-increment: step-counter;
+      content: counter(step-counter);
+      position: absolute;
+      right: 0;
+      top: 0;
+      width: 2.2rem;
+      height: 2.2rem;
+      background: var(--bg-surface);
+      border: 1px solid var(--border-color);
+      color: var(--primary);
+      font-weight: 700;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.9rem;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .step-item h4 {
+      font-size: 1rem;
+      font-weight: 600;
+      margin-bottom: 0.25rem;
+    }
+
+    .step-item p {
+      font-size: 0.88rem;
+      color: var(--text-muted);
+      margin-bottom: 0;
+    }
+
+    /* Footer */
+    footer {
+      margin-top: 5rem;
+      padding-top: 2rem;
+      border-top: 1px solid var(--border-color);
+      text-align: center;
+      font-size: 0.85rem;
+      color: var(--text-muted);
+    }
+
+    /* Responsive Mobile Styles */
+    @media (max-width: 820px) {
+      .sidebar { display: none; }
+      .mobile-menu-btn { display: inline-flex; }
+      .version-pill { display: none; }
+      .search-box { display: none; }
+      
+      .navbar {
+        height: 56px;
+        padding: 0 0.85rem;
+      }
+      
+      .navbar-brand {
+        gap: 0.5rem;
+        white-space: nowrap;
+      }
+
+      .navbar-brand span {
+        font-size: 0.98rem;
+      }
+      
+      .navbar-start, .navbar-end {
+        gap: 0.5rem;
+      }
+      
+      .btn-text {
+        display: none;
+      }
+
+      .nav-btn {
+        padding: 0.45rem 0.6rem;
+      }
+
+      .main-content {
+        padding: 1.75rem 1.15rem 4rem;
+      }
+
+      h1.page-title {
+        font-size: 1.65rem;
+        line-height: 1.4;
+      }
+
+      h2 {
+        font-size: 1.3rem;
+        margin: 2.5rem 0 1rem;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Top Navbar -->
+  <nav class="navbar">
+    <div class="navbar-start">
+      <button id="mobileMenuBtn" class="mobile-menu-btn" aria-label="فتح القائمة">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="4" x2="20" y1="12" y2="12"/><line x1="4" x2="20" y1="6" y2="6"/><line x1="4" x2="20" y1="18" y2="18"/>
+        </svg>
+      </button>
+
+      <a href="#" class="navbar-brand">
+        <div class="logo-badge">L</div>
+        <span>لَكي ماما</span>
+      </a>
+      <span class="version-pill">v2.0 SPA</span>
+    </div>
+
+    <div class="navbar-end">
+      <div class="search-box">
+        <span class="search-icon">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/>
+          </svg>
+        </span>
+        <input type="text" id="searchInput" class="search-input" placeholder="بحث سريع في الدليل..." />
+      </div>
+
+      <button id="themeToggle" class="nav-btn" aria-label="تبديل المظهر">
+        <span id="themeIcon" style="display: inline-flex; align-items: center; gap: 0.35rem;">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/>
+          </svg>
+          <span class="btn-text">داكن</span>
+        </span>
+      </button>
+
+      <a href="https://luckymam.com.dz/admin/" target="_blank" class="nav-btn nav-btn-primary" style="display: inline-flex; align-items: center; gap: 0.4rem;">
+        <span class="btn-text">لوحة التحكم</span>
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/>
+        </svg>
+      </a>
+    </div>
+  </nav>
+
+  <!-- Mobile Drawer Backdrop -->
+  <div id="drawerBackdrop" class="drawer-backdrop"></div>
+
+  <!-- Mobile Drawer Sidebar -->
+  <aside id="mobileDrawer" class="mobile-drawer">
+    <div class="drawer-header">
+      <div class="navbar-brand">
+        <div class="logo-badge">L</div>
+        <span>فهرس الدليل</span>
+      </div>
+      <button id="closeDrawerBtn" class="close-drawer-btn" aria-label="إغلاق القائمة">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+        </svg>
+      </button>
+    </div>
+
+    <div class="drawer-search">
+      <input type="text" id="drawerSearchInput" class="drawer-search-input" placeholder="بحث سريع في أقسام الدليل..." />
+    </div>
+
+    <div class="drawer-nav">
+      <div class="sidebar-group">
+        <div class="sidebar-group-title">البداية والإعداد</div>
+        <a href="#intro" class="drawer-link">1. نظرة عامة والبنية</a>
+        <a href="#auth" class="drawer-link">2. تسجيل الدخول والحماية</a>
+        <a href="#dashboard" class="drawer-link">3. المؤشرات والإحصائيات</a>
+      </div>
+
+      <div class="sidebar-group">
+        <div class="sidebar-group-title">إدارة المتجر الإلكتروني</div>
+        <a href="#orders" class="drawer-link">4. طلبات المتجر (Marketplace)</a>
+        <a href="#catalog" class="drawer-link">5. كتالوج المنتجات</a>
+        <a href="#inventory" class="drawer-link">6. المخازن والتنبيهات</a>
+      </div>
+
+      <div class="sidebar-group">
+        <div class="sidebar-group-title">الخدمات والمحتوى</div>
+        <a href="#prints" class="drawer-link">7. طلبات طباعة الألبومات</a>
+        <a href="#reels" class="drawer-link">8. مقاطع الريلز (Video Commerce)</a>
+        <a href="#notifications" class="drawer-link">9. مركز الإشعارات الموجهة</a>
+      </div>
+
+      <div class="sidebar-group">
+        <div class="sidebar-group-title">العملاء والدعم</div>
+        <a href="#users" class="drawer-link">10. إدارة حسابات الأمهات</a>
+        <a href="#quick-guide" class="drawer-link">11. دليل العمليات السريعة</a>
+      </div>
+    </div>
+
+    <div class="drawer-footer">
+      <a href="https://luckymam.com.dz/admin/" target="_blank" class="nav-btn nav-btn-primary" style="width: 100%; justify-content: center; gap: 0.5rem; padding: 0.65rem 1rem;">
+        <span>فتح لوحة التحكم المباشرة</span>
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/>
+        </svg>
+      </a>
+    </div>
+  </aside>
+
+  <!-- Document Layout (RTL) -->
+  <div class="doc-layout">
+
+    <!-- Right Sidebar (Navigation) -->
+    <aside class="sidebar">
+      <div class="sidebar-group">
+        <div class="sidebar-group-title">البداية والإعداد</div>
+        <a href="#intro" class="sidebar-link active">1. نظرة عامة والبنية</a>
+        <a href="#auth" class="sidebar-link">2. تسجيل الدخول والحماية</a>
+        <a href="#dashboard" class="sidebar-link">3. المؤشرات والإحصائيات</a>
+      </div>
+
+      <div class="sidebar-group">
+        <div class="sidebar-group-title">إدارة المتجر الإلكتروني</div>
+        <a href="#orders" class="sidebar-link">4. طلبات المتجر (Marketplace)</a>
+        <a href="#catalog" class="sidebar-link">5. كتالوج المنتجات</a>
+        <a href="#inventory" class="sidebar-link">6. المخازن والتنبيهات</a>
+      </div>
+
+      <div class="sidebar-group">
+        <div class="sidebar-group-title">الخدمات والمحتوى</div>
+        <a href="#prints" class="sidebar-link">7. طلبات طباعة الألبومات</a>
+        <a href="#reels" class="sidebar-link">8. مقاطع الريلز (Video Commerce)</a>
+        <a href="#notifications" class="sidebar-link">9. مركز الإشعارات الموجهة</a>
+      </div>
+
+      <div class="sidebar-group">
+        <div class="sidebar-group-title">العملاء والدعم</div>
+        <a href="#users" class="sidebar-link">10. إدارة حسابات الأمهات</a>
+        <a href="#quick-guide" class="sidebar-link">11. دليل العمليات السريعة</a>
+      </div>
+    </aside>
+
+    <!-- Center Main Content -->
+    <main class="main-content">
+      <div class="breadcrumbs">
+        <a href="#">الرئيسية</a>
+        <span>/</span>
+        <a href="#">الدليل الفني</a>
+        <span>/</span>
+        <span class="active">لوحة التحكم</span>
+      </div>
+
+      <h1 class="page-title">دليل إدارة لوحة تحكم Luckymam Admin</h1>
+      <p class="lead-text">
+        دليل استخدام شامل ومبسّط مصمم لإدارة كافة العمليات والأنشطة اليومية لمنصة لَكي ماما (الطلبات، المنتجات، طباعة الألبومات، الفيديوهات التفاعلية، والتنبيهات المخصصة).
+      </p>
+
+      <!-- Section 1 -->
+      <section id="intro">
+        <h2>1. نظرة عامة والبنية التقنية</h2>
+        <p>
+          تم بناء لوحة تحكم <strong>Luckymam Admin</strong> كواجهة أحادية الصفحة <strong>(Single Page Application)</strong> حديثة وفائقة السرعة، متصلة مباشرة بسحابة Google Firebase، وتعمل بتوافق كامل مع شاشات الحواسيب والهواتف الذكية.
+        </p>
+
+        <div class="cards-grid">
+          <div class="card">
+            <div class="card-icon">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--primary)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>
+              </svg>
+            </div>
+            <h4>سرعة واستجابة فورية</h4>
+            <p>تنقل فوري بين الشاشات دون الحاجة لإعادة تحميل الصفحة نهائياً بفضل TanStack Router.</p>
+          </div>
+          <div class="card">
+            <div class="card-icon">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--primary)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <rect width="14" height="20" x="5" y="2" rx="2" ry="2"/><path d="M12 18h.01"/>
+              </svg>
+            </div>
+            <h4>متجاوبة كلياً مع الموبايل</h4>
+            <p>قائمة جانبية منزلقة ذكية تتيح إدارة كافة تفاصيل المتجر عبر الهاتف بسهولة تامة.</p>
+          </div>
+          <div class="card">
+            <div class="card-icon">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--primary)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+              </svg>
+            </div>
+            <h4>أمان سحابي متكامل</h4>
+            <p>اتصال مباشر ومشفر مع Firestore محمي بقواعد تحقق أمنية وحسابات إدارية معتمدة.</p>
+          </div>
+          <div class="card">
+            <div class="card-icon">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--primary)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="12" r="10"/><path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20"/><path d="M2 12h20"/>
+              </svg>
+            </div>
+            <h4>دعم ثلاثي اللغات</h4>
+            <p>محاذاة كاملة للغة العربية مع تنسيق العملة بالدينار الجزائري (د.ج / DZD).</p>
+          </div>
+        </div>
+
+        <div class="admonition admonition-tip">
+          <div class="admonition-title">
+            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M15 14c.2-1 .7-1.7 1.5-2.5 1-.9 1.5-2.2 1.5-3.5A6 6 0 0 0 6 8c0 1 .2 2.2 1.5 3.5.7.7 1.3 1.5 1.5 2.5"/><path d="M9 18h6"/><path d="M10 22h4"/>
+            </svg>
+            <span>ميزة الاستضافة السحابية</span>
+          </div>
+          النظام مهيأ للعمل بنجاح على استضافتكم المشتركة تحت المسار <code>/admin/</code> دون الحاجة إلى خادم VPS مخصص.
+        </div>
+      </section>
+
+      <!-- Section 2 -->
+      <section id="auth">
+        <h2>2. تسجيل الدخول والحماية الإدارية</h2>
+        <p>
+          الوصول إلى لوحة الإدارة محمي بصلاحية إدارية خاصة (Custom Claim <code>admin: true</code>) تمنع أي وصول غير مصرّح به.
+        </p>
+
+        <p>رابط الدخول الرسمي والمعتمد:</p>
+        <div class="code-box">
+https://luckymam.com.dz/admin/login
+        </div>
+
+        <ul class="steps">
+          <li class="step-item">
+            <h4>إدخال البريد الإداري وكلمة المرور</h4>
+            <p>استخدم الحساب الرسمي المسجل لدى الإدارة للولوج إلى الواجهة.</p>
+          </li>
+          <li class="step-item">
+            <h4>التحقق التلقائي من الصلاحيات</h4>
+            <p>يتأكد النظام فورياً من شارة المدير ويفتح القوائم المناسبة.</p>
+          </li>
+          <li class="step-item">
+            <h4>تسجيل الخروج الآمن</h4>
+            <p>عند الانتهاء من العمل، يمكن النقر على زر الخروج أسفل القائمة الجانبية لإغلاق الجلسة.</p>
+          </li>
+        </ul>
+      </section>
+
+      <!-- Section 3 -->
+      <section id="dashboard">
+        <h2>3. لوحة المؤشرات والإحصائيات الحية</h2>
+        <p>
+          توفر الصفحة الرئيسية نظرة فورية وشاملة على صحة النشاط التجاري والتفاعلي للتطبيق:
+        </p>
+        <ul style="padding-right: 1.5rem; margin-bottom: 1rem;">
+          <li><strong>بطاقات الأداء (KPIs):</strong> إجمالي الطلبات النشطة، الإيرادات المالية المحققة، وعدد الأمهات المشتركات.</li>
+          <li><strong>الرسوم البيانية التفاعلية:</strong> منحنيات بيانية توضح مسار المبيعات الشهرية وتفاعل المستخدمات.</li>
+          <li><strong>النشاطات الأخيرة:</strong> جدول سريع يستعرض أحدث الطلبات الواردة فوراً للمباشرة في معالجتها.</li>
+        </ul>
+      </section>
+
+      <!-- Section 4 -->
+      <section id="orders">
+        <h2>4. إدارة طلبات المتجر (Marketplace Orders)</h2>
+        <p>
+          متابعة دورة حياة مشتريات الأمهات من منتجات العناية والأمومة وشحنها خطوة بخطوة:
+        </p>
+
+        <div class="table-wrapper">
+          <table>
+            <thead>
+              <tr>
+                <th>الحالة</th>
+                <th>المعنى</th>
+                <th>الإجراء المطلوب من الإدارة</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><span class="badge badge-amber">قيد الانتظار (Pending)</span></td>
+                <td>طلب جديد تم تسجيله من التطبيق</td>
+                <td>مراجعة المخزون وتأكيد الطلب للبدء في التجهيز</td>
+              </tr>
+              <tr>
+                <td><span class="badge badge-blue">مؤكد (Confirmed)</span></td>
+                <td>الطلب قيد التجهيز في المخزن</td>
+                <td>تغليف المنتجات وإعداد الطرد لشركة الشحن</td>
+              </tr>
+              <tr>
+                <td><span class="badge badge-blue">تم الشحن (Shipped)</span></td>
+                <td>الطرد في الطريق مع شركة التوصيل</td>
+                <td>إدخال رقم تتبع الشحنة لتتمكن الزبونة من متابعته</td>
+              </tr>
+              <tr>
+                <td><span class="badge badge-green">تم الاستلام (Delivered)</span></td>
+                <td>استلمت الزبونة الطلب بنجاح</td>
+                <td>إتمام الطلب وتحديث الحسابات تلقائياً</td>
+              </tr>
+              <tr>
+                <td><span class="badge badge-rose">ملغي (Cancelled)</span></td>
+                <td>طلب تم إلغاؤه أو تعذر توصيله</td>
+                <td>إعادة حبات المنتج إلى رصيد المخزون المتوفر</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- Section 5 -->
+      <section id="catalog">
+        <h2>5. كتالوج المنتجات (Marketplace Catalog)</h2>
+        <p>
+          إضافة وتحديث المنتجات المعروضة للأمهات على تطبيق الهاتف بكل سهولة:
+        </p>
+
+        <div class="cards-grid">
+          <div class="card">
+            <h4>إضافة منتج جديد</h4>
+            <p>النقر على «+ منتج جديد»، كتابة الاسم والوصف، وتحديد السعر بالدينار الجزائري (د.ج).</p>
+          </div>
+          <div class="card">
+            <h4>رفع الصور السحابية</h4>
+            <p>تحميل الصور بدقة عالية مع ضغطها تلقائياً على Firebase Storage لتسريع تصفح الأمهات.</p>
+          </div>
+          <div class="card">
+            <h4>التصنيفات والأقسام</h4>
+            <p>تخصيص القسم المناسب للمنتج (رضاعة، راحة، عناية بالأم، مستلزمات الرضيع).</p>
+          </div>
+          <div class="card">
+            <h4>التحكم في العرض</h4>
+            <p>إمكانية تبديل حالة المنتج فورياً بين (نشط، مسودة مؤقتة، أو مؤرشف).</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- Section 6 -->
+      <section id="inventory">
+        <h2>6. إدارة المخازن والتنبيهات المبكرة</h2>
+        <p>
+          مراقبة دقيقة لكميات السلع لتفادي نفاد المنتجات المفاجئ:
+        </p>
+
+        <div class="admonition admonition-warn">
+          <div class="admonition-title">
+            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/>
+            </svg>
+            <span>جرس إنذار المخزون المنخفض</span>
+          </div>
+          أي منتج ينخفض رصيده إلى <strong>أقل من 10 قطع</strong> يحصل على شارة تحذيرية باللون البرتقالي لتنبيهكم بضرورة إعادة التموين قبل نفاذه كلياً.
+        </div>
+
+        <p>
+          <strong>التعديل السريع:</strong> يمكنك تعديل كمية أي منتج مباشرة من جدول المخازن بنقرة زر دون الحاجة لفتح صفحة المنتج بالكامل.
+        </p>
+      </section>
+
+      <!-- Section 7 -->
+      <section id="prints">
+        <h2>7. طلبات طباعة الصور وألبومات VIP</h2>
+        <p>
+          خدمة متميزة تتيح للأمهات حفظ أجمل ذكريات حملهن ومواليدهن عبر ألبومات فاخرة مطبوعة:
+        </p>
+        <ul style="padding-right: 1.5rem; margin-bottom: 1rem;">
+          <li><strong>معاينة الصور:</strong> تدقيق جودة ودقة صور الزبونة والتأكد من مطابقتها لقياسات الألبوم.</li>
+          <li><strong>مسار المعالجة:</strong> نقل الطلب تدريجياً: <em>طلب جديد ← قيد التصميم ← في المطبعة ← تم الشحن للزبونة</em>.</li>
+          <li><strong>ألبومات VIP المجانية:</strong> تتبع طلبات الأمهات المستفيدات من عروض الاشتراك المميز.</li>
+        </ul>
+      </section>
+
+      <!-- Section 8 -->
+      <section id="reels">
+        <h2>8. كتالوج الفيديوهات القصيرة (Reels)</h2>
+        <p>
+          طريقة مبتكرة للتسويق بالفيديو (Video Commerce) لزيادة مبيعات المتجر:
+        </p>
+        <ul style="padding-right: 1.5rem; margin-bottom: 1rem;">
+          <li><strong>ربط السلع بالفيديو:</strong> ربط منتجات محددة بمقطع الفيديو ليظهر زر الشراء مباشرة أثناء مشاهدة الأم للنصائح.</li>
+          <li><strong>إحصائيات المشاهدة:</strong> تتبع عدد المشاهدات ونقرات الشراء لمعرفة المحتوى الأكثر جذباً للأمهات.</li>
+        </ul>
+      </section>
+
+      <!-- Section 9 -->
+      <section id="notifications">
+        <h2>9. مركز الإشعارات الموجهة</h2>
+        <p>
+          إرسال رسائل وتنبيهات فورية ومخصصة إلى هواتف الأمهات مباشرة (Push Notifications):
+        </p>
+
+        <div class="admonition admonition-note">
+          <div class="admonition-title">
+            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/>
+            </svg>
+            <span>الاستهداف الذكي حسب الحالة</span>
+          </div>
+          يمكنك توجيه الرسائل لفئات معينة فقط (مثال: الحوامل في الثلث الأخير، الأمهات الجدد، أو مشتركات باقة VIP) لضمان تفاعل أكبر.
+        </div>
+      </section>
+
+      <!-- Section 10 -->
+      <section id="users">
+        <h2>10. إدارة حسابات الأمهات والعملاء</h2>
+        <p>
+          قاعدة بيانات الأمهات المسجلات لمتابعة الاشتراكات وتقديم الدعم الفني:
+        </p>
+        <ul style="padding-right: 1.5rem; margin-bottom: 1rem;">
+          <li>الاطلاع على نوع الاشتراك (مجاني / VIP).</li>
+          <li>مراجعة سجل الطلبات السابقة لكل عميلة لسرعة حل أي استفسار أو شكوى.</li>
+        </ul>
+      </section>
+
+      <!-- Section 11 -->
+      <section id="quick-guide">
+        <h2>11. دليل العمليات السريعة اليومية</h2>
+
+        <div class="table-wrapper">
+          <table>
+            <thead>
+              <tr>
+                <th>المهمة اليومية</th>
+                <th>الصفحة المخصصة</th>
+                <th>طريقة التنفيذ</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>إضافة منتج جديد</strong></td>
+                <td>كتالوج المتجر</td>
+                <td>النقر على «+ منتج جديد»، كتابة الاسم والسعر ورفع الصورة ثم حفظ.</td>
+              </tr>
+              <tr>
+                <td><strong>شحن طرد للزبونة</strong></td>
+                <td>طلبات المتجر</td>
+                <td>اختيار الطلب، النقر على زر «تم الشحن»، وإدخال تفاصيل التوصيل.</td>
+              </tr>
+              <tr>
+                <td><strong>تعديل كمية المخزن</strong></td>
+                <td>إدارة المخازن</td>
+                <td>البحث عن السلعة، النقر على رقم الكمية في الجدول وتعديله فوراً.</td>
+              </tr>
+              <tr>
+                <td><strong>إرسال عرض ترويجي</strong></td>
+                <td>مركز التنبيهات</td>
+                <td>كتابة عنوان الإشعار ونصه، اختيار فئة الأمهات ثم الضغط على «إرسال».</td>
+              </tr>
+              <tr>
+                <td><strong>مراجعة طلبات الصور</strong></td>
+                <td>طلبات الطباعة</td>
+                <td>استعراض صور الأم، التأكد من جودتها، وتمرير الطلب للمطبعة.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <footer>
+        <p>&copy; 2026 Luckymam — منصة لَكي ماما. جميع الحقوق محفوظة.</p>
+      </footer>
+    </main>
+
+  </div>
+
+  <script>
+    // Theme toggle (Light / Dark)
+    const themeBtn = document.getElementById("themeToggle");
+    const themeIcon = document.getElementById("themeIcon");
+    const htmlEl = document.documentElement;
+
+    function setTheme(theme) {
+      htmlEl.setAttribute("data-theme", theme);
+      localStorage.setItem("doc-theme", theme);
+      if (theme === "dark") {
+        themeIcon.innerHTML = `
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="m17.66 17.66 1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="m6.34 17.66-1.41 1.41"/><path d="m19.07 4.93-1.41 1.41"/>
+          </svg>
+          <span class="btn-text">فاتح</span>
+        `;
+      } else {
+        themeIcon.innerHTML = `
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/>
+          </svg>
+          <span class="btn-text">داكن</span>
+        `;
+      }
+    }
+
+    const savedTheme = localStorage.getItem("doc-theme") || "light";
+    setTheme(savedTheme);
+
+    themeBtn.addEventListener("click", () => {
+      const current = htmlEl.getAttribute("data-theme");
+      setTheme(current === "dark" ? "light" : "dark");
+    });
+
+    // Real-time Search filter (Desktop & Mobile)
+    const searchInput = document.getElementById("searchInput");
+    const drawerSearchInput = document.getElementById("drawerSearchInput");
+
+    function applySearch(query) {
+      const sections = document.querySelectorAll(".main-content section");
+      sections.forEach((sec) => {
+        if (!query) {
+          sec.style.display = "block";
+        } else {
+          const text = sec.innerText.toLowerCase();
+          sec.style.display = text.includes(query) ? "block" : "none";
+        }
+      });
+    }
+
+    if (searchInput) {
+      searchInput.addEventListener("input", (e) => applySearch(e.target.value.toLowerCase().trim()));
+    }
+    if (drawerSearchInput) {
+      drawerSearchInput.addEventListener("input", (e) => applySearch(e.target.value.toLowerCase().trim()));
+    }
+
+    // Mobile Drawer Interactions
+    const mobileMenuBtn = document.getElementById("mobileMenuBtn");
+    const closeDrawerBtn = document.getElementById("closeDrawerBtn");
+    const mobileDrawer = document.getElementById("mobileDrawer");
+    const drawerBackdrop = document.getElementById("drawerBackdrop");
+    const drawerLinks = document.querySelectorAll(".drawer-link");
+
+    function openDrawer() {
+      mobileDrawer.classList.add("open");
+      drawerBackdrop.classList.add("open");
+      document.body.style.overflow = "hidden";
+    }
+
+    function closeDrawer() {
+      mobileDrawer.classList.remove("open");
+      drawerBackdrop.classList.remove("open");
+      document.body.style.overflow = "";
+    }
+
+    if (mobileMenuBtn) mobileMenuBtn.addEventListener("click", openDrawer);
+    if (closeDrawerBtn) closeDrawerBtn.addEventListener("click", closeDrawer);
+    if (drawerBackdrop) drawerBackdrop.addEventListener("click", closeDrawer);
+
+    drawerLinks.forEach((link) => {
+      link.addEventListener("click", () => {
+        closeDrawer();
+      });
+    });
+
+    // Sidebar active indicator on scroll
+    const navLinks = document.querySelectorAll(".sidebar-link, .drawer-link");
+    window.addEventListener("scroll", () => {
+      let currentId = "";
+      document.querySelectorAll(".main-content section").forEach((sec) => {
+        const top = sec.offsetTop - 120;
+        if (window.scrollY >= top) {
+          currentId = "#" + sec.getAttribute("id");
+        }
+      });
+
+      navLinks.forEach((l) => {
+        l.classList.toggle("active", l.getAttribute("href") === currentId);
+      });
+    });
+  </script>
+</body>
+</html>

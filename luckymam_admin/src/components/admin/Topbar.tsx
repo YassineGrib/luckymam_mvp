@@ -1,23 +1,35 @@
-import { Bell, Search } from "lucide-react";
+import { Bell, Search, Menu } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useI18n } from "@/i18n";
 import { useAdminProfile } from "@/hooks/useAdminProfile";
 
-export function Topbar() {
+export function Topbar({ onMenuClick }: { onMenuClick?: () => void }) {
   const { t, dir } = useI18n();
   const { displayName, initials } = useAdminProfile();
   const isRtl = dir === "rtl";
 
   return (
-    <header className="h-16 border-b border-border bg-background/80 backdrop-blur-md sticky top-0 z-20 flex items-center justify-between px-6 lg:px-10 gap-4">
-      <div className={cn("relative flex-1 max-w-md", isRtl ? "order-2" : "order-1")}>
-        <Search className="absolute start-3 top-1/2 -translate-y-1/2 size-4 text-ink-muted pointer-events-none" />
-        <input
-          type="text"
-          placeholder={t("top.search")}
-          dir={dir}
-          className="w-full bg-cherry-100/60 border border-transparent hover:border-cherry-200 focus:border-cherry-400 focus:bg-white rounded-full py-2 ps-10 pe-4 text-sm outline-none transition-all placeholder:text-ink-muted/70"
-        />
+    <header className="h-16 border-b border-border bg-background/80 backdrop-blur-md sticky top-0 z-20 flex items-center justify-between px-4 sm:px-6 lg:px-10 gap-3 sm:gap-4">
+      <div className={cn("flex items-center gap-2.5 flex-1 max-w-md", isRtl ? "order-2" : "order-1")}>
+        <button
+          type="button"
+          onClick={onMenuClick}
+          className="md:hidden size-10 grid place-items-center rounded-xl bg-cherry-100/70 hover:bg-cherry-200/80 text-cherry-700 transition-colors shrink-0 cursor-pointer"
+          aria-label={t("nav.expand")}
+          title={t("nav.expand")}
+        >
+          <Menu className="size-5" />
+        </button>
+
+        <div className="relative flex-1">
+          <Search className="absolute start-3 top-1/2 -translate-y-1/2 size-4 text-ink-muted pointer-events-none" />
+          <input
+            type="text"
+            placeholder={t("top.search")}
+            dir={dir}
+            className="w-full bg-cherry-100/60 border border-transparent hover:border-cherry-200 focus:border-cherry-400 focus:bg-white rounded-full py-2 ps-10 pe-4 text-sm outline-none transition-all placeholder:text-ink-muted/70"
+          />
+        </div>
       </div>
 
       <div className={cn("flex items-center gap-3", isRtl ? "order-1" : "order-2")}>

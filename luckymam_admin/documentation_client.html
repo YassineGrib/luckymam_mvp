@@ -1,0 +1,696 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Documentation Client — Luckymam Admin Dashboard</title>
+  <style>
+    :root {
+      --bg: #f8fafc;
+      --surface: #ffffff;
+      --border: #e2e8f0;
+      --border-subtle: #f1f5f9;
+      --text: #0f172a;
+      --text-muted: #64748b;
+      --text-light: #94a3b8;
+      --primary: #be123c;
+      --primary-soft: #fff1f2;
+      --primary-hover: #9f1239;
+      --accent-green: #059669;
+      --accent-green-soft: #ecfdf5;
+      --accent-blue: #0284c7;
+      --accent-blue-soft: #f0f9ff;
+      --accent-amber: #d97706;
+      --accent-amber-soft: #fffbeb;
+      --radius-sm: 6px;
+      --radius-md: 10px;
+      --radius-lg: 16px;
+      --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.04);
+      --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.05), 0 2px 4px -2px rgb(0 0 0 / 0.05);
+    }
+
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      background-color: var(--bg);
+      color: var(--text);
+      line-height: 1.65;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* Layout */
+    .container {
+      max-width: 920px;
+      margin: 0 auto;
+      padding: 3rem 1.5rem 6rem;
+    }
+
+    /* Header */
+    header {
+      margin-bottom: 3.5rem;
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 2.5rem;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      background: var(--primary-soft);
+      color: var(--primary);
+      font-size: 0.75rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      padding: 0.3rem 0.75rem;
+      border-radius: 9999px;
+      margin-bottom: 1rem;
+    }
+
+    .badge-dot {
+      width: 6px;
+      height: 6px;
+      background-color: var(--primary);
+      border-radius: 50%;
+    }
+
+    h1 {
+      font-size: 2.25rem;
+      font-weight: 700;
+      letter-spacing: -0.025em;
+      color: var(--text);
+      line-height: 1.25;
+      margin-bottom: 0.75rem;
+    }
+
+    .subtitle {
+      font-size: 1.05rem;
+      color: var(--text-muted);
+      max-width: 680px;
+    }
+
+    .doc-meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1.5rem;
+      margin-top: 1.5rem;
+      font-size: 0.85rem;
+      color: var(--text-muted);
+    }
+
+    .doc-meta span strong {
+      color: var(--text);
+      font-weight: 600;
+    }
+
+    /* Navigation / Table of contents */
+    .toc {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 1.5rem;
+      margin-bottom: 3.5rem;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .toc-title {
+      font-size: 0.85rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--text-muted);
+      margin-bottom: 1rem;
+    }
+
+    .toc-list {
+      list-style: none;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 0.5rem 1.5rem;
+    }
+
+    .toc-list a {
+      color: var(--text);
+      text-decoration: none;
+      font-size: 0.9rem;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      transition: color 0.15s ease;
+    }
+
+    .toc-list a:hover {
+      color: var(--primary);
+    }
+
+    /* Section Styles */
+    section {
+      margin-bottom: 4rem;
+    }
+
+    h2 {
+      font-size: 1.45rem;
+      font-weight: 700;
+      letter-spacing: -0.015em;
+      color: var(--text);
+      margin-bottom: 1rem;
+      padding-bottom: 0.5rem;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+    }
+
+    h3 {
+      font-size: 1.1rem;
+      font-weight: 600;
+      color: var(--text);
+      margin: 1.5rem 0 0.5rem;
+    }
+
+    p {
+      margin-bottom: 1rem;
+      color: var(--text);
+    }
+
+    /* Cards Grid */
+    .grid-2 {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 1.25rem;
+      margin: 1.5rem 0;
+    }
+
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 1.35rem;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .card-icon {
+      font-size: 1.3rem;
+      margin-bottom: 0.75rem;
+      display: inline-block;
+    }
+
+    .card h4 {
+      font-size: 0.95rem;
+      font-weight: 600;
+      margin-bottom: 0.35rem;
+      color: var(--text);
+    }
+
+    .card p {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      margin-bottom: 0;
+    }
+
+    /* Tables */
+    .table-container {
+      overflow-x: auto;
+      margin: 1.5rem 0;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      box-shadow: var(--shadow-sm);
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      text-align: left;
+      font-size: 0.88rem;
+    }
+
+    thead {
+      background: #f8fafc;
+      border-bottom: 1px solid var(--border);
+    }
+
+    th {
+      padding: 0.85rem 1rem;
+      font-weight: 600;
+      color: var(--text-muted);
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+
+    td {
+      padding: 0.85rem 1rem;
+      border-bottom: 1px solid var(--border-subtle);
+      color: var(--text);
+      vertical-align: middle;
+    }
+
+    tr:last-child td {
+      border-bottom: none;
+    }
+
+    /* Status Pill */
+    .pill {
+      display: inline-block;
+      font-size: 0.75rem;
+      font-weight: 600;
+      padding: 0.2rem 0.55rem;
+      border-radius: 4px;
+    }
+
+    .pill-green { background: var(--accent-green-soft); color: var(--accent-green); }
+    .pill-blue  { background: var(--accent-blue-soft);  color: var(--accent-blue);  }
+    .pill-amber { background: var(--accent-amber-soft); color: var(--accent-amber); }
+    .pill-rose  { background: var(--primary-soft);      color: var(--primary);      }
+
+    /* Step List */
+    .steps {
+      list-style: none;
+      counter-reset: step-counter;
+      margin: 1.5rem 0;
+    }
+
+    .step-item {
+      position: relative;
+      padding-left: 3rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .step-item::before {
+      counter-increment: step-counter;
+      content: counter(step-counter);
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 2rem;
+      height: 2rem;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      color: var(--primary);
+      font-weight: 700;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.85rem;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .step-item h4 {
+      font-size: 0.95rem;
+      font-weight: 600;
+      margin-bottom: 0.25rem;
+    }
+
+    .step-item p {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      margin-bottom: 0;
+    }
+
+    /* Callout */
+    .callout {
+      border-left: 3px solid var(--primary);
+      background: var(--surface);
+      padding: 1rem 1.25rem;
+      border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+      margin: 1.5rem 0;
+      font-size: 0.88rem;
+      color: var(--text);
+      box-shadow: var(--shadow-sm);
+      border-top: 1px solid var(--border);
+      border-right: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .callout-title {
+      font-weight: 600;
+      margin-bottom: 0.25rem;
+      color: var(--primary);
+    }
+
+    /* Footer */
+    footer {
+      margin-top: 5rem;
+      padding-top: 2rem;
+      border-top: 1px solid var(--border);
+      text-align: center;
+      font-size: 0.85rem;
+      color: var(--text-muted);
+    }
+
+    /* Print Styles */
+    @media print {
+      body { background: white; }
+      .container { padding: 0; max-width: 100%; }
+      .toc { display: none; }
+      .card, .table-container, .callout { box-shadow: none; border-color: #ccc; }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+
+    <!-- Header -->
+    <header>
+      <div class="badge">
+        <span class="badge-dot"></span> Guide d'utilisation officiel
+      </div>
+      <h1>Luckymam Admin — Documentation Client</h1>
+      <p class="subtitle">
+        Guide de référence complet pour la gestion quotidienne de la plateforme e-commerce, des impressions personnalisées, du contenu vidéo et des clientes Luckymam.
+      </p>
+
+      <div class="doc-meta">
+        <span><strong>Plateforme :</strong> Luckymam Backoffice</span>
+        <span><strong>Version :</strong> 2.0 (Production SPA)</span>
+        <span><strong>Accès Web :</strong> https://luckymam.com.dz/admin/</span>
+        <span><strong>Langue :</strong> Français</span>
+      </div>
+    </header>
+
+    <!-- Table des matières -->
+    <nav class="toc">
+      <div class="toc-title">Sommaire du document</div>
+      <ul class="toc-list">
+        <li><a href="#vue-ensemble">1. Vue d'ensemble</a></li>
+        <li><a href="#connexion">2. Accès & Sécurité</a></li>
+        <li><a href="#commandes-marche">3. Commandes Marketplace</a></li>
+        <li><a href="#catalogue">4. Gestion des Produits</a></li>
+        <li><a href="#inventaire">5. Stocks & Inventaire</a></li>
+        <li><a href="#commandes-impression">6. Commandes d'Impression</a></li>
+        <li><a href="#reels">7. Contenu Vidéo (Reels)</a></li>
+        <li><a href="#notifications">8. Centre de Notifications</a></li>
+        <li><a href="#utilisatrices">9. Gestion des Mamans</a></li>
+        <li><a href="#guide-rapide">10. Guide des Tâches Rapides</a></li>
+      </ul>
+    </nav>
+
+    <!-- 1. Vue d'ensemble -->
+    <section id="vue-ensemble">
+      <h2>1. Vue d'ensemble de la Plateforme</h2>
+      <p>
+        Le tableau de bord <strong>Luckymam Admin</strong> centralise l'ensemble des flux opérationnels de l'écosystème Luckymam. Conçu selon une architecture web moderne (Single Page Application réactive), il garantit une consultation instantanée et une gestion fluide, tant sur ordinateur que sur smartphone.
+      </p>
+
+      <div class="grid-2">
+        <div class="card">
+          <div class="card-icon">⚡</div>
+          <h4>Rapidité & Réactivité</h4>
+          <p>Navigation instantanée sans rechargement de page. Interface conçue pour réagir au doigt et à l'œil.</p>
+        </div>
+        <div class="card">
+          <div class="card-icon">📱</div>
+          <h4>Adaptabilité Mobile</h4>
+          <p>Accès complet optimisé pour téléphone avec menu latéral coulissant et commandes tactiles fluides.</p>
+        </div>
+        <div class="card">
+          <div class="card-icon">🌐</div>
+          <h4>Support Trilingue & RTL</h4>
+          <p>Prise en charge native de l'Arabe (RTL), du Français et de l'Anglais avec adaptation dynamique des formats de prix (DZD).</p>
+        </div>
+        <div class="card">
+          <div class="card-icon">🔒</div>
+          <h4>Sécurité Directe Cloud</h4>
+          <p>Données hébergées sur Google Firebase sécurisées par règles de sécurité strictes et authentification administrative.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- 2. Connexion & Sécurité -->
+    <section id="connexion">
+      <h2>2. Accès & Sécurité Administrateur</h2>
+      <p>
+        L'accès à l'interface administrative est strictement réservé aux utilisateurs disposant du privilège administrateur (Custom Claim <code>admin: true</code>).
+      </p>
+
+      <div class="callout">
+        <div class="callout-title">Point d'accès sécurisé</div>
+        Pour accéder à l'espace de gestion, ouvrez votre navigateur et rendez-vous sur : 
+        <strong>https://luckymam.com.dz/admin/login</strong>
+      </div>
+
+      <ul class="steps">
+        <li class="step-item">
+          <h4>Saisie des identifiants</h4>
+          <p>Indiquez votre adresse e-mail administrative et votre mot de passe confidentiel.</p>
+        </li>
+        <li class="step-item">
+          <h4>Validation du rôle</h4>
+          <p>Le système vérifie immédiatement la présence du rôle administrateur actif avant de déverrouiller le menu complet.</p>
+        </li>
+        <li class="step-item">
+          <h4>Déconnexion sécurisée</h4>
+          <p>En fin de session, cliquez sur l'icône de déconnexion située au bas du menu latéral pour clore les accès.</p>
+        </li>
+      </ul>
+    </section>
+
+    <!-- 3. Commandes Marketplace -->
+    <section id="commandes-marche">
+      <h2>3. Gestion des Commandes Marketplace</h2>
+      <p>
+        Ce module centralise les commandes de produits d'allaitement, de maternité et d'équipements passées par les mamans depuis l'application mobile.
+      </p>
+
+      <div class="table-container">
+        <table>
+          <thead>
+            <tr>
+              <th>Statut</th>
+              <th>Description</th>
+              <th>Action requise de l'administrateur</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><span class="pill pill-amber">En attente (Pending)</span></td>
+              <td>Commande nouvellement passée par la cliente.</td>
+              <td>Vérifier la disponibilité en stock et valider la commande.</td>
+            </tr>
+            <tr>
+              <td><span class="pill pill-blue">Confirmée (Confirmed)</span></td>
+              <td>Commande validée, en cours de préparation en magasin.</td>
+              <td>Préparer le colis pour le transporteur partenaire.</td>
+            </tr>
+            <tr>
+              <td><span class="pill pill-blue">Expédiée (Shipped)</span></td>
+              <td>Colis remis au service de livraison avec suivi.</td>
+              <td>Mettre à jour le statut avec le numéro de bordereau.</td>
+            </tr>
+            <tr>
+              <td><span class="pill pill-green">Livrée (Delivered)</span></td>
+              <td>Colis réceptionné par la cliente.</td>
+              <td>Clôture comptable de la transaction.</td>
+            </tr>
+            <tr>
+              <td><span class="pill pill-rose">Annulée (Cancelled)</span></td>
+              <td>Commande refusée ou annulée par la cliente.</td>
+              <td>Réintégration automatique des articles au stock.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <p>
+        <strong>Détail d'une commande :</strong> En cliquant sur une commande, un panneau latéral détaille les articles achetés, l'adresse de livraison complète (Wilaya, Commune), le numéro de téléphone direct de la maman ainsi qu'un historique chronologique des statuts.
+      </p>
+    </section>
+
+    <!-- 4. Catalogue Produits -->
+    <section id="catalogue">
+      <h2>4. Catalogue des Produits</h2>
+      <p>
+        Permet de créer, mettre à jour, catégoriser et valoriser tous les articles mis en vente sur la boutique en ligne.
+      </p>
+
+      <div class="grid-2">
+        <div class="card">
+          <h4>Ajout d'un nouveau produit</h4>
+          <p>Cliquez sur <strong>« + Nouveau produit »</strong>. Renseignez le libellé, la description bilingue, le prix en Dinars Algériens (DZD) et téléversez des visuels en haute résolution.</p>
+        </div>
+        <div class="card">
+          <h4>Catégorisation & Tags</h4>
+          <p>Attribuez chaque produit à un univers spécifique (Éveil, Soin, Confort, Allaitement) pour optimiser la navigation des mamans sur l'application.</p>
+        </div>
+        <div class="card">
+          <h4>Gestion des statuts</h4>
+          <p>Basculez un produit en <strong>Actif</strong>, <strong>Brouillon</strong> (non visible au public) ou <strong>Archivé</strong> en un clic.</p>
+        </div>
+        <div class="card">
+          <h4>Photos & Médias</h4>
+          <p>Téléversement direct et sécurisé sur Firebase Storage avec recadrage et compression automatique.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- 5. Stocks & Inventaire -->
+    <section id="inventaire">
+      <h2>5. Gestion des Stocks & Alertes d'Approvisionnement</h2>
+      <p>
+        Une vue dédiée permet de surveiller la disponibilité de chaque référence et d'anticiper les ruptures.
+      </p>
+
+      <div class="callout">
+        <div class="callout-title">Seuil d'Alerte Automatique</div>
+        Tout article dont la quantité disponible passe sous le seuil critique (moins de 10 unités) déclenche un indicateur visuel orangé demandant un réassort immédiat.
+      </div>
+
+      <ul class="steps">
+        <li class="step-item">
+          <h4>Réajustement rapide</h4>
+          <p>Modifiez les quantités directement dans le tableau récapitulatif sans ouvrir la fiche complète du produit.</p>
+        </li>
+        <li class="step-item">
+          <h4>Historique des mouvements</h4>
+          <p>Suivez les décomptes automatiques générés à chaque commande confirmée.</p>
+        </li>
+      </ul>
+    </section>
+
+    <!-- 6. Commandes d'Impression -->
+    <section id="commandes-impression">
+      <h2>6. Commandes d'Impression Photos & Albums</h2>
+      <p>
+        Luckymam propose aux mamans d'immortaliser leurs moments précieux à travers l'impression de tirages photos de haute qualité et d'albums de naissance.
+      </p>
+
+      <div class="grid-2">
+        <div class="card">
+          <h4>Vérification des photos</h4>
+          <p>Accédez aux photos téléchargées par la cliente, vérifiez leur résolution et leur adéquation avec le format choisi (Carré, Rétro, Standard).</p>
+        </div>
+        <div class="card">
+          <h4>Suivi de fabrication</h4>
+          <p>Faites évoluer le statut : <em>Reçue &rarr; En mise en page &rarr; En tirage imprimeur &rarr; Expédiée</em>.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- 7. Contenu Vidéo (Reels) -->
+    <section id="reels">
+      <h2>7. Vidéo-Commerce & Catalogue Reels</h2>
+      <p>
+        Les Reels permettent de présenter des conseils de pédiatres, des astuces d'allaitement et des démonstrations de produits pour encourager les ventes interactives.
+      </p>
+      <div class="table-container">
+        <table>
+          <thead>
+            <tr>
+              <th>Fonctionnalité</th>
+              <th>Utilité pour la plateforme</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>Association de Produits</strong></td>
+              <td>Liez jusqu'à 3 produits du catalogue à un clip vidéo pour un achat en 1 clic pendant le visionnage.</td>
+            </tr>
+            <tr>
+              <td><strong>Statistiques de Vue</strong></td>
+              <td>Mesurez le nombre de lectures, de partages et de conversions directes générées par chaque vidéo.</td>
+            </tr>
+            <tr>
+              <td><strong>Organisation par Thème</strong></td>
+              <td>Classez les vidéos par tranche d'âge de l'enfant (0-3 mois, 3-6 mois, etc.).</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- 8. Centre de Notifications -->
+    <section id="notifications">
+      <h2>8. Centre de Notifications Ciblées</h2>
+      <p>
+        Communiquez directement avec votre communauté grâce aux notifications push instantanées sur mobile.
+      </p>
+
+      <div class="grid-2">
+        <div class="card">
+          <h4>Segmentation intelligente</h4>
+          <p>Ciblez vos messages selon la situation de la maman : <em>Femme enceinte, Maman nouveau-né, Membre VIP, etc.</em></p>
+        </div>
+        <div class="card">
+          <h4>Planification de campagnes</h4>
+          <p>Rédigez des offres spéciales, des alertes de réapprovisionnement ou des conseils de santé diffusés instantanément.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- 9. Gestion des Mamans -->
+    <section id="utilisatrices">
+      <h2>9. Gestion des Utilisatrices & Profils</h2>
+      <p>
+        Visualisez la communauté Luckymam tout en respectant la confidentialité des informations personnelles.
+      </p>
+      <ul class="steps">
+        <li class="step-item">
+          <h4>Suivi des abonnements</h4>
+          <p>Distinguez les membres régulières des membres VIP / Offres spéciales.</p>
+        </li>
+        <li class="step-item">
+          <h4>Support & Contact direct</h4>
+          <p>Consultez l'historique d'achat d'une cliente pour répondre efficacement à ses demandes de support après-vente.</p>
+        </li>
+      </ul>
+    </section>
+
+    <!-- 10. Guide des Tâches Rapides -->
+    <section id="guide-rapide">
+      <h2>10. Aide-Mémoire des Actions Fréquentes</h2>
+
+      <div class="table-container">
+        <table>
+          <thead>
+            <tr>
+              <th>Opération</th>
+              <th>Section</th>
+              <th>Étapes à suivre</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>Ajouter un produit</strong></td>
+              <td>Catalogue</td>
+              <td>Cliquez sur <em>+ Nouveau produit</em>, saisissez le nom, le prix en DZD, ajoutez la photo et validez.</td>
+            </tr>
+            <tr>
+              <td><strong>Expédier une commande</strong></td>
+              <td>Commandes</td>
+              <td>Sélectionnez la commande, cliquez sur <em>Expédiée</em>, renseignez les détails de livraison et confirmez.</td>
+            </tr>
+            <tr>
+              <td><strong>Ajuster un stock</strong></td>
+              <td>Inventaire</td>
+              <td>Recherchez le produit, cliquez sur la cellule de quantité et entrez le nouveau solde disponible.</td>
+            </tr>
+            <tr>
+              <td><strong>Envoyer une annonce</strong></td>
+              <td>Notifications</td>
+              <td>Rédigez le titre et le corps de notification, choisissez le segment ciblé et cliquez sur <em>Diffuser</em>.</td>
+            </tr>
+            <tr>
+              <td><strong>Changer la langue</strong></td>
+              <td>Haut de page</td>
+              <td>Sélectionnez Arabe, Français ou Anglais dans le menu supérieur pour basculer l'ensemble de l'interface.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+      <p>&copy; 2026 Luckymam. Tous droits réservés. Plateforme conçue avec passion pour le bien-être des mamans et de leurs bébés.</p>
+    </footer>
+
+  </div>
+</body>
+</html>
