@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../../core/extensions/l10n_extension.dart';
 import '../../capsules/screens/create_capsule_screen.dart';
 import '../../health/screens/health_hub_screen.dart';
 import '../../profile/models/profile_models.dart';
@@ -80,6 +81,7 @@ class _TallHealthBentoCardState extends State<_TallHealthBentoCard> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = context.l10n;
     final isDark = widget.isDark;
 
     final bg = isDark ? const Color(0xFF281F15) : const Color(0xFFFFF2DF);
@@ -177,10 +179,10 @@ class _TallHealthBentoCardState extends State<_TallHealthBentoCard> {
                                   Flexible(
                                     child: Text(
                                       widget.status == UserStatus.pregnant
-                                          ? 'Grossesse'
+                                          ? l10n.dashboardHealthPregnancy
                                           : widget.status == UserStatus.hope
-                                              ? 'Cycle'
-                                              : 'Bébé',
+                                              ? l10n.cycleTrackingTitle
+                                              : l10n.quickActionHealth,
                                       maxLines: 1,
                                       overflow: TextOverflow.ellipsis,
                                       style: TextStyle(
@@ -211,10 +213,10 @@ class _TallHealthBentoCardState extends State<_TallHealthBentoCard> {
                         children: [
                           Text(
                             widget.status == UserStatus.pregnant
-                                ? 'Vitalité & Mouvements'
+                                ? l10n.dashboardHealthPregnancy
                                 : widget.status == UserStatus.hope
-                                    ? 'Cycle & Ovulation'
-                                    : 'Santé & Éveil',
+                                    ? l10n.cycleTrackingTitle
+                                    : l10n.homeHealthTitle,
                             maxLines: 2,
                             overflow: TextOverflow.ellipsis,
                             style: TextStyle(
@@ -226,7 +228,11 @@ class _TallHealthBentoCardState extends State<_TallHealthBentoCard> {
                           ),
                           const SizedBox(height: 5),
                           Text(
-                            'Suivi quotidien • Bien-être',
+                            widget.status == UserStatus.pregnant
+                                ? l10n.dashboardPregnantBannerTitle
+                                : widget.status == UserStatus.hope
+                                    ? l10n.dashboardHopeBannerTitle
+                                    : l10n.homeHealthSubtitle,
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
                             style: TextStyle(
@@ -259,7 +265,7 @@ class _TallHealthBentoCardState extends State<_TallHealthBentoCard> {
                                 mainAxisSize: MainAxisSize.min,
                                 children: [
                                   Text(
-                                    'Dr. Suivi',
+                                    l10n.navHealth,
                                     maxLines: 1,
                                     overflow: TextOverflow.ellipsis,
                                     style: TextStyle(
@@ -269,7 +275,7 @@ class _TallHealthBentoCardState extends State<_TallHealthBentoCard> {
                                     ),
                                   ),
                                   Text(
-                                    'Mon carnet',
+                                    l10n.dashboardQuickAccess,
                                     maxLines: 1,
                                     overflow: TextOverflow.ellipsis,
                                     style: TextStyle(
@@ -316,6 +322,7 @@ class _MemoryBentoCardState extends State<_MemoryBentoCard> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = context.l10n;
     final isDark = widget.isDark;
     final bg = isDark ? const Color(0xFF182332) : const Color(0xFFE8F3FF);
     final borderColor = isDark
@@ -396,7 +403,7 @@ class _MemoryBentoCardState extends State<_MemoryBentoCard> {
                                 borderRadius: BorderRadius.circular(10),
                               ),
                               child: Text(
-                                'MÉMOIRE',
+                                l10n.quickActionCapsule.toUpperCase(),
                                 maxLines: 1,
                                 overflow: TextOverflow.ellipsis,
                                 style: TextStyle(
@@ -419,7 +426,7 @@ class _MemoryBentoCardState extends State<_MemoryBentoCard> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            'Capsule du Jour',
+                            l10n.dashboardMyMemories,
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
                             style: TextStyle(
@@ -431,7 +438,7 @@ class _MemoryBentoCardState extends State<_MemoryBentoCard> {
                           ),
                           const SizedBox(height: 2),
                           Text(
-                            'Créer un souvenir ↗',
+                            '${l10n.timeline_add} ↗',
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
                             style: TextStyle(
@@ -470,6 +477,7 @@ class _ReelsBentoCardState extends State<_ReelsBentoCard> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = context.l10n;
     final isDark = widget.isDark;
     final bg = isDark ? const Color(0xFF2C1924) : const Color(0xFFFDE8F3);
     final borderColor = isDark
@@ -560,7 +568,7 @@ class _ReelsBentoCardState extends State<_ReelsBentoCard> {
                                   const SizedBox(width: 3),
                                   Flexible(
                                     child: Text(
-                                      'REELS',
+                                      l10n.quickActionReels.toUpperCase(),
                                       maxLines: 1,
                                       overflow: TextOverflow.ellipsis,
                                       style: TextStyle(
@@ -589,7 +597,7 @@ class _ReelsBentoCardState extends State<_ReelsBentoCard> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            'Astuces & Vidéos',
+                            l10n.reelsTitle,
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
                             style: TextStyle(
@@ -601,7 +609,7 @@ class _ReelsBentoCardState extends State<_ReelsBentoCard> {
                           ),
                           const SizedBox(height: 2),
                           Text(
-                            'Conseils sages-femmes ↗',
+                            l10n.homeReelsSubtitle,
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
                             style: TextStyle(

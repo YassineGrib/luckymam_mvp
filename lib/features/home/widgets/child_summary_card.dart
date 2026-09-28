@@ -173,7 +173,7 @@ class ChildSummaryCard extends StatelessWidget {
                               ),
                               const SizedBox(width: 4),
                               Text(
-                                child.genderLabel,
+                                isGirl ? l10n.profileGirl : l10n.profileBoy,
                                 style: TextStyle(
                                   fontSize: 10,
                                   fontWeight: FontWeight.w700,

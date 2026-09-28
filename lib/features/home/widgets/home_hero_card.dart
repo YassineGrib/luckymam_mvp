@@ -424,29 +424,29 @@ class _HomeHeroCompanionCardState extends ConsumerState<HomeHeroCompanionCard> {
       case UserStatus.pregnant:
         return _HeroContent(
           tagIcon: Icons.pregnant_woman_rounded,
-          tagText: 'SUIVI GROSSESSE',
+          tagText: l10n.dashboardHealthPregnancy.toUpperCase(),
           progressText: 'T2',
-          title: 'Bébé grandit chaque jour',
-          subtitle: 'Semaine 24 • Enregistrez les mouvements et votre hydratation',
-          buttonText: 'SUIVRE',
+          title: l10n.dashboardPregnantBannerTitle,
+          subtitle: l10n.dashboardPregnantBannerSubtitle,
+          buttonText: l10n.cycleActivateTracking,
         );
       case UserStatus.hope:
         return _HeroContent(
           tagIcon: Icons.wb_twilight_rounded,
-          tagText: 'CYCLE & FERTILITÉ',
+          tagText: l10n.cycleTrackingTitle.toUpperCase(),
           progressText: 'J14',
-          title: 'Fenêtre de Fertilité Optimale',
-          subtitle: 'Phase ovulatoire • Écoutez votre corps et notez vos ressentis',
-          buttonText: 'NOTER',
+          title: l10n.dashboardHopeBannerTitle,
+          subtitle: l10n.dashboardHopeBannerSubtitle,
+          buttonText: l10n.cycleLogPeriod,
         );
       case UserStatus.mom:
         return _HeroContent(
           tagIcon: Icons.auto_awesome_rounded,
-          tagText: 'ESPACE MAMAN',
+          tagText: l10n.homeYourChildren.toUpperCase(),
           progressText: '100%',
-          title: 'Chaque instant est précieux',
-          subtitle: 'Capturez un sourire ou une nouvelle découverte aujourd\'hui',
-          buttonText: 'CAPTURER',
+          title: l10n.dashboardMyMemories,
+          subtitle: l10n.homeRecentCapsulesEmpty,
+          buttonText: l10n.timeline_add,
         );
     }
   }

@@ -452,7 +452,7 @@ class RecentCapsules extends ConsumerWidget {
                     ),
                     const SizedBox(height: 2),
                     Text(
-                      'Souvenir',
+                      l10n.quickActionCapsule,
                       style: TextStyle(
                         fontSize: 10.5,
                         fontWeight: FontWeight.w500,
