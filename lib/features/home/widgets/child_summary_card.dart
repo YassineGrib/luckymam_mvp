@@ -30,9 +30,6 @@ class ChildSummaryCard extends StatelessWidget {
     final l10n = context.l10n;
     final lang = Localizations.localeOf(context).languageCode;
 
-    final primaryColor = isDark
-        ? AppColors.primaryDark
-        : AppColors.primaryLight;
     final textColor = isDark ? Colors.white : const Color(0xFF241C1A);
     final secondaryColor = isDark
         ? AppColors.textSecondaryDark
@@ -53,10 +50,18 @@ class ChildSummaryCard extends StatelessWidget {
       eventColor = const Color(0xFFF39C12);
     }
 
+    final isGirl = child.gender == ChildGender.girl;
+    final genderColor = isGirl
+        ? (isDark ? const Color(0xFFFB7185) : const Color(0xFFE11D48))
+        : (isDark ? const Color(0xFF60A5FA) : const Color(0xFF2563EB));
+    final genderBgColor = isGirl
+        ? (isDark ? const Color(0xFFFB7185).withValues(alpha: 0.15) : const Color(0xFFFFF1F2))
+        : (isDark ? const Color(0xFF3B82F6).withValues(alpha: 0.15) : const Color(0xFFEFF6FF));
+
     final bg = isDark ? const Color(0xFF241C20) : const Color(0xFFFFF4EE);
     final borderColor = isDark
         ? Colors.white.withValues(alpha: 0.08)
-        : const Color(0xFFFFDFD0);
+        : (isGirl ? const Color(0xFFFFDFE5) : const Color(0xFFDCEBFE));
 
     final hasPhoto = child.photoUrl != null && child.photoUrl!.isNotEmpty;
 
@@ -73,7 +78,7 @@ class ChildSummaryCard extends StatelessWidget {
             BoxShadow(
               color: isDark
                   ? Colors.black.withValues(alpha: 0.25)
-                  : const Color(0xFFF7DCD0).withValues(alpha: 0.45),
+                  : genderColor.withValues(alpha: 0.12),
               blurRadius: 14,
               offset: const Offset(0, 5),
             ),
@@ -125,8 +130,8 @@ class ChildSummaryCard extends StatelessWidget {
                       Icons.child_care_rounded,
                       size: 92,
                       color: isDark
-                          ? Colors.white.withValues(alpha: 0.04)
-                          : const Color(0xFFE87A5D).withValues(alpha: 0.09),
+                          ? genderColor.withValues(alpha: 0.04)
+                          : genderColor.withValues(alpha: 0.08),
                     ),
                   ),
                 ),
@@ -149,24 +154,22 @@ class ChildSummaryCard extends StatelessWidget {
                             vertical: 4,
                           ),
                           decoration: BoxDecoration(
-                            color: isDark
-                                ? Colors.white.withValues(alpha: 0.12)
-                                : Colors.white.withValues(alpha: 0.85),
+                            color: genderBgColor,
                             borderRadius: BorderRadius.circular(10),
                             border: Border.all(
-                              color: primaryColor.withValues(alpha: 0.25),
-                              width: 0.8,
+                              color: genderColor.withValues(alpha: 0.35),
+                              width: 0.9,
                             ),
                           ),
                           child: Row(
                             mainAxisSize: MainAxisSize.min,
                             children: [
                               Icon(
-                                child.gender == ChildGender.girl
+                                isGirl
                                     ? Icons.face_3_rounded
                                     : Icons.face_6_rounded,
                                 size: 13,
-                                color: primaryColor,
+                                color: genderColor,
                               ),
                               const SizedBox(width: 4),
                               Text(
@@ -174,7 +177,7 @@ class ChildSummaryCard extends StatelessWidget {
                                 style: TextStyle(
                                   fontSize: 10,
                                   fontWeight: FontWeight.w700,
-                                  color: primaryColor,
+                                  color: genderColor,
                                 ),
                               ),
                             ],
