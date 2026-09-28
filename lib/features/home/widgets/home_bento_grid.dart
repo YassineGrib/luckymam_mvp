@@ -7,10 +7,11 @@ import '../../profile/models/profile_models.dart';
 import '../../profile/providers/profile_providers.dart';
 import '../../reels/screens/reels_screen.dart';
 
-/// Asymmetric Bento Grid layout with aesthetic watermark icons and dedicated Reels card.
-/// - Left: Tall Health & Vitality Card with watermark icon.
-/// - Right Top: Memory Capsule Card with camera watermark icon.
-/// - Right Bottom: Dedicated Reels & Video Tips Card with play watermark icon.
+/// Asymmetric Bento Grid layout with clean typography, generous text space,
+/// and subtle watermark background icons (redundant circular icons removed).
+/// - Left: Tall Health & Vitality Card with watermark.
+/// - Right Top: Memory Capsule Card with camera watermark.
+/// - Right Bottom: Dedicated Reels & Video Tips Card with play watermark.
 class HomeBentoGrid extends ConsumerWidget {
   const HomeBentoGrid({super.key});
 
@@ -37,10 +38,10 @@ class HomeBentoGrid extends ConsumerWidget {
             flex: 5,
             child: Column(
               children: [
-                // Top: Capsule Capture card with watermark
+                // Top: Capsule Capture card (spacious, watermark in background)
                 _MemoryBentoCard(isDark: isDark),
                 const SizedBox(height: 14),
-                // Bottom: Dedicated Reels & Video Tips card with watermark
+                // Bottom: Dedicated Reels card (spacious, watermark in background)
                 _ReelsBentoCard(isDark: isDark),
               ],
             ),
@@ -131,7 +132,7 @@ class _TallHealthBentoCardState extends State<_TallHealthBentoCard> {
                   child: IgnorePointer(
                     child: Icon(
                       watermarkIcon,
-                      size: 115,
+                      size: 118,
                       color: isDark
                           ? Colors.white.withValues(alpha: 0.04)
                           : const Color(0xFFE8833A).withValues(alpha: 0.09),
@@ -188,7 +189,7 @@ class _TallHealthBentoCardState extends State<_TallHealthBentoCard> {
                             ),
                           ),
 
-                          // Arrow indicator
+                          // Subtle arrow indicator
                           Icon(
                             Icons.arrow_outward_rounded,
                             size: 16,
@@ -208,7 +209,7 @@ class _TallHealthBentoCardState extends State<_TallHealthBentoCard> {
                                     ? 'Cycle & Ovulation'
                                     : 'Santé & Éveil',
                             style: TextStyle(
-                              fontSize: 16,
+                              fontSize: 16.5,
                               fontWeight: FontWeight.w800,
                               color: textColor,
                               height: 1.2,
@@ -221,61 +222,51 @@ class _TallHealthBentoCardState extends State<_TallHealthBentoCard> {
                               fontSize: 11,
                               fontWeight: FontWeight.w400,
                               color: subtextColor,
-                              height: 1.3,
+                              height: 1.35,
                             ),
                           ),
                         ],
                       ),
 
-                      // Bottom Caregiver / Specialist snippet
+                      // Bottom Caregiver / Specialist snippet (Spacious, no small circular icon)
                       Container(
                         padding: const EdgeInsets.symmetric(
-                          horizontal: 10,
-                          vertical: 8,
+                          horizontal: 12,
+                          vertical: 9,
                         ),
                         decoration: BoxDecoration(
                           color: isDark
                               ? Colors.white.withValues(alpha: 0.08)
-                              : Colors.white.withValues(alpha: 0.7),
+                              : Colors.white.withValues(alpha: 0.75),
                           borderRadius: BorderRadius.circular(16),
                         ),
                         child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            Container(
-                              width: 28,
-                              height: 28,
-                              decoration: const BoxDecoration(
-                                shape: BoxShape.circle,
-                                color: Color(0xFFE8833A),
-                              ),
-                              child: const Icon(
-                                Icons.medical_services_rounded,
-                                size: 14,
-                                color: Colors.white,
-                              ),
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  'Dr. Suivi',
+                                  style: TextStyle(
+                                    fontSize: 11.5,
+                                    fontWeight: FontWeight.w700,
+                                    color: textColor,
+                                  ),
+                                ),
+                                Text(
+                                  'Ouvrir mon carnet de santé',
+                                  style: TextStyle(
+                                    fontSize: 10,
+                                    color: subtextColor,
+                                  ),
+                                ),
+                              ],
                             ),
-                            const SizedBox(width: 8),
-                            Expanded(
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    'Dr. Suivi',
-                                    style: TextStyle(
-                                      fontSize: 11,
-                                      fontWeight: FontWeight.w700,
-                                      color: textColor,
-                                    ),
-                                  ),
-                                  Text(
-                                    'Ouvrir mon carnet',
-                                    style: TextStyle(
-                                      fontSize: 9.5,
-                                      color: subtextColor,
-                                    ),
-                                  ),
-                                ],
-                              ),
+                            Icon(
+                              Icons.chevron_right_rounded,
+                              size: 16,
+                              color: subtextColor,
                             ),
                           ],
                         ),
@@ -292,7 +283,7 @@ class _TallHealthBentoCardState extends State<_TallHealthBentoCard> {
   }
 }
 
-// ─── Right Top Card: Memory Capture with Watermark ────────────────────────────
+// ─── Right Top Card: Memory Capture (Clean & Spacious) ────────────────────────
 
 class _MemoryBentoCard extends StatefulWidget {
   final bool isDark;
@@ -352,93 +343,81 @@ class _MemoryBentoCardState extends State<_MemoryBentoCard> {
               children: [
                 // ─── Large Aesthetic Watermark Icon in Background ─────
                 Positioned(
-                  bottom: -14,
-                  right: -10,
+                  bottom: -10,
+                  right: -6,
                   child: IgnorePointer(
                     child: Icon(
                       Icons.photo_camera_rounded,
-                      size: 80,
+                      size: 78,
                       color: isDark
-                          ? Colors.white.withValues(alpha: 0.04)
-                          : const Color(0xFF2C74B3).withValues(alpha: 0.09),
+                          ? Colors.white.withValues(alpha: 0.05)
+                          : const Color(0xFF2C74B3).withValues(alpha: 0.11),
                     ),
                   ),
                 ),
 
-                // ─── Foreground Content ──────────────────────────────
+                // ─── Foreground Content (Spacious, No Small Icon Box) ─
                 Padding(
-                  padding: const EdgeInsets.all(14),
-                  child: Row(
+                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 13),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Container(
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 8,
-                                vertical: 3,
-                              ),
-                              decoration: BoxDecoration(
-                                color: isDark
-                                    ? Colors.white.withValues(alpha: 0.12)
-                                    : Colors.white.withValues(alpha: 0.8),
-                                borderRadius: BorderRadius.circular(10),
-                              ),
-                              child: Text(
-                                'MÉMOIRE',
-                                style: TextStyle(
-                                  fontSize: 9,
-                                  fontWeight: FontWeight.w800,
-                                  color: isDark
-                                      ? Colors.white
-                                      : const Color(0xFF1E5185),
-                                  letterSpacing: 0.4,
-                                ),
-                              ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Container(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 9,
+                              vertical: 3.5,
                             ),
-                            const SizedBox(height: 6),
-                            Text(
-                              'Capsule du Jour',
+                            decoration: BoxDecoration(
+                              color: isDark
+                                  ? Colors.white.withValues(alpha: 0.12)
+                                  : Colors.white.withValues(alpha: 0.85),
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                            child: Text(
+                              'MÉMOIRE',
                               style: TextStyle(
-                                fontSize: 13.5,
+                                fontSize: 9.5,
                                 fontWeight: FontWeight.w800,
-                                color: textColor,
+                                color: isDark
+                                    ? Colors.white
+                                    : const Color(0xFF1E5185),
+                                letterSpacing: 0.4,
                               ),
                             ),
-                            Text(
-                              'Créer un souvenir ↗',
-                              style: TextStyle(
-                                fontSize: 10,
-                                fontWeight: FontWeight.w500,
-                                color: subtextColor,
-                              ),
-                            ),
-                          ],
-                        ),
+                          ),
+                          Icon(
+                            Icons.arrow_outward_rounded,
+                            size: 15,
+                            color: subtextColor,
+                          ),
+                        ],
                       ),
-                      Container(
-                        width: 38,
-                        height: 38,
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          color: isDark
-                              ? Colors.white.withValues(alpha: 0.12)
-                              : Colors.white,
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.black.withValues(alpha: 0.06),
-                              blurRadius: 6,
-                              offset: const Offset(0, 2),
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            'Capsule du Jour',
+                            style: TextStyle(
+                              fontSize: 15,
+                              fontWeight: FontWeight.w800,
+                              color: textColor,
+                              letterSpacing: -0.2,
                             ),
-                          ],
-                        ),
-                        child: const Icon(
-                          Icons.camera_alt_rounded,
-                          size: 18,
-                          color: Color(0xFF2C74B3),
-                        ),
+                          ),
+                          const SizedBox(height: 2),
+                          Text(
+                            'Créer un souvenir ↗',
+                            style: TextStyle(
+                              fontSize: 11,
+                              fontWeight: FontWeight.w500,
+                              color: subtextColor,
+                            ),
+                          ),
+                        ],
                       ),
                     ],
                   ),
@@ -452,7 +431,7 @@ class _MemoryBentoCardState extends State<_MemoryBentoCard> {
   }
 }
 
-// ─── Right Bottom Card: Dedicated Reels & Video Tips with Watermark ──────────
+// ─── Right Bottom Card: Dedicated Reels (Clean & Spacious) ───────────────────
 
 class _ReelsBentoCard extends StatefulWidget {
   final bool isDark;
@@ -512,104 +491,92 @@ class _ReelsBentoCardState extends State<_ReelsBentoCard> {
               children: [
                 // ─── Large Aesthetic Watermark Play Icon in Background ───
                 Positioned(
-                  bottom: -14,
-                  right: -10,
+                  bottom: -10,
+                  right: -6,
                   child: IgnorePointer(
                     child: Icon(
                       Icons.play_circle_fill_rounded,
-                      size: 80,
+                      size: 78,
                       color: isDark
-                          ? Colors.white.withValues(alpha: 0.05)
-                          : const Color(0xFF8E44AD).withValues(alpha: 0.09),
+                          ? Colors.white.withValues(alpha: 0.06)
+                          : const Color(0xFF8E44AD).withValues(alpha: 0.11),
                     ),
                   ),
                 ),
 
-                // ─── Foreground Content ──────────────────────────────
+                // ─── Foreground Content (Spacious, No Small Icon Box) ─
                 Padding(
-                  padding: const EdgeInsets.all(14),
-                  child: Row(
+                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 13),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Container(
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 8,
-                                vertical: 3,
-                              ),
-                              decoration: BoxDecoration(
-                                color: isDark
-                                    ? Colors.white.withValues(alpha: 0.12)
-                                    : Colors.white.withValues(alpha: 0.8),
-                                borderRadius: BorderRadius.circular(10),
-                              ),
-                              child: Row(
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  const Icon(
-                                    Icons.play_arrow_rounded,
-                                    size: 11,
-                                    color: Color(0xFF8E44AD),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Container(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 9,
+                              vertical: 3.5,
+                            ),
+                            decoration: BoxDecoration(
+                              color: isDark
+                                  ? Colors.white.withValues(alpha: 0.12)
+                                  : Colors.white.withValues(alpha: 0.85),
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                            child: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                const Icon(
+                                  Icons.play_arrow_rounded,
+                                  size: 11,
+                                  color: Color(0xFF8E44AD),
+                                ),
+                                const SizedBox(width: 3),
+                                Text(
+                                  'REELS',
+                                  style: TextStyle(
+                                    fontSize: 9.5,
+                                    fontWeight: FontWeight.w800,
+                                    color: isDark
+                                        ? Colors.white
+                                        : const Color(0xFF8E44AD),
+                                    letterSpacing: 0.4,
                                   ),
-                                  const SizedBox(width: 3),
-                                  Text(
-                                    'REELS',
-                                    style: TextStyle(
-                                      fontSize: 9,
-                                      fontWeight: FontWeight.w800,
-                                      color: isDark
-                                          ? Colors.white
-                                          : const Color(0xFF8E44AD),
-                                      letterSpacing: 0.4,
-                                    ),
-                                  ),
-                                ],
-                              ),
+                                ),
+                              ],
                             ),
-                            const SizedBox(height: 6),
-                            Text(
-                              'Astuces & Vidéos',
-                              style: TextStyle(
-                                fontSize: 13.5,
-                                fontWeight: FontWeight.w800,
-                                color: textColor,
-                              ),
-                            ),
-                            Text(
-                              'Conseils sages-femmes ↗',
-                              style: TextStyle(
-                                fontSize: 10,
-                                fontWeight: FontWeight.w500,
-                                color: subtextColor,
-                              ),
-                            ),
-                          ],
-                        ),
+                          ),
+                          Icon(
+                            Icons.arrow_outward_rounded,
+                            size: 15,
+                            color: subtextColor,
+                          ),
+                        ],
                       ),
-                      Container(
-                        width: 38,
-                        height: 38,
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          color: isDark
-                              ? Colors.white.withValues(alpha: 0.12)
-                              : Colors.white,
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.black.withValues(alpha: 0.06),
-                              blurRadius: 6,
-                              offset: const Offset(0, 2),
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            'Astuces & Vidéos',
+                            style: TextStyle(
+                              fontSize: 15,
+                              fontWeight: FontWeight.w800,
+                              color: textColor,
+                              letterSpacing: -0.2,
                             ),
-                          ],
-                        ),
-                        child: const Icon(
-                          Icons.play_arrow_rounded,
-                          size: 22,
-                          color: Color(0xFF8E44AD),
-                        ),
+                          ),
+                          const SizedBox(height: 2),
+                          Text(
+                            'Conseils sages-femmes ↗',
+                            style: TextStyle(
+                              fontSize: 11,
+                              fontWeight: FontWeight.w500,
+                              color: subtextColor,
+                            ),
+                          ),
+                        ],
                       ),
                     ],
                   ),
