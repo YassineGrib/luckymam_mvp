@@ -7,11 +7,11 @@ import '../../profile/models/profile_models.dart';
 import '../../profile/providers/profile_providers.dart';
 import '../../reels/screens/reels_screen.dart';
 
-/// Asymmetric Bento Grid layout with clean typography, generous text space,
-/// and subtle watermark background icons (redundant circular icons removed).
-/// - Left: Tall Health & Vitality Card with watermark.
-/// - Right Top: Memory Capsule Card with camera watermark.
-/// - Right Bottom: Dedicated Reels & Video Tips Card with play watermark.
+/// Asymmetric Bento Grid layout with aesthetic corner-bleeding watermark icons
+/// and zero RenderFlex overflows.
+/// - Left: Tall Health & Vitality Card with clipped corner watermark.
+/// - Right Top: Memory Capsule Card with clipped corner watermark.
+/// - Right Bottom: Dedicated Reels & Video Tips Card with clipped corner watermark.
 class HomeBentoGrid extends ConsumerWidget {
   const HomeBentoGrid({super.key});
 
@@ -38,10 +38,10 @@ class HomeBentoGrid extends ConsumerWidget {
             flex: 5,
             child: Column(
               children: [
-                // Top: Capsule Capture card (spacious, watermark in background)
+                // Top: Capsule Capture card (spacious, watermark in corner)
                 _MemoryBentoCard(isDark: isDark),
                 const SizedBox(height: 14),
-                // Bottom: Dedicated Reels card (spacious, watermark in background)
+                // Bottom: Dedicated Reels card (spacious, watermark in corner)
                 _ReelsBentoCard(isDark: isDark),
               ],
             ),
@@ -52,7 +52,7 @@ class HomeBentoGrid extends ConsumerWidget {
   }
 }
 
-// ─── Left Tall Card: Health & Cycle with Watermark ───────────────────────────
+// ─── Left Tall Card: Health & Vitality ───────────────────────────────────────
 
 class _TallHealthBentoCard extends StatefulWidget {
   final bool isDark;
@@ -125,24 +125,26 @@ class _TallHealthBentoCardState extends State<_TallHealthBentoCard> {
             borderRadius: BorderRadius.circular(26),
             child: Stack(
               children: [
-                // ─── Large Aesthetic Watermark Icon in Background ─────
+                // ─── Watermark Icon Shifted Further Down & Right ─────
+                // Only a portion is visible inside the card (~65%),
+                // and the rest is elegantly clipped off the corner.
                 Positioned(
-                  bottom: -18,
-                  right: -16,
+                  bottom: -36,
+                  right: -30,
                   child: IgnorePointer(
                     child: Icon(
                       watermarkIcon,
-                      size: 118,
+                      size: 132,
                       color: isDark
                           ? Colors.white.withValues(alpha: 0.04)
-                          : const Color(0xFFE8833A).withValues(alpha: 0.09),
+                          : const Color(0xFFE8833A).withValues(alpha: 0.10),
                     ),
                   ),
                 ),
 
                 // ─── Foreground Content ──────────────────────────────
                 Padding(
-                  padding: const EdgeInsets.all(18),
+                  padding: const EdgeInsets.all(16),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -151,45 +153,50 @@ class _TallHealthBentoCardState extends State<_TallHealthBentoCard> {
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          Container(
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 10,
-                              vertical: 5,
-                            ),
-                            decoration: BoxDecoration(
-                              color: isDark
-                                  ? Colors.white.withValues(alpha: 0.12)
-                                  : Colors.white.withValues(alpha: 0.8),
-                              borderRadius: BorderRadius.circular(14),
-                            ),
-                            child: Row(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                const Icon(
-                                  Icons.favorite_rounded,
-                                  size: 12,
-                                  color: Color(0xFFE8833A),
-                                ),
-                                const SizedBox(width: 4),
-                                Text(
-                                  widget.status == UserStatus.pregnant
-                                      ? 'Grossesse'
-                                      : widget.status == UserStatus.hope
-                                          ? 'Cycle'
-                                          : 'Bébé',
-                                  style: TextStyle(
-                                    fontSize: 10.5,
-                                    fontWeight: FontWeight.w700,
-                                    color: isDark
-                                        ? Colors.white
-                                        : const Color(0xFF5A3915),
+                          Flexible(
+                            child: Container(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 10,
+                                vertical: 5,
+                              ),
+                              decoration: BoxDecoration(
+                                color: isDark
+                                    ? Colors.white.withValues(alpha: 0.12)
+                                    : Colors.white.withValues(alpha: 0.85),
+                                borderRadius: BorderRadius.circular(14),
+                              ),
+                              child: Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  const Icon(
+                                    Icons.favorite_rounded,
+                                    size: 12,
+                                    color: Color(0xFFE8833A),
                                   ),
-                                ),
-                              ],
+                                  const SizedBox(width: 4),
+                                  Flexible(
+                                    child: Text(
+                                      widget.status == UserStatus.pregnant
+                                          ? 'Grossesse'
+                                          : widget.status == UserStatus.hope
+                                              ? 'Cycle'
+                                              : 'Bébé',
+                                      maxLines: 1,
+                                      overflow: TextOverflow.ellipsis,
+                                      style: TextStyle(
+                                        fontSize: 10.5,
+                                        fontWeight: FontWeight.w700,
+                                        color: isDark
+                                            ? Colors.white
+                                            : const Color(0xFF5A3915),
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
                             ),
                           ),
-
-                          // Subtle arrow indicator
+                          const SizedBox(width: 4),
                           Icon(
                             Icons.arrow_outward_rounded,
                             size: 16,
@@ -208,60 +215,70 @@ class _TallHealthBentoCardState extends State<_TallHealthBentoCard> {
                                 : widget.status == UserStatus.hope
                                     ? 'Cycle & Ovulation'
                                     : 'Santé & Éveil',
+                            maxLines: 2,
+                            overflow: TextOverflow.ellipsis,
                             style: TextStyle(
-                              fontSize: 16.5,
+                              fontSize: 15.5,
                               fontWeight: FontWeight.w800,
                               color: textColor,
                               height: 1.2,
                             ),
                           ),
-                          const SizedBox(height: 6),
+                          const SizedBox(height: 5),
                           Text(
-                            'Suivi quotidien • Hydratation & Bien-être',
+                            'Suivi quotidien • Bien-être',
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
                             style: TextStyle(
                               fontSize: 11,
                               fontWeight: FontWeight.w400,
                               color: subtextColor,
-                              height: 1.35,
+                              height: 1.3,
                             ),
                           ),
                         ],
                       ),
 
-                      // Bottom Caregiver / Specialist snippet (Spacious, no small circular icon)
+                      // Bottom Caregiver / Specialist snippet (No overflow guaranteed)
                       Container(
                         padding: const EdgeInsets.symmetric(
-                          horizontal: 12,
-                          vertical: 9,
+                          horizontal: 10,
+                          vertical: 7,
                         ),
                         decoration: BoxDecoration(
                           color: isDark
                               ? Colors.white.withValues(alpha: 0.08)
                               : Colors.white.withValues(alpha: 0.75),
-                          borderRadius: BorderRadius.circular(16),
+                          borderRadius: BorderRadius.circular(14),
                         ),
                         child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  'Dr. Suivi',
-                                  style: TextStyle(
-                                    fontSize: 11.5,
-                                    fontWeight: FontWeight.w700,
-                                    color: textColor,
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Text(
+                                    'Dr. Suivi',
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
+                                    style: TextStyle(
+                                      fontSize: 11,
+                                      fontWeight: FontWeight.w700,
+                                      color: textColor,
+                                    ),
                                   ),
-                                ),
-                                Text(
-                                  'Ouvrir mon carnet de santé',
-                                  style: TextStyle(
-                                    fontSize: 10,
-                                    color: subtextColor,
+                                  Text(
+                                    'Mon carnet',
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
+                                    style: TextStyle(
+                                      fontSize: 9.5,
+                                      color: subtextColor,
+                                    ),
                                   ),
-                                ),
-                              ],
+                                ],
+                              ),
                             ),
                             Icon(
                               Icons.chevron_right_rounded,
@@ -283,7 +300,7 @@ class _TallHealthBentoCardState extends State<_TallHealthBentoCard> {
   }
 }
 
-// ─── Right Top Card: Memory Capture (Clean & Spacious) ────────────────────────
+// ─── Right Top Card: Memory Capture ──────────────────────────────────────────
 
 class _MemoryBentoCard extends StatefulWidget {
   final bool isDark;
@@ -341,14 +358,14 @@ class _MemoryBentoCardState extends State<_MemoryBentoCard> {
             borderRadius: BorderRadius.circular(24),
             child: Stack(
               children: [
-                // ─── Large Aesthetic Watermark Icon in Background ─────
+                // ─── Watermark Camera Shifted Further Down & Right ───
                 Positioned(
-                  bottom: -10,
-                  right: -6,
+                  bottom: -26,
+                  right: -20,
                   child: IgnorePointer(
                     child: Icon(
                       Icons.photo_camera_rounded,
-                      size: 78,
+                      size: 94,
                       color: isDark
                           ? Colors.white.withValues(alpha: 0.05)
                           : const Color(0xFF2C74B3).withValues(alpha: 0.11),
@@ -356,7 +373,7 @@ class _MemoryBentoCardState extends State<_MemoryBentoCard> {
                   ),
                 ),
 
-                // ─── Foreground Content (Spacious, No Small Icon Box) ─
+                // ─── Foreground Content ──────────────────────────────
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 13),
                   child: Column(
@@ -366,26 +383,28 @@ class _MemoryBentoCardState extends State<_MemoryBentoCard> {
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          Container(
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 9,
-                              vertical: 3.5,
-                            ),
-                            decoration: BoxDecoration(
-                              color: isDark
-                                  ? Colors.white.withValues(alpha: 0.12)
-                                  : Colors.white.withValues(alpha: 0.85),
-                              borderRadius: BorderRadius.circular(10),
-                            ),
-                            child: Text(
-                              'MÉMOIRE',
-                              style: TextStyle(
-                                fontSize: 9.5,
-                                fontWeight: FontWeight.w800,
+                          Flexible(
+                            child: Container(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 9,
+                                vertical: 3.5,
+                              ),
+                              decoration: BoxDecoration(
                                 color: isDark
-                                    ? Colors.white
-                                    : const Color(0xFF1E5185),
-                                letterSpacing: 0.4,
+                                    ? Colors.white.withValues(alpha: 0.12)
+                                    : Colors.white.withValues(alpha: 0.85),
+                                borderRadius: BorderRadius.circular(10),
+                              ),
+                              child: Text(
+                                'MÉMOIRE',
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                                style: TextStyle(
+                                  fontSize: 9.5,
+                                  fontWeight: FontWeight.w800,
+                                  color: isDark ? Colors.white : const Color(0xFF1E5185),
+                                  letterSpacing: 0.4,
+                                ),
                               ),
                             ),
                           ),
@@ -401,8 +420,10 @@ class _MemoryBentoCardState extends State<_MemoryBentoCard> {
                         children: [
                           Text(
                             'Capsule du Jour',
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
                             style: TextStyle(
-                              fontSize: 15,
+                              fontSize: 14.5,
                               fontWeight: FontWeight.w800,
                               color: textColor,
                               letterSpacing: -0.2,
@@ -411,8 +432,10 @@ class _MemoryBentoCardState extends State<_MemoryBentoCard> {
                           const SizedBox(height: 2),
                           Text(
                             'Créer un souvenir ↗',
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
                             style: TextStyle(
-                              fontSize: 11,
+                              fontSize: 10.5,
                               fontWeight: FontWeight.w500,
                               color: subtextColor,
                             ),
@@ -431,7 +454,7 @@ class _MemoryBentoCardState extends State<_MemoryBentoCard> {
   }
 }
 
-// ─── Right Bottom Card: Dedicated Reels (Clean & Spacious) ───────────────────
+// ─── Right Bottom Card: Dedicated Reels ──────────────────────────────────────
 
 class _ReelsBentoCard extends StatefulWidget {
   final bool isDark;
@@ -489,14 +512,14 @@ class _ReelsBentoCardState extends State<_ReelsBentoCard> {
             borderRadius: BorderRadius.circular(24),
             child: Stack(
               children: [
-                // ─── Large Aesthetic Watermark Play Icon in Background ───
+                // ─── Watermark Play Icon Shifted Further Down & Right ─
                 Positioned(
-                  bottom: -10,
-                  right: -6,
+                  bottom: -26,
+                  right: -20,
                   child: IgnorePointer(
                     child: Icon(
                       Icons.play_circle_fill_rounded,
-                      size: 78,
+                      size: 94,
                       color: isDark
                           ? Colors.white.withValues(alpha: 0.06)
                           : const Color(0xFF8E44AD).withValues(alpha: 0.11),
@@ -504,7 +527,7 @@ class _ReelsBentoCardState extends State<_ReelsBentoCard> {
                   ),
                 ),
 
-                // ─── Foreground Content (Spacious, No Small Icon Box) ─
+                // ─── Foreground Content ──────────────────────────────
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 13),
                   child: Column(
@@ -514,40 +537,47 @@ class _ReelsBentoCardState extends State<_ReelsBentoCard> {
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          Container(
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 9,
-                              vertical: 3.5,
-                            ),
-                            decoration: BoxDecoration(
-                              color: isDark
-                                  ? Colors.white.withValues(alpha: 0.12)
-                                  : Colors.white.withValues(alpha: 0.85),
-                              borderRadius: BorderRadius.circular(10),
-                            ),
-                            child: Row(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                const Icon(
-                                  Icons.play_arrow_rounded,
-                                  size: 11,
-                                  color: Color(0xFF8E44AD),
-                                ),
-                                const SizedBox(width: 3),
-                                Text(
-                                  'REELS',
-                                  style: TextStyle(
-                                    fontSize: 9.5,
-                                    fontWeight: FontWeight.w800,
-                                    color: isDark
-                                        ? Colors.white
-                                        : const Color(0xFF8E44AD),
-                                    letterSpacing: 0.4,
+                          Flexible(
+                            child: Container(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 9,
+                                vertical: 3.5,
+                              ),
+                              decoration: BoxDecoration(
+                                color: isDark
+                                    ? Colors.white.withValues(alpha: 0.12)
+                                    : Colors.white.withValues(alpha: 0.85),
+                                borderRadius: BorderRadius.circular(10),
+                              ),
+                              child: Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  const Icon(
+                                    Icons.play_arrow_rounded,
+                                    size: 11,
+                                    color: Color(0xFF8E44AD),
                                   ),
-                                ),
-                              ],
+                                  const SizedBox(width: 3),
+                                  Flexible(
+                                    child: Text(
+                                      'REELS',
+                                      maxLines: 1,
+                                      overflow: TextOverflow.ellipsis,
+                                      style: TextStyle(
+                                        fontSize: 9.5,
+                                        fontWeight: FontWeight.w800,
+                                        color: isDark
+                                            ? Colors.white
+                                            : const Color(0xFF8E44AD),
+                                        letterSpacing: 0.4,
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
                             ),
                           ),
+                          const SizedBox(width: 4),
                           Icon(
                             Icons.arrow_outward_rounded,
                             size: 15,
@@ -560,8 +590,10 @@ class _ReelsBentoCardState extends State<_ReelsBentoCard> {
                         children: [
                           Text(
                             'Astuces & Vidéos',
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
                             style: TextStyle(
-                              fontSize: 15,
+                              fontSize: 14.5,
                               fontWeight: FontWeight.w800,
                               color: textColor,
                               letterSpacing: -0.2,
@@ -570,8 +602,10 @@ class _ReelsBentoCardState extends State<_ReelsBentoCard> {
                           const SizedBox(height: 2),
                           Text(
                             'Conseils sages-femmes ↗',
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
                             style: TextStyle(
-                              fontSize: 11,
+                              fontSize: 10.5,
                               fontWeight: FontWeight.w500,
                               color: subtextColor,
                             ),
