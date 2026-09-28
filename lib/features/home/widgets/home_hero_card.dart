@@ -6,13 +6,13 @@ import '../../../core/theme/app_colors.dart';
 import '../../capsules/screens/create_capsule_screen.dart';
 import '../../health/screens/health_hub_screen.dart';
 import '../../profile/models/profile_models.dart';
+import '../../profile/profile_screen.dart';
 import '../../profile/providers/profile_providers.dart';
-import '../providers/home_providers.dart';
 
 /// Central Hero Companion Card on the Home Dashboard.
-/// Inspired by the flagship cards in modern lifestyle/health mobile apps.
 /// Features soft pastel gradients, double-bezel squircle contours,
-/// tactile pill CTAs, and contextual guidance for Mom/Pregnant/Hope states.
+/// dynamic profile completion tracking circle, tactile pill CTAs,
+/// and contextual guidance for Mom/Pregnant/Hope states.
 class HomeHeroCompanionCard extends ConsumerStatefulWidget {
   const HomeHeroCompanionCard({super.key});
 
@@ -30,7 +30,10 @@ class _HomeHeroCompanionCardState extends ConsumerState<HomeHeroCompanionCard> {
     final profileAsync = ref.watch(profileProvider);
     final profile = profileAsync.valueOrNull;
     final status = profile?.status ?? UserStatus.mom;
-    final tip = ref.watch(dailyTipProvider);
+
+    final childrenAsync = ref.watch(childrenProvider);
+    final children = childrenAsync.valueOrNull ?? const [];
+    final completionPercentage = _calculateProfileCompletion(profile, children);
 
     final l10n = context.l10n;
 
@@ -102,7 +105,9 @@ class _HomeHeroCompanionCardState extends ConsumerState<HomeHeroCompanionCard> {
                         shape: BoxShape.circle,
                         gradient: RadialGradient(
                           colors: [
-                            AppColors.primaryLight.withValues(alpha: isDark ? 0.15 : 0.22),
+                            AppColors.primaryLight.withValues(
+                              alpha: isDark ? 0.15 : 0.22,
+                            ),
                             Colors.transparent,
                           ],
                         ),
@@ -117,7 +122,7 @@ class _HomeHeroCompanionCardState extends ConsumerState<HomeHeroCompanionCard> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      // Top Row: Category pill tag + progress circle
+                      // Top Row: Category pill tag + Dynamic Profile Completion Circle
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
@@ -163,31 +168,11 @@ class _HomeHeroCompanionCardState extends ConsumerState<HomeHeroCompanionCard> {
                             ),
                           ),
 
-                          // Circular indicator pill (e.g. "2/3" or trimester or streak)
-                          Container(
-                            width: 38,
-                            height: 38,
-                            decoration: BoxDecoration(
-                              shape: BoxShape.circle,
-                              color: isDark
-                                  ? Colors.white.withValues(alpha: 0.1)
-                                  : Colors.white.withValues(alpha: 0.9),
-                              border: Border.all(
-                                color: AppColors.primaryLight.withValues(alpha: 0.25),
-                                width: 1.5,
-                              ),
-                            ),
-                            alignment: Alignment.center,
-                            child: Text(
-                              content.progressText,
-                              style: TextStyle(
-                                fontSize: 11,
-                                fontWeight: FontWeight.w800,
-                                color: isDark
-                                    ? Colors.white
-                                    : const Color(0xFF1E1B24),
-                              ),
-                            ),
+                          // Dynamic larger profile completion circle (48px)
+                          _buildDynamicProgressIndicator(
+                            context: context,
+                            percentage: completionPercentage,
+                            isDark: isDark,
                           ),
                         ],
                       ),
@@ -219,62 +204,18 @@ class _HomeHeroCompanionCardState extends ConsumerState<HomeHeroCompanionCard> {
                         ),
                       ),
 
-                      const SizedBox(height: 12),
+                      const SizedBox(height: 20),
 
-                      // ─── Integrated Daily Tip Bubble ─────────────────
-                      Container(
-                        width: double.infinity,
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 13,
-                          vertical: 9,
-                        ),
-                        decoration: BoxDecoration(
-                          color: isDark
-                              ? Colors.white.withValues(alpha: 0.07)
-                              : Colors.white.withValues(alpha: 0.75),
-                          borderRadius: BorderRadius.circular(16),
-                          border: Border.all(
-                            color: isDark
-                                ? Colors.white.withValues(alpha: 0.05)
-                                : const Color(0xFFD6C8E6).withValues(alpha: 0.4),
-                            width: 1,
-                          ),
-                        ),
-                        child: Row(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            const Icon(
-                              Icons.lightbulb_rounded,
-                              size: 15,
-                              color: AppColors.casablanca,
-                            ),
-                            const SizedBox(width: 8),
-                            Expanded(
-                              child: Text(
-                                tip,
-                                maxLines: 2,
-                                overflow: TextOverflow.ellipsis,
-                                style: TextStyle(
-                                  fontSize: 11.5,
-                                  fontStyle: FontStyle.italic,
-                                  fontWeight: FontWeight.w500,
-                                  color: subtextColor,
-                                  height: 1.35,
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-
-                      const SizedBox(height: 18),
-
-                      // Bottom Row: Avatar stack + tactile action pill
+                      // Bottom Row: Profile status badge + tactile action pill
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          // Social / Milestones avatar stack
-                          _buildAvatarStack(isDark),
+                          _buildProfileStatusBadge(
+                            context,
+                            profile,
+                            completionPercentage,
+                            isDark,
+                          ),
 
                           // Dark high-contrast Pill button
                           Container(
@@ -283,7 +224,9 @@ class _HomeHeroCompanionCardState extends ConsumerState<HomeHeroCompanionCard> {
                               vertical: 11,
                             ),
                             decoration: BoxDecoration(
-                              color: isDark ? Colors.white : const Color(0xFF161618),
+                              color: isDark
+                                  ? Colors.white
+                                  : const Color(0xFF161618),
                               borderRadius: BorderRadius.circular(24),
                               boxShadow: [
                                 BoxShadow(
@@ -331,76 +274,190 @@ class _HomeHeroCompanionCardState extends ConsumerState<HomeHeroCompanionCard> {
     );
   }
 
-  Widget _buildAvatarStack(bool isDark) {
-    final border = Border.all(
-      color: isDark ? const Color(0xFF281C30) : const Color(0xFFF1E9FD),
-      width: 2,
-    );
+  /// Dynamic circular progress indicator showing real profile completion.
+  /// 48px diameter with semi-transparent frosted center.
+  Widget _buildDynamicProgressIndicator({
+    required BuildContext context,
+    required int percentage,
+    required bool isDark,
+  }) {
+    final progress = (percentage / 100.0).clamp(0.0, 1.0);
+    final strokeColor = AppColors.primaryLight;
+    final trackColor = isDark
+        ? Colors.white.withValues(alpha: 0.12)
+        : AppColors.primaryLight.withValues(alpha: 0.18);
+    final centerBg = isDark
+        ? Colors.white.withValues(alpha: 0.15)
+        : Colors.white.withValues(alpha: 0.55);
 
-    return SizedBox(
-      height: 32,
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Container(
-            width: 28,
-            height: 28,
-            decoration: BoxDecoration(
-              shape: BoxShape.circle,
-              color: const Color(0xFFFF8FA3),
-              border: border,
-            ),
-            child: const Icon(Icons.child_care_rounded, size: 16, color: Colors.white),
-          ),
-          Transform.translate(
-            offset: const Offset(-8, 0),
-            child: Container(
-              width: 28,
-              height: 28,
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                color: const Color(0xFF8E94F2),
-                border: border,
-              ),
-              child: const Icon(Icons.favorite_rounded, size: 14, color: Colors.white),
-            ),
-          ),
-          Transform.translate(
-            offset: const Offset(-16, 0),
-            child: Container(
-              width: 28,
-              height: 28,
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                color: const Color(0xFF5CC8A5),
-                border: border,
-              ),
-              child: const Icon(Icons.verified_user_rounded, size: 14, color: Colors.white),
-            ),
-          ),
-          Transform.translate(
-            offset: const Offset(-20, 0),
-            child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 3),
-              decoration: BoxDecoration(
-                color: isDark
-                    ? Colors.white.withValues(alpha: 0.15)
-                    : const Color(0xFF2C243B),
-                borderRadius: BorderRadius.circular(10),
-              ),
-              child: Text(
-                '+3',
-                style: TextStyle(
-                  fontSize: 10,
-                  fontWeight: FontWeight.w800,
-                  color: isDark ? Colors.white : Colors.white,
+    return Tooltip(
+      message: context.l10n.navProfile,
+      child: GestureDetector(
+        onTap: () {
+          Navigator.of(context).push(
+            MaterialPageRoute(builder: (_) => const ProfileScreen()),
+          );
+        },
+        child: SizedBox(
+          width: 48,
+          height: 48,
+          child: Stack(
+            alignment: Alignment.center,
+            children: [
+              // Circular progress ring
+              SizedBox(
+                width: 48,
+                height: 48,
+                child: CircularProgressIndicator(
+                  value: progress,
+                  strokeWidth: 3.5,
+                  strokeCap: StrokeCap.round,
+                  backgroundColor: trackColor,
+                  valueColor: AlwaysStoppedAnimation<Color>(strokeColor),
                 ),
               ),
-            ),
+              // Semi-transparent translucent center circle
+              Container(
+                width: 38,
+                height: 38,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: centerBg,
+                  border: Border.all(
+                    color: Colors.white.withValues(alpha: isDark ? 0.2 : 0.6),
+                    width: 1,
+                  ),
+                ),
+                alignment: Alignment.center,
+                child: Text(
+                  '$percentage%',
+                  style: TextStyle(
+                    fontSize: 11,
+                    fontWeight: FontWeight.w800,
+                    color: isDark ? Colors.white : const Color(0xFF1E1B24),
+                    letterSpacing: -0.3,
+                  ),
+                ),
+              ),
+            ],
           ),
-        ],
+        ),
       ),
     );
+  }
+
+  Widget _buildProfileStatusBadge(
+    BuildContext context,
+    UserProfile? profile,
+    int percentage,
+    bool isDark,
+  ) {
+    final l10n = context.l10n;
+    final name = profile?.displayName?.trim();
+    final hasName = name != null && name.isNotEmpty;
+
+    return InkWell(
+      onTap: () {
+        Navigator.of(context).push(
+          MaterialPageRoute(builder: (_) => const ProfileScreen()),
+        );
+      },
+      borderRadius: BorderRadius.circular(16),
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+        decoration: BoxDecoration(
+          color: isDark
+              ? Colors.white.withValues(alpha: 0.08)
+              : Colors.white.withValues(alpha: 0.55),
+          borderRadius: BorderRadius.circular(16),
+          border: Border.all(
+            color: isDark
+                ? Colors.white.withValues(alpha: 0.06)
+                : Colors.white.withValues(alpha: 0.7),
+            width: 1,
+          ),
+        ),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(
+              hasName ? Icons.verified_user_rounded : Icons.person_outline_rounded,
+              size: 14,
+              color: AppColors.primaryLight,
+            ),
+            const SizedBox(width: 5),
+            Text(
+              hasName ? name : l10n.navProfile,
+              style: TextStyle(
+                fontSize: 11.5,
+                fontWeight: FontWeight.w700,
+                color: isDark ? Colors.white : const Color(0xFF2C243B),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  int _calculateProfileCompletion(UserProfile? profile, List<Child> children) {
+    if (profile == null) return 20;
+    int score = 0;
+
+    // 1. Account / Email active
+    if (profile.email != null && profile.email!.trim().isNotEmpty) {
+      score += 10;
+    } else {
+      score += 10;
+    }
+
+    // 2. Display Name
+    if (profile.displayName != null && profile.displayName!.trim().isNotEmpty) {
+      score += 20;
+    }
+
+    // 3. Profile Photo
+    if (profile.photoUrl != null && profile.photoUrl!.trim().isNotEmpty) {
+      score += 15;
+    }
+
+    // 4. Phone
+    if (profile.phone != null && profile.phone!.trim().isNotEmpty) {
+      score += 15;
+    }
+
+    // 5. Wilaya / Location
+    if (profile.wilaya != null && profile.wilaya!.trim().isNotEmpty) {
+      score += 15;
+    }
+
+    // 6. Contextual Status Data
+    switch (profile.status) {
+      case UserStatus.mom:
+        if (children.isNotEmpty) {
+          score += 25;
+        } else if (profile.birthDate != null) {
+          score += 15;
+        }
+        break;
+      case UserStatus.pregnant:
+        if (profile.lastPregnancyDate != null) {
+          score += 25;
+        } else if (profile.birthDate != null) {
+          score += 15;
+        }
+        break;
+      case UserStatus.hope:
+        if (profile.cycleInfo.lastPeriodDate != null ||
+            profile.cycleInfo.isTracking) {
+          score += 25;
+        } else if (profile.birthDate != null) {
+          score += 15;
+        }
+        break;
+    }
+
+    return score.clamp(10, 100);
   }
 
   void _handleAction(BuildContext context, UserStatus status) {
@@ -425,7 +482,6 @@ class _HomeHeroCompanionCardState extends ConsumerState<HomeHeroCompanionCard> {
         return _HeroContent(
           tagIcon: Icons.pregnant_woman_rounded,
           tagText: l10n.dashboardHealthPregnancy.toUpperCase(),
-          progressText: 'T2',
           title: l10n.dashboardPregnantBannerTitle,
           subtitle: l10n.dashboardPregnantBannerSubtitle,
           buttonText: l10n.cycleActivateTracking,
@@ -434,7 +490,6 @@ class _HomeHeroCompanionCardState extends ConsumerState<HomeHeroCompanionCard> {
         return _HeroContent(
           tagIcon: Icons.wb_twilight_rounded,
           tagText: l10n.cycleTrackingTitle.toUpperCase(),
-          progressText: 'J14',
           title: l10n.dashboardHopeBannerTitle,
           subtitle: l10n.dashboardHopeBannerSubtitle,
           buttonText: l10n.cycleLogPeriod,
@@ -443,7 +498,6 @@ class _HomeHeroCompanionCardState extends ConsumerState<HomeHeroCompanionCard> {
         return _HeroContent(
           tagIcon: Icons.auto_awesome_rounded,
           tagText: l10n.homeYourChildren.toUpperCase(),
-          progressText: '100%',
           title: l10n.dashboardMyMemories,
           subtitle: l10n.homeRecentCapsulesEmpty,
           buttonText: l10n.timeline_add,
@@ -455,7 +509,6 @@ class _HomeHeroCompanionCardState extends ConsumerState<HomeHeroCompanionCard> {
 class _HeroContent {
   final IconData tagIcon;
   final String tagText;
-  final String progressText;
   final String title;
   final String subtitle;
   final String buttonText;
@@ -463,7 +516,6 @@ class _HeroContent {
   _HeroContent({
     required this.tagIcon,
     required this.tagText,
-    required this.progressText,
     required this.title,
     required this.subtitle,
     required this.buttonText,

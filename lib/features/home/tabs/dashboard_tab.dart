@@ -7,6 +7,7 @@ import '../../../shared/widgets/top_ambient_gradient.dart';
 import '../../profile/models/profile_models.dart';
 import '../../profile/providers/profile_providers.dart';
 import '../widgets/children_overview.dart';
+import '../widgets/daily_tip_card.dart';
 import '../widgets/home_bento_grid.dart';
 import '../widgets/home_bottom_bento.dart';
 import '../widgets/home_hero_card.dart';
@@ -117,7 +118,10 @@ class DashboardTab extends ConsumerWidget {
                 ),
                 const SliverToBoxAdapter(child: HomeBottomBento()),
 
-                // 9. Upgrade Prompt for free-tier users
+                // 9. Conseil du Jour (Daily Tip standalone boutique section)
+                const SliverToBoxAdapter(child: DailyTipCard()),
+
+                // 10. Upgrade Prompt for free-tier users
                 const SliverToBoxAdapter(child: UpgradePromptBanner()),
 
                 // Bottom padding for floating navigation bar
