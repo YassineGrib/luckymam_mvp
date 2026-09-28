@@ -58,6 +58,8 @@ class ChildSummaryCard extends StatelessWidget {
         ? Colors.white.withValues(alpha: 0.08)
         : const Color(0xFFFFDFD0);
 
+    final hasPhoto = child.photoUrl != null && child.photoUrl!.isNotEmpty;
+
     return GestureDetector(
       onTap: onTap,
       child: Container(
@@ -80,58 +82,118 @@ class ChildSummaryCard extends StatelessWidget {
         child: ClipRRect(
           borderRadius: BorderRadius.circular(24),
           child: Stack(
+            fit: StackFit.expand,
             children: [
-              // ─── Watermark Icon Bleeding into Corner ───────────────
-              Positioned(
-                bottom: -22,
-                right: -18,
-                child: IgnorePointer(
-                  child: Icon(
-                    Icons.child_care_rounded,
-                    size: 92,
-                    color: isDark
-                        ? Colors.white.withValues(alpha: 0.04)
-                        : const Color(0xFFE87A5D).withValues(alpha: 0.09),
+              // ─── 1. Full-Background Child Photo (Watermark / Transparent) ─
+              if (hasPhoto) ...[
+                Opacity(
+                  opacity: isDark ? 0.35 : 0.32,
+                  child: Image.network(
+                    child.photoUrl!,
+                    fit: BoxFit.cover,
+                    errorBuilder: (_, _, _) => const SizedBox.shrink(),
                   ),
                 ),
-              ),
+                // Soft gradient scrim to ensure text and badges contrast perfectly
+                DecoratedBox(
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      begin: Alignment.topCenter,
+                      end: Alignment.bottomCenter,
+                      stops: const [0.0, 0.45, 1.0],
+                      colors: isDark
+                          ? [
+                              Colors.transparent,
+                              const Color(0xFF241C20).withValues(alpha: 0.40),
+                              const Color(0xFF241C20).withValues(alpha: 0.85),
+                            ]
+                          : [
+                              Colors.transparent,
+                              const Color(0xFFFFF4EE).withValues(alpha: 0.40),
+                              const Color(0xFFFFF4EE).withValues(alpha: 0.88),
+                            ],
+                    ),
+                  ),
+                ),
+              ] else ...[
+                // Fallback: Large Baby Watermark Icon Bleeding into Corner
+                Positioned(
+                  bottom: -22,
+                  right: -18,
+                  child: IgnorePointer(
+                    child: Icon(
+                      Icons.child_care_rounded,
+                      size: 92,
+                      color: isDark
+                          ? Colors.white.withValues(alpha: 0.04)
+                          : const Color(0xFFE87A5D).withValues(alpha: 0.09),
+                    ),
+                  ),
+                ),
+              ],
 
-              // ─── Foreground Content ────────────────────────────────
+              // ─── 2. Foreground Card Content ──────────────────────────────
               Padding(
                 padding: const EdgeInsets.all(14),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    // Top: Child Avatar with soft ring
+                    // Top: Child gender badge & Arrow outward
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Container(
-                          width: 44,
-                          height: 44,
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 8,
+                            vertical: 4,
+                          ),
                           decoration: BoxDecoration(
-                            shape: BoxShape.circle,
+                            color: isDark
+                                ? Colors.white.withValues(alpha: 0.12)
+                                : Colors.white.withValues(alpha: 0.85),
+                            borderRadius: BorderRadius.circular(10),
                             border: Border.all(
-                              color: primaryColor.withValues(alpha: 0.35),
-                              width: 2,
+                              color: primaryColor.withValues(alpha: 0.25),
+                              width: 0.8,
                             ),
                           ),
-                          child: ClipOval(
-                            child: child.photoUrl != null
-                                ? Image.network(
-                                    child.photoUrl!,
-                                    fit: BoxFit.cover,
-                                    errorBuilder: (_, _, _) =>
-                                        _fallbackChildAvatar(child.name, primaryColor),
-                                  )
-                                : _fallbackChildAvatar(child.name, primaryColor),
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Icon(
+                                child.gender == ChildGender.girl
+                                    ? Icons.face_3_rounded
+                                    : Icons.face_6_rounded,
+                                size: 13,
+                                color: primaryColor,
+                              ),
+                              const SizedBox(width: 4),
+                              Text(
+                                child.genderLabel,
+                                style: TextStyle(
+                                  fontSize: 10,
+                                  fontWeight: FontWeight.w700,
+                                  color: primaryColor,
+                                ),
+                              ),
+                            ],
                           ),
                         ),
-                        Icon(
-                          Icons.arrow_outward_rounded,
-                          size: 14,
-                          color: secondaryColor,
+                        Container(
+                          width: 26,
+                          height: 26,
+                          decoration: BoxDecoration(
+                            color: isDark
+                                ? Colors.white.withValues(alpha: 0.10)
+                                : Colors.white.withValues(alpha: 0.85),
+                            shape: BoxShape.circle,
+                          ),
+                          child: Icon(
+                            Icons.arrow_outward_rounded,
+                            size: 13,
+                            color: secondaryColor,
+                          ),
                         ),
                       ],
                     ),
@@ -145,7 +207,7 @@ class ChildSummaryCard extends StatelessWidget {
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
                           style: TextStyle(
-                            fontSize: 15,
+                            fontSize: 16,
                             fontWeight: FontWeight.w800,
                             color: textColor,
                             letterSpacing: -0.2,
@@ -157,8 +219,8 @@ class ChildSummaryCard extends StatelessWidget {
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
                           style: TextStyle(
-                            fontSize: 11,
-                            fontWeight: FontWeight.w500,
+                            fontSize: 11.5,
+                            fontWeight: FontWeight.w600,
                             color: secondaryColor,
                           ),
                         ),
@@ -173,13 +235,20 @@ class ChildSummaryCard extends StatelessWidget {
                       ),
                       decoration: BoxDecoration(
                         color: isDark
-                            ? Colors.white.withValues(alpha: 0.1)
-                            : Colors.white.withValues(alpha: 0.85),
+                            ? Colors.white.withValues(alpha: 0.12)
+                            : Colors.white.withValues(alpha: 0.92),
                         borderRadius: BorderRadius.circular(10),
                         border: Border.all(
-                          color: eventColor.withValues(alpha: 0.2),
+                          color: eventColor.withValues(alpha: 0.25),
                           width: 1,
                         ),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withValues(alpha: 0.03),
+                            blurRadius: 4,
+                            offset: const Offset(0, 1),
+                          ),
+                        ],
                       ),
                       child: Row(
                         mainAxisSize: MainAxisSize.min,
@@ -206,21 +275,6 @@ class ChildSummaryCard extends StatelessWidget {
               ),
             ],
           ),
-        ),
-      ),
-    );
-  }
-
-  Widget _fallbackChildAvatar(String name, Color primaryColor) {
-    return Container(
-      color: primaryColor.withValues(alpha: 0.2),
-      alignment: Alignment.center,
-      child: Text(
-        name.isNotEmpty ? name[0].toUpperCase() : '?',
-        style: TextStyle(
-          fontSize: 16,
-          fontWeight: FontWeight.w800,
-          color: primaryColor,
         ),
       ),
     );

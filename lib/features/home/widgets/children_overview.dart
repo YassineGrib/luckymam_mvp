@@ -99,9 +99,8 @@ class ChildrenOverview extends ConsumerWidget {
         ).push(MaterialPageRoute(builder: (_) => const ProfileScreen()));
       },
       child: Container(
-        width: 130,
+        width: 152,
         margin: const EdgeInsetsDirectional.only(end: 20),
-        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 16),
         decoration: BoxDecoration(
           color: bg,
           borderRadius: BorderRadius.circular(24),
@@ -112,54 +111,70 @@ class ChildrenOverview extends ConsumerWidget {
           boxShadow: [
             BoxShadow(
               color: isDark
-                  ? Colors.black.withValues(alpha: 0.15)
-                  : const Color(0xFFF7DCD0).withValues(alpha: 0.35),
-              blurRadius: 12,
-              offset: const Offset(0, 4),
+                  ? Colors.black.withValues(alpha: 0.25)
+                  : const Color(0xFFF7DCD0).withValues(alpha: 0.45),
+              blurRadius: 14,
+              offset: const Offset(0, 5),
             ),
           ],
         ),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            Container(
-              width: 44,
-              height: 44,
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                color: isDark
-                    ? Colors.white.withValues(alpha: 0.1)
-                    : Colors.white,
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withValues(alpha: 0.05),
-                    blurRadius: 6,
-                    offset: const Offset(0, 2),
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(24),
+          child: Stack(
+            children: [
+              // Bleeding baby icon watermark in the corner
+              Positioned(
+                bottom: -22,
+                right: -18,
+                child: IgnorePointer(
+                  child: Icon(
+                    Icons.child_care_rounded,
+                    size: 92,
+                    color: isDark
+                        ? Colors.white.withValues(alpha: 0.04)
+                        : const Color(0xFFE87A5D).withValues(alpha: 0.09),
                   ),
-                ],
-              ),
-              child: Center(
-                child: Icon(
-                  Icons.add_rounded,
-                  color: primaryColor,
-                  size: 24,
                 ),
               ),
-            ),
-            const SizedBox(height: 10),
-            Text(
-              l10n.addChild,
-              textAlign: TextAlign.center,
-              maxLines: 2,
-              overflow: TextOverflow.ellipsis,
-              style: TextStyle(
-                fontSize: 12,
-                fontWeight: FontWeight.w700,
-                color: primaryColor,
+              Center(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Container(
+                      width: 44,
+                      height: 44,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        color: primaryColor.withValues(alpha: 0.15),
+                      ),
+                      child: Center(
+                        child: Icon(
+                          Icons.add_rounded,
+                          color: primaryColor,
+                          size: 26,
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 12),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 8),
+                      child: Text(
+                        l10n.addChild,
+                        textAlign: TextAlign.center,
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                        style: TextStyle(
+                          fontSize: 12.5,
+                          fontWeight: FontWeight.w800,
+                          color: isDark ? Colors.white : const Color(0xFF241C1A),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
