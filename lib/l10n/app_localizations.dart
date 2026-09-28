@@ -853,14 +853,26 @@ abstract class AppLocalizations {
   /// No description provided for @upgradePremiumTitle.
   ///
   /// In fr, this message translates to:
-  /// **'Passez à Premium'**
+  /// **'Passez à Premium & VIP'**
   String get upgradePremiumTitle;
 
   /// No description provided for @upgradePremiumSubtitle.
   ///
   /// In fr, this message translates to:
-  /// **'Capsules illimitées • Sans pubs'**
+  /// **'Capsules illimitées • Zéro publicité • Album imprimé'**
   String get upgradePremiumSubtitle;
+
+  /// No description provided for @upgradePromptBadge.
+  ///
+  /// In fr, this message translates to:
+  /// **'Privilège LuckyMam'**
+  String get upgradePromptBadge;
+
+  /// No description provided for @upgradePromptCta.
+  ///
+  /// In fr, this message translates to:
+  /// **'Découvrir les offres'**
+  String get upgradePromptCta;
 
   /// No description provided for @marketplaceTitle.
   ///
@@ -1795,7 +1807,7 @@ abstract class AppLocalizations {
   /// No description provided for @vaccineReelsTitle.
   ///
   /// In fr, this message translates to:
-  /// **'Reels éducatifs'**
+  /// **'Reels & Conseils pédiatriques'**
   String get vaccineReelsTitle;
 
   /// No description provided for @vaccineReelsSubtitle.
@@ -2185,13 +2197,13 @@ abstract class AppLocalizations {
   /// No description provided for @healthTabGrowth.
   ///
   /// In fr, this message translates to:
-  /// **'📈 Croissance'**
+  /// **'Croissance'**
   String get healthTabGrowth;
 
   /// No description provided for @healthTabAppointments.
   ///
   /// In fr, this message translates to:
-  /// **'🗓 Rendez-vous'**
+  /// **'Rendez-vous'**
   String get healthTabAppointments;
 
   /// No description provided for @healthNoChildTitle.
@@ -2215,13 +2227,13 @@ abstract class AppLocalizations {
   /// No description provided for @healthTabVaccines.
   ///
   /// In fr, this message translates to:
-  /// **'💉 Vaccins'**
+  /// **'Vaccins'**
   String get healthTabVaccines;
 
   /// No description provided for @healthTabRdv.
   ///
   /// In fr, this message translates to:
-  /// **'🗓 RDV'**
+  /// **'Rendez-vous'**
   String get healthTabRdv;
 
   /// No description provided for @healthErrorWithDetail.
@@ -3988,6 +4000,54 @@ abstract class AppLocalizations {
   /// **'Ces informations sont à titre éducatif uniquement. Consultez toujours votre médecin ou pédiatre avant toute décision médicale.'**
   String get vaccineDetailDisclaimer;
 
+  /// No description provided for @vaccineShieldTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Bouclier immunitaire'**
+  String get vaccineShieldTitle;
+
+  /// No description provided for @vaccinePostCareTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Conseils post-vaccination'**
+  String get vaccinePostCareTitle;
+
+  /// No description provided for @vaccineCareTipCompress.
+  ///
+  /// In fr, this message translates to:
+  /// **'Compresses fraîches : appliquez délicatement un linge propre et frais sur le site d\'injection.'**
+  String get vaccineCareTipCompress;
+
+  /// No description provided for @vaccineCareTipHydrate.
+  ///
+  /// In fr, this message translates to:
+  /// **'Hydratation & Câlins : offrez du repos et allaitez fréquemment bébé pour le réconforter.'**
+  String get vaccineCareTipHydrate;
+
+  /// No description provided for @vaccineCareTipFever.
+  ///
+  /// In fr, this message translates to:
+  /// **'Surveillance de la fièvre : une légère fièvre est normale. Utilisez le médicament prescrit uniquement si nécessaire.'**
+  String get vaccineCareTipFever;
+
+  /// No description provided for @vaccineStatusCardTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Statut vaccinal de l\'enfant'**
+  String get vaccineStatusCardTitle;
+
+  /// No description provided for @vaccineStatusRecorded.
+  ///
+  /// In fr, this message translates to:
+  /// **'Vaccin administré avec succès'**
+  String get vaccineStatusRecorded;
+
+  /// No description provided for @vaccineStatusUpcoming.
+  ///
+  /// In fr, this message translates to:
+  /// **'Vaccin programmé dans le calendrier'**
+  String get vaccineStatusUpcoming;
+
   /// No description provided for @subscriptionPlanFreeTitle.
   ///
   /// In fr, this message translates to:
@@ -4087,7 +4147,7 @@ abstract class AppLocalizations {
   /// No description provided for @subscriptionPlanVipFeatureFreeAlbum.
   ///
   /// In fr, this message translates to:
-  /// **'Album imprimé OFFERT 🎁'**
+  /// **'Album imprimé offert'**
   String get subscriptionPlanVipFeatureFreeAlbum;
 
   /// No description provided for @subscriptionPlanVipFeaturePrioritySupport.
@@ -4113,6 +4173,360 @@ abstract class AppLocalizations {
   /// In fr, this message translates to:
   /// **'/an'**
   String get subscriptionPlanBillingPerYear;
+
+  /// No description provided for @subscriptionVipBadge.
+  ///
+  /// In fr, this message translates to:
+  /// **'Le plus complet & avantageux'**
+  String get subscriptionVipBadge;
+
+  /// No description provided for @subscriptionVipAlbumHighlight.
+  ///
+  /// In fr, this message translates to:
+  /// **'Comprend l\'impression et la livraison à domicile gratuite de votre album photo souvenir'**
+  String get subscriptionVipAlbumHighlight;
+
+  /// No description provided for @subscriptionTrustSecureTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Paiement 100% sécurisé'**
+  String get subscriptionTrustSecureTitle;
+
+  /// No description provided for @subscriptionTrustSecureSubtitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Certifié via Algérie Poste (Edahabia) et banques nationales (CIB) avec Chargily Pay'**
+  String get subscriptionTrustSecureSubtitle;
+
+  /// No description provided for @subscriptionTrustInstantTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Activation immédiate'**
+  String get subscriptionTrustInstantTitle;
+
+  /// No description provided for @subscriptionTrustInstantSubtitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Accès instantané à toutes les fonctionnalités dès la validation'**
+  String get subscriptionTrustInstantSubtitle;
+
+  /// No description provided for @subscriptionTrustSupportTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Accompagnement dédié'**
+  String get subscriptionTrustSupportTitle;
+
+  /// No description provided for @subscriptionTrustSupportSubtitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Notre équipe d\'assistance aux mamans est à votre écoute'**
+  String get subscriptionTrustSupportSubtitle;
+
+  /// No description provided for @subscriptionCompareTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Comparatif des formules'**
+  String get subscriptionCompareTitle;
+
+  /// No description provided for @subscriptionCompareSubtitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Choisissez l\'abonnement adapté à votre famille'**
+  String get subscriptionCompareSubtitle;
+
+  /// No description provided for @subscriptionCompareFeatureCapsules.
+  ///
+  /// In fr, this message translates to:
+  /// **'Nombre de capsules souvenirs'**
+  String get subscriptionCompareFeatureCapsules;
+
+  /// No description provided for @subscriptionCompareFeatureChildren.
+  ///
+  /// In fr, this message translates to:
+  /// **'Nombre d\'enfants'**
+  String get subscriptionCompareFeatureChildren;
+
+  /// No description provided for @subscriptionCompareFeatureHealth.
+  ///
+  /// In fr, this message translates to:
+  /// **'Courbes de croissance et vaccins'**
+  String get subscriptionCompareFeatureHealth;
+
+  /// No description provided for @subscriptionCompareFeatureMemoryBook.
+  ///
+  /// In fr, this message translates to:
+  /// **'Livre de souvenirs numérique'**
+  String get subscriptionCompareFeatureMemoryBook;
+
+  /// No description provided for @subscriptionCompareFeaturePrintedAlbum.
+  ///
+  /// In fr, this message translates to:
+  /// **'Album photo imprimé livré chez vous'**
+  String get subscriptionCompareFeaturePrintedAlbum;
+
+  /// No description provided for @subscriptionCompareFeatureSupport.
+  ///
+  /// In fr, this message translates to:
+  /// **'Support prioritaire dédié'**
+  String get subscriptionCompareFeatureSupport;
+
+  /// No description provided for @subscriptionCompareFeatureAdFree.
+  ///
+  /// In fr, this message translates to:
+  /// **'Navigation sans aucune publicité'**
+  String get subscriptionCompareFeatureAdFree;
+
+  /// No description provided for @subscriptionCompareValueFreeCapsules.
+  ///
+  /// In fr, this message translates to:
+  /// **'25 capsules'**
+  String get subscriptionCompareValueFreeCapsules;
+
+  /// No description provided for @subscriptionCompareValueUnlimited.
+  ///
+  /// In fr, this message translates to:
+  /// **'Illimité'**
+  String get subscriptionCompareValueUnlimited;
+
+  /// No description provided for @subscriptionCompareValueOneChild.
+  ///
+  /// In fr, this message translates to:
+  /// **'1 enfant'**
+  String get subscriptionCompareValueOneChild;
+
+  /// No description provided for @subscriptionCompareValueAllChildren.
+  ///
+  /// In fr, this message translates to:
+  /// **'Tous vos enfants'**
+  String get subscriptionCompareValueAllChildren;
+
+  /// No description provided for @subscriptionFaqTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Questions fréquentes'**
+  String get subscriptionFaqTitle;
+
+  /// No description provided for @subscriptionFaqSubtitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Tout ce qu\'il faut savoir sur les abonnements LuckyMam'**
+  String get subscriptionFaqSubtitle;
+
+  /// No description provided for @subscriptionFaqQ1.
+  ///
+  /// In fr, this message translates to:
+  /// **'Comment recevoir mon album photo imprimé VIP ?'**
+  String get subscriptionFaqQ1;
+
+  /// No description provided for @subscriptionFaqA1.
+  ///
+  /// In fr, this message translates to:
+  /// **'Dès votre souscription VIP, accédez à la section \'Réclamer mon album\', sélectionnez les moments forts de votre enfant et votre adresse. Nous imprimons et livrons votre album relié chez vous gratuitement dans les 58 wilayas.'**
+  String get subscriptionFaqA1;
+
+  /// No description provided for @subscriptionFaqQ2.
+  ///
+  /// In fr, this message translates to:
+  /// **'Le paiement par carte Edahabia ou CIB est-il sécurisé ?'**
+  String get subscriptionFaqQ2;
+
+  /// No description provided for @subscriptionFaqA2.
+  ///
+  /// In fr, this message translates to:
+  /// **'Oui, à 100%. La transaction s\'effectue directement sur la plateforme officielle 3D Secure certifiée par Algérie Poste et GIE Monétique via Chargily Pay.'**
+  String get subscriptionFaqA2;
+
+  /// No description provided for @subscriptionFaqQ3.
+  ///
+  /// In fr, this message translates to:
+  /// **'Puis-je passer de Premium à VIP à tout moment ?'**
+  String get subscriptionFaqQ3;
+
+  /// No description provided for @subscriptionFaqA3.
+  ///
+  /// In fr, this message translates to:
+  /// **'Absolument, vous pouvez passer à la formule VIP quand vous le souhaitez pour commander votre album physique et débloquer les privilèges VIP.'**
+  String get subscriptionFaqA3;
+
+  /// No description provided for @subscriptionPaymentMethodSelect.
+  ///
+  /// In fr, this message translates to:
+  /// **'Moyen de paiement'**
+  String get subscriptionPaymentMethodSelect;
+
+  /// No description provided for @subscriptionPaymentEdahabiaDesc.
+  ///
+  /// In fr, this message translates to:
+  /// **'Carte de paiement Algérie Poste'**
+  String get subscriptionPaymentEdahabiaDesc;
+
+  /// No description provided for @subscriptionPaymentCibDesc.
+  ///
+  /// In fr, this message translates to:
+  /// **'Carte interbancaire nationale'**
+  String get subscriptionPaymentCibDesc;
+
+  /// No description provided for @subscriptionPaymentPayButton.
+  ///
+  /// In fr, this message translates to:
+  /// **'Procéder au paiement sécurisé via Chargily Pay'**
+  String get subscriptionPaymentPayButton;
+
+  /// No description provided for @subscriptionPaymentRetry.
+  ///
+  /// In fr, this message translates to:
+  /// **'Réessayer'**
+  String get subscriptionPaymentRetry;
+
+  /// No description provided for @subscriptionPaymentCancelled.
+  ///
+  /// In fr, this message translates to:
+  /// **'Paiement non finalisé. Vous pouvez réessayer à tout moment.'**
+  String get subscriptionPaymentCancelled;
+
+  /// No description provided for @subscriptionPaymentSuccessModalTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Félicitations ! Vous êtes membre VIP'**
+  String get subscriptionPaymentSuccessModalTitle;
+
+  /// No description provided for @subscriptionPaymentSuccessModalDesc.
+  ///
+  /// In fr, this message translates to:
+  /// **'Votre abonnement est activé. Votre album imprimé offert et tous les avantages illimités sont prêts.'**
+  String get subscriptionPaymentSuccessModalDesc;
+
+  /// No description provided for @subscriptionPaymentClaimAlbumNow.
+  ///
+  /// In fr, this message translates to:
+  /// **'Commander mon album offert'**
+  String get subscriptionPaymentClaimAlbumNow;
+
+  /// No description provided for @subscriptionPaymentLater.
+  ///
+  /// In fr, this message translates to:
+  /// **'Commencer à explorer'**
+  String get subscriptionPaymentLater;
+
+  /// No description provided for @subscriptionHeroHeadline.
+  ///
+  /// In fr, this message translates to:
+  /// **'Choisissez votre formule :'**
+  String get subscriptionHeroHeadline;
+
+  /// No description provided for @subscriptionHeroBadgeTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'LuckyMam VIP'**
+  String get subscriptionHeroBadgeTitle;
+
+  /// No description provided for @subscriptionHeroBenefit1.
+  ///
+  /// In fr, this message translates to:
+  /// **'Capsules souvenirs illimitées pour tous vos enfants'**
+  String get subscriptionHeroBenefit1;
+
+  /// No description provided for @subscriptionHeroBenefit2.
+  ///
+  /// In fr, this message translates to:
+  /// **'Album photo imprimé premium offert livré à domicile'**
+  String get subscriptionHeroBenefit2;
+
+  /// No description provided for @subscriptionHeroBenefit3.
+  ///
+  /// In fr, this message translates to:
+  /// **'Paiement 100% sécurisé par carte Edahabia ou CIB'**
+  String get subscriptionHeroBenefit3;
+
+  /// No description provided for @subscriptionContinueButton.
+  ///
+  /// In fr, this message translates to:
+  /// **'Continuer l\'abonnement • {price} DZD'**
+  String subscriptionContinueButton(int price);
+
+  /// No description provided for @subscriptionViewDetails.
+  ///
+  /// In fr, this message translates to:
+  /// **'Voir le comparatif complet & FAQ'**
+  String get subscriptionViewDetails;
+
+  /// No description provided for @subscriptionLegalNotice.
+  ///
+  /// In fr, this message translates to:
+  /// **'Paiement officiel sécurisé via Chargily Pay & Algérie Poste. Activation immédiate.'**
+  String get subscriptionLegalNotice;
+
+  /// No description provided for @subscriptionPlanPricePerMonth.
+  ///
+  /// In fr, this message translates to:
+  /// **'{price} DZD /mois'**
+  String subscriptionPlanPricePerMonth(int price);
+
+  /// No description provided for @subscriptionVipCardSubtitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Album photo imprimé premium offert livré à domicile'**
+  String get subscriptionVipCardSubtitle;
+
+  /// No description provided for @paymentDurationFullYear.
+  ///
+  /// In fr, this message translates to:
+  /// **'365 jours d\'accès complet'**
+  String get paymentDurationFullYear;
+
+  /// No description provided for @paymentShippingAndDelivery.
+  ///
+  /// In fr, this message translates to:
+  /// **'Frais de livraison et d\'expédition'**
+  String get paymentShippingAndDelivery;
+
+  /// No description provided for @paymentFreeShipping.
+  ///
+  /// In fr, this message translates to:
+  /// **'0 DZD (Gratuit)'**
+  String get paymentFreeShipping;
+
+  /// No description provided for @checkoutSecurePayment.
+  ///
+  /// In fr, this message translates to:
+  /// **'Paiement sécurisé (Edahabia / CIB)'**
+  String get checkoutSecurePayment;
+
+  /// No description provided for @checkoutOpenedInNewWindow.
+  ///
+  /// In fr, this message translates to:
+  /// **'La page de paiement s\'est ouverte dans une nouvelle fenêtre'**
+  String get checkoutOpenedInNewWindow;
+
+  /// No description provided for @checkoutCompleteInstructions.
+  ///
+  /// In fr, this message translates to:
+  /// **'Veuillez finaliser le paiement par carte Edahabia ou CIB, puis cliquer ci-dessous pour confirmer.'**
+  String get checkoutCompleteInstructions;
+
+  /// No description provided for @checkoutConfirmSuccess.
+  ///
+  /// In fr, this message translates to:
+  /// **'Confirmer le paiement réussi'**
+  String get checkoutConfirmSuccess;
+
+  /// No description provided for @checkoutReopenLink.
+  ///
+  /// In fr, this message translates to:
+  /// **'Rouvrir le lien de paiement'**
+  String get checkoutReopenLink;
+
+  /// No description provided for @subscriptionCompareSupportPremium.
+  ///
+  /// In fr, this message translates to:
+  /// **'Support rapide'**
+  String get subscriptionCompareSupportPremium;
+
+  /// No description provided for @subscriptionCompareSupportVip.
+  ///
+  /// In fr, this message translates to:
+  /// **'Priorité VIP dédiée'**
+  String get subscriptionCompareSupportVip;
 
   /// No description provided for @subscriptionPlanFreePrice.
   ///

@@ -31,6 +31,18 @@ class StandardAlbumService {
         );
   }
 
+  /// Watch all standard albums for the current user.
+  Stream<List<StandardAlbum>> watchAllAlbums() {
+    if (_userId == null) return Stream.value([]);
+    return _albumsRef
+        .snapshots()
+        .map(
+          (snap) =>
+              snap.docs.map(StandardAlbum.fromFirestore).toList()
+                ..sort((a, b) => b.updatedAt.compareTo(a.updatedAt)),
+        );
+  }
+
   /// Watch a single standard album by id.
   Stream<StandardAlbum?> watchAlbum(String albumId) {
     return _albumsRef

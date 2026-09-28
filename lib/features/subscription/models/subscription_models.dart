@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
 /// Subscription tier levels.
@@ -126,6 +127,28 @@ class AlbumClaim {
     this.status = 'pending',
     required this.createdAt,
   });
+
+  factory AlbumClaim.fromFirestore(DocumentSnapshot doc) {
+    final data = doc.data() as Map<String, dynamic>? ?? {};
+    return AlbumClaim(
+      id: doc.id,
+      userId: data['userId'] ?? '',
+      fullName: data['fullName'] ?? '',
+      phone: data['phone'] ?? '',
+      wilaya: data['wilaya'] ?? '',
+      address: data['address'] ?? '',
+      childId: data['childId'] ?? '',
+      childName: data['childName'] ?? '',
+      dateRange: data['dateRange'] ?? '',
+      status: data['status'] ?? 'pending',
+      createdAt: data['createdAt'] != null
+          ? (data['createdAt'] is Timestamp
+              ? (data['createdAt'] as Timestamp).toDate()
+              : DateTime.tryParse(data['createdAt'].toString()) ??
+                  DateTime.now())
+          : DateTime.now(),
+    );
+  }
 
   Map<String, dynamic> toFirestore() => {
     'userId': userId,

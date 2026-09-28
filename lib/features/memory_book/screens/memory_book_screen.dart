@@ -7,7 +7,6 @@ import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_spacing.dart';
 import '../../profile/models/profile_models.dart';
 import '../../profile/providers/profile_providers.dart';
-import '../models/album_suggestion.dart';
 import '../providers/memory_book_providers.dart';
 import '../providers/standard_album_providers.dart';
 import '../widgets/album_cover_card.dart';
@@ -44,102 +43,214 @@ class MemoryBookScreen extends ConsumerWidget {
         children: [
           const TopAmbientGradient(height: 380),
           SafeArea(
-            child: Column(
-          children: [
-            childrenAsync.when(
-              loading: () => const SizedBox(height: 50),
-              error: (_, _) => const SizedBox.shrink(),
-              data: (children) {
-                return PageHeaderWithFilter(
-                  title: l10n.memoryBookTitle,
-                  subtitle: l10n.memoryBookSubtitle,
-                  icon: Icons.auto_stories_rounded,
-                  iconGradient: const LinearGradient(
-                    colors: [Color(0xFFFF6F00), Color(0xFFFFAB00)],
+            bottom: false,
+            child: CustomScrollView(
+              physics: const BouncingScrollPhysics(),
+              slivers: [
+                // 1. Header with Child Filter
+                SliverToBoxAdapter(
+                  child: childrenAsync.when(
+                    loading: () => const SizedBox(height: 50),
+                    error: (_, _) => const SizedBox.shrink(),
+                    data: (children) => PageHeaderWithFilter(
+                      title: l10n.memoryBookTitle,
+                      subtitle: l10n.memoryBookSubtitle,
+                      icon: Icons.auto_stories_rounded,
+                      iconGradient: const LinearGradient(
+                        colors: [Color(0xFFFF6F00), Color(0xFFFFAB00)],
+                      ),
+                      showBackButton: true,
+                      childrenList: children.cast<Child>(),
+                      selectedChildId: childFilter,
+                      allowAll: true,
+                      onChildSelected: (id) {
+                        ref.read(memoryBookChildFilterProvider.notifier).state = id;
+                      },
+                    ),
                   ),
-                  showBackButton: true,
-                  childrenList: children.cast<Child>(),
-                  selectedChildId: childFilter,
-                  allowAll: true,
-                  onChildSelected: (id) {
-                    ref.read(memoryBookChildFilterProvider.notifier).state = id;
+                ),
+
+                const SliverToBoxAdapter(child: SizedBox(height: 12)),
+
+                // 2. Bento Album Creation Cards (Home-Bento Signature Style)
+                SliverToBoxAdapter(
+                  child: childrenAsync.when(
+                    loading: () => const SizedBox.shrink(),
+                    error: (_, _) => const SizedBox.shrink(),
+                    data: (children) => Padding(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: AppSpacing.screenPaddingH,
+                      ),
+                      child: Row(
+                        children: [
+                          Expanded(
+                            child: _AlbumCreationBentoCard(
+                              title: l10n.albumPredefinedTitle,
+                              subtitle: l10n.albumPredefinedSubtitle,
+                              icon: Icons.auto_awesome_rounded,
+                              watermarkIcon: Icons.auto_awesome_rounded,
+                              lightBg: const Color(0xFFFFF0F5),
+                              darkBg: const Color(0xFF281C28),
+                              lightBorder: const Color(0xFFFFD4E2),
+                              accentColor: const Color(0xFFE11D48),
+                              onTap: () => _openTemplatePicker(
+                                context,
+                                children.cast<Child>(),
+                              ),
+                            ),
+                          ),
+                          const SizedBox(width: 14),
+                          Expanded(
+                            child: _AlbumCreationBentoCard(
+                              title: l10n.albumFreeTitle,
+                              subtitle: l10n.albumFreeSubtitle,
+                              icon: Icons.dashboard_customize_rounded,
+                              watermarkIcon: Icons.dashboard_customize_rounded,
+                              lightBg: const Color(0xFFF0FDF4),
+                              darkBg: const Color(0xFF16251E),
+                              lightBorder: const Color(0xFFDCFCE7),
+                              accentColor: const Color(0xFF16A34A),
+                              onTap: () => _openStandardAlbumCreator(
+                                context,
+                                ref,
+                                children.cast<Child>(),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+
+                const SliverToBoxAdapter(child: SizedBox(height: 20)),
+
+                // 3. Section Title Bar (Bridging the gap and providing count pill)
+                albumsAsync.maybeWhen(
+                  data: (albums) {
+                    if (albums.isEmpty) return const SliverToBoxAdapter(child: SizedBox.shrink());
+                    return SliverToBoxAdapter(
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: AppSpacing.screenPaddingH,
+                        ),
+                        child: Row(
+                          children: [
+                            Text(
+                              l10n.memoryBookTitle,
+                              style: TextStyle(
+                                fontSize: 18,
+                                fontWeight: FontWeight.w800,
+                                color: textColor,
+                                letterSpacing: -0.3,
+                              ),
+                            ),
+                            const SizedBox(width: 8),
+                            Container(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 9,
+                                vertical: 3,
+                              ),
+                              decoration: BoxDecoration(
+                                color: primary.withValues(
+                                  alpha: isDark ? 0.20 : 0.12,
+                                ),
+                                borderRadius: BorderRadius.circular(10),
+                                border: Border.all(
+                                  color: primary.withValues(
+                                    alpha: isDark ? 0.35 : 0.20,
+                                  ),
+                                  width: 0.8,
+                                ),
+                              ),
+                              child: Text(
+                                '${albums.length}',
+                                style: TextStyle(
+                                  fontSize: 12,
+                                  fontWeight: FontWeight.w800,
+                                  color: primary,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    );
                   },
-                );
-              },
-            ),
+                  orElse: () => const SliverToBoxAdapter(child: SizedBox.shrink()),
+                ),
 
-            const SizedBox(height: AppSpacing.sm),
+                const SliverToBoxAdapter(child: SizedBox(height: 12)),
 
-            // Album creation entry points
-            childrenAsync.when(
-              loading: () => const SizedBox.shrink(),
-              error: (_, _) => const SizedBox.shrink(),
-              data: (children) {
-                return Padding(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: AppSpacing.screenPaddingH,
-                  ),
-                  child: Row(
-                    children: [
-                      Expanded(
-                        child: _AlbumEntryBanner(
-                          icon: Icons.auto_awesome_rounded,
-                          title: l10n.albumPredefinedTitle,
-                          subtitle: l10n.albumPredefinedSubtitle,
-                          gradientColors: const [
-                            Color(0xFFFF6F91),
-                            Color(0xFF7C4DFF),
-                          ],
-                          onTap: () => _openTemplatePicker(
+                // 4. Albums Grid / Loading / Error / Empty States
+                ...albumsAsync.when(
+                  loading: () => [
+                    SliverPadding(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: AppSpacing.screenPaddingH,
+                      ),
+                      sliver: _buildLoadingSliverGrid(isDark),
+                    ),
+                  ],
+                  error: (e, _) => [
+                    SliverToBoxAdapter(
+                      child: _buildErrorState(context, textColor, secondaryText),
+                    ),
+                  ],
+                  data: (albums) {
+                    if (albums.isEmpty) {
+                      return [
+                        SliverToBoxAdapter(
+                          child: _buildEmptyState(
                             context,
-                            children.cast<Child>(),
+                            primary,
+                            textColor,
+                            secondaryText,
+                          ),
+                        ),
+                      ];
+                    }
+                    return [
+                      SliverPadding(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: AppSpacing.screenPaddingH,
+                        ),
+                        sliver: SliverGrid(
+                          gridDelegate:
+                              const SliverGridDelegateWithFixedCrossAxisCount(
+                            crossAxisCount: 2,
+                            mainAxisSpacing: 16,
+                            crossAxisSpacing: 16,
+                            childAspectRatio: 0.78,
+                          ),
+                          delegate: SliverChildBuilderDelegate(
+                            (context, index) {
+                              final album = albums[index];
+                              return AlbumCoverCard(
+                                album: album,
+                                onTap: () => Navigator.of(context).push(
+                                  MaterialPageRoute(
+                                    builder: (_) =>
+                                        AlbumDetailScreen(album: album),
+                                  ),
+                                ),
+                              );
+                            },
+                            childCount: albums.length,
                           ),
                         ),
                       ),
-                      const SizedBox(width: AppSpacing.sm),
-                      Expanded(
-                        child: _AlbumEntryBanner(
-                          icon: Icons.dashboard_customize_rounded,
-                          title: l10n.albumFreeTitle,
-                          subtitle: l10n.albumFreeSubtitle,
-                          gradientColors: const [
-                            Color(0xFF00BFA5),
-                            Color(0xFF448AFF),
-                          ],
-                          onTap: () => _openStandardAlbumCreator(
-                            context,
-                            ref,
-                            children.cast<Child>(),
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                );
-              },
-            ),
+                    ];
+                  },
+                ),
 
-            const SizedBox(height: AppSpacing.sm),
-
-            // Album grid
-            Expanded(
-              child: albumsAsync.when(
-                loading: () => _buildLoadingGrid(isDark),
-                error: (e, _) => _buildErrorState(context, textColor, secondaryText),
-                data: (albums) {
-                  if (albums.isEmpty) {
-                    return _buildEmptyState(context, primary, textColor, secondaryText);
-                  }
-                  return _buildAlbumGrid(context, albums);
-                },
-              ),
+                const SliverToBoxAdapter(child: SizedBox(height: 110)),
+              ],
             ),
-          ],
-        ),
+          ),
+        ],
       ),
-    ],
-  ),
-);
+    );
   }
 
   void _openTemplatePicker(BuildContext context, List<Child> children) {
@@ -285,59 +396,117 @@ class MemoryBookScreen extends ConsumerWidget {
     );
   }
 
-  Widget _buildAlbumGrid(BuildContext context, List<AlbumSuggestion> albums) {
-    return GridView.builder(
-      padding: const EdgeInsets.fromLTRB(
-        AppSpacing.screenPaddingH,
-        AppSpacing.sm,
-        AppSpacing.screenPaddingH,
-        100,
-      ),
+  Widget _buildLoadingSliverGrid(bool isDark) {
+    return SliverGrid(
       gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
         crossAxisCount: 2,
-        mainAxisSpacing: 14,
-        crossAxisSpacing: 14,
-        childAspectRatio: 0.82,
+        mainAxisSpacing: 16,
+        crossAxisSpacing: 16,
+        childAspectRatio: 0.78,
       ),
-      itemCount: albums.length,
-      itemBuilder: (context, index) {
-        final album = albums[index];
-        return AlbumCoverCard(
-          album: album,
-          onTap: () => Navigator.of(context).push(
-            MaterialPageRoute(builder: (_) => AlbumDetailScreen(album: album)),
-          ),
-        );
-      },
-    );
-  }
-
-  Widget _buildLoadingGrid(bool isDark) {
-    return GridView.builder(
-      padding: const EdgeInsets.all(AppSpacing.screenPaddingH),
-      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-        crossAxisCount: 2,
-        mainAxisSpacing: 14,
-        crossAxisSpacing: 14,
-        childAspectRatio: 0.82,
-      ),
-      itemCount: 4,
-      itemBuilder: (_, _) {
-        return Shimmer.fromColors(
-          baseColor: isDark ? Colors.grey[800]! : Colors.grey[300]!,
-          highlightColor: isDark ? Colors.grey[700]! : Colors.grey[100]!,
+      delegate: SliverChildBuilderDelegate(
+        (_, _) => Shimmer.fromColors(
+          baseColor: isDark ? Colors.grey[850]! : Colors.grey[200]!,
+          highlightColor: isDark ? Colors.grey[750]! : Colors.grey[50]!,
           child: Container(
             decoration: BoxDecoration(
               color: Colors.white,
-              borderRadius: BorderRadius.circular(18),
+              borderRadius: BorderRadius.circular(22),
             ),
           ),
-        );
-      },
+        ),
+        childCount: 4,
+      ),
     );
   }
 
-  Widget _buildEmptyState(BuildContext context, Color primary, Color textColor, Color secondaryText) {
+  Widget _buildEmptyState(
+    BuildContext context,
+    Color primary,
+    Color textColor,
+    Color secondaryText,
+  ) {
+    final l10n = context.l10n;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
+    return Padding(
+      padding: const EdgeInsets.symmetric(
+        horizontal: AppSpacing.screenPaddingH,
+        vertical: AppSpacing.md,
+      ),
+      child: Container(
+        padding: const EdgeInsets.all(AppSpacing.xl),
+        decoration: BoxDecoration(
+          color: isDark
+              ? const Color(0xFF221C2B)
+              : Colors.white.withValues(alpha: 0.85),
+          borderRadius: BorderRadius.circular(24),
+          border: Border.all(
+            color: isDark
+                ? Colors.white.withValues(alpha: 0.08)
+                : primary.withValues(alpha: 0.15),
+            width: 1.2,
+          ),
+          boxShadow: [
+            BoxShadow(
+              color: primary.withValues(alpha: isDark ? 0.12 : 0.08),
+              blurRadius: 16,
+              offset: const Offset(0, 6),
+            ),
+          ],
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Container(
+              width: 76,
+              height: 76,
+              decoration: BoxDecoration(
+                color: primary.withValues(alpha: 0.12),
+                shape: BoxShape.circle,
+                border: Border.all(
+                  color: primary.withValues(alpha: 0.25),
+                  width: 1.5,
+                ),
+              ),
+              child: Center(
+                child: Icon(
+                  Icons.auto_stories_rounded,
+                  size: 38,
+                  color: primary,
+                ),
+              ),
+            ),
+            const SizedBox(height: AppSpacing.md),
+            Text(
+              l10n.memoryBookNoAlbums,
+              style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                    fontWeight: FontWeight.w800,
+                    color: textColor,
+                    letterSpacing: -0.2,
+                  ),
+              textAlign: TextAlign.center,
+            ),
+            const SizedBox(height: 6),
+            Text(
+              l10n.memoryBookCaptureMore,
+              style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                    color: secondaryText,
+                    height: 1.35,
+                  ),
+              textAlign: TextAlign.center,
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildErrorState(
+    BuildContext context,
+    Color textColor,
+    Color secondaryText,
+  ) {
     final l10n = context.l10n;
     return Center(
       child: Padding(
@@ -345,139 +514,222 @@ class MemoryBookScreen extends ConsumerWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Container(
-              width: 100,
-              height: 100,
-              decoration: BoxDecoration(
-                color: primary.withValues(alpha: 0.1),
-                shape: BoxShape.circle,
-              ),
-              child: Icon(Icons.auto_stories_rounded, size: 50, color: primary),
+            const Icon(
+              Icons.error_outline_rounded,
+              size: 54,
+              color: AppColors.error,
             ),
-            const SizedBox(height: AppSpacing.lg),
+            const SizedBox(height: AppSpacing.md),
             Text(
-              l10n.memoryBookNoAlbums,
-              style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                fontWeight: FontWeight.bold,
-                color: textColor,
-              ),
-              textAlign: TextAlign.center,
+              l10n.albumLoadingError,
+              style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                    fontWeight: FontWeight.bold,
+                    color: textColor,
+                  ),
             ),
-            const SizedBox(height: AppSpacing.sm),
+            const SizedBox(height: AppSpacing.xs),
             Text(
-              l10n.memoryBookCaptureMore,
+              l10n.memoryBookGenerateError,
               style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                color: secondaryText,
-              ),
-              textAlign: TextAlign.center,
+                    color: secondaryText,
+                  ),
             ),
           ],
         ),
-      ),
-    );
-  }
-
-  Widget _buildErrorState(BuildContext context, Color textColor, Color secondaryText) {
-    final l10n = context.l10n;
-    return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          const Icon(
-            Icons.error_outline_rounded,
-            size: 60,
-            color: AppColors.error,
-          ),
-          const SizedBox(height: AppSpacing.md),
-          Text(
-            l10n.albumLoadingError,
-            style: Theme.of(context).textTheme.titleMedium?.copyWith(
-              fontWeight: FontWeight.bold,
-              color: textColor,
-            ),
-          ),
-          const SizedBox(height: AppSpacing.xs),
-          Text(
-            l10n.memoryBookGenerateError,
-            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-              color: secondaryText,
-            ),
-          ),
-        ],
       ),
     );
   }
 }
 
-/// Entry point banner leading to an album-creation flow.
-class _AlbumEntryBanner extends StatelessWidget {
-  const _AlbumEntryBanner({
-    required this.icon,
+/// Bento-styled album creation card matching the signature Accueil design.
+class _AlbumCreationBentoCard extends StatefulWidget {
+  final String title;
+  final String subtitle;
+  final IconData icon;
+  final IconData watermarkIcon;
+  final Color lightBg;
+  final Color darkBg;
+  final Color lightBorder;
+  final Color accentColor;
+  final VoidCallback onTap;
+
+  const _AlbumCreationBentoCard({
     required this.title,
     required this.subtitle,
-    required this.gradientColors,
+    required this.icon,
+    required this.watermarkIcon,
+    required this.lightBg,
+    required this.darkBg,
+    required this.lightBorder,
+    required this.accentColor,
     required this.onTap,
   });
 
-  final IconData icon;
-  final String title;
-  final String subtitle;
-  final List<Color> gradientColors;
-  final VoidCallback onTap;
+  @override
+  State<_AlbumCreationBentoCard> createState() =>
+      _AlbumCreationBentoCardState();
+}
+
+class _AlbumCreationBentoCardState extends State<_AlbumCreationBentoCard> {
+  bool _isPressed = false;
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final bg = isDark ? widget.darkBg : widget.lightBg;
+    final border = isDark
+        ? Colors.white.withValues(alpha: 0.08)
+        : widget.lightBorder;
+    final textColor = isDark ? Colors.white : const Color(0xFF1E1B24);
+    final subtextColor = isDark
+        ? Colors.white.withValues(alpha: 0.70)
+        : const Color(0xFF5E5668);
+
     return GestureDetector(
-      onTap: onTap,
-      child: Container(
-        padding: const EdgeInsets.all(AppSpacing.sm),
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            colors: gradientColors,
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
+      onTapDown: (_) => setState(() => _isPressed = true),
+      onTapUp: (_) {
+        setState(() => _isPressed = false);
+        widget.onTap();
+      },
+      onTapCancel: () => setState(() => _isPressed = false),
+      child: AnimatedScale(
+        scale: _isPressed ? 0.96 : 1.0,
+        duration: const Duration(milliseconds: 140),
+        curve: Curves.easeOutCubic,
+        child: Container(
+          height: 124,
+          decoration: BoxDecoration(
+            color: bg,
+            borderRadius: BorderRadius.circular(22),
+            border: Border.all(color: border, width: 1.2),
+            boxShadow: [
+              BoxShadow(
+                color: widget.accentColor.withValues(
+                  alpha: isDark ? 0.16 : 0.14,
+                ),
+                blurRadius: 14,
+                offset: const Offset(0, 5),
+              ),
+            ],
           ),
-          borderRadius: BorderRadius.circular(16),
-          boxShadow: [
-            BoxShadow(
-              color: gradientColors.first.withValues(alpha: 0.3),
-              blurRadius: 10,
-              offset: const Offset(0, 3),
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(22),
+            child: Stack(
+              children: [
+                // Floating corner watermark icon (matching Home Bento signature)
+                PositionedDirectional(
+                  bottom: -18,
+                  end: -14,
+                  child: IgnorePointer(
+                    child: Icon(
+                      widget.watermarkIcon,
+                      size: 82,
+                      color: isDark
+                          ? Colors.white.withValues(alpha: 0.04)
+                          : widget.accentColor.withValues(alpha: 0.10),
+                    ),
+                  ),
+                ),
+
+                // Foreground Content
+                Padding(
+                  padding: const EdgeInsets.all(14),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      // Top Row: Squircle icon badge + subtle arrow outward
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Container(
+                            width: 38,
+                            height: 38,
+                            decoration: BoxDecoration(
+                              color: isDark
+                                  ? widget.accentColor.withValues(alpha: 0.20)
+                                  : Colors.white,
+                              borderRadius: BorderRadius.circular(12),
+                              border: Border.all(
+                                color: widget.accentColor.withValues(
+                                  alpha: isDark ? 0.35 : 0.25,
+                                ),
+                                width: 1,
+                              ),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: widget.accentColor.withValues(
+                                    alpha: 0.12,
+                                  ),
+                                  blurRadius: 6,
+                                  offset: const Offset(0, 2),
+                                ),
+                              ],
+                            ),
+                            child: Center(
+                              child: Icon(
+                                widget.icon,
+                                color: widget.accentColor,
+                                size: 20,
+                              ),
+                            ),
+                          ),
+                          Container(
+                            width: 26,
+                            height: 26,
+                            decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              color: isDark
+                                  ? Colors.white.withValues(alpha: 0.06)
+                                  : Colors.white.withValues(alpha: 0.70),
+                            ),
+                            child: Center(
+                              child: Icon(
+                                Icons.arrow_forward_rounded,
+                                size: 14,
+                                color: widget.accentColor,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+
+                      // Bottom Text Block
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            widget.title,
+                            style: TextStyle(
+                              fontSize: 14,
+                              fontWeight: FontWeight.w800,
+                              color: textColor,
+                              letterSpacing: -0.2,
+                              height: 1.15,
+                            ),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                          const SizedBox(height: 2),
+                          Text(
+                            widget.subtitle,
+                            style: TextStyle(
+                              fontSize: 11,
+                              fontWeight: FontWeight.w500,
+                              color: subtextColor,
+                              height: 1.15,
+                            ),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+              ],
             ),
-          ],
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Container(
-              width: 32,
-              height: 32,
-              decoration: BoxDecoration(
-                color: Colors.white.withValues(alpha: 0.2),
-                borderRadius: BorderRadius.circular(10),
-              ),
-              child: Icon(icon, color: Colors.white, size: 18),
-            ),
-            const SizedBox(height: 8),
-            Text(
-              title,
-              style: Theme.of(context).textTheme.labelLarge?.copyWith(
-                fontWeight: FontWeight.bold,
-                color: Colors.white,
-              ),
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
-            ),
-            const SizedBox(height: 2),
-            Text(
-              subtitle,
-              style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                color: Colors.white.withValues(alpha: 0.85),
-              ),
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
-            ),
-          ],
+          ),
         ),
       ),
     );

@@ -100,6 +100,23 @@ final albumClaimedProvider = StreamProvider<bool>((ref) {
       .map((snap) => snap.docs.isNotEmpty);
 });
 
+/// Latest VIP album claim by the user.
+final latestAlbumClaimProvider = StreamProvider<AlbumClaim?>((ref) {
+  final uid = ref.watch(userIdProvider);
+  if (uid == null) return Stream.value(null);
+
+  return FirebaseFirestore.instance
+      .collection('album_claims')
+      .where('userId', isEqualTo: uid)
+      .snapshots()
+      .map((snap) {
+        if (snap.docs.isEmpty) return null;
+        final list = snap.docs.map(AlbumClaim.fromFirestore).toList();
+        list.sort((a, b) => b.createdAt.compareTo(a.createdAt));
+        return list.first;
+      });
+});
+
 // ═══════════════════════════════════════════════════════════════════════════
 // ACTIONS
 // ═══════════════════════════════════════════════════════════════════════════

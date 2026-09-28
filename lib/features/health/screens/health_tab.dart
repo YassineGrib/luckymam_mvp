@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/extensions/l10n_extension.dart';
@@ -30,10 +31,18 @@ class _HealthTabState extends ConsumerState<HealthTab>
   void initState() {
     super.initState();
     _tabController = TabController(length: 3, vsync: this);
+    _tabController.addListener(_onTabChanged);
+  }
+
+  void _onTabChanged() {
+    if (_tabController.indexIsChanging) {
+      HapticFeedback.selectionClick();
+    }
   }
 
   @override
   void dispose() {
+    _tabController.removeListener(_onTabChanged);
     _tabController.dispose();
     super.dispose();
   }
@@ -220,32 +229,123 @@ class _HealthTabState extends ConsumerState<HealthTab>
       AppSpacing.screenPaddingH,
       AppSpacing.sm,
       AppSpacing.screenPaddingH,
-      0,
+      AppSpacing.xs,
     ),
     child: Container(
+      height: 52,
       decoration: BoxDecoration(
         color: isDark
             ? AppColors.surfaceContainerDark
-            : AppColors.surfaceContainerLight,
-        borderRadius: BorderRadius.circular(16),
+            : Colors.white,
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(
+          color: isDark
+              ? AppColors.dividerDark
+              : AppColors.dividerLight,
+          width: 1,
+        ),
+        boxShadow: isDark
+            ? [
+                BoxShadow(
+                  color: Colors.black.withValues(alpha: 0.25),
+                  blurRadius: 16,
+                  offset: const Offset(0, 4),
+                ),
+              ]
+            : [
+                BoxShadow(
+                  color: primary.withValues(alpha: 0.06),
+                  blurRadius: 18,
+                  offset: const Offset(0, 6),
+                ),
+                BoxShadow(
+                  color: Colors.black.withValues(alpha: 0.03),
+                  blurRadius: 6,
+                  offset: const Offset(0, 2),
+                ),
+              ],
       ),
+      padding: const EdgeInsets.all(4),
       child: TabBar(
         controller: _tabController,
+        onTap: (_) => HapticFeedback.selectionClick(),
         indicator: BoxDecoration(
-          color: primary,
-          borderRadius: BorderRadius.circular(14),
+          gradient: AppColors.primaryGradient,
+          borderRadius: BorderRadius.circular(16),
+          boxShadow: [
+            BoxShadow(
+              color: primary.withValues(alpha: 0.35),
+              blurRadius: 10,
+              offset: const Offset(0, 3),
+            ),
+          ],
         ),
         indicatorSize: TabBarIndicatorSize.tab,
-        labelStyle: AppTypography.fromContext(context, fontSize: 13, fontWeight: FontWeight.w600),
-        unselectedLabelStyle: AppTypography.fromContext(context, fontSize: 13),
+        labelStyle: AppTypography.fromContext(
+          context,
+          fontSize: 12,
+          fontWeight: FontWeight.w700,
+        ),
+        unselectedLabelStyle: AppTypography.fromContext(
+          context,
+          fontSize: 12,
+          fontWeight: FontWeight.w500,
+        ),
         labelColor: Colors.white,
         unselectedLabelColor: textColor.withValues(alpha: 0.6),
         dividerColor: Colors.transparent,
-        padding: const EdgeInsets.all(4),
         tabs: [
-          Tab(text: l10n.healthTabVaccines),
-          Tab(text: l10n.healthTabGrowth),
-          Tab(text: l10n.healthTabRdv),
+          Tab(
+            height: 44,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                const Icon(Icons.vaccines_rounded, size: 17),
+                const SizedBox(width: 5),
+                Flexible(
+                  child: Text(
+                    l10n.healthTabVaccines,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          Tab(
+            height: 44,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                const Icon(Icons.show_chart_rounded, size: 17),
+                const SizedBox(width: 5),
+                Flexible(
+                  child: Text(
+                    l10n.healthTabGrowth,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          Tab(
+            height: 44,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                const Icon(Icons.calendar_month_rounded, size: 17),
+                const SizedBox(width: 5),
+                Flexible(
+                  child: Text(
+                    l10n.healthTabRdv,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ),
+              ],
+            ),
+          ),
         ],
       ),
     ),

@@ -414,10 +414,17 @@ class AppLocalizationsEn extends AppLocalizations {
   String get dailyTipFooter => '— Luckymam Team 💕';
 
   @override
-  String get upgradePremiumTitle => 'Go Premium';
+  String get upgradePremiumTitle => 'Upgrade to Premium & VIP';
 
   @override
-  String get upgradePremiumSubtitle => 'Unlimited capsules • Ad-free';
+  String get upgradePremiumSubtitle =>
+      'Unlimited capsules • Ad-free experience • Printed album';
+
+  @override
+  String get upgradePromptBadge => 'LuckyMam Membership';
+
+  @override
+  String get upgradePromptCta => 'Explore Plans';
 
   @override
   String get marketplaceTitle => 'Marketplace';
@@ -944,7 +951,7 @@ class AppLocalizationsEn extends AppLocalizations {
       'Add a photo or a voice recording to keep this moment in memory.';
 
   @override
-  String get vaccineReelsTitle => 'Educational Reels';
+  String get vaccineReelsTitle => 'Doctor Reels & Advice';
 
   @override
   String get vaccineReelsSubtitle =>
@@ -1159,10 +1166,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String get healthHubSubtitle => 'Growth & Appointments';
 
   @override
-  String get healthTabGrowth => '📈 Growth';
+  String get healthTabGrowth => 'Growth';
 
   @override
-  String get healthTabAppointments => '🗓 Appointments';
+  String get healthTabAppointments => 'Appointments';
 
   @override
   String get healthNoChildTitle => 'No child registered';
@@ -1174,10 +1181,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String get healthTabSubtitle => 'Vaccines · Growth · Appointments';
 
   @override
-  String get healthTabVaccines => '💉 Vaccines';
+  String get healthTabVaccines => 'Vaccines';
 
   @override
-  String get healthTabRdv => '🗓 Appts';
+  String get healthTabRdv => 'Appointments';
 
   @override
   String healthErrorWithDetail(String error) {
@@ -2164,6 +2171,33 @@ class AppLocalizationsEn extends AppLocalizations {
       'This information is for educational purposes only. Always consult your doctor or pediatrician before any medical decision.';
 
   @override
+  String get vaccineShieldTitle => 'Immune & Defense Shield';
+
+  @override
+  String get vaccinePostCareTitle => 'Post-Vaccination Care & Advice';
+
+  @override
+  String get vaccineCareTipCompress =>
+      'Cool Compress: Gently apply a clean, cool, damp cloth over the injection site to ease tenderness.';
+
+  @override
+  String get vaccineCareTipHydrate =>
+      'Hydration & Rest: Provide a quiet environment and nurse frequently to comfort baby.';
+
+  @override
+  String get vaccineCareTipFever =>
+      'Fever Monitoring: Mild fever is normal. Use prescribed medication only if necessary.';
+
+  @override
+  String get vaccineStatusCardTitle => 'Child\'s Vaccine Status';
+
+  @override
+  String get vaccineStatusRecorded => 'Vaccine successfully administered';
+
+  @override
+  String get vaccineStatusUpcoming => 'Scheduled on the immunization calendar';
+
+  @override
   String get subscriptionPlanFreeTitle => 'Free';
 
   @override
@@ -2213,7 +2247,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get subscriptionPlanVipFeatureAllPremium => 'All Premium included';
 
   @override
-  String get subscriptionPlanVipFeatureFreeAlbum => 'FREE printed album 🎁';
+  String get subscriptionPlanVipFeatureFreeAlbum => 'Free printed album';
 
   @override
   String get subscriptionPlanVipFeaturePrioritySupport => 'Priority support';
@@ -2227,6 +2261,209 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get subscriptionPlanBillingPerYear => '/year';
+
+  @override
+  String get subscriptionVipBadge => 'Best Value & Most Popular';
+
+  @override
+  String get subscriptionVipAlbumHighlight =>
+      'Includes a free premium printed photo album delivered right to your home';
+
+  @override
+  String get subscriptionTrustSecureTitle => '100% Secure Payment';
+
+  @override
+  String get subscriptionTrustSecureSubtitle =>
+      'Certified via Algérie Poste (Edahabia) & national banks (CIB) through Chargily Pay';
+
+  @override
+  String get subscriptionTrustInstantTitle => 'Instant Activation';
+
+  @override
+  String get subscriptionTrustInstantSubtitle =>
+      'Immediate access to all features and VIP tier right upon payment';
+
+  @override
+  String get subscriptionTrustSupportTitle => 'Dedicated Mom Support';
+
+  @override
+  String get subscriptionTrustSupportSubtitle =>
+      'Our customer care team is available 7 days a week to assist you';
+
+  @override
+  String get subscriptionCompareTitle => 'Compare All Plans';
+
+  @override
+  String get subscriptionCompareSubtitle =>
+      'Choose the best plan for your baby\'s journey';
+
+  @override
+  String get subscriptionCompareFeatureCapsules => 'Memory Capsules';
+
+  @override
+  String get subscriptionCompareFeatureChildren => 'Number of Children';
+
+  @override
+  String get subscriptionCompareFeatureHealth =>
+      'Growth Charts & Vaccination Tracker';
+
+  @override
+  String get subscriptionCompareFeatureMemoryBook =>
+      'Digital Memory Book Generator';
+
+  @override
+  String get subscriptionCompareFeaturePrintedAlbum =>
+      'Free Printed Photo Album Shipped Home';
+
+  @override
+  String get subscriptionCompareFeatureSupport => 'Priority Dedicated Support';
+
+  @override
+  String get subscriptionCompareFeatureAdFree => '100% Ad-Free Experience';
+
+  @override
+  String get subscriptionCompareValueFreeCapsules => '25 capsules';
+
+  @override
+  String get subscriptionCompareValueUnlimited => 'Unlimited';
+
+  @override
+  String get subscriptionCompareValueOneChild => '1 child';
+
+  @override
+  String get subscriptionCompareValueAllChildren => 'All your children';
+
+  @override
+  String get subscriptionFaqTitle => 'Frequently Asked Questions';
+
+  @override
+  String get subscriptionFaqSubtitle =>
+      'Everything you need to know about LuckyMam plans';
+
+  @override
+  String get subscriptionFaqQ1 => 'How do I claim my free printed VIP album?';
+
+  @override
+  String get subscriptionFaqA1 =>
+      'As soon as you upgrade to VIP, go to \'Claim Printed Album\', select your child\'s favorite memories and enter your shipping address. We will print and deliver a premium hardcover album to your door anywhere in Algeria for free.';
+
+  @override
+  String get subscriptionFaqQ2 => 'Is Edahabia and CIB payment secure?';
+
+  @override
+  String get subscriptionFaqA2 =>
+      '100% secure. Payments are processed through the official national 3D Secure gateway certified by Algérie Poste and GIE Monétique via Chargily Pay.';
+
+  @override
+  String get subscriptionFaqQ3 => 'Can I upgrade from Premium to VIP later?';
+
+  @override
+  String get subscriptionFaqA3 =>
+      'Yes, you can upgrade to VIP at any time to order your printed album and unlock priority VIP perks.';
+
+  @override
+  String get subscriptionPaymentMethodSelect => 'Select Payment Method';
+
+  @override
+  String get subscriptionPaymentEdahabiaDesc => 'Algérie Poste card';
+
+  @override
+  String get subscriptionPaymentCibDesc => 'National interbank card';
+
+  @override
+  String get subscriptionPaymentPayButton =>
+      'Proceed to Secure Payment via Chargily Pay';
+
+  @override
+  String get subscriptionPaymentRetry => 'Try Again';
+
+  @override
+  String get subscriptionPaymentCancelled =>
+      'Payment was cancelled. You can retry at any time.';
+
+  @override
+  String get subscriptionPaymentSuccessModalTitle =>
+      'Congratulations! You are now a VIP Member';
+
+  @override
+  String get subscriptionPaymentSuccessModalDesc =>
+      'Your subscription is active. Your free printed album and unlimited benefits are ready.';
+
+  @override
+  String get subscriptionPaymentClaimAlbumNow => 'Claim My Free Album Now';
+
+  @override
+  String get subscriptionPaymentLater => 'Start Exploring';
+
+  @override
+  String get subscriptionHeroHeadline => 'Choose your plan:';
+
+  @override
+  String get subscriptionHeroBadgeTitle => 'LuckyMam VIP';
+
+  @override
+  String get subscriptionHeroBenefit1 =>
+      'Unlimited memory capsules for all your children';
+
+  @override
+  String get subscriptionHeroBenefit2 =>
+      'Free luxury printed photo album shipped to your door';
+
+  @override
+  String get subscriptionHeroBenefit3 =>
+      '100% secure Algerian payment via Edahabia or CIB';
+
+  @override
+  String subscriptionContinueButton(int price) {
+    return 'Continue & Subscribe • $price DZD';
+  }
+
+  @override
+  String get subscriptionViewDetails => 'View full feature comparison & FAQ';
+
+  @override
+  String get subscriptionLegalNotice =>
+      'Official encrypted payment via Chargily Pay & Algérie Poste. Instant activation.';
+
+  @override
+  String subscriptionPlanPricePerMonth(int price) {
+    return '$price DZD /month';
+  }
+
+  @override
+  String get subscriptionVipCardSubtitle =>
+      'Free luxury printed photo album shipped to your door';
+
+  @override
+  String get paymentDurationFullYear => '365 days of full access';
+
+  @override
+  String get paymentShippingAndDelivery => 'Shipping & delivery fees';
+
+  @override
+  String get paymentFreeShipping => '0 DZD (Free)';
+
+  @override
+  String get checkoutSecurePayment => 'Secure Payment (Edahabia / CIB)';
+
+  @override
+  String get checkoutOpenedInNewWindow => 'Payment page opened in a new window';
+
+  @override
+  String get checkoutCompleteInstructions =>
+      'Please complete the payment with your Edahabia or CIB card, then click below to confirm.';
+
+  @override
+  String get checkoutConfirmSuccess => 'Confirm Successful Payment';
+
+  @override
+  String get checkoutReopenLink => 'Reopen payment link';
+
+  @override
+  String get subscriptionCompareSupportPremium => 'Fast support';
+
+  @override
+  String get subscriptionCompareSupportVip => 'Dedicated VIP priority';
 
   @override
   String get subscriptionPlanFreePrice => 'Free';

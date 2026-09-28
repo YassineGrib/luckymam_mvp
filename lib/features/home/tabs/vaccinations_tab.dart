@@ -10,6 +10,8 @@ import '../../profile/models/profile_models.dart';
 import '../../profile/providers/profile_providers.dart';
 import '../../vaccines/providers/vaccine_providers.dart';
 import '../../vaccines/widgets/vaccine_card.dart';
+import '../../vaccines/widgets/vaccine_hero_summary_card.dart';
+import '../../vaccines/widgets/vaccine_timeline_item.dart';
 import '../../../shared/widgets/page_header_with_filter.dart';
 import '../../../shared/widgets/top_ambient_gradient.dart';
 import '../../../core/theme/app_typography.dart';
@@ -69,6 +71,7 @@ class _VaccinationsTabState extends ConsumerState<VaccinationsTab> {
                   title: l10n.homeVaccineCalendarTitle,
                   subtitle: l10n.homeVaccineCalendarSubtitle,
                   icon: Icons.vaccines_rounded,
+                  showBackButton: Navigator.of(context).canPop(),
                   childrenList: children,
                   selectedChildId: _selectedChild?.id,
                   allowAll: false,
@@ -120,21 +123,88 @@ class _VaccinationsTabState extends ConsumerState<VaccinationsTab> {
         ),
       ),
       data: (vaccineGroups) {
+        final completedCount = vaccineGroups.where((g) => g.isCompleted).length;
+        final totalCount = vaccineGroups.length;
+        final lang = Localizations.localeOf(context).languageCode;
+        final sectionTitle = lang == 'ar'
+            ? 'مراحل التقويم الوطني'
+            : (lang == 'en' ? 'Vaccination Stages' : 'Étapes du calendrier');
+
         return ListView.builder(
-          padding: const EdgeInsetsDirectional.fromSTEB(
-            AppSpacing.screenPaddingH,
-            AppSpacing.sm,
-            AppSpacing.screenPaddingH,
-            100, // Bottom padding for nav bar
+          physics: const BouncingScrollPhysics(),
+          padding: const EdgeInsets.only(
+            bottom: 110, // Bottom padding for floating navigation bar
           ),
-          itemCount: vaccineGroups.length,
+          itemCount: vaccineGroups.length + 2, // 0: Hero, 1: Section Header, 2+: Timeline items
           itemBuilder: (context, index) {
-            final group = vaccineGroups[index];
-            return VaccineCard(
-              childId: child.id,
-              vaccineGroup: group,
-              onMarkComplete: () => _showMarkCompleteDialog(child, group),
-              onMarkIncomplete: () => _showMarkIncompleteDialog(child, group),
+            if (index == 0) {
+              return VaccineHeroSummaryCard(
+                child: child,
+                vaccineGroups: vaccineGroups,
+              );
+            }
+
+            if (index == 1) {
+              return Padding(
+                padding: const EdgeInsets.fromLTRB(
+                  AppSpacing.screenPaddingH,
+                  14,
+                  AppSpacing.screenPaddingH,
+                  8,
+                ),
+                child: Row(
+                  children: [
+                    Text(
+                      sectionTitle,
+                      style: AppTypography.fromContext(
+                        context,
+                        fontSize: 15.5,
+                        fontWeight: FontWeight.w800,
+                        color: textColor,
+                      ),
+                    ),
+                    const SizedBox(width: 8),
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                      decoration: BoxDecoration(
+                        color: AppColors.success.withValues(alpha: 0.12),
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      child: Text(
+                        '$completedCount / $totalCount',
+                        style: AppTypography.fromContext(
+                          context,
+                          fontSize: 11,
+                          fontWeight: FontWeight.w800,
+                          color: AppColors.success,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              );
+            }
+
+            final groupIndex = index - 2;
+            final group = vaccineGroups[groupIndex];
+            final isFirst = groupIndex == 0;
+            final isLast = groupIndex == vaccineGroups.length - 1;
+
+            return Padding(
+              padding: const EdgeInsets.symmetric(
+                horizontal: AppSpacing.screenPaddingH,
+              ),
+              child: VaccineTimelineItem(
+                statusType: group.statusType,
+                isFirst: isFirst,
+                isLast: isLast,
+                child: VaccineCard(
+                  childId: child.id,
+                  vaccineGroup: group,
+                  onMarkComplete: () => _showMarkCompleteDialog(child, group),
+                  onMarkIncomplete: () => _showMarkIncompleteDialog(child, group),
+                ),
+              ),
             );
           },
         );

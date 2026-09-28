@@ -218,61 +218,79 @@ class PageHeaderWithFilter extends StatelessWidget {
       onTap: onTap,
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 200),
-        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+        padding: EdgeInsetsDirectional.fromSTEB(
+          (photoUrl != null && photoUrl.isNotEmpty) || label != 'Tous' ? 5 : 14,
+          3,
+          14,
+          3,
+        ),
         decoration: BoxDecoration(
           color: isSelected ? primary.withValues(alpha: 0.15) : surface,
           borderRadius: BorderRadius.circular(21),
           border: Border.all(
-            color: isSelected ? primary : Colors.transparent,
-            width: 1.5,
+            color: isSelected ? primary : (isDark ? Colors.white12 : const Color(0xFFE5E7EB)),
+            width: isSelected ? 1.5 : 1.0,
           ),
         ),
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            // Miniature optionnelle mais hyper compacte
+            // Miniature agrandie sans agrandir le conteneur parent
             if (photoUrl != null && photoUrl.isNotEmpty) ...[
               Container(
-                width: 22,
-                height: 22,
+                width: 32,
+                height: 32,
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
+                  border: Border.all(
+                    color: isSelected ? primary : Colors.white,
+                    width: 1.5,
+                  ),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withValues(alpha: 0.12),
+                      blurRadius: 4,
+                      offset: const Offset(0, 1),
+                    ),
+                  ],
                   image: DecorationImage(
                     image: NetworkImage(photoUrl),
                     fit: BoxFit.cover,
                   ),
                 ),
               ),
-              const SizedBox(width: 6),
+              const SizedBox(width: 8),
             ] else if (label != 'Tous') ...[
               // Fallback initial
               Container(
-                width: 22,
-                height: 22,
+                width: 32,
+                height: 32,
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
                   color: isSelected
                       ? primary
-                      : Colors.grey.withValues(alpha: 0.2),
+                      : (isDark ? Colors.white12 : Colors.grey.withValues(alpha: 0.2)),
                 ),
                 child: Center(
                   child: Text(
                     label.isNotEmpty ? label[0].toUpperCase() : '?',
-                    style: AppTypography.fromContext(context, 
-                      fontSize: 10,
+                    style: AppTypography.fromContext(
+                      context,
+                      fontSize: 12,
                       fontWeight: FontWeight.bold,
                       color: isSelected ? Colors.white : textColor,
                     ),
                   ),
                 ),
               ),
-              const SizedBox(width: 6),
+              const SizedBox(width: 8),
             ],
             Text(
               label,
-              style: AppTypography.fromContext(context, 
+              style: AppTypography.fromContext(
+                context,
                 fontSize: 13,
-                fontWeight: FontWeight.w600,
+                fontWeight: isSelected ? FontWeight.w700 : FontWeight.w600,
                 color: isSelected ? primary : textColor,
               ),
             ),

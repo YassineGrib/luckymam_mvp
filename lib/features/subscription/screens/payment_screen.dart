@@ -1,19 +1,22 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import '../../../core/theme/app_typography.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import 'package:firebase_auth/firebase_auth.dart';
 import '../../../core/extensions/l10n_extension.dart';
 import '../../../core/services/chargily_payment_service.dart';
 import '../../../core/theme/app_colors.dart';
+import '../../../core/theme/app_spacing.dart';
+import '../../../core/theme/app_typography.dart';
 import '../../../l10n/app_localizations.dart';
-import '../subscription_plan_l10n.dart';
+import '../../../shared/widgets/top_ambient_gradient.dart';
 import '../models/subscription_models.dart';
 import '../providers/subscription_providers.dart';
+import '../subscription_plan_l10n.dart';
+import 'album_claim_screen.dart';
 import 'chargily_checkout_screen.dart';
 
-/// BaridiMob payment screen (CIB / Edahabia) — UI only, no real processing.
+/// Streamlined Algerian Checkout Screen for Edahabia / CIB via Chargily Pay.
 class PaymentScreen extends ConsumerStatefulWidget {
   final SubscriptionPlan selectedPlan;
 
@@ -24,399 +27,567 @@ class PaymentScreen extends ConsumerStatefulWidget {
 }
 
 class _PaymentScreenState extends ConsumerState<PaymentScreen> {
-  PaymentMethod _method = PaymentMethod.cib;
-  final _cardNumberCtrl = TextEditingController();
-  final _expiryCtrl = TextEditingController();
-  final _cvvCtrl = TextEditingController();
-  final _holderCtrl = TextEditingController();
-  bool _showSuccess = false;
-
-  @override
-  void dispose() {
-    _cardNumberCtrl.dispose();
-    _expiryCtrl.dispose();
-    _cvvCtrl.dispose();
-    _holderCtrl.dispose();
-    super.dispose();
-  }
+  PaymentMethod _selectedMethod = PaymentMethod.edahabia;
+  bool _isProcessing = false;
+  String? _cancellationNotice;
 
   @override
   Widget build(BuildContext context) {
     final l10n = context.l10n;
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final bgColor = isDark
-        ? AppColors.backgroundDark
-        : AppColors.backgroundLight;
+    final bgColor =
+        isDark ? AppColors.backgroundDark : AppColors.backgroundLight;
     final textColor = isDark ? Colors.white : AppColors.onSurfaceLight;
-    final subTextColor = isDark
-        ? AppColors.textSecondaryDark
-        : AppColors.textSecondaryLight;
-    final surface = isDark ? AppColors.surfaceDark : AppColors.surfaceLight;
-    final inputBg = isDark
-        ? AppColors.inputBackgroundDark
-        : AppColors.inputBackgroundLight;
+    final subTextColor =
+        isDark ? AppColors.textSecondaryDark : AppColors.textSecondaryLight;
+    final surfaceColor =
+        isDark ? AppColors.surfaceDark : AppColors.surfaceLight;
+    final borderColor =
+        isDark ? AppColors.dividerDark : AppColors.dividerLight;
+
     final plan = widget.selectedPlan;
-
-    final actionsState = ref.watch(subscriptionActionsProvider);
-
-    ref.listen<SubscriptionActionsState>(subscriptionActionsProvider, (
-      _,
-      next,
-    ) {
-      if (next.successMessage != null) {
-        setState(() => _showSuccess = true);
-        ref.read(subscriptionActionsProvider.notifier).clearMessages();
-      }
-      if (next.errorDetails != null) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(l10n.subscriptionSnackError(next.errorDetails!)),
-            backgroundColor: Colors.red,
-          ),
-        );
-        ref.read(subscriptionActionsProvider.notifier).clearMessages();
-      }
-    });
-
-    if (_showSuccess) return _buildSuccessView(context, textColor, plan, l10n);
+    final isVip = plan.tier == SubscriptionTier.vip;
 
     return Scaffold(
       backgroundColor: bgColor,
-      body: SafeArea(
-        child: Column(
-          children: [
-            // Header
-            Padding(
-              padding: const EdgeInsets.fromLTRB(8, 16, 20, 8),
-              child: Row(
-                children: [
-                  IconButton(
-                    onPressed: () => Navigator.pop(context),
-                    icon: Icon(
-                      Icons.arrow_back_ios_new_rounded,
-                      color: textColor,
-                    ),
+      body: Stack(
+        children: [
+          const TopAmbientGradient(height: 380),
+          SafeArea(
+            child: Column(
+              children: [
+                // ── Top Navigation Bar ──────────────────────────────────────────
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(
+                    AppSpacing.screenPaddingH,
+                    AppSpacing.sm,
+                    AppSpacing.screenPaddingH,
+                    AppSpacing.sm,
                   ),
-                  const SizedBox(width: 4),
-                  Expanded(
-                    child: Text(
-                      l10n.paymentTitle,
-                      style: AppTypography.fromContext(context, 
-                        fontSize: 22,
-                        fontWeight: FontWeight.bold,
-                        color: textColor,
-                      ),
-                    ),
-                  ),
-                  // BaridiMob badge
-                  Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 10,
-                      vertical: 5,
-                    ),
-                    decoration: BoxDecoration(
-                      color: const Color(0xFF00695C).withValues(alpha: 0.15),
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                    child: Text(
-                      l10n.paymentBaridiMob,
-                      style: AppTypography.fromContext(context, 
-                        fontSize: 12,
-                        fontWeight: FontWeight.bold,
-                        color: const Color(0xFF00695C),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-
-            if (actionsState.isLoading) const LinearProgressIndicator(),
-
-            Expanded(
-              child: SingleChildScrollView(
-                padding: const EdgeInsets.fromLTRB(20, 8, 20, 40),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    // Order summary
-                    Container(
-                      width: double.infinity,
-                      padding: const EdgeInsets.all(18),
-                      decoration: BoxDecoration(
-                        gradient: LinearGradient(
-                          colors: [
-                            plan.accentColor,
-                            plan.accentColor.withValues(alpha: 0.7),
+                  child: Row(
+                    children: [
+                      Container(
+                        decoration: BoxDecoration(
+                          color: isDark ? Colors.white12 : Colors.white,
+                          borderRadius: BorderRadius.circular(14),
+                          border: Border.all(color: borderColor),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black.withValues(
+                                alpha: isDark ? 0.2 : 0.04,
+                              ),
+                              blurRadius: 8,
+                              offset: const Offset(0, 2),
+                            ),
                           ],
                         ),
-                        borderRadius: BorderRadius.circular(18),
-                      ),
-                      child: Row(
-                        children: [
-                          Icon(plan.tier.icon, color: Colors.white, size: 32),
-                          const SizedBox(width: 14),
-                          Expanded(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  plan.localizedTitle(l10n),
-                                  style: AppTypography.fromContext(context, 
-                                    fontSize: 18,
-                                    fontWeight: FontWeight.bold,
-                                    color: Colors.white,
-                                  ),
-                                ),
-                                Text(
-                                  plan.localizedSubtitle(l10n),
-                                  style: AppTypography.fromContext(context, 
-                                    fontSize: 13,
-                                    color: Colors.white70,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.end,
-                            children: [
-                              Text(
-                                l10n.paymentPriceDzd(plan.priceDZD),
-                                style: AppTypography.fromContext(context, 
-                                  fontSize: 22,
-                                  fontWeight: FontWeight.bold,
-                                  color: Colors.white,
-                                ),
-                              ),
-                              Text(
-                                plan.localizedBillingCycle(l10n),
-                                style: AppTypography.fromContext(context, 
-                                  fontSize: 12,
-                                  color: Colors.white60,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ],
-                      ),
-                    ),
-
-                    const SizedBox(height: 24),
-
-                    // Payment method selection
-                    Text(
-                      l10n.paymentMethodTitle,
-                      style: AppTypography.fromContext(context, 
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
-                        color: textColor,
-                      ),
-                    ),
-                    const SizedBox(height: 12),
-
-                    Row(
-                      children: PaymentMethod.values.map((method) {
-                        final isSelected = method == _method;
-                        return Expanded(
-                          child: GestureDetector(
-                            onTap: () => setState(() => _method = method),
-                            child: AnimatedContainer(
-                              duration: const Duration(milliseconds: 200),
-                              margin: EdgeInsets.only(
-                                right: method == PaymentMethod.cib ? 8 : 0,
-                                left: method == PaymentMethod.edahabia ? 8 : 0,
-                              ),
-                              padding: const EdgeInsets.symmetric(vertical: 16),
-                              decoration: BoxDecoration(
-                                color: isSelected
-                                    ? plan.accentColor.withValues(alpha: 0.12)
-                                    : surface,
-                                borderRadius: BorderRadius.circular(16),
-                                border: Border.all(
-                                  color: isSelected
-                                      ? plan.accentColor
-                                      : Colors.transparent,
-                                  width: 2,
-                                ),
-                              ),
-                              child: Column(
-                                children: [
-                                  Icon(
-                                    method.icon,
-                                    color: isSelected
-                                        ? plan.accentColor
-                                        : subTextColor,
-                                    size: 28,
-                                  ),
-                                  const SizedBox(height: 6),
-                                  Text(
-                                    _paymentMethodLabel(method, l10n),
-                                    style: AppTypography.fromContext(context, 
-                                      fontSize: 14,
-                                      fontWeight: FontWeight.bold,
-                                      color: isSelected
-                                          ? plan.accentColor
-                                          : textColor,
-                                    ),
-                                  ),
-                                  Text(
-                                    _paymentMethodDescription(method, l10n),
-                                    style: AppTypography.fromContext(context, 
-                                      fontSize: 11,
-                                      color: subTextColor,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ),
-                        );
-                      }).toList(),
-                    ),
-
-                    const SizedBox(height: 24),
-
-                    // Card details
-                    Text(
-                      l10n.paymentCardDetailsTitle,
-                      style: AppTypography.fromContext(context, 
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
-                        color: textColor,
-                      ),
-                    ),
-                    const SizedBox(height: 12),
-
-                    // Card holder
-                    _buildField(
-                      label: l10n.paymentCardHolderLabel,
-                      hint: l10n.name,
-                      controller: _holderCtrl,
-                      icon: Icons.person_outline_rounded,
-                      inputBg: inputBg,
-                      textColor: textColor,
-                      subTextColor: subTextColor,
-                    ),
-                    const SizedBox(height: 12),
-
-                    // Card number
-                    _buildField(
-                      label: l10n.paymentCardNumberLabel,
-                      hint: l10n.paymentCardNumberHint,
-                      controller: _cardNumberCtrl,
-                      icon: Icons.credit_card_rounded,
-                      inputBg: inputBg,
-                      textColor: textColor,
-                      subTextColor: subTextColor,
-                      keyboardType: TextInputType.number,
-                      formatters: [
-                        FilteringTextInputFormatter.digitsOnly,
-                        LengthLimitingTextInputFormatter(16),
-                        _CardNumberFormatter(),
-                      ],
-                    ),
-                    const SizedBox(height: 12),
-
-                    // Expiry + CVV row
-                    Row(
-                      children: [
-                        Expanded(
-                          child: _buildField(
-                            label: l10n.paymentExpiryLabel,
-                            hint: l10n.paymentExpiryHint,
-                            controller: _expiryCtrl,
-                            icon: Icons.calendar_today_rounded,
-                            inputBg: inputBg,
-                            textColor: textColor,
-                            subTextColor: subTextColor,
-                            keyboardType: TextInputType.number,
-                            formatters: [
-                              FilteringTextInputFormatter.digitsOnly,
-                              LengthLimitingTextInputFormatter(4),
-                              _ExpiryFormatter(),
-                            ],
+                        child: IconButton(
+                          onPressed: () {
+                            HapticFeedback.selectionClick();
+                            Navigator.pop(context);
+                          },
+                          icon: Icon(
+                            Icons.arrow_back_ios_new_rounded,
+                            size: 18,
+                            color: textColor,
                           ),
                         ),
-                        const SizedBox(width: 12),
-                        Expanded(
-                          child: _buildField(
-                            label: l10n.paymentCvvLabel,
-                            hint: l10n.paymentCvvHint,
-                            controller: _cvvCtrl,
-                            icon: Icons.lock_outline_rounded,
-                            inputBg: inputBg,
-                            textColor: textColor,
-                            subTextColor: subTextColor,
-                            obscure: true,
-                            keyboardType: TextInputType.number,
-                            formatters: [
-                              FilteringTextInputFormatter.digitsOnly,
-                              LengthLimitingTextInputFormatter(3),
-                            ],
-                          ),
-                        ),
-                      ],
-                    ),
-
-                    const SizedBox(height: 28),
-
-                    // Security notice
-                    Container(
-                      padding: const EdgeInsets.all(14),
-                      decoration: BoxDecoration(
-                        color: const Color(0xFF00695C).withValues(alpha: 0.08),
-                        borderRadius: BorderRadius.circular(14),
                       ),
-                      child: Row(
-                        children: [
-                          const Icon(
-                            Icons.shield_rounded,
-                            color: Color(0xFF00695C),
-                            size: 22,
-                          ),
-                          const SizedBox(width: 12),
-                          Expanded(
-                            child: Text(
-                              l10n.paymentSecurityNotice,
-                              style: AppTypography.fromContext(context, 
-                                fontSize: 12,
-                                color: const Color(0xFF00695C),
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-
-                    const SizedBox(height: 24),
-
-                    // Confirm button
-                    SizedBox(
-                      width: double.infinity,
-                      height: 54,
-                      child: ElevatedButton(
-                        onPressed: actionsState.isLoading ? null : _onConfirm,
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: plan.accentColor,
-                          foregroundColor: Colors.white,
-                          elevation: 0,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(16),
-                          ),
-                        ),
+                      const SizedBox(width: AppSpacing.sm),
+                      Expanded(
                         child: Text(
-                          l10n.paymentConfirmButton(plan.priceDZD),
-                          style: AppTypography.fromContext(context, 
-                            fontSize: 16,
+                          l10n.paymentTitle,
+                          style: AppTypography.fromContext(
+                            context,
+                            fontSize: 20,
                             fontWeight: FontWeight.bold,
+                            color: textColor,
                           ),
                         ),
+                      ),
+                      // Security indicator badge
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 10,
+                          vertical: 6,
+                        ),
+                        decoration: BoxDecoration(
+                          color: const Color(0xFF00897B).withValues(alpha: 0.12),
+                          borderRadius: BorderRadius.circular(10),
+                          border: Border.all(
+                            color: const Color(0xFF00897B).withValues(alpha: 0.3),
+                          ),
+                        ),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            const Icon(
+                              Icons.lock_rounded,
+                              size: 13,
+                              color: Color(0xFF00897B),
+                            ),
+                            const SizedBox(width: 4),
+                            Text(
+                              '3D Secure',
+                              style: AppTypography.fromContext(
+                                context,
+                                fontSize: 11,
+                                fontWeight: FontWeight.bold,
+                                color: const Color(0xFF00897B),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+
+                if (_isProcessing)
+                  const LinearProgressIndicator(
+                    color: Color(0xFFFF8F00),
+                    minHeight: 2.5,
+                  ),
+
+                // ── Main Scrollable Content ─────────────────────────────────────
+                Expanded(
+                  child: ListView(
+                    physics: const BouncingScrollPhysics(),
+                    padding: const EdgeInsets.fromLTRB(
+                      AppSpacing.screenPaddingH,
+                      AppSpacing.sm,
+                      AppSpacing.screenPaddingH,
+                      AppSpacing.xxl,
+                    ),
+                    children: [
+                      // Order Summary Bento Card
+                      _buildOrderSummaryCard(
+                        context,
+                        plan,
+                        isVip,
+                        isDark,
+                        textColor,
+                        l10n,
+                      ),
+
+                      const SizedBox(height: AppSpacing.lg),
+
+                      // Cancellation / Retry Notification (if previously cancelled)
+                      if (_cancellationNotice != null) ...[
+                        Container(
+                          padding: const EdgeInsets.all(AppSpacing.md),
+                          decoration: BoxDecoration(
+                            color: const Color(0xFFFFF3E0),
+                            borderRadius: BorderRadius.circular(16),
+                            border: Border.all(color: const Color(0xFFFFB74D)),
+                          ),
+                          child: Row(
+                            children: [
+                              const Icon(
+                                Icons.info_outline_rounded,
+                                color: Color(0xFFE65100),
+                                size: 22,
+                              ),
+                              const SizedBox(width: 10),
+                              Expanded(
+                                child: Text(
+                                  _cancellationNotice!,
+                                  style: AppTypography.fromContext(
+                                    context,
+                                    fontSize: 12.5,
+                                    color: const Color(0xFFBF360C),
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        const SizedBox(height: AppSpacing.md),
+                      ],
+
+                      // Payment Method Selector
+                      Text(
+                        l10n.subscriptionPaymentMethodSelect,
+                        style: AppTypography.fromContext(
+                          context,
+                          fontSize: 15.5,
+                          fontWeight: FontWeight.bold,
+                          color: textColor,
+                        ),
+                      ),
+                      const SizedBox(height: AppSpacing.sm),
+
+                      Row(
+                        children: [
+                          Expanded(
+                            child: _buildMethodCard(
+                              method: PaymentMethod.edahabia,
+                              title: l10n.paymentMethodEdahabia,
+                              subtitle: l10n.subscriptionPaymentEdahabiaDesc,
+                              icon: Icons.credit_card_rounded,
+                              activeColor: const Color(0xFFD4AF37),
+                              isDark: isDark,
+                              surfaceColor: surfaceColor,
+                              textColor: textColor,
+                              subTextColor: subTextColor,
+                            ),
+                          ),
+                          const SizedBox(width: AppSpacing.sm),
+                          Expanded(
+                            child: _buildMethodCard(
+                              method: PaymentMethod.cib,
+                              title: l10n.paymentMethodCib,
+                              subtitle: l10n.subscriptionPaymentCibDesc,
+                              icon: Icons.account_balance_rounded,
+                              activeColor: const Color(0xFF1E88E5),
+                              isDark: isDark,
+                              surfaceColor: surfaceColor,
+                              textColor: textColor,
+                              subTextColor: subTextColor,
+                            ),
+                          ),
+                        ],
+                      ),
+
+                      const SizedBox(height: AppSpacing.lg),
+
+                      // Reassuring Trust & Official Gateway Notice
+                      _buildSecurityNotice(
+                        context,
+                        isDark,
+                        surfaceColor,
+                        borderColor,
+                        textColor,
+                        l10n,
+                      ),
+
+                      const SizedBox(height: AppSpacing.xl),
+
+                      // Primary CTA: Proceed to Chargily Pay
+                      SizedBox(
+                        width: double.infinity,
+                        height: 54,
+                        child: ElevatedButton(
+                          onPressed: _isProcessing ? null : _handlePayment,
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: isVip
+                                ? const Color(0xFFFF6F00)
+                                : AppColors.coral,
+                            foregroundColor: Colors.white,
+                            elevation: 4,
+                            shadowColor: (isVip
+                                    ? const Color(0xFFFF6F00)
+                                    : AppColors.coral)
+                                .withValues(alpha: 0.4),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(18),
+                            ),
+                          ),
+                          child: _isProcessing
+                              ? const SizedBox(
+                                  width: 24,
+                                  height: 24,
+                                  child: CircularProgressIndicator(
+                                    strokeWidth: 2.5,
+                                    valueColor: AlwaysStoppedAnimation<Color>(
+                                      Colors.white,
+                                    ),
+                                  ),
+                                )
+                              : Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    const Icon(Icons.lock_outline_rounded, size: 19),
+                                    const SizedBox(width: 8),
+                                    Flexible(
+                                      child: FittedBox(
+                                        fit: BoxFit.scaleDown,
+                                        child: Text(
+                                          l10n.subscriptionPaymentPayButton,
+                                          style: AppTypography.fromContext(
+                                            context,
+                                            fontSize: 15,
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                          maxLines: 1,
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildOrderSummaryCard(
+    BuildContext context,
+    SubscriptionPlan plan,
+    bool isVip,
+    bool isDark,
+    Color textColor,
+    AppLocalizations l10n,
+  ) {
+    return Container(
+      decoration: BoxDecoration(
+        color: isDark ? AppColors.surfaceDark : Colors.white,
+        borderRadius: BorderRadius.circular(22),
+        border: Border.all(
+          color: isVip
+              ? const Color(0xFFFF8F00).withValues(alpha: 0.6)
+              : (isDark ? AppColors.dividerDark : AppColors.dividerLight),
+          width: isVip ? 1.8 : 1.0,
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: (isVip ? const Color(0xFFFF8F00) : Colors.black).withValues(
+              alpha: isDark ? 0.25 : 0.05,
+            ),
+            blurRadius: 18,
+            offset: const Offset(0, 6),
+          ),
+        ],
+      ),
+      child: Column(
+        children: [
+          // Gradient Top Header
+          Container(
+            padding: const EdgeInsets.all(18),
+            decoration: BoxDecoration(
+              gradient: isVip
+                  ? const LinearGradient(
+                      colors: [Color(0xFFFF8F00), Color(0xFFFF6F00)],
+                    )
+                  : AppColors.primaryGradient,
+              borderRadius: const BorderRadius.vertical(
+                top: Radius.circular(21),
+              ),
+            ),
+            child: Row(
+              children: [
+                Container(
+                  width: 44,
+                  height: 44,
+                  decoration: BoxDecoration(
+                    color: Colors.white.withValues(alpha: 0.22),
+                    borderRadius: BorderRadius.circular(14),
+                  ),
+                  child: Icon(plan.tier.icon, color: Colors.white, size: 24),
+                ),
+                const SizedBox(width: 14),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        plan.localizedTitle(l10n),
+                        style: AppTypography.fromContext(
+                          context,
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.white,
+                        ),
+                      ),
+                      Text(
+                        plan.localizedSubtitle(l10n),
+                        style: AppTypography.fromContext(
+                          context,
+                          fontSize: 12.5,
+                          color: Colors.white70,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                Text(
+                  l10n.paymentPriceDzd(plan.priceDZD),
+                  style: AppTypography.fromContext(
+                    context,
+                    fontSize: 22,
+                    fontWeight: FontWeight.w800,
+                    color: Colors.white,
+                  ),
+                ),
+              ],
+            ),
+          ),
+
+          // Price Details & VIP Perk
+          Padding(
+            padding: const EdgeInsets.all(18),
+            child: Column(
+              children: [
+                if (isVip) ...[
+                  Container(
+                    padding: const EdgeInsets.all(12),
+                    decoration: BoxDecoration(
+                      color: const Color(0xFFFF8F00).withValues(
+                        alpha: isDark ? 0.15 : 0.08,
+                      ),
+                      borderRadius: BorderRadius.circular(14),
+                      border: Border.all(
+                        color: const Color(0xFFFF8F00).withValues(alpha: 0.3),
+                      ),
+                    ),
+                    child: Row(
+                      children: [
+                        const Icon(
+                          Icons.auto_stories_rounded,
+                          color: Color(0xFFFF8F00),
+                          size: 22,
+                        ),
+                        const SizedBox(width: 10),
+                        Expanded(
+                          child: Text(
+                            l10n.subscriptionVipAlbumHighlight,
+                            style: AppTypography.fromContext(
+                              context,
+                              fontSize: 12,
+                              fontWeight: FontWeight.w600,
+                              color: isDark
+                                  ? const Color(0xFFFFD54F)
+                                  : const Color(0xFFB23B00),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(height: 12),
+                ],
+
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      l10n.subscriptionPlanBillingPerYear,
+                      style: AppTypography.fromContext(
+                        context,
+                        fontSize: 13,
+                        color: textColor.withValues(alpha: 0.7),
+                      ),
+                    ),
+                    Text(
+                      l10n.paymentDurationFullYear,
+                      style: AppTypography.fromContext(
+                        context,
+                        fontSize: 13,
+                        fontWeight: FontWeight.w600,
+                        color: textColor,
                       ),
                     ),
                   ],
                 ),
+                const SizedBox(height: 8),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      l10n.paymentShippingAndDelivery,
+                      style: AppTypography.fromContext(
+                        context,
+                        fontSize: 13,
+                        color: textColor.withValues(alpha: 0.7),
+                      ),
+                    ),
+                    Text(
+                      l10n.paymentFreeShipping,
+                      style: AppTypography.fromContext(
+                        context,
+                        fontSize: 13,
+                        fontWeight: FontWeight.w700,
+                        color: const Color(0xFF2E7D32),
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildMethodCard({
+    required PaymentMethod method,
+    required String title,
+    required String subtitle,
+    required IconData icon,
+    required Color activeColor,
+    required bool isDark,
+    required Color surfaceColor,
+    required Color textColor,
+    required Color subTextColor,
+  }) {
+    final isSelected = _selectedMethod == method;
+
+    return GestureDetector(
+      onTap: () {
+        HapticFeedback.selectionClick();
+        setState(() => _selectedMethod = method);
+      },
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 200),
+        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 16),
+        decoration: BoxDecoration(
+          color: isSelected
+              ? activeColor.withValues(alpha: isDark ? 0.15 : 0.08)
+              : surfaceColor,
+          borderRadius: BorderRadius.circular(18),
+          border: Border.all(
+            color: isSelected ? activeColor : (isDark ? AppColors.dividerDark : AppColors.dividerLight),
+            width: isSelected ? 2.0 : 1.0,
+          ),
+          boxShadow: [
+            if (isSelected)
+              BoxShadow(
+                color: activeColor.withValues(alpha: 0.2),
+                blurRadius: 12,
+                offset: const Offset(0, 4),
               ),
+          ],
+        ),
+        child: Column(
+          children: [
+            Container(
+              padding: const EdgeInsets.all(8),
+              decoration: BoxDecoration(
+                color: activeColor.withValues(alpha: 0.15),
+                shape: BoxShape.circle,
+              ),
+              child: Icon(icon, color: activeColor, size: 24),
+            ),
+            const SizedBox(height: 8),
+            Text(
+              title,
+              style: AppTypography.fromContext(
+                context,
+                fontSize: 14,
+                fontWeight: FontWeight.bold,
+                color: isSelected ? activeColor : textColor,
+              ),
+              textAlign: TextAlign.center,
+            ),
+            const SizedBox(height: 2),
+            Text(
+              subtitle,
+              style: AppTypography.fromContext(
+                context,
+                fontSize: 11,
+                color: subTextColor,
+              ),
+              textAlign: TextAlign.center,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
             ),
           ],
         ),
@@ -424,108 +595,88 @@ class _PaymentScreenState extends ConsumerState<PaymentScreen> {
     );
   }
 
-  String _paymentMethodLabel(PaymentMethod method, AppLocalizations l10n) {
-    switch (method) {
-      case PaymentMethod.cib:
-        return l10n.paymentMethodCib;
-      case PaymentMethod.edahabia:
-        return l10n.paymentMethodEdahabia;
-    }
-  }
-
-  String _paymentMethodDescription(PaymentMethod method, AppLocalizations l10n) {
-    switch (method) {
-      case PaymentMethod.cib:
-        return l10n.paymentMethodCibDescription;
-      case PaymentMethod.edahabia:
-        return l10n.paymentMethodEdahabiaDescription;
-    }
-  }
-
-  Widget _buildField({
-    required String label,
-    required String hint,
-    required TextEditingController controller,
-    required IconData icon,
-    required Color inputBg,
-    required Color textColor,
-    required Color subTextColor,
-    bool obscure = false,
-    TextInputType? keyboardType,
-    List<TextInputFormatter>? formatters,
-  }) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          label,
-          style: AppTypography.fromContext(context, fontSize: 12, color: subTextColor),
-        ),
-        const SizedBox(height: 6),
-        TextField(
-          controller: controller,
-          obscureText: obscure,
-          keyboardType: keyboardType,
-          inputFormatters: formatters,
-          style: AppTypography.fromContext(context, fontSize: 15, color: textColor),
-          decoration: InputDecoration(
-            hintText: hint,
-            hintStyle: AppTypography.fromContext(context, 
-              fontSize: 15,
-              color: subTextColor.withValues(alpha: 0.5),
+  Widget _buildSecurityNotice(
+    BuildContext context,
+    bool isDark,
+    Color surfaceColor,
+    Color borderColor,
+    Color textColor,
+    AppLocalizations l10n,
+  ) {
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: surfaceColor,
+        borderRadius: BorderRadius.circular(18),
+        border: Border.all(color: borderColor),
+      ),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Container(
+            padding: const EdgeInsets.all(8),
+            decoration: BoxDecoration(
+              color: const Color(0xFF00897B).withValues(alpha: 0.12),
+              borderRadius: BorderRadius.circular(12),
             ),
-            prefixIcon: Icon(icon, size: 20, color: subTextColor),
-            filled: true,
-            fillColor: inputBg,
-            border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(14),
-              borderSide: BorderSide.none,
-            ),
-            contentPadding: const EdgeInsets.symmetric(
-              horizontal: 16,
-              vertical: 14,
+            child: const Icon(
+              Icons.security_rounded,
+              color: Color(0xFF00897B),
+              size: 22,
             ),
           ),
-        ),
-      ],
+          const SizedBox(width: 12),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  l10n.subscriptionTrustSecureTitle,
+                  style: AppTypography.fromContext(
+                    context,
+                    fontSize: 13.5,
+                    fontWeight: FontWeight.bold,
+                    color: textColor,
+                  ),
+                ),
+                const SizedBox(height: 3),
+                Text(
+                  l10n.subscriptionTrustSecureSubtitle,
+                  style: AppTypography.fromContext(
+                    context,
+                    fontSize: 12,
+                    color: textColor.withValues(alpha: 0.7),
+                  ).copyWith(height: 1.4),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
     );
   }
 
-  Future<void> _onConfirm() async {
+  Future<void> _handlePayment() async {
     final l10n = context.l10n;
     final plan = widget.selectedPlan;
     final uid = FirebaseAuth.instance.currentUser?.uid ?? 'guest_user';
 
-    showDialog(
-      context: context,
-      barrierDismissible: false,
-      builder: (_) => const Center(
-        child: Card(
-          child: Padding(
-            padding: EdgeInsets.all(24.0),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                CircularProgressIndicator(color: Color(0xFF5801A2)),
-                SizedBox(height: 16),
-                Text('جاري فتح بوابة الدفع Chargily Pay...'),
-              ],
-            ),
-          ),
-        ),
-      ),
-    );
+    HapticFeedback.mediumImpact();
+    setState(() {
+      _isProcessing = true;
+      _cancellationNotice = null;
+    });
 
     final result = await ChargilyPaymentService.createCheckout(
       amount: plan.priceDZD,
       userId: uid,
       type: 'subscription',
       planTier: plan.tier.name,
-      customerName: _holderCtrl.text.isNotEmpty ? _holderCtrl.text : null,
+      customerName: FirebaseAuth.instance.currentUser?.displayName,
     );
 
     if (!mounted) return;
-    Navigator.pop(context); // Close loading dialog
+    setState(() => _isProcessing = false);
 
     if (result.success && result.checkoutUrl != null) {
       final paid = await Navigator.push<bool>(
@@ -547,164 +698,153 @@ class _PaymentScreenState extends ConsumerState<PaymentScreen> {
       );
 
       if (paid == true) {
-        setState(() => _showSuccess = true);
+        if (!mounted) return;
+        _showSuccessCelebration(context, plan, l10n);
+      } else {
+        setState(() {
+          _cancellationNotice = l10n.subscriptionPaymentCancelled;
+        });
       }
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(result.errorMessage ?? l10n.checkoutErrorGeneric),
           backgroundColor: AppColors.error,
+          behavior: SnackBarBehavior.floating,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(14),
+          ),
         ),
       );
     }
   }
 
-  Widget _buildSuccessView(
+  void _showSuccessCelebration(
     BuildContext context,
-    Color textColor,
     SubscriptionPlan plan,
     AppLocalizations l10n,
   ) {
-    return Scaffold(
-      backgroundColor: Theme.of(context).brightness == Brightness.dark
-          ? AppColors.backgroundDark
-          : AppColors.backgroundLight,
-      body: SafeArea(
-        child: Center(
-          child: Padding(
-            padding: const EdgeInsets.all(40),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Container(
-                  width: 100,
-                  height: 100,
-                  decoration: BoxDecoration(
-                    color: AppColors.success.withValues(alpha: 0.15),
-                    shape: BoxShape.circle,
-                  ),
-                  child: const Icon(
-                    Icons.check_circle_rounded,
-                    size: 60,
-                    color: AppColors.success,
-                  ),
-                ),
-                const SizedBox(height: 28),
-                Text(
-                  l10n.paymentSuccessTitle,
-                  style: AppTypography.fromContext(context, 
-                    fontSize: 26,
-                    fontWeight: FontWeight.bold,
-                    color: textColor,
-                  ),
-                ),
-                const SizedBox(height: 12),
-                Text(
-                  l10n.paymentSuccessActivePlan(plan.localizedTitle(l10n)),
-                  style: AppTypography.fromContext(context, 
-                    fontSize: 15,
-                    color: textColor.withValues(alpha: 0.7),
-                  ),
-                  textAlign: TextAlign.center,
-                ),
-                if (plan.hasAlbumPerk) ...[
-                  const SizedBox(height: 20),
-                  Container(
-                    padding: const EdgeInsets.all(16),
-                    decoration: BoxDecoration(
-                      color: const Color(0xFFFF6F00).withValues(alpha: 0.1),
-                      borderRadius: BorderRadius.circular(16),
+    HapticFeedback.heavyImpact();
+    final isVip = plan.tier == SubscriptionTier.vip;
+
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (bottomSheetContext) {
+        final isDark = Theme.of(context).brightness == Brightness.dark;
+        return Container(
+          padding: const EdgeInsets.all(AppSpacing.xl),
+          decoration: BoxDecoration(
+            color: isDark ? AppColors.surfaceDark : Colors.white,
+            borderRadius: const BorderRadius.vertical(top: Radius.circular(28)),
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Container(
+                width: 70,
+                height: 70,
+                decoration: BoxDecoration(
+                  gradient: isVip
+                      ? const LinearGradient(
+                          colors: [Color(0xFFFF8F00), Color(0xFFFF6F00)],
+                        )
+                      : AppColors.primaryGradient,
+                  shape: BoxShape.circle,
+                  boxShadow: [
+                    BoxShadow(
+                      color: (isVip ? const Color(0xFFFF8F00) : AppColors.coral)
+                          .withValues(alpha: 0.4),
+                      blurRadius: 18,
+                      offset: const Offset(0, 6),
                     ),
-                    child: Row(
-                      children: [
-                        const Icon(
-                          Icons.card_giftcard_rounded,
-                          color: Color(0xFFFF6F00),
-                          size: 28,
-                        ),
-                        const SizedBox(width: 12),
-                        Expanded(
-                          child: Text(
-                            l10n.paymentSuccessAlbumPerk,
-                            style: AppTypography.fromContext(context, 
-                              fontSize: 13,
-                              color: const Color(0xFFFF6F00),
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
-                const SizedBox(height: 36),
+                  ],
+                ),
+                child: Icon(
+                  isVip ? Icons.diamond_rounded : Icons.check_rounded,
+                  color: Colors.white,
+                  size: 38,
+                ),
+              ),
+              const SizedBox(height: AppSpacing.md),
+              Text(
+                l10n.subscriptionPaymentSuccessModalTitle,
+                style: AppTypography.fromContext(
+                  context,
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                ),
+                textAlign: TextAlign.center,
+              ),
+              const SizedBox(height: 8),
+              Text(
+                l10n.subscriptionPaymentSuccessModalDesc,
+                style: AppTypography.fromContext(
+                  context,
+                  fontSize: 13.5,
+                  color: isDark
+                      ? AppColors.textSecondaryDark
+                      : AppColors.textSecondaryLight,
+                ).copyWith(height: 1.4),
+                textAlign: TextAlign.center,
+              ),
+              const SizedBox(height: AppSpacing.lg),
+              if (isVip) ...[
                 SizedBox(
                   width: double.infinity,
-                  height: 52,
+                  height: 50,
                   child: ElevatedButton(
                     onPressed: () {
-                      Navigator.of(context).popUntil((route) => route.isFirst);
+                      Navigator.pop(bottomSheetContext); // Close sheet
+                      Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => const AlbumClaimScreen(),
+                        ),
+                      );
                     },
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: plan.accentColor,
+                      backgroundColor: const Color(0xFFFF6F00),
                       foregroundColor: Colors.white,
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(16),
                       ),
                     ),
                     child: Text(
-                      l10n.checkoutBackHome,
-                      style: AppTypography.fromContext(context, 
-                        fontSize: 16,
+                      l10n.subscriptionPaymentClaimAlbumNow,
+                      style: AppTypography.fromContext(
+                        context,
+                        fontSize: 15,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
                   ),
                 ),
+                const SizedBox(height: 8),
               ],
-            ),
+              SizedBox(
+                width: double.infinity,
+                height: 48,
+                child: TextButton(
+                  onPressed: () {
+                    Navigator.pop(bottomSheetContext); // Close sheet
+                    Navigator.pop(context); // Return to parent screen
+                  },
+                  child: Text(
+                    l10n.subscriptionPaymentLater,
+                    style: AppTypography.fromContext(
+                      context,
+                      fontSize: 14,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                ),
+              ),
+            ],
           ),
-        ),
-      ),
-    );
-  }
-}
-
-/// Formats card number with spaces every 4 digits.
-class _CardNumberFormatter extends TextInputFormatter {
-  @override
-  TextEditingValue formatEditUpdate(
-    TextEditingValue oldValue,
-    TextEditingValue newValue,
-  ) {
-    final text = newValue.text.replaceAll(' ', '');
-    final buffer = StringBuffer();
-    for (int i = 0; i < text.length; i++) {
-      if (i > 0 && i % 4 == 0) buffer.write(' ');
-      buffer.write(text[i]);
-    }
-    return TextEditingValue(
-      text: buffer.toString(),
-      selection: TextSelection.collapsed(offset: buffer.length),
-    );
-  }
-}
-
-/// Formats expiry as MM/YY.
-class _ExpiryFormatter extends TextInputFormatter {
-  @override
-  TextEditingValue formatEditUpdate(
-    TextEditingValue oldValue,
-    TextEditingValue newValue,
-  ) {
-    final text = newValue.text.replaceAll('/', '');
-    final buffer = StringBuffer();
-    for (int i = 0; i < text.length; i++) {
-      if (i == 2) buffer.write('/');
-      buffer.write(text[i]);
-    }
-    return TextEditingValue(
-      text: buffer.toString(),
-      selection: TextSelection.collapsed(offset: buffer.length),
+        );
+      },
     );
   }
 }

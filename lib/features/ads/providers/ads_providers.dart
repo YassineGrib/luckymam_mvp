@@ -2,7 +2,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../../core/services/analytics_service.dart';
-import '../../subscription/models/subscription_models.dart';
 import '../../subscription/providers/subscription_providers.dart';
 import '../data/house_ads_data.dart';
 import '../models/house_ad.dart';
@@ -21,23 +20,18 @@ const adTabSwitchThreshold = 4;
 const adReelInterval = 4;
 
 /// Non-skippable ad duration per plan (LM2-122):
-///   Gratuit → 5 s · Premium → 3 s · VIP → 0 (aucune pub).
+///   Gratuit → 5 s · Abonnés payants (Premium / VIP) → 0 s (aucune pub).
 final adTimerSecondsProvider = Provider<int>((ref) {
   final tier = ref.watch(currentTierValueProvider);
-  switch (tier) {
-    case SubscriptionTier.free:
-      return 5;
-    case SubscriptionTier.premium:
-      return 3;
-    case SubscriptionTier.vip:
-      return 0;
-  }
+  if (tier.isPaid) return 0;
+  return 5;
 });
 
-/// Whether ads are enabled at all for the current user (VIP → never).
+/// Whether ads are enabled at all for the current user.
+/// Any paid subscriber (Premium or VIP) never sees ads.
 final adsEnabledProvider = Provider<bool>((ref) {
   final tier = ref.watch(currentTierValueProvider);
-  return tier != SubscriptionTier.vip;
+  return !tier.isPaid;
 });
 
 /// Gatekeeper for every ad slot: tier gating, cooldowns, rotation.
@@ -72,9 +66,13 @@ class AdGate {
 
   Future<HouseAd?> _requestAd(AdPlacement placement) async {
     if (!_ref.read(adsEnabledProvider)) {
+      final tier = _ref.read(currentTierValueProvider);
       AnalyticsService().logEvent(
         'ad_blocked_vip',
-        parameters: {'placement': placement.name},
+        parameters: {
+          'placement': placement.name,
+          'tier': tier.name,
+        },
       );
       return null;
     }

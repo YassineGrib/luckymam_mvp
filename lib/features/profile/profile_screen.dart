@@ -1099,7 +1099,7 @@ class _SubscriptionSection extends ConsumerWidget {
     return ProfileSectionCard(
       title: l10n.profileMySubscription,
       icon: Icons.workspace_premium_rounded,
-      iconColor: primaryColor,
+      iconColor: plan.accentColor,
       children: [
         // Current tier badge
         Row(
@@ -1269,7 +1269,7 @@ class _SettingsSection extends ConsumerWidget {
     return ProfileSectionCard(
       title: l10n.profileSettings,
       icon: Icons.settings_rounded,
-      iconColor: Colors.grey,
+      iconColor: const Color(0xFF64748B),
       children: [
         _SettingsTile(
           icon: Icons.dark_mode_outlined,

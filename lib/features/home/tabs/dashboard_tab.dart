@@ -11,10 +11,12 @@ import '../widgets/daily_tip_card.dart';
 import '../widgets/home_bento_grid.dart';
 import '../widgets/home_bottom_bento.dart';
 import '../widgets/home_hero_card.dart';
+import '../../subscription/providers/subscription_providers.dart';
 import '../widgets/personal_header.dart';
 import '../widgets/recent_capsules.dart';
 import '../widgets/section_header.dart';
 import '../widgets/upgrade_prompt_banner.dart';
+import '../widgets/vip_album_home_card.dart';
 import '../widgets/weekly_day_strip.dart';
 
 /// Redesigned Home Dashboard Tab inspired by flagship international mobile apps.
@@ -33,6 +35,8 @@ class DashboardTab extends ConsumerWidget {
 
     final profileAsync = ref.watch(profileProvider);
     final status = profileAsync.valueOrNull?.status;
+    final isPremium = ref.watch(isPremiumProvider);
+    final isVip = ref.watch(isVipProvider);
 
     return Container(
       color: backgroundColor,
@@ -121,8 +125,12 @@ class DashboardTab extends ConsumerWidget {
                 // 9. Conseil du Jour (Daily Tip standalone boutique section)
                 const SliverToBoxAdapter(child: DailyTipCard()),
 
-                // 10. Upgrade Prompt for free-tier users
-                const SliverToBoxAdapter(child: UpgradePromptBanner()),
+                // 10. Bottom Banner: Upgrade Prompt for Free users, VIP Album Card for VIP users
+                if (!isPremium) ...[
+                  const SliverToBoxAdapter(child: UpgradePromptBanner()),
+                ] else if (isVip) ...[
+                  const SliverToBoxAdapter(child: VipAlbumHomeCard()),
+                ],
 
                 // Bottom padding for floating navigation bar
                 const SliverPadding(padding: EdgeInsets.only(bottom: 110)),

@@ -412,10 +412,17 @@ class AppLocalizationsAr extends AppLocalizations {
   String get dailyTipFooter => '— فريق Luckymam 💕';
 
   @override
-  String get upgradePremiumTitle => 'ترقية إلى Premium';
+  String get upgradePremiumTitle => 'الترقية إلى بريميوم و VIP';
 
   @override
-  String get upgradePremiumSubtitle => 'كبسولات غير محدودة • بدون إعلانات';
+  String get upgradePremiumSubtitle =>
+      'ذكريات غير محدودة • بدون إعلانات • ألبوم مطبوع';
+
+  @override
+  String get upgradePromptBadge => 'عضوية لاكي مام المميزة';
+
+  @override
+  String get upgradePromptCta => 'اكتشاف الباقات';
 
   @override
   String get marketplaceTitle => 'المتجر';
@@ -939,7 +946,7 @@ class AppLocalizationsAr extends AppLocalizations {
       'أضيفي صورة أو تسجيلاً صوتياً للاحتفاظ بذكرى هذه اللحظة.';
 
   @override
-  String get vaccineReelsTitle => 'فيديوهات تعليمية';
+  String get vaccineReelsTitle => 'مقاطع الأطباء والتوعية';
 
   @override
   String get vaccineReelsSubtitle =>
@@ -1154,10 +1161,10 @@ class AppLocalizationsAr extends AppLocalizations {
   String get healthHubSubtitle => 'النمو والمواعيد';
 
   @override
-  String get healthTabGrowth => '📈 النمو';
+  String get healthTabGrowth => 'النمو';
 
   @override
-  String get healthTabAppointments => '🗓 المواعيد';
+  String get healthTabAppointments => 'المواعيد';
 
   @override
   String get healthNoChildTitle => 'لا يوجد طفل مسجل';
@@ -1169,10 +1176,10 @@ class AppLocalizationsAr extends AppLocalizations {
   String get healthTabSubtitle => 'اللقاحات · النمو · المواعيد';
 
   @override
-  String get healthTabVaccines => '💉 اللقاحات';
+  String get healthTabVaccines => 'اللقاحات';
 
   @override
-  String get healthTabRdv => '🗓 موعد';
+  String get healthTabRdv => 'المواعيد';
 
   @override
   String healthErrorWithDetail(String error) {
@@ -2157,6 +2164,33 @@ class AppLocalizationsAr extends AppLocalizations {
       'هذه المعلومات لأغراض تعليمية فقط. استشيري دائماً طبيبك أو طبيب الأطفال قبل أي قرار طبي.';
 
   @override
+  String get vaccineShieldTitle => 'درع الوقاية والمناعة';
+
+  @override
+  String get vaccinePostCareTitle => 'إرشادات العناية بعد التطعيم';
+
+  @override
+  String get vaccineCareTipCompress =>
+      'كمادات باردة: ضعي كمادة ماء بارد بلطف على موضع الحقنة لتخفيف الورم والألم.';
+
+  @override
+  String get vaccineCareTipHydrate =>
+      'الرضاعة والراحة: وفّري لطفلكِ بيئة هادئة وأكثري من الرضاعة لتهدئته وترطيب جسمه.';
+
+  @override
+  String get vaccineCareTipFever =>
+      'مراقبة الحرارة: قد تحدث حمى خفيفة طبيعية، استخدمي خافض الحرارة الموصوف من الطبيب فقط عند الحاجة.';
+
+  @override
+  String get vaccineStatusCardTitle => 'حالة تطعيم الطفل';
+
+  @override
+  String get vaccineStatusRecorded => 'تم أخذ اللقاح بنجاح';
+
+  @override
+  String get vaccineStatusUpcoming => 'لقاح مبرمج في الجدول';
+
+  @override
   String get subscriptionPlanFreeTitle => 'مجاني';
 
   @override
@@ -2175,7 +2209,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get subscriptionPlanFreeFeatureVaccines => 'التطعيمات';
 
   @override
-  String get subscriptionPlanPremiumTitle => 'Premium';
+  String get subscriptionPlanPremiumTitle => 'بريميوم';
 
   @override
   String get subscriptionPlanPremiumSubtitle => 'للأمهات النشطات';
@@ -2203,10 +2237,10 @@ class AppLocalizationsAr extends AppLocalizations {
   String get subscriptionPlanVipSubtitle => 'التجربة الكاملة';
 
   @override
-  String get subscriptionPlanVipFeatureAllPremium => 'كل ميزات Premium';
+  String get subscriptionPlanVipFeatureAllPremium => 'كل ميزات بريميوم';
 
   @override
-  String get subscriptionPlanVipFeatureFreeAlbum => 'ألبوم مطبوع مجاني 🎁';
+  String get subscriptionPlanVipFeatureFreeAlbum => 'ألبوم مطبوع مجاني';
 
   @override
   String get subscriptionPlanVipFeaturePrioritySupport => 'دعم ذو أولوية';
@@ -2220,6 +2254,213 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get subscriptionPlanBillingPerYear => '/سنة';
+
+  @override
+  String get subscriptionVipBadge => 'الأكثر تميزاً وقيمة';
+
+  @override
+  String get subscriptionVipAlbumHighlight =>
+      'يشمل طباعة وشحن ألبوم صور فاخر لطفلكِ إلى باب منزلكِ مجاناً';
+
+  @override
+  String get subscriptionTrustSecureTitle => 'دفع جزائري آمن 100%';
+
+  @override
+  String get subscriptionTrustSecureSubtitle =>
+      'معتمد عبر شبكة بريد الجزائر (الذهبية) والبنوك الوطنية (CIB) عبر Chargily Pay';
+
+  @override
+  String get subscriptionTrustInstantTitle => 'تفعيل فوري';
+
+  @override
+  String get subscriptionTrustInstantSubtitle =>
+      'تُفتح جميع الميزات ورتبة VIP في حسابكِ بمجرد إتمام الدفع';
+
+  @override
+  String get subscriptionTrustSupportTitle => 'مرافقة ودعم مخصص';
+
+  @override
+  String get subscriptionTrustSupportSubtitle =>
+      'فريق خدمة الأمهات جاهز لمساعدتكِ طوال أيام الأسبوع';
+
+  @override
+  String get subscriptionCompareTitle => 'مقارنة شاملة بين الباقات';
+
+  @override
+  String get subscriptionCompareSubtitle =>
+      'اختاري الباقة الأنسب لرحلتكِ مع طفلكِ';
+
+  @override
+  String get subscriptionCompareFeatureCapsules => 'عدد كبسولات الذكريات';
+
+  @override
+  String get subscriptionCompareFeatureChildren => 'عدد الأطفال';
+
+  @override
+  String get subscriptionCompareFeatureHealth => 'مخطط النمو وجدول التطعيمات';
+
+  @override
+  String get subscriptionCompareFeatureMemoryBook =>
+      'توليد كتاب الذكريات الرقمي';
+
+  @override
+  String get subscriptionCompareFeaturePrintedAlbum =>
+      'ألبوم ورقي فاخر مطبوع ومُوصَّل للمنزل';
+
+  @override
+  String get subscriptionCompareFeatureSupport =>
+      'أولوية خدمة العملاء والمساعدة';
+
+  @override
+  String get subscriptionCompareFeatureAdFree => 'تجربة نقية بدون أي إعلانات';
+
+  @override
+  String get subscriptionCompareValueFreeCapsules => '25 كبسولة';
+
+  @override
+  String get subscriptionCompareValueUnlimited => 'غير محدود';
+
+  @override
+  String get subscriptionCompareValueOneChild => 'طفل واحد';
+
+  @override
+  String get subscriptionCompareValueAllChildren => 'كل أطفالكِ';
+
+  @override
+  String get subscriptionFaqTitle => 'الأسئلة الشائعة';
+
+  @override
+  String get subscriptionFaqSubtitle =>
+      'كل ما تحتاجين معرفته حول باقات LuckyMam';
+
+  @override
+  String get subscriptionFaqQ1 =>
+      'كيف أحصل على الألبوم المطبوع الفاخر الخاص بباقة VIP؟';
+
+  @override
+  String get subscriptionFaqA1 =>
+      'بمجرد اشتراككِ في باقة VIP، يمكنكِ الدخول لقسم \'طلب الألبوم المطبوع\' واختيار أفضل صور وذكريات طفلكِ وعنوان الشحن، وسنقوم بطباعته بأعلى جودة وتوصيله لباب بيتكِ مجاناً في أي ولاية.';
+
+  @override
+  String get subscriptionFaqQ2 =>
+      'هل الدفع بالبطاقة الذهبية أو CIB آمن تماماً؟';
+
+  @override
+  String get subscriptionFaqA2 =>
+      'نعم 100%. عملية الدفع تتم مباشرة عبر البوابة الوطنية المعتمدة برعاية بريد الجزائر والشبكة النقدية GIE Monétique عبر Chargily Pay مشفرة بأحدث بروتوكولات الأمان 3D Secure.';
+
+  @override
+  String get subscriptionFaqQ3 =>
+      'هل يمكنني الترقية من باقة Premium إلى باقة VIP لاحقاً؟';
+
+  @override
+  String get subscriptionFaqA3 =>
+      'نعم بكل سهولة، يمكنكِ الترقية في أي وقت للاستفادة فوراً من مزايا VIP وطباعة ألبوم طفلكِ.';
+
+  @override
+  String get subscriptionPaymentMethodSelect => 'اختر بطاقة الدفع';
+
+  @override
+  String get subscriptionPaymentEdahabiaDesc => 'عبر بطاقة الدفع لبريد الجزائر';
+
+  @override
+  String get subscriptionPaymentCibDesc => 'عبر البطاقة البنكية الوطنية';
+
+  @override
+  String get subscriptionPaymentPayButton =>
+      'المتابعة للدفع الآمن عبر Chargily Pay';
+
+  @override
+  String get subscriptionPaymentRetry => 'إعادة المحاولة';
+
+  @override
+  String get subscriptionPaymentCancelled =>
+      'تم إلغاء عملية الدفع. يمكنكِ إعادة المحاولة في أي وقت.';
+
+  @override
+  String get subscriptionPaymentSuccessModalTitle =>
+      'مبروك! أنتِ الآن عضوة VIP';
+
+  @override
+  String get subscriptionPaymentSuccessModalDesc =>
+      'تم تفعيل اشتراككِ بنجاح. ألبومكِ المطبوع الفاخر وجميع الميزات غير المحدودة جاهزة لكِ.';
+
+  @override
+  String get subscriptionPaymentClaimAlbumNow => 'طلب ألبومي المطبوع الآن';
+
+  @override
+  String get subscriptionPaymentLater => 'البدء في استخدام التطبيق';
+
+  @override
+  String get subscriptionHeroHeadline => 'اختاري باقة الاشتراك:';
+
+  @override
+  String get subscriptionHeroBadgeTitle => 'لاكي مام VIP';
+
+  @override
+  String get subscriptionHeroBenefit1 =>
+      'كبسولات وذكريات غير محدودة لكل أطفالكِ';
+
+  @override
+  String get subscriptionHeroBenefit2 =>
+      'ألبوم صور ورقي مطبوع فاخر مجاناً يُشحن لباب بيتكِ';
+
+  @override
+  String get subscriptionHeroBenefit3 =>
+      'دفع جزائري آمن 100% بالبطاقة الذهبية أو CIB';
+
+  @override
+  String subscriptionContinueButton(int price) {
+    return 'المتابعة والاشتراك • $price دج';
+  }
+
+  @override
+  String get subscriptionViewDetails =>
+      'مقارنة المزايا الكاملة والأسئلة الشائعة';
+
+  @override
+  String get subscriptionLegalNotice =>
+      'دفع رسمي ومشفر عبر Chargily Pay وبريد الجزائر والشبكة النقدية. تفعيل فوري لكافة الميزات.';
+
+  @override
+  String subscriptionPlanPricePerMonth(int price) {
+    return '$price دج /شهر';
+  }
+
+  @override
+  String get subscriptionVipCardSubtitle =>
+      'يشمل طباعة ألبوم ورقي فاخر مجاناً يُشحن لباب بيتكِ';
+
+  @override
+  String get paymentDurationFullYear => '365 يوماً من الوصول الكامل';
+
+  @override
+  String get paymentShippingAndDelivery => 'مصاريف الشحن والتوصيل';
+
+  @override
+  String get paymentFreeShipping => '0 دج (مجاني)';
+
+  @override
+  String get checkoutSecurePayment => 'الدفع الآمن (الذهبية / CIB)';
+
+  @override
+  String get checkoutOpenedInNewWindow => 'تم فتح بوابة الدفع في نافذة جديدة';
+
+  @override
+  String get checkoutCompleteInstructions =>
+      'يرجى إكمال عملية الدفع عبر بطاقتكم الذهبية أو CIB، ثم الضغط على الزر أدناه لتأكيد التفعيل.';
+
+  @override
+  String get checkoutConfirmSuccess => 'تأكيد إتمام الدفع بنجاح';
+
+  @override
+  String get checkoutReopenLink => 'إعادة فتح رابط الدفع';
+
+  @override
+  String get subscriptionCompareSupportPremium => 'مساعدة سريعة';
+
+  @override
+  String get subscriptionCompareSupportVip => 'أولوية VIP مخصصة';
 
   @override
   String get subscriptionPlanFreePrice => 'مجاني';

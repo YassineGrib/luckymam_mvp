@@ -34,9 +34,6 @@ class _AppointmentsScreenState extends ConsumerState<AppointmentsScreen> {
     final l10n = context.l10n;
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final primary = isDark ? AppColors.primaryDark : AppColors.primaryLight;
-    final bgColor = isDark
-        ? AppColors.backgroundDark
-        : AppColors.backgroundLight;
     final textColor = isDark ? Colors.white : AppColors.onSurfaceLight;
     final secondary = isDark
         ? AppColors.textSecondaryDark
@@ -45,7 +42,7 @@ class _AppointmentsScreenState extends ConsumerState<AppointmentsScreen> {
     final apptAsync = ref.watch(appointmentsProvider(widget.child.id));
 
     return Scaffold(
-      backgroundColor: bgColor,
+      backgroundColor: Colors.transparent,
       body: apptAsync.when(
         loading: () => const Center(child: CircularProgressIndicator()),
         error: (e, _) => Center(

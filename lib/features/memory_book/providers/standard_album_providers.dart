@@ -28,6 +28,14 @@ final standardAlbumProvider = StreamProvider.family<StandardAlbum?, String>((
   return service.watchAlbum(albumId);
 });
 
+/// Stream provider for all standard albums belonging to the user.
+final allStandardAlbumsProvider = StreamProvider<List<StandardAlbum>>((ref) {
+  final uid = ref.watch(userIdProvider);
+  if (uid == null) return Stream.value([]);
+  final service = ref.watch(standardAlbumServiceProvider);
+  return service.watchAllAlbums();
+});
+
 /// Actions notifier for standard-album operations.
 class StandardAlbumActionsNotifier extends StateNotifier<AsyncValue<void>> {
   StandardAlbumActionsNotifier(this._service)

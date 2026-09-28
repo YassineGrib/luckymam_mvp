@@ -146,9 +146,12 @@ class _VerticalTimeline extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ListView.builder(
-      padding: const EdgeInsets.symmetric(
-        horizontal: AppSpacing.screenPaddingH,
-        vertical: AppSpacing.xs,
+      physics: const BouncingScrollPhysics(),
+      padding: const EdgeInsets.only(
+        left: AppSpacing.screenPaddingH,
+        right: AppSpacing.screenPaddingH,
+        top: AppSpacing.xs,
+        bottom: 110,
       ),
       itemCount: milestones.length,
       itemBuilder: (context, index) {
@@ -357,19 +360,19 @@ class _HorizontalNode extends StatelessWidget {
         ? AppColors.textSecondaryDark
         : AppColors.textSecondaryLight;
 
-    const cardWidth = 200.0;
+    const cardWidth = 224.0;
     const dotSize = 22.0;
     const activeDotSize = 30.0;
     final currentDotSize = (isCurrent || isOverdue) ? activeDotSize : dotSize;
 
     return SizedBox(
-      width: cardWidth + 16,
+      width: cardWidth + 14,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           // ── Connector row: line — logo/dot — line ──────────────
           SizedBox(
-            height: activeDotSize + 4,
+            height: activeDotSize + 2,
             child: Row(
               children: [
                 // Left line
@@ -411,26 +414,24 @@ class _HorizontalNode extends StatelessWidget {
             ),
           ),
 
-          const SizedBox(height: 10),
+          const SizedBox(height: 8),
 
           // ── Card ──────────────────────────────────────────────
-          GestureDetector(
+          _MilestoneCard(
+            m: m,
+            milestone: milestone,
+            status: status,
+            phase: phase,
+            isDark: isDark,
+            isCompleted: isCompleted,
+            isOverdue: isOverdue,
+            isCurrent: isCurrent,
+            color: color,
+            titleColor: titleColor,
+            subtitleColor: subtitleColor,
+            width: cardWidth,
+            isHorizontal: true,
             onTap: onTap,
-            child: _MilestoneCard(
-              m: m,
-              milestone: milestone,
-              status: status,
-              phase: phase,
-              isDark: isDark,
-              isCompleted: isCompleted,
-              isOverdue: isOverdue,
-              isCurrent: isCurrent,
-              color: color,
-              titleColor: titleColor,
-              subtitleColor: subtitleColor,
-              width: cardWidth,
-              isHorizontal: true,
-            ),
           ),
         ],
       ),
@@ -536,22 +537,20 @@ class _VerticalNode extends StatelessWidget {
 
           // ── Card ───────────────────────────────────────────────
           Expanded(
-            child: GestureDetector(
+            child: _MilestoneCard(
+              m: m,
+              milestone: milestone,
+              status: status,
+              phase: phase,
+              isDark: isDark,
+              isCompleted: isCompleted,
+              isOverdue: isOverdue,
+              isCurrent: isCurrent,
+              color: color,
+              titleColor: titleColor,
+              subtitleColor: subtitleColor,
+              isHorizontal: false,
               onTap: onTap,
-              child: _MilestoneCard(
-                m: m,
-                milestone: milestone,
-                status: status,
-                phase: phase,
-                isDark: isDark,
-                isCompleted: isCompleted,
-                isOverdue: isOverdue,
-                isCurrent: isCurrent,
-                color: color,
-                titleColor: titleColor,
-                subtitleColor: subtitleColor,
-                isHorizontal: false,
-              ),
             ),
           ),
         ],
@@ -563,7 +562,7 @@ class _VerticalNode extends StatelessWidget {
 // ─────────────────────────────────────────────────────────────────────────────
 // Shared card content (used by both horizontal and vertical nodes)
 // ─────────────────────────────────────────────────────────────────────────────
-class _MilestoneCard extends StatelessWidget {
+class _MilestoneCard extends StatefulWidget {
   const _MilestoneCard({
     required this.m,
     required this.milestone,
@@ -577,6 +576,7 @@ class _MilestoneCard extends StatelessWidget {
     required this.titleColor,
     required this.subtitleColor,
     required this.isHorizontal,
+    required this.onTap,
     this.width,
   });
 
@@ -592,231 +592,304 @@ class _MilestoneCard extends StatelessWidget {
   final Color titleColor;
   final Color subtitleColor;
   final bool isHorizontal;
+  final VoidCallback onTap;
   final double? width;
+
+  @override
+  State<_MilestoneCard> createState() => _MilestoneCardState();
+}
+
+class _MilestoneCardState extends State<_MilestoneCard> {
+  bool _isPressed = false;
 
   @override
   Widget build(BuildContext context) {
     final l10n = context.l10n;
     final lang = Localizations.localeOf(context).languageCode;
-    return Container(
-      width: width,
-      margin: EdgeInsetsDirectional.only(
-        end: isHorizontal ? 16 : 0,
-        top: isHorizontal ? 0 : 6,
-        bottom: isHorizontal ? 0 : 6,
-      ),
-      padding: const EdgeInsets.all(12),
-      decoration: BoxDecoration(
-        color: isDark ? AppColors.surfaceDark : Colors.white,
-        borderRadius: BorderRadius.circular(14),
-        border: Border.all(
-          color: isCurrent
-              ? color
-              : isOverdue
-              ? AppColors.error.withValues(alpha: 0.5)
-              : isDark
-              ? AppColors.dividerDark
-              : AppColors.dividerLight,
-          width: isCurrent ? 2 : 1,
-        ),
-        boxShadow: isCurrent
-            ? [
-                BoxShadow(
-                  color: color.withValues(alpha: 0.18),
-                  blurRadius: 12,
-                  offset: const Offset(0, 4),
-                ),
-              ]
-            : [
-                BoxShadow(
-                  color: Colors.black.withValues(alpha: 0.04),
-                  blurRadius: 4,
-                  offset: const Offset(0, 1),
-                ),
-              ],
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          // Category icon + status badge
-          Row(
+    final m = widget.m;
+    final milestone = widget.milestone;
+    final status = widget.status;
+    final phase = widget.phase;
+    final isDark = widget.isDark;
+    final isCompleted = widget.isCompleted;
+    final isOverdue = widget.isOverdue;
+    final isCurrent = widget.isCurrent;
+    final color = widget.color;
+    final titleColor = widget.titleColor;
+    final subtitleColor = widget.subtitleColor;
+    final isHorizontal = widget.isHorizontal;
+    final width = widget.width;
+
+    return AnimatedScale(
+      scale: _isPressed ? 0.96 : 1.0,
+      duration: const Duration(milliseconds: 140),
+      curve: Curves.easeOutCubic,
+      child: GestureDetector(
+        onTapDown: (_) => setState(() => _isPressed = true),
+        onTapUp: (_) => setState(() => _isPressed = false),
+        onTapCancel: () => setState(() => _isPressed = false),
+        onTap: widget.onTap,
+        child: Container(
+          width: width,
+          margin: EdgeInsetsDirectional.only(
+            end: isHorizontal ? 12 : 0,
+            top: isHorizontal ? 0 : 5,
+            bottom: isHorizontal ? 0 : 7,
+          ),
+          clipBehavior: Clip.antiAlias,
+          padding: const EdgeInsets.all(13),
+          decoration: BoxDecoration(
+            color: isDark ? AppColors.surfaceDark : Colors.white,
+            borderRadius: BorderRadius.circular(20),
+            border: Border.all(
+              color: isCurrent
+                  ? color
+                  : isOverdue
+                      ? AppColors.error.withValues(alpha: 0.55)
+                      : (isDark
+                          ? AppColors.dividerDark
+                          : const Color(0xFFEBEBF0)),
+              width: isCurrent ? 1.8 : 1.0,
+            ),
+            boxShadow: isCurrent
+                ? [
+                    BoxShadow(
+                      color: color.withValues(alpha: 0.18),
+                      blurRadius: 12,
+                      offset: const Offset(0, 4),
+                    ),
+                  ]
+                : [
+                    BoxShadow(
+                      color: Colors.black.withValues(alpha: isDark ? 0.22 : 0.035),
+                      blurRadius: 6,
+                      offset: const Offset(0, 2),
+                    ),
+                  ],
+          ),
+          child: Stack(
             children: [
-              Container(
-                width: 28,
-                height: 28,
-                decoration: BoxDecoration(
-                  color: m.category.lightBg,
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                child: Center(
+              // Bleeding semi-transparent watermark icon in corner (Home signature style)
+              PositionedDirectional(
+                bottom: -10,
+                end: -8,
+                child: IgnorePointer(
                   child: Icon(
                     m.category.icon,
-                    size: 14,
-                    color: m.category.color,
+                    size: 68,
+                    color: m.category.color.withValues(
+                      alpha: isDark ? 0.08 : 0.045,
+                    ),
                   ),
                 ),
               ),
-              const Spacer(),
-              _buildStatusBadge(context, status, phase, l10n),
-            ],
-          ),
 
-          const SizedBox(height: 8),
-
-          // Title — clean, no strikethrough
-          Text(
-            m.getTitle(lang),
-            style: AppTypography.fromContext(context, 
-              fontSize: 13,
-              fontWeight: FontWeight.w700,
-              color: isCompleted ? subtitleColor : titleColor,
-            ),
-            maxLines: isHorizontal ? 2 : 1,
-            overflow: TextOverflow.ellipsis,
-          ),
-
-          const SizedBox(height: 4),
-
-          // Description
-          Text(
-            m.getDescription(lang),
-            style: AppTypography.fromContext(context, 
-              fontSize: 11,
-              color: subtitleColor,
-              height: 1.3,
-            ),
-            maxLines: 2,
-            overflow: TextOverflow.ellipsis,
-          ),
-
-          const SizedBox(height: 8),
-
-          // Date row: completed date OR due date + age range
-          Row(
-            children: [
-              Container(
-                padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-                decoration: BoxDecoration(
-                  color: phase.color.withValues(alpha: 0.12),
-                  borderRadius: BorderRadius.circular(6),
-                ),
-                child: Text(
-                  m.ageRange,
-                  style: AppTypography.fromContext(context, 
-                    fontSize: 10,
-                    fontWeight: FontWeight.w600,
-                    color: phase.color,
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // Category icon + age badge + status badge
+                  Row(
+                    children: [
+                      Container(
+                        width: 30,
+                        height: 30,
+                        decoration: BoxDecoration(
+                          color: m.category.lightBg,
+                          borderRadius: BorderRadius.circular(9),
+                        ),
+                        child: Center(
+                          child: Icon(
+                            m.category.icon,
+                            size: 15,
+                            color: m.category.color,
+                          ),
+                        ),
+                      ),
+                      const SizedBox(width: 7),
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 6.5,
+                          vertical: 2.5,
+                        ),
+                        decoration: BoxDecoration(
+                          color: phase.color.withValues(alpha: 0.10),
+                          borderRadius: BorderRadius.circular(7),
+                        ),
+                        child: Text(
+                          m.ageRange,
+                          style: AppTypography.fromContext(
+                            context,
+                            fontSize: 10,
+                            fontWeight: FontWeight.w700,
+                            color: phase.color,
+                          ),
+                        ),
+                      ),
+                      const Spacer(),
+                      _buildStatusBadge(context, status, phase, l10n),
+                    ],
                   ),
-                ),
-              ),
-              const SizedBox(width: 6),
-              Expanded(
-                child: isCompleted && milestone.completedAt != null
-                    ? Row(
+
+                  const SizedBox(height: 8),
+
+                  // Title
+                  Text(
+                    m.getTitle(lang),
+                    style: AppTypography.fromContext(
+                      context,
+                      fontSize: 13.5,
+                      fontWeight: FontWeight.w800,
+                      color: isCompleted ? subtitleColor : titleColor,
+                      height: 1.2,
+                    ),
+                    maxLines: isHorizontal ? 2 : 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+
+                  const SizedBox(height: 3.5),
+
+                  // Description
+                  Text(
+                    m.getDescription(lang),
+                    style: AppTypography.fromContext(
+                      context,
+                      fontSize: 11,
+                      color: subtitleColor,
+                      height: 1.3,
+                    ),
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+
+                  const SizedBox(height: 7),
+
+                  // Date info row
+                  if (isCompleted && milestone.completedAt != null)
+                    Row(
+                      children: [
+                        const Icon(
+                          Icons.event_available_rounded,
+                          size: 12,
+                          color: AppColors.success,
+                        ),
+                        const SizedBox(width: 3.5),
+                        Expanded(
+                          child: Text(
+                            _formatCompletedDate(milestone.completedAt!),
+                            style: AppTypography.fromContext(
+                              context,
+                              fontSize: 10,
+                              color: AppColors.success,
+                              fontWeight: FontWeight.w700,
+                            ),
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ),
+                      ],
+                    )
+                  else if (milestone.dueDate != null)
+                    Row(
+                      children: [
+                        Icon(
+                          Icons.access_time_rounded,
+                          size: 11.5,
+                          color: isOverdue ? AppColors.error : subtitleColor,
+                        ),
+                        const SizedBox(width: 3.5),
+                        Text(
+                          _formatDue(milestone, l10n),
+                          style: AppTypography.fromContext(
+                            context,
+                            fontSize: 10,
+                            color: isOverdue ? AppColors.error : subtitleColor,
+                            fontWeight:
+                                isOverdue ? FontWeight.w700 : FontWeight.normal,
+                          ),
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ],
+                    ),
+
+                  // Capture CTA for actionable, non-completed milestones
+                  if (m.canHaveCapsule && !isCompleted) ...[
+                    const SizedBox(height: 9),
+                    Container(
+                      width: double.infinity,
+                      padding: const EdgeInsets.symmetric(vertical: 7.5),
+                      decoration: BoxDecoration(
+                        gradient: AppColors.primaryGradient,
+                        borderRadius: BorderRadius.circular(12),
+                        boxShadow: [
+                          BoxShadow(
+                            color: AppColors.primaryLight.withValues(alpha: 0.28),
+                            blurRadius: 6,
+                            offset: const Offset(0, 2),
+                          ),
+                        ],
+                      ),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           const Icon(
-                            Icons.event_available_rounded,
-                            size: 11,
-                            color: AppColors.success,
+                            Icons.camera_alt_rounded,
+                            color: Colors.white,
+                            size: 13,
                           ),
-                          const SizedBox(width: 3),
-                          Expanded(
-                            child: Text(
-                              _formatCompletedDate(milestone.completedAt!),
-                              style: AppTypography.fromContext(context, 
-                                fontSize: 10,
-                                color: AppColors.success,
-                                fontWeight: FontWeight.w600,
-                              ),
-                              overflow: TextOverflow.ellipsis,
+                          const SizedBox(width: 4.5),
+                          Text(
+                            l10n.milestone_capture,
+                            style: AppTypography.fromContext(
+                              context,
+                              fontSize: 11,
+                              fontWeight: FontWeight.w700,
+                              color: Colors.white,
                             ),
                           ),
                         ],
-                      )
-                    : milestone.dueDate != null
-                    ? Text(
-                        _formatDue(milestone, l10n),
-                        style: AppTypography.fromContext(context, 
-                          fontSize: 10,
-                          color: isOverdue ? AppColors.error : subtitleColor,
-                          fontWeight: isOverdue
-                              ? FontWeight.w600
-                              : FontWeight.normal,
+                      ),
+                    ),
+                  ],
+
+                  // "Voir la capsule" CTA for completed milestones with capsule
+                  if (isCompleted && milestone.capsuleId != null) ...[
+                    const SizedBox(height: 9),
+                    Container(
+                      width: double.infinity,
+                      padding: const EdgeInsets.symmetric(vertical: 7.5),
+                      decoration: BoxDecoration(
+                        color: AppColors.success.withValues(alpha: 0.12),
+                        borderRadius: BorderRadius.circular(12),
+                        border: Border.all(
+                          color: AppColors.success.withValues(alpha: 0.35),
                         ),
-                        overflow: TextOverflow.ellipsis,
-                      )
-                    : const SizedBox.shrink(),
+                      ),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          const Icon(
+                            Icons.play_circle_outline_rounded,
+                            color: AppColors.success,
+                            size: 13,
+                          ),
+                          const SizedBox(width: 4.5),
+                          Text(
+                            l10n.milestone_view_capsule,
+                            style: AppTypography.fromContext(
+                              context,
+                              fontSize: 11,
+                              fontWeight: FontWeight.w700,
+                              color: AppColors.success,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ],
               ),
             ],
           ),
-
-          // Capture CTA for actionable, non-completed milestones
-          if (m.canHaveCapsule && !isCompleted) ...[
-            const SizedBox(height: 8),
-            Container(
-              width: double.infinity,
-              padding: const EdgeInsets.symmetric(vertical: 6),
-              decoration: BoxDecoration(
-                gradient: AppColors.primaryGradient,
-                borderRadius: BorderRadius.circular(10),
-              ),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  const Icon(
-                    Icons.camera_alt_rounded,
-                    color: Colors.white,
-                    size: 12,
-                  ),
-                  const SizedBox(width: 4),
-                  Text(
-                    l10n.milestone_capture,
-                    style: AppTypography.fromContext(context, 
-                      fontSize: 11,
-                      fontWeight: FontWeight.w600,
-                      color: Colors.white,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ],
-
-          // "Voir la capsule" CTA for completed milestones with capsule
-          if (isCompleted && milestone.capsuleId != null) ...[
-            const SizedBox(height: 8),
-            Container(
-              width: double.infinity,
-              padding: const EdgeInsets.symmetric(vertical: 6),
-              decoration: BoxDecoration(
-                color: AppColors.success.withValues(alpha: 0.12),
-                borderRadius: BorderRadius.circular(10),
-                border: Border.all(
-                  color: AppColors.success.withValues(alpha: 0.4),
-                ),
-              ),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  const Icon(
-                    Icons.play_circle_outline_rounded,
-                    color: AppColors.success,
-                    size: 13,
-                  ),
-                  const SizedBox(width: 4),
-                  Text(
-                    l10n.milestone_view_capsule,
-                    style: AppTypography.fromContext(context, 
-                      fontSize: 11,
-                      fontWeight: FontWeight.w600,
-                      color: AppColors.success,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ],
-        ],
+        ),
       ),
     );
   }

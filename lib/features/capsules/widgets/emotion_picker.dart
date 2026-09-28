@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../../../core/extensions/l10n_extension.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_spacing.dart';
+import '../../../core/theme/app_typography.dart';
 import '../models/emotion.dart';
 
 /// Grid picker for selecting an emotion.
@@ -16,12 +17,36 @@ class EmotionPicker extends StatelessWidget {
   final Emotion? selectedEmotion;
   final ValueChanged<Emotion> onEmotionSelected;
 
+  Color _getEmotionColor(Emotion emotion) {
+    switch (emotion) {
+      case Emotion.happy:
+        return const Color(0xFFF59E0B);
+      case Emotion.love:
+        return const Color(0xFFE11D48);
+      case Emotion.tender:
+        return const Color(0xFFFB923C);
+      case Emotion.sad:
+        return const Color(0xFF3B82F6);
+      case Emotion.surprised:
+        return const Color(0xFF06B6D4);
+      case Emotion.sleepy:
+        return const Color(0xFF8B5CF6);
+      case Emotion.proud:
+        return const Color(0xFF10B981);
+      case Emotion.worried:
+        return const Color(0xFF64748B);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final l10n = context.l10n;
     final lang = Localizations.localeOf(context).languageCode;
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final textColor = isDark ? Colors.white : AppColors.onSurfaceLight;
+    final secondaryText = isDark
+        ? AppColors.textSecondaryDark
+        : AppColors.textSecondaryLight;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -32,7 +57,8 @@ class EmotionPicker extends StatelessWidget {
             const SizedBox(width: 6),
             Text(
               l10n.capsuleEmotion,
-              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+              style: AppTypography.fromContext(
+                context,
                 fontSize: 14,
                 fontWeight: FontWeight.w600,
                 color: textColor,
@@ -41,7 +67,8 @@ class EmotionPicker extends StatelessWidget {
             const SizedBox(width: 4),
             Text(
               l10n.capsuleRequired,
-              style: TextStyle(
+              style: AppTypography.fromContext(
+                context,
                 fontSize: 11,
                 color: AppColors.error,
                 fontWeight: FontWeight.w600,
@@ -63,7 +90,7 @@ class EmotionPicker extends StatelessWidget {
           itemBuilder: (context, index) {
             final emotion = Emotion.values[index];
             final isSelected = selectedEmotion == emotion;
-            final primary = isDark ? AppColors.primaryDark : AppColors.primaryLight;
+            final emotionColor = _getEmotionColor(emotion);
 
             return GestureDetector(
               onTap: () => onEmotionSelected(emotion),
@@ -72,15 +99,24 @@ class EmotionPicker extends StatelessWidget {
                 padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 6),
                 decoration: BoxDecoration(
                   color: isSelected
-                      ? primary.withValues(alpha: 0.15)
+                      ? emotionColor.withValues(alpha: isDark ? 0.22 : 0.12)
                       : (isDark
-                            ? AppColors.surfaceContainerDark
-                            : AppColors.surfaceContainerLight),
+                            ? const Color(0xFF22202A)
+                            : const Color(0xFFF7F5FA)),
                   borderRadius: BorderRadius.circular(14),
                   border: Border.all(
-                    color: isSelected ? primary : Colors.transparent,
-                    width: 1.5,
+                    color: isSelected ? emotionColor : (isDark ? Colors.white10 : const Color(0xFFECEAEF)),
+                    width: isSelected ? 1.8 : 0.8,
                   ),
+                  boxShadow: isSelected
+                      ? [
+                          BoxShadow(
+                            color: emotionColor.withValues(alpha: 0.25),
+                            blurRadius: 8,
+                            offset: const Offset(0, 2),
+                          ),
+                        ]
+                      : null,
                 ),
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
@@ -88,7 +124,7 @@ class EmotionPicker extends StatelessWidget {
                     Icon(
                       emotion.icon,
                       size: 22,
-                      color: isSelected ? primary : textColor,
+                      color: isSelected ? emotionColor : secondaryText,
                     ),
                     const SizedBox(height: 4),
                     Text(
@@ -96,12 +132,13 @@ class EmotionPicker extends StatelessWidget {
                       textAlign: TextAlign.center,
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
-                      style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                      style: AppTypography.fromContext(
+                        context,
                         fontSize: 11,
                         fontWeight: isSelected
                             ? FontWeight.w700
                             : FontWeight.w500,
-                        color: isSelected ? primary : textColor,
+                        color: isSelected ? emotionColor : textColor,
                       ),
                     ),
                   ],

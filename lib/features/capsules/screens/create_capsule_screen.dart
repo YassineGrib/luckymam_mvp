@@ -17,6 +17,7 @@ import '../providers/capsule_providers.dart';
 import '../widgets/audio_recorder.dart';
 import '../widgets/emotion_picker.dart';
 import '../widgets/image_crop_screen.dart';
+import '../../../shared/widgets/top_ambient_gradient.dart';
 
 /// Screen for creating a new capsule with a refined, tactile card-based UI.
 class CreateCapsuleScreen extends ConsumerStatefulWidget {
@@ -90,162 +91,191 @@ class _CreateCapsuleScreenState extends ConsumerState<CreateCapsuleScreen> {
 
     return Scaffold(
       backgroundColor: bgColor,
-      appBar: AppBar(
-        backgroundColor: Colors.transparent,
-        elevation: 0,
-        leading: IconButton(
-          onPressed: () => Navigator.pop(context),
-          icon: Icon(Icons.close_rounded, color: textColor),
-        ),
-        title: Text(
-          l10n.capsuleNewTitle,
-          style: AppTypography.fromContext(
-            context,
-            fontSize: 18,
-            fontWeight: FontWeight.w700,
-            color: textColor,
-          ),
-        ),
-        centerTitle: true,
-      ),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.fromLTRB(
-          AppSpacing.screenPaddingH,
-          8,
-          AppSpacing.screenPaddingH,
-          32,
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // 📸 Section 1: Photo Hero Card
-            _buildPhotoSection(context, isDark, primary, textColor, secondaryText),
-            const SizedBox(height: AppSpacing.lg),
-
-            // 📂 Section 2: Essential Info (Category & Capture Date)
-            _buildSectionCard(
-              context: context,
-              isDark: isDark,
-              children: [
-                _buildCategorySection(
-                  context,
-                  lang,
-                  isDark,
-                  primary,
-                  textColor,
-                  secondaryText,
-                ),
-                Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 12),
-                  child: Divider(
-                    height: 1,
-                    color: isDark ? AppColors.dividerDark : AppColors.dividerLight,
-                  ),
-                ),
-                _buildDateSection(
-                  context,
-                  lang,
-                  isDark,
-                  primary,
-                  textColor,
-                  secondaryText,
-                ),
-              ],
-            ),
-            const SizedBox(height: AppSpacing.lg),
-
-            // 👶 Section 3: Child & Emotion
-            _buildSectionCard(
-              context: context,
-              isDark: isDark,
-              children: [
-                childrenAsync.when(
-                  loading: () => const SizedBox.shrink(),
-                  error: (_, _) => const SizedBox.shrink(),
-                  data: (children) => _buildChildSelector(
+      body: Stack(
+        children: [
+          const TopAmbientGradient(height: 420),
+          SafeArea(
+            child: SingleChildScrollView(
+              physics: const BouncingScrollPhysics(),
+              padding: const EdgeInsets.fromLTRB(
+                AppSpacing.screenPaddingH,
+                14,
+                AppSpacing.screenPaddingH,
+                32,
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // ─── Integrated Top Header ───────────────────
+                  _buildHeader(
                     context,
-                    children,
                     isDark,
                     primary,
                     textColor,
                     secondaryText,
                   ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 12),
-                  child: Divider(
-                    height: 1,
-                    color: isDark ? AppColors.dividerDark : AppColors.dividerLight,
-                  ),
-                ),
-                EmotionPicker(
-                  selectedEmotion: _selectedEmotion,
-                  onEmotionSelected: (emotion) {
-                    setState(() => _selectedEmotion = emotion);
-                  },
-                ),
-              ],
-            ),
-            const SizedBox(height: AppSpacing.lg),
+                  const SizedBox(height: 18),
 
-            // 🎙️ Section 4: Voice Note & Tags (Optional)
-            _buildSectionCard(
-              context: context,
-              isDark: isDark,
-              children: [
-                Row(
-                  children: [
-                    Icon(Icons.mic_rounded, size: 16, color: textColor),
-                    const SizedBox(width: 6),
-                    Text(
-                      l10n.capsuleVoiceMessageOptional,
-                      style: AppTypography.fromContext(
+                  // 📸 Section 1: Photo Hero Card
+                  _buildPhotoSection(context, isDark, primary, textColor, secondaryText),
+                  const SizedBox(height: AppSpacing.md),
+
+                  // 📂 Section 2: Essential Info (Category & Capture Date)
+                  _buildSectionCard(
+                    context: context,
+                    isDark: isDark,
+                    watermarkIcon: Icons.auto_stories_rounded,
+                    backgroundColor: isDark
+                        ? const Color(0xFF261D24)
+                        : const Color(0xFFFFF9FA),
+                    borderColor: isDark
+                        ? AppColors.primaryLight.withValues(alpha: 0.25)
+                        : AppColors.primaryLight.withValues(alpha: 0.16),
+                    children: [
+                      _buildCategorySection(
                         context,
-                        fontSize: 14,
-                        fontWeight: FontWeight.w600,
-                        color: textColor,
+                        lang,
+                        isDark,
+                        primary,
+                        textColor,
+                        secondaryText,
                       ),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: AppSpacing.sm),
-                if (_recordedAudio == null)
-                  AudioRecorderWidget(
-                    onRecordingComplete: (file, duration) {
-                      setState(() {
-                        _recordedAudio = file;
-                        _audioDuration = duration;
-                      });
-                    },
-                  )
-                else
-                  RecordedAudioPreview(
-                    duration: _audioDuration!,
-                    onDelete: () {
-                      setState(() {
-                        _recordedAudio = null;
-                        _audioDuration = null;
-                      });
-                    },
+                      Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 12),
+                        child: Divider(
+                          height: 1,
+                          color: isDark ? Colors.white10 : const Color(0xFFF0EBF4),
+                        ),
+                      ),
+                      _buildDateSection(
+                        context,
+                        lang,
+                        isDark,
+                        primary,
+                        textColor,
+                        secondaryText,
+                      ),
+                    ],
                   ),
-                Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 12),
-                  child: Divider(
-                    height: 1,
-                    color: isDark ? AppColors.dividerDark : AppColors.dividerLight,
+                  const SizedBox(height: AppSpacing.md),
+
+                  // 👶 Section 3: Child & Emotion
+                  _buildSectionCard(
+                    context: context,
+                    isDark: isDark,
+                    watermarkIcon: Icons.mood_rounded,
+                    backgroundColor: isDark
+                        ? const Color(0xFF221E2C)
+                        : const Color(0xFFFAF7FF),
+                    borderColor: isDark
+                        ? const Color(0xFF8B5CF6).withValues(alpha: 0.25)
+                        : const Color(0xFF8B5CF6).withValues(alpha: 0.16),
+                    children: [
+                      childrenAsync.when(
+                        loading: () => const SizedBox.shrink(),
+                        error: (_, _) => const SizedBox.shrink(),
+                        data: (children) => _buildChildSelector(
+                          context,
+                          children,
+                          isDark,
+                          primary,
+                          textColor,
+                          secondaryText,
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 12),
+                        child: Divider(
+                          height: 1,
+                          color: isDark ? Colors.white10 : const Color(0xFFEFEAF6),
+                        ),
+                      ),
+                      EmotionPicker(
+                        selectedEmotion: _selectedEmotion,
+                        onEmotionSelected: (emotion) {
+                          setState(() => _selectedEmotion = emotion);
+                        },
+                      ),
+                    ],
                   ),
-                ),
-                _buildTagsSection(
-                  context,
-                  isDark,
-                  primary,
-                  textColor,
-                  secondaryText,
-                ),
-              ],
+                  const SizedBox(height: AppSpacing.md),
+
+                  // 🎙️ Section 4: Voice Note & Tags (Optional)
+                  _buildSectionCard(
+                    context: context,
+                    isDark: isDark,
+                    watermarkIcon: Icons.graphic_eq_rounded,
+                    backgroundColor: isDark
+                        ? const Color(0xFF1D2326)
+                        : const Color(0xFFF7FBFA),
+                    borderColor: isDark
+                        ? const Color(0xFF14B8A6).withValues(alpha: 0.25)
+                        : const Color(0xFF14B8A6).withValues(alpha: 0.18),
+                    children: [
+                      Row(
+                        children: [
+                          Container(
+                            width: 28,
+                            height: 28,
+                            decoration: BoxDecoration(
+                              color: primary.withValues(alpha: 0.12),
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                            child: Icon(Icons.mic_rounded, size: 16, color: primary),
+                          ),
+                          const SizedBox(width: 8),
+                          Text(
+                            l10n.capsuleVoiceMessageOptional.replaceAll('🎤', '').trim(),
+                            style: AppTypography.fromContext(
+                              context,
+                              fontSize: 14,
+                              fontWeight: FontWeight.w700,
+                              color: textColor,
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: AppSpacing.sm),
+                      if (_recordedAudio == null)
+                        AudioRecorderWidget(
+                          onRecordingComplete: (file, duration) {
+                            setState(() {
+                              _recordedAudio = file;
+                              _audioDuration = duration;
+                            });
+                          },
+                        )
+                      else
+                        RecordedAudioPreview(
+                          duration: _audioDuration!,
+                          onDelete: () {
+                            setState(() {
+                              _recordedAudio = null;
+                              _audioDuration = null;
+                            });
+                          },
+                        ),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 12),
+                        child: Divider(
+                          height: 1,
+                          color: isDark ? Colors.white10 : const Color(0xFFEBF2F0),
+                        ),
+                      ),
+                      _buildTagsSection(
+                        context,
+                        isDark,
+                        primary,
+                        textColor,
+                        secondaryText,
+                      ),
+                    ],
+                  ),
+                ],
+              ),
             ),
-          ],
-        ),
+          ),
+        ],
       ),
       bottomNavigationBar: _buildStickyBottomBar(
         context,
@@ -264,37 +294,150 @@ class _CreateCapsuleScreenState extends ConsumerState<CreateCapsuleScreen> {
       _selectedCategory != null &&
       !_isLoading;
 
-  /// Card wrapper for visual grouping
+  Widget _buildHeader(
+    BuildContext context,
+    bool isDark,
+    Color primary,
+    Color textColor,
+    Color secondaryText,
+  ) {
+    final l10n = context.l10n;
+
+    return Row(
+      children: [
+        // Close Button with Soft Squircle Backdrop
+        GestureDetector(
+          onTap: () => Navigator.pop(context),
+          child: Container(
+            width: 42,
+            height: 42,
+            decoration: BoxDecoration(
+              color: isDark
+                  ? Colors.white.withValues(alpha: 0.08)
+                  : Colors.black.withValues(alpha: 0.04),
+              borderRadius: BorderRadius.circular(14),
+              border: Border.all(
+                color: isDark
+                    ? Colors.white12
+                    : Colors.black.withValues(alpha: 0.06),
+                width: 1,
+              ),
+            ),
+            child: Icon(Icons.close_rounded, size: 20, color: textColor),
+          ),
+        ),
+        const SizedBox(width: 12),
+
+        // Gradient Icon Squircle matching app signature
+        Container(
+          width: 42,
+          height: 42,
+          decoration: BoxDecoration(
+            gradient: AppColors.primaryGradient,
+            borderRadius: BorderRadius.circular(14),
+            boxShadow: [
+              BoxShadow(
+                color: AppColors.primaryLight.withValues(alpha: 0.3),
+                blurRadius: 8,
+                offset: const Offset(0, 2),
+              ),
+            ],
+          ),
+          child: const Icon(
+            Icons.camera_enhance_rounded,
+            color: Colors.white,
+            size: 20,
+          ),
+        ),
+        const SizedBox(width: 12),
+
+        // Title & Localized Subtitle
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                l10n.capsuleNewTitle,
+                style: AppTypography.fromContext(
+                  context,
+                  fontSize: 18,
+                  fontWeight: FontWeight.w800,
+                  color: textColor,
+                  letterSpacing: -0.3,
+                ),
+              ),
+              const SizedBox(height: 2),
+              Text(
+                l10n.milestone_capture_this_moment,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                style: AppTypography.fromContext(
+                  context,
+                  fontSize: 12,
+                  color: secondaryText,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+
+  /// Card wrapper for visual grouping with Home Bento aesthetics and optional corner watermark
   Widget _buildSectionCard({
     required BuildContext context,
     required bool isDark,
     required List<Widget> children,
+    Color? backgroundColor,
+    Color? borderColor,
+    IconData? watermarkIcon,
   }) {
+    final bg = backgroundColor ??
+        (isDark ? const Color(0xFF221F28) : Colors.white);
+    final border = borderColor ??
+        (isDark ? AppColors.dividerDark : const Color(0xFFECEBF0));
+
     return Container(
       width: double.infinity,
-      padding: const EdgeInsets.all(AppSpacing.md),
+      clipBehavior: Clip.antiAlias,
       decoration: BoxDecoration(
-        color: isDark
-            ? AppColors.surfaceDark
-            : Colors.white,
-        borderRadius: BorderRadius.circular(20),
-        border: Border.all(
-          color: isDark
-              ? AppColors.dividerDark
-              : AppColors.dividerLight.withValues(alpha: 0.8),
-          width: 1,
-        ),
+        color: bg,
+        borderRadius: BorderRadius.circular(22),
+        border: Border.all(color: border, width: 1.2),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: isDark ? 0.25 : 0.03),
-            blurRadius: 10,
+            color: Colors.black.withValues(alpha: isDark ? 0.22 : 0.035),
+            blurRadius: 12,
             offset: const Offset(0, 3),
           ),
         ],
       ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: children,
+      child: Stack(
+        children: [
+          if (watermarkIcon != null)
+            PositionedDirectional(
+              bottom: -16,
+              end: -12,
+              child: IgnorePointer(
+                child: Icon(
+                  watermarkIcon,
+                  size: 96,
+                  color: AppColors.primaryLight.withValues(
+                    alpha: isDark ? 0.07 : 0.04,
+                  ),
+                ),
+              ),
+            ),
+          Padding(
+            padding: const EdgeInsets.all(AppSpacing.md),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: children,
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -382,62 +525,89 @@ class _CreateCapsuleScreenState extends ConsumerState<CreateCapsuleScreen> {
       onTap: _showPhotoSourceSheet,
       child: Container(
         width: double.infinity,
-        height: 200,
+        height: 205,
+        clipBehavior: Clip.antiAlias,
         decoration: BoxDecoration(
-          color: isDark
-              ? AppColors.surfaceDark
-              : AppColors.surfaceContainerLight.withValues(alpha: 0.6),
-          borderRadius: BorderRadius.circular(20),
+          gradient: LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: isDark
+                ? [const Color(0xFF2B2028), const Color(0xFF201B24)]
+                : [const Color(0xFFFFF4F7), const Color(0xFFFBF2FE)],
+          ),
+          borderRadius: BorderRadius.circular(22),
           border: Border.all(
-            color: primary.withValues(alpha: 0.3),
+            color: primary.withValues(alpha: 0.25),
             width: 1.5,
           ),
           boxShadow: [
             BoxShadow(
-              color: primary.withValues(alpha: isDark ? 0.05 : 0.03),
-              blurRadius: 12,
+              color: primary.withValues(alpha: isDark ? 0.12 : 0.05),
+              blurRadius: 14,
               offset: const Offset(0, 4),
             ),
           ],
         ),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
+        child: Stack(
+          alignment: Alignment.center,
           children: [
-            Container(
-              width: 58,
-              height: 58,
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  colors: [
-                    primary.withValues(alpha: 0.2),
-                    AppColors.coral.withValues(alpha: 0.15),
-                  ],
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
+            // Corner watermark icon
+            PositionedDirectional(
+              bottom: -18,
+              end: -10,
+              child: IgnorePointer(
+                child: Icon(
+                  Icons.camera_alt_rounded,
+                  size: 110,
+                  color: primary.withValues(alpha: isDark ? 0.08 : 0.05),
                 ),
-                shape: BoxShape.circle,
-                border: Border.all(color: primary.withValues(alpha: 0.3)),
-              ),
-              child: Icon(Icons.add_a_photo_rounded, size: 26, color: primary),
-            ),
-            const SizedBox(height: AppSpacing.sm),
-            Text(
-              l10n.capsuleAddPhoto,
-              style: AppTypography.fromContext(
-                context,
-                fontSize: 15,
-                fontWeight: FontWeight.w700,
-                color: textColor,
               ),
             ),
-            const SizedBox(height: 4),
-            Text(
-              l10n.capsulePhotoSourceHint,
-              style: AppTypography.fromContext(
-                context,
-                fontSize: 12,
-                color: secondaryText,
-              ),
+            Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Container(
+                  width: 60,
+                  height: 60,
+                  decoration: BoxDecoration(
+                    gradient: AppColors.primaryGradient,
+                    borderRadius: BorderRadius.circular(18),
+                    boxShadow: [
+                      BoxShadow(
+                        color: AppColors.primaryLight.withValues(alpha: 0.35),
+                        blurRadius: 10,
+                        offset: const Offset(0, 3),
+                      ),
+                    ],
+                  ),
+                  child: const Center(
+                    child: Icon(
+                      Icons.add_a_photo_rounded,
+                      size: 26,
+                      color: Colors.white,
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 12),
+                Text(
+                  l10n.capsuleAddPhoto,
+                  style: AppTypography.fromContext(
+                    context,
+                    fontSize: 15.5,
+                    fontWeight: FontWeight.w800,
+                    color: textColor,
+                  ),
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  l10n.capsulePhotoSourceHint,
+                  style: AppTypography.fromContext(
+                    context,
+                    fontSize: 12,
+                    color: secondaryText,
+                  ),
+                ),
+              ],
             ),
           ],
         ),
@@ -476,6 +646,21 @@ class _CreateCapsuleScreenState extends ConsumerState<CreateCapsuleScreen> {
         ),
       ),
     );
+  }
+
+  Color _getCategoryColor(CapsuleCategory cat) {
+    switch (cat) {
+      case CapsuleCategory.preGestation:
+        return const Color(0xFF0D9488);
+      case CapsuleCategory.gestation:
+        return const Color(0xFFE11D48);
+      case CapsuleCategory.postPartum:
+        return const Color(0xFFF59E0B);
+      case CapsuleCategory.enfance:
+        return const Color(0xFF10B981);
+      case CapsuleCategory.adulte:
+        return const Color(0xFF8B5CF6);
+    }
   }
 
   Widget _buildCategorySection(
@@ -529,6 +714,8 @@ class _CreateCapsuleScreenState extends ConsumerState<CreateCapsuleScreen> {
           itemBuilder: (context, index) {
             final cat = CapsuleCategory.values[index];
             final isSelected = _selectedCategory == cat;
+            final catColor = _getCategoryColor(cat);
+
             return GestureDetector(
               onTap: () => setState(() => _selectedCategory = cat),
               child: AnimatedContainer(
@@ -536,15 +723,24 @@ class _CreateCapsuleScreenState extends ConsumerState<CreateCapsuleScreen> {
                 padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 8),
                 decoration: BoxDecoration(
                   color: isSelected
-                      ? primary.withValues(alpha: 0.15)
+                      ? catColor.withValues(alpha: isDark ? 0.22 : 0.12)
                       : (isDark
-                            ? AppColors.surfaceContainerDark
-                            : AppColors.surfaceContainerLight),
+                            ? const Color(0xFF221F28)
+                            : const Color(0xFFF7F5FA)),
                   borderRadius: BorderRadius.circular(14),
                   border: Border.all(
-                    color: isSelected ? primary : Colors.transparent,
-                    width: 1.5,
+                    color: isSelected ? catColor : (isDark ? Colors.white10 : const Color(0xFFECEAEF)),
+                    width: isSelected ? 1.8 : 0.8,
                   ),
+                  boxShadow: isSelected
+                      ? [
+                          BoxShadow(
+                            color: catColor.withValues(alpha: 0.25),
+                            blurRadius: 8,
+                            offset: const Offset(0, 2),
+                          ),
+                        ]
+                      : null,
                 ),
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
@@ -552,7 +748,7 @@ class _CreateCapsuleScreenState extends ConsumerState<CreateCapsuleScreen> {
                     Icon(
                       cat.icon,
                       size: 22,
-                      color: isSelected ? primary : secondaryText,
+                      color: isSelected ? catColor : secondaryText,
                     ),
                     const SizedBox(height: 5),
                     Text(
@@ -566,7 +762,7 @@ class _CreateCapsuleScreenState extends ConsumerState<CreateCapsuleScreen> {
                         fontWeight: isSelected
                             ? FontWeight.w700
                             : FontWeight.w500,
-                        color: isSelected ? primary : textColor,
+                        color: isSelected ? catColor : textColor,
                       ),
                     ),
                   ],
@@ -753,59 +949,99 @@ class _CreateCapsuleScreenState extends ConsumerState<CreateCapsuleScreen> {
           child: Row(
             children: children.map((child) {
               final isSelected = _selectedChild?.id == child.id;
+              final hasPhoto = child.photoUrl != null && child.photoUrl!.isNotEmpty;
+
               return Padding(
-                padding: const EdgeInsetsDirectional.only(end: 8),
+                padding: const EdgeInsetsDirectional.only(end: 10),
                 child: GestureDetector(
                   onTap: () => setState(() => _selectedChild = child),
                   child: AnimatedContainer(
                     duration: const Duration(milliseconds: 200),
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 14,
-                      vertical: 8,
-                    ),
+                    padding: const EdgeInsetsDirectional.fromSTEB(6, 5, 14, 5),
                     decoration: BoxDecoration(
                       color: isSelected
-                          ? primary.withValues(alpha: 0.15)
+                          ? primary.withValues(alpha: isDark ? 0.22 : 0.12)
                           : (isDark
-                                ? AppColors.surfaceContainerDark
-                                : AppColors.surfaceContainerLight),
-                      borderRadius: BorderRadius.circular(16),
+                                ? const Color(0xFF262230)
+                                : const Color(0xFFF6F3F9)),
+                      borderRadius: BorderRadius.circular(18),
                       border: Border.all(
-                        color: isSelected ? primary : Colors.transparent,
-                        width: 1.5,
+                        color: isSelected
+                            ? primary
+                            : (isDark ? Colors.white12 : const Color(0xFFE6E2EC)),
+                        width: isSelected ? 1.8 : 1.0,
                       ),
+                      boxShadow: isSelected
+                          ? [
+                              BoxShadow(
+                                color: primary.withValues(alpha: 0.22),
+                                blurRadius: 8,
+                                offset: const Offset(0, 2),
+                              ),
+                            ]
+                          : null,
                     ),
                     child: Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        CircleAvatar(
-                          radius: 12,
-                          backgroundColor: isSelected
-                              ? primary
-                              : secondaryText.withValues(alpha: 0.2),
-                          child: Text(
-                            child.name.isNotEmpty
-                                ? child.name[0].toUpperCase()
-                                : '?',
-                            style: const TextStyle(
-                              fontSize: 11,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.white,
+                        // Enlarged Child Photo Avatar (36x36)
+                        Container(
+                          width: 36,
+                          height: 36,
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            border: Border.all(
+                              color: isSelected ? primary : Colors.white,
+                              width: 1.5,
                             ),
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.black.withValues(alpha: 0.12),
+                                blurRadius: 4,
+                                offset: const Offset(0, 1),
+                              ),
+                            ],
+                          ),
+                          child: ClipOval(
+                            child: hasPhoto
+                                ? Image.network(
+                                    child.photoUrl!,
+                                    fit: BoxFit.cover,
+                                    errorBuilder: (_, _, _) => _buildChildInitials(
+                                      child,
+                                      isSelected,
+                                      primary,
+                                      secondaryText,
+                                    ),
+                                  )
+                                : _buildChildInitials(
+                                    child,
+                                    isSelected,
+                                    primary,
+                                    secondaryText,
+                                  ),
                           ),
                         ),
-                        const SizedBox(width: 8),
+                        const SizedBox(width: 10),
                         Text(
                           child.name,
                           style: AppTypography.fromContext(
                             context,
-                            fontSize: 13,
+                            fontSize: 13.5,
                             fontWeight: isSelected
                                 ? FontWeight.w700
-                                : FontWeight.w500,
+                                : FontWeight.w600,
                             color: isSelected ? primary : textColor,
                           ),
                         ),
+                        if (isSelected) ...[
+                          const SizedBox(width: 6),
+                          Icon(
+                            Icons.check_circle_rounded,
+                            size: 16,
+                            color: primary,
+                          ),
+                        ],
                       ],
                     ),
                   ),
@@ -815,6 +1051,27 @@ class _CreateCapsuleScreenState extends ConsumerState<CreateCapsuleScreen> {
           ),
         ),
       ],
+    );
+  }
+
+  Widget _buildChildInitials(
+    Child child,
+    bool isSelected,
+    Color primary,
+    Color secondaryText,
+  ) {
+    return Container(
+      color: isSelected ? primary : secondaryText.withValues(alpha: 0.25),
+      child: Center(
+        child: Text(
+          child.name.isNotEmpty ? child.name[0].toUpperCase() : '?',
+          style: const TextStyle(
+            fontSize: 13,
+            fontWeight: FontWeight.bold,
+            color: Colors.white,
+          ),
+        ),
+      ),
     );
   }
 

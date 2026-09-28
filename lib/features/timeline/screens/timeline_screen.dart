@@ -92,53 +92,106 @@ class _TimelineScreenState extends ConsumerState<TimelineScreen> {
                   });
                 }
 
-                return Column(
-                  children: [
-                    // Header with child selector
-                    PageHeaderWithFilter(
-                      title: context.l10n.timelineLifeBook,
-                      subtitle: context.l10n.timelineLifeBookOf(selectedChild.name),
-                      icon: Icons.auto_stories_rounded,
-                      iconColor: primary,
-                      iconGradient: null,
-                      showBackButton: false,
-                      childrenList: children,
-                      selectedChildId: selectedChild.id,
-                      allowAll: false,
-                      onChildSelected: (id) {
-                        if (id != null) {
-                          ref.read(selectedChildIdProvider.notifier).state = id;
-                        }
-                      },
-                      trailing: _buildQuickAddButton(
-                        context,
-                        primary,
-                        selectedChild,
-                      ),
-                    ),
+                final allMilestonesAsync =
+                    ref.watch(childMilestonesProvider(selectedChild.id));
+                final viewMode = ref.watch(timelineViewModeProvider);
 
-                    // Phase carousel
-                    PhaseCarousel(
-                      currentPhase: currentPhase,
-                      selectedPhase: _selectedPhase,
-                      onPhaseSelected: (phase) {
-                        setState(() => _selectedPhase = phase);
-                      },
-                    ),
+                return allMilestonesAsync.when(
+                  loading: () =>
+                      const Center(child: CircularProgressIndicator()),
+                  error: (e, _) => Center(
+                    child: Text(context.l10n.errorWithMessage('$e')),
+                  ),
+                  data: (allMilestones) {
+                    final phaseMilestones = allMilestones
+                        .where((m) => m.milestone.phase == _selectedPhase)
+                        .toList();
+                    final completedCount =
+                        phaseMilestones.where((m) => m.isCompleted).length;
+                    final totalCount = phaseMilestones.length;
 
-                    const SizedBox(height: AppSpacing.md),
+                    // Calculate live statistics for all phases
+                    final phaseStats = <Phase, PhaseStats>{};
+                    for (final phase in Phase.values) {
+                      final pMilestones = allMilestones
+                          .where((m) => m.milestone.phase == phase)
+                          .toList();
+                      final pCompleted =
+                          pMilestones.where((m) => m.isCompleted).length;
+                      phaseStats[phase] = PhaseStats(
+                        completed: pCompleted,
+                        total: pMilestones.length,
+                      );
+                    }
 
-                    // Milestones content
-                    Expanded(
-                      child: _buildMilestonesContent(
-                        context,
-                        selectedChild.id,
-                        textColor,
-                        secondaryText,
-                        primary,
-                      ),
-                    ),
-                  ],
+                    return Column(
+                      children: [
+                        // Header with child selector
+                        PageHeaderWithFilter(
+                          title: context.l10n.timelineLifeBook,
+                          subtitle: context.l10n
+                              .timelineLifeBookOf(selectedChild.name),
+                          icon: Icons.auto_stories_rounded,
+                          iconColor: primary,
+                          iconGradient: null,
+                          showBackButton: false,
+                          childrenList: children,
+                          selectedChildId: selectedChild.id,
+                          allowAll: false,
+                          onChildSelected: (id) {
+                            if (id != null) {
+                              ref.read(selectedChildIdProvider.notifier).state =
+                                  id;
+                            }
+                          },
+                          trailing: _buildQuickAddButton(
+                            context,
+                            primary,
+                            selectedChild,
+                          ),
+                        ),
+
+                        const SizedBox(height: 6),
+
+                        // Phase carousel with live stats & progress
+                        PhaseCarousel(
+                          currentPhase: currentPhase,
+                          selectedPhase: _selectedPhase,
+                          phaseStats: phaseStats,
+                          onPhaseSelected: (phase) {
+                            setState(() => _selectedPhase = phase);
+                          },
+                        ),
+
+                        const SizedBox(height: 14),
+
+                        // Section header with live counter and view toggle
+                        _buildSectionHeader(
+                          context,
+                          completedCount,
+                          totalCount,
+                          viewMode,
+                          textColor,
+                          secondaryText,
+                          _selectedPhase,
+                        ),
+
+                        const SizedBox(height: 8),
+
+                        // Milestones content
+                        Expanded(
+                          child: _buildMilestonesContent(
+                            context,
+                            selectedChild,
+                            phaseMilestones,
+                            viewMode,
+                            textColor,
+                            secondaryText,
+                          ),
+                        ),
+                      ],
+                    );
+                  },
                 );
               },
             );
@@ -150,38 +203,84 @@ class _TimelineScreenState extends ConsumerState<TimelineScreen> {
 );
   }
 
-  Widget _buildMilestonesContent(
+  Widget _buildSectionHeader(
     BuildContext context,
-    String childId,
+    int completedCount,
+    int totalCount,
+    TimelineViewMode viewMode,
     Color textColor,
     Color secondaryText,
-    Color primary,
+    Phase phase,
+  ) {
+    final lang = Localizations.localeOf(context).languageCode;
+    final title = lang == 'ar'
+        ? 'المعالم والذكريات'
+        : (lang == 'en' ? 'Milestones & Memories' : 'Jalons & Souvenirs');
+
+    return Padding(
+      padding: const EdgeInsets.symmetric(
+        horizontal: AppSpacing.screenPaddingH,
+      ),
+      child: Row(
+        children: [
+          Text(
+            title,
+            style: AppTypography.fromContext(
+              context,
+              fontSize: 15.5,
+              fontWeight: FontWeight.w800,
+              color: textColor,
+            ),
+          ),
+          const SizedBox(width: 8),
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+            decoration: BoxDecoration(
+              color: phase.color.withValues(alpha: 0.12),
+              borderRadius: BorderRadius.circular(10),
+            ),
+            child: Text(
+              '$completedCount / $totalCount',
+              style: AppTypography.fromContext(
+                context,
+                fontSize: 11,
+                fontWeight: FontWeight.w800,
+                color: phase.color,
+              ),
+            ),
+          ),
+          const Spacer(),
+          _TimelineViewModeToggle(
+            mode: viewMode,
+            onChanged: (newMode) {
+              ref.read(timelineViewModeProvider.notifier).setMode(newMode);
+            },
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildMilestonesContent(
+    BuildContext context,
+    Child selectedChild,
+    List<MilestoneWithDueDate> phaseMilestones,
+    TimelineViewMode viewMode,
+    Color textColor,
+    Color secondaryText,
   ) {
     // Side-effect: schedule milestone reminders whenever milestones are loaded.
-    ref.watch(milestoneRemindersProvider(childId));
+    ref.watch(milestoneRemindersProvider(selectedChild.id));
 
-    final allMilestonesAsync = ref.watch(childMilestonesProvider(childId));
+    if (phaseMilestones.isEmpty) {
+      return _buildEmptyPhase(context, textColor, secondaryText);
+    }
 
-    return allMilestonesAsync.when(
-      loading: () => const Center(child: CircularProgressIndicator()),
-      error: (e, _) => Center(child: Text(context.l10n.errorWithMessage('$e'))),
-      data: (allMilestones) {
-        // Filter by selected phase
-        final phaseMilestones = allMilestones
-            .where((m) => m.milestone.phase == _selectedPhase)
-            .toList();
-
-        if (phaseMilestones.isEmpty) {
-          return _buildEmptyPhase(context, textColor, secondaryText);
-        }
-
-        return TimelineRail(
-          milestones: phaseMilestones,
-          phase: _selectedPhase,
-          viewMode: ref.watch(timelineViewModeProvider),
-          onMilestoneTap: (m) => _openMilestoneDetail(context, m),
-        );
-      },
+    return TimelineRail(
+      milestones: phaseMilestones,
+      phase: _selectedPhase,
+      viewMode: viewMode,
+      onMilestoneTap: (m) => _openMilestoneDetail(context, m),
     );
   }
 
@@ -191,33 +290,69 @@ class _TimelineScreenState extends ConsumerState<TimelineScreen> {
     Color secondaryText,
   ) {
     final l10n = context.l10n;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     return Center(
       child: Padding(
-        padding: const EdgeInsets.all(AppSpacing.xl),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(
-              _selectedPhase.icon,
-              size: 60,
-              color: _selectedPhase.color.withValues(alpha: 0.7),
+        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 24),
+        child: Container(
+          padding: const EdgeInsets.all(24),
+          decoration: BoxDecoration(
+            color: isDark ? const Color(0xFF1E1E26) : Colors.white,
+            borderRadius: BorderRadius.circular(22),
+            border: Border.all(
+              color: isDark ? AppColors.dividerDark : const Color(0xFFECECF0),
+              width: 1.0,
             ),
-            const SizedBox(height: AppSpacing.md),
-            Text(
-              l10n.timelineNoMilestonesPhase,
-              style: AppTypography.fromContext(context, 
-                fontSize: 18,
-                fontWeight: FontWeight.w600,
-                color: textColor,
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withValues(alpha: isDark ? 0.22 : 0.04),
+                blurRadius: 10,
+                offset: const Offset(0, 3),
               ),
-            ),
-            const SizedBox(height: AppSpacing.xs),
-            Text(
-              l10n.timelineMilestonesAppear,
-              style: AppTypography.fromContext(context, fontSize: 14, color: secondaryText),
-              textAlign: TextAlign.center,
-            ),
-          ],
+            ],
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Container(
+                width: 58,
+                height: 58,
+                decoration: BoxDecoration(
+                  color: _selectedPhase.color.withValues(alpha: 0.14),
+                  borderRadius: BorderRadius.circular(18),
+                ),
+                child: Center(
+                  child: Icon(
+                    _selectedPhase.icon,
+                    size: 30,
+                    color: _selectedPhase.color,
+                  ),
+                ),
+              ),
+              const SizedBox(height: 14),
+              Text(
+                l10n.timelineNoMilestonesPhase,
+                style: AppTypography.fromContext(
+                  context,
+                  fontSize: 16,
+                  fontWeight: FontWeight.w800,
+                  color: textColor,
+                ),
+                textAlign: TextAlign.center,
+              ),
+              const SizedBox(height: 6),
+              Text(
+                l10n.timelineMilestonesAppear,
+                style: AppTypography.fromContext(
+                  context,
+                  fontSize: 12.5,
+                  color: secondaryText,
+                ),
+                textAlign: TextAlign.center,
+              ),
+            ],
+          ),
         ),
       ),
     );
@@ -523,31 +658,171 @@ class _TimelineScreenState extends ConsumerState<TimelineScreen> {
     );
   }
 
-  /// Gradient « + » quick-add button — mirrors the Mes Capsules "Capturer" button
-  Widget _buildQuickAddButton(BuildContext context, Color primary, Child? child) {
-    return GestureDetector(
+  /// Gradient « + » quick-add button — boutique squircle design
+  Widget _buildQuickAddButton(
+    BuildContext context,
+    Color primary,
+    Child? child,
+  ) {
+    return _BouncingQuickAddButton(
+      child: child,
       onTap: child != null ? () => _openQuickAdd(context, child) : null,
-      child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-        decoration: BoxDecoration(
-          gradient: child != null ? AppColors.primaryGradient : null,
-          color: child != null ? null : Colors.grey,
-          borderRadius: BorderRadius.circular(20),
-        ),
-        child: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            const Icon(Icons.add_rounded, color: Colors.white, size: 18),
-            const SizedBox(width: 4),
-            Text(
-              context.l10n.timeline_add,
-              style: AppTypography.fromContext(context, 
-                fontSize: 13,
-                fontWeight: FontWeight.w600,
-                color: Colors.white,
+    );
+  }
+}
+
+class _BouncingQuickAddButton extends StatefulWidget {
+  final Child? child;
+  final VoidCallback? onTap;
+
+  const _BouncingQuickAddButton({
+    required this.child,
+    required this.onTap,
+  });
+
+  @override
+  State<_BouncingQuickAddButton> createState() =>
+      _BouncingQuickAddButtonState();
+}
+
+class _BouncingQuickAddButtonState extends State<_BouncingQuickAddButton> {
+  bool _isPressed = false;
+
+  @override
+  Widget build(BuildContext context) {
+    final hasChild = widget.child != null;
+
+    return AnimatedScale(
+      scale: _isPressed ? 0.94 : 1.0,
+      duration: const Duration(milliseconds: 130),
+      curve: Curves.easeOutCubic,
+      child: GestureDetector(
+        onTapDown: (_) => setState(() => _isPressed = true),
+        onTapUp: (_) => setState(() => _isPressed = false),
+        onTapCancel: () => setState(() => _isPressed = false),
+        onTap: widget.onTap,
+        child: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8.5),
+          decoration: BoxDecoration(
+            gradient: hasChild ? AppColors.primaryGradient : null,
+            color: hasChild ? null : Colors.grey.shade400,
+            borderRadius: BorderRadius.circular(14),
+            boxShadow: hasChild
+                ? [
+                    BoxShadow(
+                      color: AppColors.primaryLight.withValues(alpha: 0.32),
+                      blurRadius: 8,
+                      offset: const Offset(0, 2),
+                    ),
+                  ]
+                : null,
+          ),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const Icon(Icons.add_rounded, color: Colors.white, size: 17),
+              const SizedBox(width: 4),
+              Text(
+                context.l10n.timeline_add,
+                style: AppTypography.fromContext(
+                  context,
+                  fontSize: 12.5,
+                  fontWeight: FontWeight.w700,
+                  color: Colors.white,
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+// ─── Timeline View Mode Toggle ────────────────────────────────────────────────
+
+class _TimelineViewModeToggle extends StatelessWidget {
+  final TimelineViewMode mode;
+  final ValueChanged<TimelineViewMode> onChanged;
+
+  const _TimelineViewModeToggle({
+    required this.mode,
+    required this.onChanged,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final isVertical = mode == TimelineViewMode.vertical;
+
+    return Container(
+      height: 32,
+      padding: const EdgeInsets.all(2.5),
+      decoration: BoxDecoration(
+        color: isDark ? const Color(0xFF1E1E26) : const Color(0xFFEEEEF3),
+        borderRadius: BorderRadius.circular(10),
+        border: Border.all(
+          color: isDark ? Colors.white10 : Colors.black.withValues(alpha: 0.04),
+          width: 0.8,
+        ),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          _buildSegment(
+            icon: Icons.timeline_rounded,
+            isSelected: isVertical,
+            isDark: isDark,
+            onTap: () => onChanged(TimelineViewMode.vertical),
+          ),
+          const SizedBox(width: 2),
+          _buildSegment(
+            icon: Icons.view_carousel_rounded,
+            isSelected: !isVertical,
+            isDark: isDark,
+            onTap: () => onChanged(TimelineViewMode.horizontal),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildSegment({
+    required IconData icon,
+    required bool isSelected,
+    required bool isDark,
+    required VoidCallback onTap,
+  }) {
+    return GestureDetector(
+      onTap: onTap,
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 180),
+        curve: Curves.easeInOut,
+        width: 32,
+        height: 27,
+        decoration: BoxDecoration(
+          color: isSelected
+              ? (isDark ? const Color(0xFF2E2E3A) : Colors.white)
+              : Colors.transparent,
+          borderRadius: BorderRadius.circular(8),
+          boxShadow: isSelected
+              ? [
+                  BoxShadow(
+                    color: Colors.black.withValues(alpha: isDark ? 0.3 : 0.08),
+                    blurRadius: 4,
+                    offset: const Offset(0, 1),
+                  ),
+                ]
+              : null,
+        ),
+        child: Center(
+          child: Icon(
+            icon,
+            size: 15,
+            color: isSelected
+                ? (isDark ? Colors.white : AppColors.primaryLight)
+                : (isDark ? Colors.white54 : AppColors.textSecondaryLight),
+          ),
         ),
       ),
     );
@@ -556,7 +831,7 @@ class _TimelineScreenState extends ConsumerState<TimelineScreen> {
 
 // ─── Quick Add tile ───────────────────────────────────────────────────────────
 
-class _QuickAddTile extends StatelessWidget {
+class _QuickAddTile extends StatefulWidget {
   const _QuickAddTile({
     required this.icon,
     required this.color,
@@ -572,55 +847,90 @@ class _QuickAddTile extends StatelessWidget {
   final VoidCallback onTap;
 
   @override
+  State<_QuickAddTile> createState() => _QuickAddTileState();
+}
+
+class _QuickAddTileState extends State<_QuickAddTile> {
+  bool _isPressed = false;
+
+  @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final textColor = isDark ? AppColors.onSurfaceDark : AppColors.onSurfaceLight;
-    final secondary = isDark ? AppColors.textSecondaryDark : AppColors.textSecondaryLight;
-    final surface = isDark ? AppColors.backgroundDark : AppColors.backgroundLight;
+    final textColor =
+        isDark ? AppColors.onSurfaceDark : AppColors.onSurfaceLight;
+    final secondary =
+        isDark ? AppColors.textSecondaryDark : AppColors.textSecondaryLight;
+    final surface =
+        isDark ? AppColors.backgroundDark : AppColors.backgroundLight;
 
-    return GestureDetector(
-      onTap: onTap,
-      child: Container(
-        padding: const EdgeInsets.all(16),
-        decoration: BoxDecoration(
-          color: surface,
-          borderRadius: BorderRadius.circular(16),
-          border: Border.all(color: color.withValues(alpha: 0.25)),
-        ),
-        child: Row(
-          children: [
-            Container(
-              width: 48,
-              height: 48,
-              decoration: BoxDecoration(
-                color: color.withValues(alpha: 0.12),
-                borderRadius: BorderRadius.circular(12),
-              ),
-              child: Icon(icon, color: color, size: 24),
+    return AnimatedScale(
+      scale: _isPressed ? 0.97 : 1.0,
+      duration: const Duration(milliseconds: 130),
+      child: GestureDetector(
+        onTapDown: (_) => setState(() => _isPressed = true),
+        onTapUp: (_) => setState(() => _isPressed = false),
+        onTapCancel: () => setState(() => _isPressed = false),
+        onTap: widget.onTap,
+        child: Container(
+          padding: const EdgeInsets.all(16),
+          decoration: BoxDecoration(
+            color: surface,
+            borderRadius: BorderRadius.circular(18),
+            border: Border.all(
+              color: widget.color.withValues(alpha: 0.25),
+              width: 1.0,
             ),
-            const SizedBox(width: 16),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    title,
-                    style: AppTypography.fromContext(context, 
-                      fontSize: 15,
-                      fontWeight: FontWeight.w600,
-                      color: textColor,
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withValues(alpha: isDark ? 0.2 : 0.03),
+                blurRadius: 6,
+                offset: const Offset(0, 2),
+              ),
+            ],
+          ),
+          child: Row(
+            children: [
+              Container(
+                width: 48,
+                height: 48,
+                decoration: BoxDecoration(
+                  color: widget.color.withValues(alpha: 0.12),
+                  borderRadius: BorderRadius.circular(14),
+                ),
+                child: Icon(widget.icon, color: widget.color, size: 24),
+              ),
+              const SizedBox(width: 16),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      widget.title,
+                      style: AppTypography.fromContext(
+                        context,
+                        fontSize: 15,
+                        fontWeight: FontWeight.w700,
+                        color: textColor,
+                      ),
                     ),
-                  ),
-                  const SizedBox(height: 2),
-                  Text(
-                    subtitle,
-                    style: AppTypography.fromContext(context, fontSize: 12, color: secondary),
-                  ),
-                ],
+                    const SizedBox(height: 2),
+                    Text(
+                      widget.subtitle,
+                      style: AppTypography.fromContext(
+                        context,
+                        fontSize: 12,
+                        color: secondary,
+                      ),
+                    ),
+                  ],
+                ),
               ),
-            ),
-            Icon(Icons.chevron_right_rounded, color: color.withValues(alpha: 0.6)),
-          ],
+              Icon(
+                Icons.chevron_right_rounded,
+                color: widget.color.withValues(alpha: 0.6),
+              ),
+            ],
+          ),
         ),
       ),
     );

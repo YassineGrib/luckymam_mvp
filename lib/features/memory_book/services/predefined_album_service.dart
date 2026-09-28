@@ -31,6 +31,18 @@ class PredefinedAlbumService {
         );
   }
 
+  /// Watch all predefined albums for the current user.
+  Stream<List<PredefinedAlbum>> watchAllAlbums() {
+    if (_userId == null) return Stream.value([]);
+    return _albumsRef
+        .snapshots()
+        .map(
+          (snap) =>
+              snap.docs.map(PredefinedAlbum.fromFirestore).toList()
+                ..sort((a, b) => b.createdAt.compareTo(a.createdAt)),
+        );
+  }
+
   /// Watch a single predefined album by id.
   Stream<PredefinedAlbum?> watchAlbum(String albumId) {
     return _albumsRef

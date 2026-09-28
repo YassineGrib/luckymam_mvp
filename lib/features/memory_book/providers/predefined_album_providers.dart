@@ -26,6 +26,15 @@ final predefinedAlbumProvider =
       return service.watchAlbum(albumId);
     });
 
+/// Stream provider for all predefined albums belonging to the user.
+final allPredefinedAlbumsProvider =
+    StreamProvider<List<PredefinedAlbum>>((ref) {
+      final uid = ref.watch(userIdProvider);
+      if (uid == null) return Stream.value([]);
+      final service = ref.watch(predefinedAlbumServiceProvider);
+      return service.watchAllAlbums();
+    });
+
 /// Actions notifier for predefined-album operations.
 class PredefinedAlbumActionsNotifier extends StateNotifier<AsyncValue<void>> {
   PredefinedAlbumActionsNotifier(this._service)

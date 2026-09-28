@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/extensions/l10n_extension.dart';
@@ -11,6 +12,7 @@ import '../screens/growth_screen.dart';
 import '../screens/appointments_screen.dart';
 import '../../../shared/widgets/page_header_with_filter.dart';
 import '../../../core/theme/app_typography.dart';
+import '../../../shared/widgets/top_ambient_gradient.dart';
 
 /// Standalone "Santé enfant" screen — Growth + Appointments with child selector.
 /// Accessed via a shortcut card on the Dashboard, not the bottom nav.
@@ -30,10 +32,18 @@ class _HealthHubScreenState extends ConsumerState<HealthHubScreen>
   void initState() {
     super.initState();
     _tabController = TabController(length: 2, vsync: this);
+    _tabController.addListener(_onTabChanged);
+  }
+
+  void _onTabChanged() {
+    if (_tabController.indexIsChanging) {
+      HapticFeedback.selectionClick();
+    }
   }
 
   @override
   void dispose() {
+    _tabController.removeListener(_onTabChanged);
     _tabController.dispose();
     super.dispose();
   }
@@ -58,71 +68,76 @@ class _HealthHubScreenState extends ConsumerState<HealthHubScreen>
 
     return Scaffold(
       backgroundColor: bgColor,
-      body: SafeArea(
-        child: childrenAsync.when(
-          loading: () => const Center(child: CircularProgressIndicator()),
-          error: (_, _) => Center(
-            child: Text(
-              l10n.healthLoadingError,
-              style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: AppColors.error),
+      body: Stack(
+        children: [
+          const TopAmbientGradient(height: 380),
+          SafeArea(
+            child: childrenAsync.when(
+              loading: () => const Center(child: CircularProgressIndicator()),
+              error: (_, _) => Center(
+                child: Text(
+                  l10n.healthLoadingError,
+                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: AppColors.error),
+                ),
+              ),
+              data: (children) {
+                if (children.isEmpty) {
+                  return _buildNoChildren(
+                    primary,
+                    textColor,
+                    secondaryText,
+                    l10n,
+                  );
+                }
+
+                // Auto-select first child
+                _selectedChild ??= children.first;
+                if (!children.any((c) => c.id == _selectedChild?.id)) {
+                  _selectedChild = children.first;
+                }
+
+                return Column(
+                  children: [
+                    // ── Header & Child Selector ─────────────────────────────
+                    PageHeaderWithFilter(
+                      title: l10n.navHealth,
+                      subtitle: l10n.healthHubSubtitle,
+                      icon: Icons.monitor_heart_rounded,
+                      showBackButton: true,
+                      childrenList: children,
+                      selectedChildId: _selectedChild?.id,
+                      allowAll: false,
+                      onChildSelected: (id) {
+                        if (id != null) {
+                          setState(() {
+                            _selectedChild = children.firstWhere(
+                              (c) => c.id == id,
+                              orElse: () => children.first,
+                            );
+                          });
+                        }
+                      },
+                    ),
+
+                    // ── Tab bar ─────────────────────────────────────────────
+                    _buildTabBar(primary, textColor, isDark, surfaceColor, l10n),
+
+                    // ── Tab views ───────────────────────────────────────────
+                    Expanded(
+                      child: TabBarView(
+                        controller: _tabController,
+                        children: [
+                          GrowthScreen(child: _selectedChild!),
+                          AppointmentsScreen(child: _selectedChild!),
+                        ],
+                      ),
+                    ),
+                  ],
+                );
+              },
             ),
           ),
-          data: (children) {
-            if (children.isEmpty) {
-              return _buildNoChildren(
-                primary,
-                textColor,
-                secondaryText,
-                l10n,
-              );
-            }
-
-            // Auto-select first child
-            _selectedChild ??= children.first;
-            if (!children.any((c) => c.id == _selectedChild?.id)) {
-              _selectedChild = children.first;
-            }
-
-            return Column(
-              children: [
-                // ── Header & Child Selector ─────────────────────────────
-                PageHeaderWithFilter(
-                  title: l10n.navHealth,
-                  subtitle: l10n.healthHubSubtitle,
-                  icon: Icons.monitor_heart_rounded,
-                  showBackButton: true,
-                  childrenList: children,
-                  selectedChildId: _selectedChild?.id,
-                  allowAll: false,
-                  onChildSelected: (id) {
-                    if (id != null) {
-                      setState(() {
-                        _selectedChild = children.firstWhere(
-                          (c) => c.id == id,
-                          orElse: () => children.first,
-                        );
-                      });
-                    }
-                  },
-                ),
-
-                // ── Tab bar ─────────────────────────────────────────────
-                _buildTabBar(primary, textColor, isDark, surfaceColor, l10n),
-
-                // ── Tab views ───────────────────────────────────────────
-                Expanded(
-                  child: TabBarView(
-                    controller: _tabController,
-                    children: [
-                      GrowthScreen(child: _selectedChild!),
-                      AppointmentsScreen(child: _selectedChild!),
-                    ],
-                  ),
-                ),
-              ],
-            );
-          },
-        ),
+        ],
       ),
     );
   }
@@ -140,31 +155,106 @@ class _HealthHubScreenState extends ConsumerState<HealthHubScreen>
       AppSpacing.screenPaddingH,
       AppSpacing.sm,
       AppSpacing.screenPaddingH,
-      0,
+      AppSpacing.xs,
     ),
     child: Container(
+      height: 52,
       decoration: BoxDecoration(
         color: isDark
             ? AppColors.surfaceContainerDark
-            : AppColors.surfaceContainerLight,
-        borderRadius: BorderRadius.circular(16),
+            : Colors.white,
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(
+          color: isDark
+              ? AppColors.dividerDark
+              : AppColors.dividerLight,
+          width: 1,
+        ),
+        boxShadow: isDark
+            ? [
+                BoxShadow(
+                  color: Colors.black.withValues(alpha: 0.25),
+                  blurRadius: 16,
+                  offset: const Offset(0, 4),
+                ),
+              ]
+            : [
+                BoxShadow(
+                  color: primary.withValues(alpha: 0.06),
+                  blurRadius: 18,
+                  offset: const Offset(0, 6),
+                ),
+                BoxShadow(
+                  color: Colors.black.withValues(alpha: 0.03),
+                  blurRadius: 6,
+                  offset: const Offset(0, 2),
+                ),
+              ],
       ),
+      padding: const EdgeInsets.all(4),
       child: TabBar(
         controller: _tabController,
+        onTap: (_) => HapticFeedback.selectionClick(),
         indicator: BoxDecoration(
-          color: primary,
-          borderRadius: BorderRadius.circular(14),
+          gradient: AppColors.primaryGradient,
+          borderRadius: BorderRadius.circular(16),
+          boxShadow: [
+            BoxShadow(
+              color: primary.withValues(alpha: 0.35),
+              blurRadius: 10,
+              offset: const Offset(0, 3),
+            ),
+          ],
         ),
         indicatorSize: TabBarIndicatorSize.tab,
-        labelStyle: AppTypography.fromContext(context, fontSize: 13, fontWeight: FontWeight.w600),
-        unselectedLabelStyle: AppTypography.fromContext(context, fontSize: 13),
+        labelStyle: AppTypography.fromContext(
+          context,
+          fontSize: 13,
+          fontWeight: FontWeight.w700,
+        ),
+        unselectedLabelStyle: AppTypography.fromContext(
+          context,
+          fontSize: 13,
+          fontWeight: FontWeight.w500,
+        ),
         labelColor: Colors.white,
         unselectedLabelColor: textColor.withValues(alpha: 0.6),
         dividerColor: Colors.transparent,
-        padding: const EdgeInsets.all(4),
         tabs: [
-          Tab(text: l10n.healthTabGrowth),
-          Tab(text: l10n.healthTabAppointments),
+          Tab(
+            height: 44,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                const Icon(Icons.show_chart_rounded, size: 19),
+                const SizedBox(width: 8),
+                Flexible(
+                  child: Text(
+                    l10n.healthTabGrowth,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          Tab(
+            height: 44,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                const Icon(Icons.calendar_month_rounded, size: 19),
+                const SizedBox(width: 8),
+                Flexible(
+                  child: Text(
+                    l10n.healthTabAppointments,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ),
+              ],
+            ),
+          ),
         ],
       ),
     ),
