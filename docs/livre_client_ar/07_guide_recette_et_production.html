@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>الفصل السابع — دليل الفحص والجاهزية للإنتاج · لاكي مام</title>
+  <meta name="description" content="قائمة التحقق والفحص اليدوي التفاعلية المحفوظة آلياً، تدقيق جاهزية لوحة التحكم بنسبة 88% وخارطة طريق الإطلاق.">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+  <div id="reading-progress"></div>
+
+  <div class="app-layout">
+    
+    <aside class="sidebar">
+      <div class="sidebar-brand">
+        <div class="sidebar-title">لاكي مام</div>
+        <div class="sidebar-subtitle">دليل العميل المرجعي · النسخة التجريبية</div>
+      </div>
+
+      <button class="sidebar-search-btn trigger-search" type="button">
+        <span>ابحث في الدليل...</span>
+        <kbd>/</kbd>
+      </button>
+
+      <nav class="sidebar-nav">
+        <div class="nav-section-label">فهرس المحتويات</div>
+        <a href="index.html" class="nav-link">
+          <span class="nav-number">٠٠</span>
+          <span>نظرة عامة وفهرس شامل</span>
+        </a>
+        <a href="01_architecture_et_produit.html" class="nav-link">
+          <span class="nav-number">٠١</span>
+          <span>رؤية المنتج والأساس التقني</span>
+        </a>
+        <a href="02_release_mvp_v1.html" class="nav-link">
+          <span class="nav-number">٠٢</span>
+          <span>تسليم الإصدار الأولي v1.0.0</span>
+        </a>
+        <a href="03_conformite_loi_18_07.html" class="nav-link">
+          <span class="nav-number">٠٣</span>
+          <span>الامتثال للقانون 18-07 واللغات</span>
+        </a>
+        <a href="04_backlog_addendum.html" class="nav-link">
+          <span class="nav-number">٠٤</span>
+          <span>ملحق المهام (22 تذكرة)</span>
+        </a>
+        <a href="05_memoires_et_impression.html" class="nav-link">
+          <span class="nav-number">٠٥</span>
+          <span>ألبوم الذكريات وطباعة PDF</span>
+        </a>
+        <a href="06_marketplace_et_monetisation.html" class="nav-link">
+          <span class="nav-number">٠٦</span>
+          <span>متجر الشركاء والإيرادات</span>
+        </a>
+        <a href="07_guide_recette_et_production.html" class="nav-link active">
+          <span class="nav-number">٠٧</span>
+          <span>دليل الفحص والجاهزية</span>
+        </a>
+      </nav>
+
+      <div class="sidebar-footer">
+        <a href="../livre_client/07_guide_recette_et_production.html" class="btn btn-secondary" style="padding: 4px 8px; font-size: 0.72rem;">Français</a>
+        <button class="btn btn-secondary" onclick="window.print()" style="padding: 4px 8px; font-size: 0.72rem;">طباعة</button>
+      </div>
+    </aside>
+
+    <main class="main-content">
+      
+      <header class="chapter-header">
+        <div class="chapter-meta">
+          <span class="badge badge-green">ضمان الجودة والاعتماد النهائي</span>
+          <span class="chapter-number">الفصل السابع</span>
+        </div>
+        <h1 class="chapter-title">دليل الفحص والجاهزية للإنتاج</h1>
+        <p class="chapter-lead">
+          يضع هذا الفصل الختامي بين يدي العميل وفريق الفحص بروتوكول مطابقة يدوي تفاعلي. يتم تخزين كل نقطة فحص تقومون بتحديدها بشكل تلقائي وفوري داخل متصفحكم، مما يمكنكم من إتمام وتوثيق عملية المراجعة الشاملة قبل الإطلاق الرسمي.
+        </p>
+      </header>
+
+      <!-- عداد الإنجاز التفاعلي -->
+      <section>
+        <div class="card" style="margin-bottom: 32px; background: var(--surface-muted); display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 16px;">
+          <div>
+            <span class="badge badge-neutral">مستوى تقدم الفحص اليدوي</span>
+            <div id="checklist-progress-counter" class="card-metric" style="font-size: 1.8rem; margin: 6px 0 0 0;">
+              ٠ / ١٤ مكتمل (0%)
+            </div>
+          </div>
+          <div>
+            <button class="btn btn-secondary" type="button" onclick="localStorage.removeItem('luckymam_qa_checklist_ar_v1'); window.location.reload();" style="font-size: 0.8rem;">
+              إعادة ضبط الاختبارات
+            </button>
+          </div>
+        </div>
+      </section>
+
+      <!-- بنك الاختبارات الـ 14 -->
+      <section>
+        <h2>بنك الفحص اليدوي التفاعلي (14 نقطة تحقق)</h2>
+        <p>
+          يرجى تفعيل الخانات تباعاً أثناء تجربة التطبيق على هاتف أندرويد الحقيقي أو جهاز المحاكاة:
+        </p>
+
+        <div class="card" style="padding: 0; overflow: hidden;">
+          
+          <div class="check-item">
+            <input type="checkbox" id="check-1" data-check-id="qa_ar_1">
+            <div class="check-content">
+              <label for="check-1" class="check-title">١. الموافقة الإلزامية للقانون 18-07 وسجل التدقيق المشفر</label>
+              <div class="check-desc">
+                إنشاء حساب تجريبي جديد. يجب أن تمنع شاشة <code>Law1807ConsentScreen</code> الدخول حتى تأكيد الموافقة. التحقق من تسجيل البصمة المشفرة FNV-1a في قاعدة البيانات <code>/consent_logs</code>.
+              </div>
+            </div>
+            <span class="badge badge-green" style="margin-top: 4px;">امتثال قانوني</span>
+          </div>
+
+          <div class="check-item">
+            <input type="checkbox" id="check-2" data-check-id="qa_ar_2">
+            <div class="check-content">
+              <label for="check-2" class="check-title">٢. التحول اللغوي الفوري والاتجاه العربي من اليمين (RTL)</label>
+              <div class="check-desc">
+                تحويل التطبيق إلى العربية من شاشة الملف الشخصي. التأكد من انعكاس كافة القوائم والأزرار لليمين بدون أخطاء محاذاة، ثم العودة لتجربة اللغات الأخرى.
+              </div>
+            </div>
+            <span class="badge badge-blue" style="margin-top: 4px;">دعم اللغات</span>
+          </div>
+
+          <div class="check-item">
+            <input type="checkbox" id="check-3" data-check-id="qa_ar_3">
+            <div class="check-content">
+              <label for="check-3" class="check-title">٣. وضع «أمل» ومراعاة الجانب النفسي للإنجاب</label>
+              <div class="check-desc">
+                اختيار حالة «أمل» في الملف الشخصي. التأكد من الاختفاء الفوري لبطاقات «أطفالي» من الشاشة الرئيسية، وتكيف النصائح اليومية مع راحة البال.
+              </div>
+            </div>
+            <span class="badge badge-yellow" style="margin-top: 4px;">مراعاة المشاعر</span>
+          </div>
+
+          <div class="check-item">
+            <input type="checkbox" id="check-4" data-check-id="qa_ar_4">
+            <div class="check-content">
+              <label for="check-4" class="check-title">٤. متابعة الحمل وحساب أسابيع الحمل والعد التنازلي</label>
+              <div class="check-desc">
+                اختيار حالة «حامل» وإدخال تاريخ آخر دورة شهرية. التأكد من ظهور حلقة أسابيع الحمل (SA / 40) وشارة تاريخ الولادة المرتقب والعد التنازلي المتبقي <code>J-XX</code>.
+              </div>
+            </div>
+            <span class="badge badge-blue" style="margin-top: 4px;">حساب دقيق</span>
+          </div>
+
+          <div class="check-item">
+            <input type="checkbox" id="check-5" data-check-id="qa_ar_5">
+            <div class="check-content">
+              <label for="check-5" class="check-title">٥. مخطط الوزن الديناميكي بحد أدنى 80 كغ</label>
+              <div class="check-desc">
+                فتح منحنى وزن الطفل والتأكد من انطلاق المحور الشاقولي بحد أدنى 80 كغ مع تمدد المحور الزمني تلقائياً لما بعد 60 شهراً حسب عمر الطفل.
+              </div>
+            </div>
+            <span class="badge badge-neutral" style="margin-top: 4px;">بيانات ورسوم</span>
+          </div>
+
+          <div class="check-item">
+            <input type="checkbox" id="check-6" data-check-id="qa_6">
+            <div class="check-content">
+              <label for="check-6" class="check-title">٦. اختصار الوصول المباشر لإعدادات إشعارات أندرويد</label>
+              <div class="check-desc">
+                النقر على أيقونة الترس ⚙️ في شاشة الإشعارات. يجب أن يفتح النظام مباشرة صفحة أذونات التنبيهات الخاصة بلاكي مام في إعدادات الهاتف.
+              </div>
+            </div>
+            <span class="badge badge-neutral" style="margin-top: 4px;">أندرويد أصيل</span>
+          </div>
+
+          <div class="check-item">
+            <input type="checkbox" id="check-7" data-check-id="qa_7">
+            <div class="check-content">
+              <label for="check-7" class="check-title">٧. الخط الزمني والتمرير المزدوج والإضافة السريعة</label>
+              <div class="check-desc">
+                اختبار سلاسة التمرير الأفقي والعمودي في الخط الزمني، إنشاء محطة جديدة بسرعة، والتأكد من ظهور شعار العلامة على نقاط الأحداث.
+              </div>
+            </div>
+            <span class="badge badge-blue" style="margin-top: 4px;">خط زمني</span>
+          </div>
+
+          <div class="check-item">
+            <input type="checkbox" id="check-8" data-check-id="qa_8">
+            <div class="check-content">
+              <label for="check-8" class="check-title">٨. مصغرات صور الكبسولات ومؤثر الوميض (Shimmer)</label>
+              <div class="check-desc">
+                ربط كبسولة مصورة بإحدى المحطات. التأكد من ظهور الصورة المصغرة في بطاقة الحدث مع وميض تحميل ناعم متوافق مع المظهر الفاتح والداكن.
+              </div>
+            </div>
+            <span class="badge badge-green" style="margin-top: 4px;">واجهة بصرية</span>
+          </div>
+
+          <div class="check-item">
+            <input type="checkbox" id="check-9" data-check-id="qa_9">
+            <div class="check-content">
+              <label for="check-9" class="check-title">٩. جدولة التذكيرات المسبقة لمحطات النمو</label>
+              <div class="check-desc">
+                فتح قائمة التذكيرات من تفاصيل المحطة، اختيار موعد مسبق (مثل «غداً»)، والتأكد من ظهور رسالة التأكيد المترجمة بنجاح.
+              </div>
+            </div>
+            <span class="badge badge-neutral" style="margin-top: 4px;">تنبيهات</span>
+          </div>
+
+          <div class="check-item">
+            <input type="checkbox" id="check-10" data-check-id="qa_10">
+            <div class="check-content">
+              <label for="check-10" class="check-title">١٠. كبسولات اللقاحات ومقاطع التوعية المرتبطة</label>
+              <div class="check-desc">
+                تسجيل كبسولة مشاعر بعد أحد اللقاحات، ثم النقر على زر الفيديو للتأكد من تصفية مقاطع Reels حسب الفئة العمرية المحددة بدقة.
+              </div>
+            </div>
+            <span class="badge badge-blue" style="margin-top: 4px;">صحة وقائية</span>
+          </div>
+
+          <div class="check-item">
+            <input type="checkbox" id="check-11" data-check-id="qa_11">
+            <div class="check-content">
+              <label for="check-11" class="check-title">١١. إنشاء الألبومات الجاهزة (14 محطة) والألبومات الحرة</label>
+              <div class="check-desc">
+                إنشاء ألبوم جاهز «الولادة» وتجربة إنشاء ألبوم حر، مع تخصيص الصور في الخانات وتغيير اسم الألبوم بنجاح.
+              </div>
+            </div>
+            <span class="badge badge-green" style="margin-top: 4px;">ألبومات صور</span>
+          </div>
+
+          <div class="check-item">
+            <input type="checkbox" id="check-12" data-check-id="qa_12">
+            <div class="check-content">
+              <label for="check-12" class="check-title">١٢. محرك كتاب الصور PDF والمعاينة الحية المباشرة</label>
+              <div class="check-desc">
+                فتح معاينة الكتاب في الألبوم. التحقق من تنسيق الغلاف المتدرج بشعار لاكي مام، تأطير الصور، أرقام الصفحات وصفحة الإهداء الختامية.
+              </div>
+            </div>
+            <span class="badge badge-green" style="margin-top: 4px;">محرك الطباعة</span>
+          </div>
+
+          <div class="check-item">
+            <input type="checkbox" id="check-13" data-check-id="qa_13">
+            <div class="check-content">
+              <label for="check-13" class="check-title">١٣. طلب الطباعة الورقية والتعرف على امتياز باقة VIP</label>
+              <div class="check-desc">
+                بدء طلب طباعة بحساب VIP: يجب ظهور إشعار <em>«مشمول مجاناً مع اشتراككم VIP»</em>. تعبئة العنوان من بين الـ 58 ولاية وإتمام الإرسال.
+              </div>
+            </div>
+            <span class="badge badge-green" style="margin-top: 4px;">طباعة وتوصيل</span>
+          </div>
+
+          <div class="check-item">
+            <input type="checkbox" id="check-14" data-check-id="qa_14">
+            <div class="check-content">
+              <label for="check-14" class="check-title">١٤. متجر المنتجات والشراء بالدفع عند الاستلام</label>
+              <div class="check-desc">
+                إضافة منتج للسلة، إدخال رقم هاتف جزائري صالح (مثال: <code>0550123456</code>)، وتأكيد خيار «الدفع نقداً عند الاستلام»، ثم مراجعة الطلب في قائمة «طلباتي».
+              </div>
+            </div>
+            <span class="badge badge-yellow" style="margin-top: 4px;">تجارة إلكترونية</span>
+          </div>
+
+        </div>
+      </section>
+
+      <!-- تدقيق لوحة التحكم الإدارية -->
+      <section id="prod">
+        <h2>تقرير جاهزية لوحة التحكم والإدارة عبر الويب</h2>
+        <p>
+          أكد التدقيق الهندسي الشامل للوحة التحكم <code>luckymam_admin/</code> تحقيق نسبة جاهزية عملياتية بلغت <strong>~88%</strong> (مؤهلة للإنتاج الفعلي):
+        </p>
+
+        <div class="table-wrapper">
+          <table>
+            <thead>
+              <tr>
+                <th>محور التقييم</th>
+                <th>المستوى</th>
+                <th>النسبة</th>
+                <th>البيان والإجراءات المنجزة</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>واجهة التحكم وربط السحابة</strong></td>
+                <td><span class="badge badge-green">ممتاز</span></td>
+                <td class="mono">90%</td>
+                <td>تسجيل الدخول بصلاحيات المسؤول <code>admin: true</code>، حماية المسارات، وقراءة بيانات فايرستور المباشرة.</td>
+              </tr>
+              <tr>
+                <td><strong>أمان وسرية البيانات</strong></td>
+                <td><span class="badge badge-green">ممتاز</span></td>
+                <td class="mono">80%</td>
+                <td>نشر قواعد الحماية السحابية، تدوير وتأمين مفاتيح حسابات الخدمة (Service Account).</td>
+              </tr>
+              <tr>
+                <td><strong>إدارة العمليات والكتالوج</strong></td>
+                <td><span class="badge badge-yellow">قيد الاعتماد</span></td>
+                <td class="mono">70%</td>
+                <td>تحكم كامل بمنتجات المتجر، مراقبة طلبات طباعة الألبومات والإشعارات الإدارية.</td>
+              </tr>
+              <tr>
+                <td><strong>التجربة واللغات في اللوحة</strong></td>
+                <td><span class="badge badge-green">ممتاز</span></td>
+                <td class="mono">85%</td>
+                <td>واجهة ثلاثية اللغات (عربي/فرنسي/إنجليزي) مع شريط جانبي ثابت وتناسق بصري مريح.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="callout">
+          <div class="callout-title">الخطوة الإجرائية الأخيرة قبل الإطلاق العام</div>
+          <p>
+            أُنجز ملف إصلاح فهرس الاستضافة <code>scripts/generateHostingIndex.mjs</code> وجرى بناؤه بنجاح. يلزم فقط تشغيل أمر النشر النهائي <code>firebase deploy --only hosting:admin</code> لإزالة رسالة 404 المؤقتة عن الرابط الرسمي <a href="https://luckymam-app-dv.web.app" target="_blank" style="color: inherit; text-decoration: underline;">luckymam-app-dv.web.app</a> وبدء الاختبار الميداني بالحسابات المعتمدة.
+          </p>
+        </div>
+      </section>
+
+      <!-- ختام الدليل -->
+      <section>
+        <h2>خاتمة وتسليم المشروع</h2>
+        <p>
+          يؤكد هذا السجل الهندسي التزام فريق العمل بأرفع معايير الجودة البرمجية، واحترام نصوص التشريعات الوطنية الجزائرية، وتجسيد الرؤية الإنسانية الدافئة لتطبيق لاكي مام. تطبيق الهواتف فلاتر مكتمل ومستقر، ومستعد تماماً لاستقبال العائلات ومرافقتها في أجمل لحظات الحياة.
+        </p>
+
+        <div style="margin-top: 32px; display: flex; gap: 16px; flex-wrap: wrap;">
+          <button class="btn btn-primary" onclick="window.print()">
+            طباعة الدليل بالكامل بصيغة PDF
+          </button>
+          <a href="index.html" class="btn btn-secondary">
+            العودة إلى الفهرس الرئيسي
+          </a>
+        </div>
+      </section>
+
+      <footer class="page-nav">
+        <a href="06_marketplace_et_monetisation.html" class="page-nav-item">
+          <span class="page-nav-label">السابق · الفصل ٠٦</span>
+          <span class="page-nav-title">→ متجر الشركاء والإيرادات</span>
+        </a>
+        <a href="index.html" class="page-nav-item next">
+          <span class="page-nav-label">الختام · البداية</span>
+          <span class="page-nav-title">العودة إلى الفهرس العام ↑</span>
+        </a>
+      </footer>
+
+    </main>
+
+  </div>
+
+  <div id="search-modal" class="search-modal">
+    <div class="search-box">
+      <div class="search-input-wrapper">
+        <span class="mono" style="font-size: 0.85rem; color: var(--text-muted);">بحث:</span>
+        <input type="text" id="search-input" class="search-input" placeholder="اكتب كلمة مفتاحية..." autocomplete="off">
+        <kbd>Esc</kbd>
+      </div>
+      <div id="search-results" class="search-results"></div>
+    </div>
+  </div>
+
+  <button class="mobile-toggle" aria-label="قائمة التصفح">
+    <span class="mono" style="font-size: 1.1rem; line-height: 1;">☰</span>
+  </button>
+
+  <script src="book.js"></script>
+</body>
+</html>

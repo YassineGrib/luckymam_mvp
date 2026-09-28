@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>الفصل الرابع — ملحق المهام والميزات (22 تذكرة) · لاكي مام</title>
+  <meta name="description" content="متابعة دقيقة لـ 22 تذكرة تطويرية بملحق المهام، 167 نقطة برمجية، وتفاصيل مراحل الإنجاز مع تحليل التذكرة المعلقة.">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+  <div id="reading-progress"></div>
+
+  <div class="app-layout">
+    
+    <aside class="sidebar">
+      <div class="sidebar-brand">
+        <div class="sidebar-title">لاكي مام</div>
+        <div class="sidebar-subtitle">دليل العميل المرجعي · النسخة التجريبية</div>
+      </div>
+
+      <button class="sidebar-search-btn trigger-search" type="button">
+        <span>ابحث في الدليل...</span>
+        <kbd>/</kbd>
+      </button>
+
+      <nav class="sidebar-nav">
+        <div class="nav-section-label">فهرس المحتويات</div>
+        <a href="index.html" class="nav-link">
+          <span class="nav-number">٠٠</span>
+          <span>نظرة عامة وفهرس شامل</span>
+        </a>
+        <a href="01_architecture_et_produit.html" class="nav-link">
+          <span class="nav-number">٠١</span>
+          <span>رؤية المنتج والأساس التقني</span>
+        </a>
+        <a href="02_release_mvp_v1.html" class="nav-link">
+          <span class="nav-number">٠٢</span>
+          <span>تسليم الإصدار الأولي v1.0.0</span>
+        </a>
+        <a href="03_conformite_loi_18_07.html" class="nav-link">
+          <span class="nav-number">٠٣</span>
+          <span>الامتثال للقانون 18-07 واللغات</span>
+        </a>
+        <a href="04_backlog_addendum.html" class="nav-link active">
+          <span class="nav-number">٠٤</span>
+          <span>ملحق المهام (22 تذكرة)</span>
+        </a>
+        <a href="05_memoires_et_impression.html" class="nav-link">
+          <span class="nav-number">٠٥</span>
+          <span>ألبوم الذكريات وطباعة PDF</span>
+        </a>
+        <a href="06_marketplace_et_monetisation.html" class="nav-link">
+          <span class="nav-number">٠٦</span>
+          <span>متجر الشركاء والإيرادات</span>
+        </a>
+        <a href="07_guide_recette_et_production.html" class="nav-link">
+          <span class="nav-number">٠٧</span>
+          <span>دليل الفحص والجاهزية</span>
+        </a>
+      </nav>
+
+      <div class="sidebar-footer">
+        <a href="../livre_client/04_backlog_addendum.html" class="btn btn-secondary" style="padding: 4px 8px; font-size: 0.72rem;">Français</a>
+        <button class="btn btn-secondary" onclick="window.print()" style="padding: 4px 8px; font-size: 0.72rem;">طباعة</button>
+      </div>
+    </aside>
+
+    <main class="main-content">
+      
+      <header class="chapter-header">
+        <div class="chapter-meta">
+          <span class="badge badge-yellow">إدارة المشاريع والتسليمات</span>
+          <span class="chapter-number">الفصل الرابع</span>
+        </div>
+        <h1 class="chapter-title">ملحق المهام والميزات (22 تذكرة)</h1>
+        <p class="chapter-lead">
+          عقب إطلاق الإصدار الأولي، تم توقيع ملحق المهام التعاقدي في 27 أفريل 2026 لتنفيذ خارطة طريق تطويرية تشمل 22 محوراً هندسياً بإجمالي 167 نقطة برمجية. يستعرض هذا الفصل تقرير الإنجاز التفصيلي عبر المراحل الأربع، مع إنجاز 21 تذكرة بالكامل وتقديم دراسة وافية للحالة المعلقة.
+        </p>
+      </header>
+
+      <!-- مؤشرات ملحق المهام -->
+      <section>
+        <h2>لوحة القيادة الإجمالية للملحق</h2>
+
+        <div class="bento-grid">
+          <div class="card col-3">
+            <span class="badge badge-green">نسبة الإنجاز</span>
+            <div class="card-metric">95.5%</div>
+            <div class="card-metric-label">21 / 22 تذكرة منجزة</div>
+          </div>
+
+          <div class="card col-3">
+            <span class="badge badge-blue">حجم العمل البرمجي</span>
+            <div class="card-metric">167 نقطة</div>
+            <div class="card-metric-label">نقاط القصة (Story Points)</div>
+          </div>
+
+          <div class="card col-3">
+            <span class="badge badge-green">المهام الإلزامية</span>
+            <div class="card-metric">100%</div>
+            <div class="card-metric-label">9 / 9 تذاكر Must Have</div>
+          </div>
+
+          <div class="card col-3">
+            <span class="badge badge-red">قرار البنية السحابية</span>
+            <div class="card-metric">تذكرة واحدة</div>
+            <div class="card-metric-label">LM2-136 (المشاركة عبر الويب)</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- التوزيع الزمني و MoSCoW -->
+      <section>
+        <h2>التوزيع حسب المراحل الزمنية ومصفوفة الأولويات</h2>
+        
+        <div class="bento-grid">
+          
+          <div class="card col-6">
+            <div class="card-title">التقدم حسب المراحل الزمنية</div>
+            <div class="table-wrapper" style="margin: 12px 0 0 0;">
+              <table>
+                <thead>
+                  <tr>
+                    <th>المرحلة</th>
+                    <th>التذاكر المشمولة</th>
+                    <th>النقاط</th>
+                    <th>الحالة</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td class="mono">M1-M3</td>
+                    <td>LM2-118, 119, 120, 121, 123, 124, 125, 127</td>
+                    <td class="mono">37 SP</td>
+                    <td><span class="badge badge-green">مكتمل 100%</span></td>
+                  </tr>
+                  <tr>
+                    <td class="mono">M4-M6</td>
+                    <td>LM2-122, 126, 128, 129, 131</td>
+                    <td class="mono">27 SP</td>
+                    <td><span class="badge badge-green">مكتمل 100%</span></td>
+                  </tr>
+                  <tr>
+                    <td class="mono">M7-M9</td>
+                    <td>LM2-130, 132, 133</td>
+                    <td class="mono">18 SP</td>
+                    <td><span class="badge badge-green">مكتمل 100%</span></td>
+                  </tr>
+                  <tr>
+                    <td class="mono">M10-M12</td>
+                    <td>LM2-134, 135, 136, 137, 138, 139</td>
+                    <td class="mono">81 SP</td>
+                    <td><span class="badge badge-yellow">5 من 6 مكتملة</span></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <div class="card col-6">
+            <div class="card-title">توزيع مصفوفة الأولويات (MoSCoW)</div>
+            <div class="table-wrapper" style="margin: 12px 0 0 0;">
+              <table>
+                <thead>
+                  <tr>
+                    <th>المستوى</th>
+                    <th>حجم النقاط</th>
+                    <th>نسبة الإنجاز</th>
+                    <th>الأثر المباشر</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td><span class="badge badge-red">إلزامي (Must)</span></td>
+                    <td class="mono">58 نقطة (9 تذاكر)</td>
+                    <td><span class="badge badge-green">100% (9/9)</span></td>
+                    <td>الوظائف الحيوية والامتثال القانوني</td>
+                  </tr>
+                  <tr>
+                    <td><span class="badge badge-yellow">مهم (Should)</span></td>
+                    <td class="mono">62 نقطة (10 تذاكر)</td>
+                    <td><span class="badge badge-green">100% (10/10)</span></td>
+                    <td>الترقيات الأساسية لتجربة الاستخدام</td>
+                  </tr>
+                  <tr>
+                    <td><span class="badge badge-blue">اختياري (Could)</span></td>
+                    <td class="mono">47 نقطة (3 تذاكر)</td>
+                    <td><span class="badge badge-yellow">66% (2/3)</span></td>
+                    <td>المتجر تم تسليمه، والرابط بانتظار السحابة</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+        </div>
+      </section>
+
+      <!-- أبرز إنجازات الملحق -->
+      <section>
+        <h2>أبرز الميزات المنجزة في الملحق</h2>
+
+        <div class="bento-grid">
+          
+          <div class="card col-6" id="grossesse">
+            <div class="card-title">
+              <span>LM2-124: حاسبة الحمل بالأسبوع وتاريخ الولادة</span>
+              <span class="badge badge-green">تم التسليم</span>
+            </div>
+            <p class="card-desc">
+              تكييف فوري للملف الشخصي بمجرد اختيار حالة <code>حامل</code>:
+            </p>
+            <ul style="margin-top: 8px; margin-right: 18px;">
+              <li>تقويم سهل لإدخال تاريخ آخر دورة شهرية (DDR).</li>
+              <li>حساب تلقائي لأسابيع انقطاع الطمث (حلقة تقدم بصرية 40 أسبوعاً).</li>
+              <li>شارة ديناميكية تعرض تاريخ الولادة المتوقع والعد التنازلي المتبقي <code>J-XX</code>.</li>
+            </ul>
+          </div>
+
+          <div class="card col-6" id="poids">
+            <div class="card-title">
+              <span>LM2-125: مخطط نمو الوزن الذكي (80 كغ)</span>
+              <span class="badge badge-green">تم التسليم</span>
+            </div>
+            <p class="card-desc">
+              إعادة بناء أداة <code>GrowthChartWidget</code> لعلاج القيود السابقة:
+            </p>
+            <ul style="margin-top: 8px; margin-right: 18px;">
+              <li>تحديد حد أدنى للمحور الرأسي عند 80 كغ، مع التمدد التلقائي في حال وجود قياسات تفوق ذلك.</li>
+              <li>امتداد زمني يغطي 60 شهراً على الأقل ويزيد تلقائياً حسب عمر الطفل المسجل.</li>
+            </ul>
+          </div>
+
+          <div class="card col-6">
+            <div class="card-title">
+              <span>LM2-126: اختصار إعدادات التنبيهات في النظام</span>
+              <span class="badge badge-green">تم التسليم</span>
+            </div>
+            <p class="card-desc">
+              بناء جسر برمجي أصيل مع أندرويد (<code>MethodChannel('luckymam/settings')</code> داخل <code>MainActivity.kt</code>) يفتح مباشرة صفحة أذونات التنبيهات الخاصة بالتطبيق دون عناء البحث في إعدادات الهاتف.
+            </p>
+          </div>
+
+          <div class="card col-6">
+            <div class="card-title">
+              <span>LM2-127 & LM2-129: ربط الكبسولات بالمحطات والوميض</span>
+              <span class="badge badge-green">تم التسليم</span>
+            </div>
+            <p class="card-desc">
+              إمكانية التقاط وتوثيق كبسولة تذكارية مباشرة من بطاقة أي محطة على الخط الزمني، مع ظهور صورة مصغرة (Thumbnail) بمؤثر تحميل لامع (Shimmer) يتكيف مع المظهر الداكن والفاتح.
+            </p>
+          </div>
+
+          <div class="card col-6">
+            <div class="card-title">
+              <span>LM2-131: نظام التذكيرات المجدولة للمحطات</span>
+              <span class="badge badge-green">تم التسليم</span>
+            </div>
+            <p class="card-desc">
+              قائمة خيارات متعددة اللغات لجدولة تنبيهات تسبق مواعيد المحطات الصحية واللقاحات (مثل «غداً»، «بعد 3 أيام»، أو «يوم الحدث نفسه»).
+            </p>
+          </div>
+
+          <div class="card col-6">
+            <div class="card-title">
+              <span>LM2-132 & LM2-133: كبسولات اللقاحات ومقاطع التوعية</span>
+              <span class="badge badge-green">تم التسليم</span>
+            </div>
+            <p class="card-desc">
+              إتاحة توثيق مشاعر الطفل بعد كل حقنة تلقيح، مع ربط كل لقاح بمقاطع الفيديو التوعوية الطبية المخصصة للمرحلة العمرية المعنية.
+            </p>
+          </div>
+
+        </div>
+      </section>
+
+      <!-- دراسة التذكرة المعلقة -->
+      <section>
+        <h2>دراسة وتحليل التذكرة المعلقة: LM2-136</h2>
+        
+        <div class="callout" style="border-right-color: var(--pastel-red-text);">
+          <div class="callout-title" style="color: var(--pastel-red-text);">التذكرة LM2-136 · نشر الألبوم عبر رابط ويب مفتوح ومؤقت</div>
+          <p>
+            <strong>الحالة: 🚫 معلقة تقنياً</strong> · الأولوية: 🔵 اختيارية (Could Have) · التقدير: 13 نقطة.
+          </p>
+          <p style="margin-top: 8px;">
+            <strong>الأسباب الهندسية للتعليق:</strong> لاكي مام تطبيق للهواتف الذكية. إنشاء رابط ويب مفتوح للقراءة فقط يمكن لأي شخص فتحه في المتصفح يتطلب بنية تحتية سحابية مستقلة غير متوفرة في المشروع حالياً:
+          </p>
+          <ul style="margin: 8px 20px 12px 0;">
+            <li>يتطلب الانتقال إلى <strong>خطة فايربيز المدفوعة (Blaze Plan)</strong> لتشغيل دوال سحابية متقدمة (Cloud Functions) لتوليد روابط آمنة تنتهي صلاحيتها آلياً.</li>
+            <li>يتطلب بناء ونشر تطبيق ويب مستقل ومفتوح عبر <strong>Firebase Hosting</strong> لعرض صور الألبوم لغير المشتركين.</li>
+            <li>يثير تساؤلات حول خصوصية وأمان صور الأطفال عند مشاركتها عبر روابط مفتوحة على الإنترنت دون تسجيل دخول.</li>
+          </ul>
+          <p>
+            <strong>التوصية الفنية:</strong> فضّل الفريق الهندسي تعليق هذه الميزة الاختيارية وعدم إلزام المشروع باشتراكات سحابية مدفوعة متكررة قبل دراسة نموذج حماية الخصوصية وموافقة الإدارة.
+          </p>
+        </div>
+      </section>
+
+      <!-- جدول التذاكر الـ 22 -->
+      <section>
+        <h2>السجل الشامل لتذاكر ملحق المهام (22 تذكرة)</h2>
+        
+        <div class="table-wrapper">
+          <table>
+            <thead>
+              <tr>
+                <th>رمز التذكرة</th>
+                <th>الميزة والوحدة البرمجية</th>
+                <th>النقاط</th>
+                <th>المرحلة</th>
+                <th>الأولوية</th>
+                <th>الحالة</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr><td class="mono">LM2-118</td><td>الموافقة الإلزامية وفق القانون 18-07</td><td class="mono">5</td><td class="mono">M1-M3</td><td><span class="badge badge-red">إلزامي</span></td><td><span class="badge badge-green">مكتمل</span></td></tr>
+              <tr><td class="mono">LM2-119</td><td>شاشة البداية بهوية لاكي مام الرسمية</td><td class="mono">3</td><td class="mono">M1-M3</td><td><span class="badge badge-yellow">مهم</span></td><td><span class="badge badge-green">مكتمل</span></td></tr>
+              <tr><td class="mono">LM2-120</td><td>توحيد وضبط نصوص العلامة التجارية</td><td class="mono">3</td><td class="mono">M1-M3</td><td><span class="badge badge-red">إلزامي</span></td><td><span class="badge badge-green">مكتمل</span></td></tr>
+              <tr><td class="mono">LM2-121</td><td>تكبير الصورة الرمزية في ترويسة الرئيسية</td><td class="mono">2</td><td class="mono">M1-M3</td><td><span class="badge badge-yellow">مهم</span></td><td><span class="badge badge-green">مكتمل</span></td></tr>
+              <tr><td class="mono">LM2-122</td><td>تنظيم الإعلانات والمؤقتات حسب الباقة</td><td class="mono">8</td><td class="mono">M4-M6</td><td><span class="badge badge-red">إلزامي</span></td><td><span class="badge badge-green">مكتمل</span></td></tr>
+              <tr><td class="mono">LM2-123</td><td>تفعيل حالة «أمل» ومراعاة المشاعر</td><td class="mono">5</td><td class="mono">M1-M3</td><td><span class="badge badge-red">إلزامي</span></td><td><span class="badge badge-green">مكتمل</span></td></tr>
+              <tr><td class="mono">LM2-124</td><td>حساب الحمل التلقائي وموعد الولادة</td><td class="mono">8</td><td class="mono">M1-M3</td><td><span class="badge badge-red">إلزامي</span></td><td><span class="badge badge-green">مكتمل</span></td></tr>
+              <tr><td class="mono">LM2-125</td><td>مخطط نمو الوزن المتكيف حتى 80 كغ</td><td class="mono">3</td><td class="mono">M1-M3</td><td><span class="badge badge-yellow">مهم</span></td><td><span class="badge badge-green">مكتمل</span></td></tr>
+              <tr><td class="mono">LM2-126</td><td>اختصار الوصول لإعدادات التنبيهات بالنظام</td><td class="mono">3</td><td class="mono">M4-M6</td><td><span class="badge badge-yellow">مهم</span></td><td><span class="badge badge-green">مكتمل</span></td></tr>
+              <tr><td class="mono">LM2-127</td><td>إضافة كبسولة ذكريات مباشرة على المحطة</td><td class="mono">8</td><td class="mono">M1-M3</td><td><span class="badge badge-red">إلزامي</span></td><td><span class="badge badge-green">مكتمل</span></td></tr>
+              <tr><td class="mono">LM2-128</td><td>الإضافة السريعة على الخط الزمني</td><td class="mono">5</td><td class="mono">M4-M6</td><td><span class="badge badge-yellow">مهم</span></td><td><span class="badge badge-green">مكتمل</span></td></tr>
+              <tr><td class="mono">LM2-129</td><td>عرض مصغرات الصور على محطات الزمن</td><td class="mono">5</td><td class="mono">M4-M6</td><td><span class="badge badge-red">إلزامي</span></td><td><span class="badge badge-green">مكتمل</span></td></tr>
+              <tr><td class="mono">LM2-130</td><td>نصائح صحية وتوعوية مخصصة لكل محطة</td><td class="mono">5</td><td class="mono">M7-M9</td><td><span class="badge badge-yellow">مهم</span></td><td><span class="badge badge-green">مكتمل</span></td></tr>
+              <tr><td class="mono">LM2-131</td><td>برمجة التنبيهات والتذكيرات للمحطات</td><td class="mono">8</td><td class="mono">M4-M6</td><td><span class="badge badge-red">إلزامي</span></td><td><span class="badge badge-green">مكتمل</span></td></tr>
+              <tr><td class="mono">LM2-132</td><td>توثيق كبسولات المشاعر بعد اللقاحات</td><td class="mono">8</td><td class="mono">M7-M9</td><td><span class="badge badge-yellow">مهم</span></td><td><span class="badge badge-green">مكتمل</span></td></tr>
+              <tr><td class="mono">LM2-133</td><td>فيديوهات توعوية طبية مخصصة لكل لقاح</td><td class="mono">5</td><td class="mono">M7-M9</td><td><span class="badge badge-yellow">مهم</span></td><td><span class="badge badge-green">مكتمل</span></td></tr>
+              <tr><td class="mono">LM2-134</td><td>ألبومات الصور الجاهزة (14 محطة نمو)</td><td class="mono">13</td><td class="mono">M10-M12</td><td><span class="badge badge-yellow">مهم</span></td><td><span class="badge badge-green">مكتمل</span></td></tr>
+              <tr><td class="mono">LM2-135</td><td>إنشاء وتخصيص ألبومات حرة ومفتوحة</td><td class="mono">13</td><td class="mono">M10-M12</td><td><span class="badge badge-yellow">مهم</span></td><td><span class="badge badge-green">مكتمل</span></td></tr>
+              <tr><td class="mono">LM2-136</td><td>مشاركة الألبوم عبر رابط ويب مفتوح</td><td class="mono">13</td><td class="mono">M10-M12</td><td><span class="badge badge-blue">اختياري</span></td><td><span class="badge badge-red">معلق سحابياً</span></td></tr>
+              <tr><td class="mono">LM2-137</td><td>جسر تحويل الألبوم لكتاب PDF وطباعته</td><td class="mono">8</td><td class="mono">M10-M12</td><td><span class="badge badge-red">إلزامي</span></td><td><span class="badge badge-green">مكتمل</span></td></tr>
+              <tr><td class="mono">LM2-138</td><td>متجر الشركاء — كتالوج مستلزمات الأم والطفل</td><td class="mono">13</td><td class="mono">M10-M12</td><td><span class="badge badge-blue">اختياري</span></td><td><span class="badge badge-green">مكتمل</span></td></tr>
+              <tr><td class="mono">LM2-139</td><td>مسار الشراء والتوصيل والدفع عند الاستلام</td><td class="mono">21</td><td class="mono">M10-M12</td><td><span class="badge badge-blue">اختياري</span></td><td><span class="badge badge-green">مكتمل</span></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <footer class="page-nav">
+        <a href="03_conformite_loi_18_07.html" class="page-nav-item">
+          <span class="page-nav-label">السابق · الفصل ٠٣</span>
+          <span class="page-nav-title">→ الامتثال للقانون 18-07 واللغات</span>
+        </a>
+        <a href="05_memoires_et_impression.html" class="page-nav-item next">
+          <span class="page-nav-label">التالي · الفصل ٠٥</span>
+          <span class="page-nav-title">ألبوم الذكريات وطباعة PDF ←</span>
+        </a>
+      </footer>
+
+    </main>
+
+  </div>
+
+  <div id="search-modal" class="search-modal">
+    <div class="search-box">
+      <div class="search-input-wrapper">
+        <span class="mono" style="font-size: 0.85rem; color: var(--text-muted);">بحث:</span>
+        <input type="text" id="search-input" class="search-input" placeholder="اكتب كلمة مفتاحية..." autocomplete="off">
+        <kbd>Esc</kbd>
+      </div>
+      <div id="search-results" class="search-results"></div>
+    </div>
+  </div>
+
+  <button class="mobile-toggle" aria-label="قائمة التصفح">
+    <span class="mono" style="font-size: 1.1rem; line-height: 1;">☰</span>
+  </button>
+
+  <script src="book.js"></script>
+</body>
+</html>

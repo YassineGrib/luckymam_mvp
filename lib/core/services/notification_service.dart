@@ -41,6 +41,10 @@ class NotificationService {
   }
 
   Future<void> _init() async {
+    if (kIsWeb) {
+      _initialized = true;
+      return;
+    }
     if (_initialized) return;
     tz.initializeTimeZones();
     // Algeria is UTC+1 (no DST)
@@ -72,6 +76,7 @@ class NotificationService {
   /// Returns the payload of the notification that launched the app from a
   /// terminated state, or null if the app wasn't launched via a notification.
   Future<String?> getLaunchPayload() async {
+    if (kIsWeb) return null;
     await _ensure();
     final details = await _plugin.getNotificationAppLaunchDetails();
     if (details?.didNotificationLaunchApp != true) return null;
@@ -81,6 +86,7 @@ class NotificationService {
   // ─── Permissions ────────────────────────────────────────────────────────────
 
   Future<bool> requestPermissions() async {
+    if (kIsWeb) return true;
     final android = _plugin
         .resolvePlatformSpecificImplementation<
           AndroidFlutterLocalNotificationsPlugin
@@ -273,8 +279,15 @@ class NotificationService {
 
   // ─── Cancel helpers ───────────────────────────────────────────────────────────
 
-  Future<void> cancelNotification(int id) => _plugin.cancel(id);
-  Future<void> cancelAll() => _plugin.cancelAll();
+  Future<void> cancelNotification(int id) async {
+    if (kIsWeb) return;
+    await _plugin.cancel(id);
+  }
+
+  Future<void> cancelAll() async {
+    if (kIsWeb) return;
+    await _plugin.cancelAll();
+  }
 
   /// Cancel pending notifications by channel tag.
   /// Since the plugin doesn't support channel-level cancel natively,
@@ -283,6 +296,7 @@ class NotificationService {
   ///   milestone — same; scheduled reminders expire naturally
   ///   cycle     — fixed IDs, cancel directly
   Future<void> cancelNotificationsByChannel(String channelTag) async {
+    if (kIsWeb) return;
     if (channelTag == 'cycle') {
       await _plugin.cancel(cycleNextPeriodId);
       await _plugin.cancel(cycleOvulationId);
@@ -316,6 +330,10 @@ class NotificationService {
     required String channelDesc,
     String? payload,
   }) async {
+    if (kIsWeb) {
+      debugPrint('[Notif-Web] simulated schedule id=$id "$title" at $scheduledDate');
+      return;
+    }
     try {
       await _plugin.zonedSchedule(
         id,

@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>الفصل الأول — رؤية المنتج والأساس التقني · لاكي مام</title>
+  <meta name="description" content="الرؤية الوظيفية، شخصيات المستخدمين الثلاث في مسار الأمومة والمعمارية التقنية لتطبيق فلاتر وفيربيز.">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+  <div id="reading-progress"></div>
+
+  <div class="app-layout">
+    
+    <aside class="sidebar">
+      <div class="sidebar-brand">
+        <div class="sidebar-title">لاكي مام</div>
+        <div class="sidebar-subtitle">دليل العميل المرجعي · النسخة التجريبية</div>
+      </div>
+
+      <button class="sidebar-search-btn trigger-search" type="button">
+        <span>ابحث في الدليل...</span>
+        <kbd>/</kbd>
+      </button>
+
+      <nav class="sidebar-nav">
+        <div class="nav-section-label">فهرس المحتويات</div>
+        <a href="index.html" class="nav-link">
+          <span class="nav-number">٠٠</span>
+          <span>نظرة عامة وفهرس شامل</span>
+        </a>
+        <a href="01_architecture_et_produit.html" class="nav-link active">
+          <span class="nav-number">٠١</span>
+          <span>رؤية المنتج والأساس التقني</span>
+        </a>
+        <a href="02_release_mvp_v1.html" class="nav-link">
+          <span class="nav-number">٠٢</span>
+          <span>تسليم الإصدار الأولي v1.0.0</span>
+        </a>
+        <a href="03_conformite_loi_18_07.html" class="nav-link">
+          <span class="nav-number">٠٣</span>
+          <span>الامتثال للقانون 18-07 واللغات</span>
+        </a>
+        <a href="04_backlog_addendum.html" class="nav-link">
+          <span class="nav-number">٠٤</span>
+          <span>ملحق المهام (22 تذكرة)</span>
+        </a>
+        <a href="05_memoires_et_impression.html" class="nav-link">
+          <span class="nav-number">٠٥</span>
+          <span>ألبوم الذكريات وطباعة PDF</span>
+        </a>
+        <a href="06_marketplace_et_monetisation.html" class="nav-link">
+          <span class="nav-number">٠٦</span>
+          <span>متجر الشركاء والإيرادات</span>
+        </a>
+        <a href="07_guide_recette_et_production.html" class="nav-link">
+          <span class="nav-number">٠٧</span>
+          <span>دليل الفحص والجاهزية</span>
+        </a>
+      </nav>
+
+      <div class="sidebar-footer">
+        <a href="../livre_client/01_architecture_et_produit.html" class="btn btn-secondary" style="padding: 4px 8px; font-size: 0.72rem;">Français</a>
+        <button class="btn btn-secondary" onclick="window.print()" style="padding: 4px 8px; font-size: 0.72rem;">طباعة</button>
+      </div>
+    </aside>
+
+    <main class="main-content">
+      
+      <header class="chapter-header">
+        <div class="chapter-meta">
+          <span class="badge badge-blue">الهندسة والأساس البرمجي</span>
+          <span class="chapter-number">الفصل الأول</span>
+        </div>
+        <h1 class="chapter-title">رؤية المنتج والأساس التقني</h1>
+        <p class="chapter-lead">
+          صُمم تطبيق لاكي مام لمرافقة كل امرأة بعناية إنسانية فائقة خلال مختلف محطات الأمومة: من الرغبة في الإنجاب وفترات الترقب، إلى مراحل الحمل ورعاية الطفولة المبكرة. تطلبت هذه الحساسية الإنسانية بناء هيكل برمجي مرن وقادر على تكييف الواجهة كلياً حسب الحالة النفسية والواقع الأسري للمستخدمة، مع تطبيق معايير أمنية صارمة.
+        </p>
+      </header>
+
+      <!-- القسم الأول: الشخصيات -->
+      <section id="personas">
+        <h2>١. تجزئة المستخدمين والتصميم المتجاوب مع المشاعر</h2>
+        <p>
+          على خلاف التطبيقات التقليدية للأمومة، يرفض لاكي مام فرض واجهة موحدة على الجميع. يحدد التطبيق ثلاث حالات استخدام رئيسية تتمتع كل منها بتجربة بصرية ولغوية ووظيفية متخصصة:
+        </p>
+
+        <div class="table-wrapper">
+          <table>
+            <thead>
+              <tr>
+                <th>حالة المستخدمة</th>
+                <th>المرحلة الحياتية</th>
+                <th>التكييفات الوظيفية والنفسية</th>
+                <th>المؤشرات والبطاقات الرئيسية</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>أمل (HOPE)</strong></td>
+                <td>الرغبة في الإنجاب · مسار المساعدة الطبية (PMA)</td>
+                <td>
+                  <strong>الإخفاء التام والتلقائي</strong> لقسم «أطفالي» من الشاشة الرئيسية والملف الشخصي لتجنب أي إحراج أو ألم نفسي. تقديم نصائح يومية تركز على الصحة العامة والطمأنينة.
+                </td>
+                <td>
+                  <span class="badge badge-yellow">تتبع الدورة</span>
+                  <span class="badge badge-neutral">نصائح الراحة</span>
+                </td>
+              </tr>
+              <tr>
+                <td><strong>حامل (ENCEINTE)</strong></td>
+                <td>فترة الحمل الحالية (من الأسبوع الأول حتى الـ 40)</td>
+                <td>
+                  استبدال قسم الدورة الشهرية بلوحة <strong>«حملي»</strong> التفاعلية. حساب آلي ودقيق لعمر الحمل بالأسبوع وموعد الولادة المرتقب بمجرد إدخال تاريخ آخر دورة شهرية.
+                </td>
+                <td>
+                  <span class="badge badge-blue">حلقة الأسبوع ٤٠/X</span>
+                  <span class="badge badge-blue">العد التنازلي J-XX</span>
+                </td>
+              </tr>
+              <tr>
+                <td><strong>أم (MAMAN)</strong></td>
+                <td>ما بعد الولادة ومتابعة نمو الأبناء</td>
+                <td>
+                  تفعيل ملفات الأطفال المستقلة، جدول التلقيحات الوطني الجزائري التفاعلي، رسم منحنى النمو حتى 80 كغ، وتوثيق كبسولات الذكريات المصورة والصوتية.
+                </td>
+                <td>
+                  <span class="badge badge-green">ملف الأطفال</span>
+                  <span class="badge badge-green">التلقيحات والكبسولات</span>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="callout">
+          <div class="callout-title">قاعدة الهندسة الحساسة للمشاعر (التذكرة LM2-123)</div>
+          <p>
+            لتفادي الظهور الخاطئ للبطاقات الخاصة بالأمهات أثناء فترة الانتظار الشبكي لتحميل البيانات من فايرستور، عُدّلت خاصية الحالة لتصبح اختيارية (<code>UserStatus?</code>). وبذلك، لا يظهر قسم «أطفالي» نهائياً إلا بعد التأكيد الصريح والمباشر من قاعدة البيانات بأن المستخدمة مسجلة كـ <code>mom</code>، مما يحقق عزلاً نفسياً آمناً للمستخدمات في حالة أمل.
+          </p>
+        </div>
+      </section>
+
+      <!-- القسم الثاني: فلاتر -->
+      <section id="architecture">
+        <h2>٢. الأساس الهندسي لتطبيق الهواتف (Flutter)</h2>
+        <p>
+          يعتمد تطبيق الهاتف الذكي على بيئة عمل جوجل فلاتر (Google Flutter)، وفق معايير <em>Clean Architecture</em> وتوزيع الميزات المستقل (Feature-First Pattern).
+        </p>
+
+        <div class="bento-grid">
+          
+          <div class="card col-6">
+            <div class="card-title">
+              <span>إدارة الحالة: Riverpod 2</span>
+              <span class="badge badge-blue">تفاعل بدون إعادة بناء زائدة</span>
+            </div>
+            <p class="card-desc">
+              استخدام حصري لمزودات <code>StateNotifierProvider</code> و<code>AsyncNotifier</code> لعزل البيانات عن شجرة واجهات العرض، مما يحافظ على ثبات وسلاسة الأداء بمعدل 60 إلى 120 إطاراً بالثانية.
+            </p>
+            <ul style="margin-top: 12px; margin-right: 18px;">
+              <li><code>localeProvider</code>: التبديل اللحظي بين العربية والفرنسية والإنجليزية دون إعادة تشغيل التطبيق.</li>
+              <li><code>authControllerProvider</code>: الإشراف الموحد على الجلسات وصلاحيات الأمان.</li>
+              <li><code>capsuleActionsNotifier</code>: مزامنة ثنائية الاتجاه بين كبسولات الذكريات ومحطات اللقاحات.</li>
+            </ul>
+          </div>
+
+          <div class="card col-6">
+            <div class="card-title">
+              <span>التوجيه وحراس الأمان (GoRouter)</span>
+              <span class="badge badge-green">توجيه تصريحي صارم</span>
+            </div>
+            <p class="card-desc">
+              تدار جميع مسارات التطبيق عبر <code>app_router.dart</code>. يتحقق حارس التوجيه التلقائي من شرطين إجباريين قبل فتح أي شاشة:
+            </p>
+            <ul style="margin-top: 12px; margin-right: 18px;">
+              <li>وجود جلسة مستخدم نشطة وصالحة عبر Firebase Auth.</li>
+              <li>تسجيل التوقيع على الموافقة الإلزامية للقانون الجزائري 18-07، والتوجيه الإجباري لشاشة الموافقة في حال غيابه.</li>
+            </ul>
+          </div>
+
+          <div class="card col-12">
+            <div class="card-title">
+              <span>التقسيم المعياري للخصائص (lib/features)</span>
+              <span class="badge badge-neutral">وحدات برمجية معزولة</span>
+            </div>
+            <p class="card-desc">
+              تم تقسيم الشيفرة المصدرية إلى أنظمة فرعية مستقلة تضمن سهولة الصيانة والتطوير المستقبلي:
+            </p>
+            <div class="bento-grid" style="margin-bottom: 0;">
+              <div class="card col-3" style="background: var(--surface-muted); padding: 16px;">
+                <strong class="mono" style="font-size: 0.8rem;">/auth</strong>
+                <p style="font-size: 0.78rem; color: var(--text-secondary); margin-top: 4px;">تسجيل الدخول، إنشاء الحساب، سياسة الخصوصية وقبول القانون 18-07.</p>
+              </div>
+              <div class="card col-3" style="background: var(--surface-muted); padding: 16px;">
+                <strong class="mono" style="font-size: 0.8rem;">/capsules</strong>
+                <p style="font-size: 0.78rem; color: var(--text-secondary); margin-top: 4px;">مشغل الصوت الغامر بشعار العلامة، مؤثر كين بيرنز والتسجيل الصوتي.</p>
+              </div>
+              <div class="card col-3" style="background: var(--surface-muted); padding: 16px;">
+                <strong class="mono" style="font-size: 0.8rem;">/health & /vaccines</strong>
+                <p style="font-size: 0.78rem; color: var(--text-secondary); margin-top: 4px;">مخططات الوزن حتى 80 كغ، روزنامة اللقاحات والنصائح الطبية المعتمدة.</p>
+              </div>
+              <div class="card col-3" style="background: var(--surface-muted); padding: 16px;">
+                <strong class="mono" style="font-size: 0.8rem;">/memory_book & /print</strong>
+                <p style="font-size: 0.78rem; color: var(--text-secondary); margin-top: 4px;">توليد كتب الصور بصيغة PDF الاحترافية وإدارة مسار طلبات الطباعة.</p>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </section>
+
+      <!-- القسم الثالث: السحابة والأمان -->
+      <section id="firebase">
+        <h2>٣. البنية السحابية وقواعد أمان البيانات (Firebase)</h2>
+        <p>
+          يعتمد تطبيق لاكي مام على حلول جوجل السحابية المدارة عبر فايربيز، مما يوفر استجابة سريعة جداً وقابلية توسع فورية لخدمة المستخدمات في مختلف أنحاء الجزائر.
+        </p>
+
+        <div class="window-chrome">
+          <div class="window-bar">
+            <span class="window-dot"></span>
+            <span class="window-dot"></span>
+            <span class="window-dot"></span>
+            <span class="window-title">مخطط تدفق البيانات ومعمارية السحابة</span>
+          </div>
+          <div class="window-body">
+            <pre><code>[ تطبيق الهواتف الذكية فلاتر ]
+        │
+        ├── (1) خدمة المصادقة ──────────> Firebase Authentication (البريد الإلكتروني وجوجل)
+        │                                  └─ ادعاءات المسؤولين : { admin: true / false }
+        │
+        ├── (2) قاعدة البيانات ─────────> Cloud Firestore Database
+        │                                  ├─ /users/{uid} (الملف الشخصي والحالة)
+        │                                  ├─ /users/{uid}/children/{childId} (بيانات الأطفال)
+        │                                  ├─ /consent_logs/{logId} (سجل غير قابل للتعديل · 18-07)
+        │                                  ├─ /capsules/{capsuleId} (الذكريات والصوتيات)
+        │                                  ├─ /print_orders/{orderId} (طلبات طباعة الألبومات)
+        │                                  └─ /marketplace_orders/{orderId} (طلبات المتجر والدفع)
+        │
+        └── (3) التخزين السحابي ────────> Cloud Storage (تخزين مشفر تلقائياً)
+                                           ├─ /capsule_photos/ (صور الذكريات)
+                                           ├─ /capsule_audio/ (التسجيلات الصوتية للأم والطفل)
+                                           └─ /products/ (صور كتالوج المتجر)</code></pre>
+          </div>
+        </div>
+
+        <h3>قواعد الحماية في فايرستور (firestore.rules)</h3>
+        <p>
+          لا يتم الوثوق بالهاتف نهائياً للتحقق من الأمان، بل تتولى قواعد الحماية في الخادم التحقق الصارم:
+        </p>
+        <ul style="margin-right: 20px;">
+          <li><strong>مبدأ العزل المطلق:</strong> لا يمكن لأي مستخدمة قراءة أو تعديل بيانات لا تخص معرّفها الشخصي (<code>request.auth.uid == userId</code>).</li>
+          <li><strong>مناعة سجلات التدقيق:</strong> المجموعات <code>/consent_logs</code> و<code>/print_orders</code> تقبل الإنشاء الأولي فقط وتمنع منعاً باتاً أي تعديل أو حذف.</li>
+          <li><strong>صلاحيات الإدارة المشفرة:</strong> تقتصر العمليات الإدارية الحساسة على الحسابات التي تحمل ادعاء التوكن <code>request.auth.token.admin == true</code>.</li>
+        </ul>
+      </section>
+
+      <!-- القسم الرابع: لوحة التحكم -->
+      <section id="admin">
+        <h2>٤. لوحة التحكم والإدارة عبر الويب (Web Admin)</h2>
+        <p>
+          تم تطوير لوحة تحكم متكاملة مخصصة لفريق الإدارة والدعم الفني في لاكي مام لمتابعة نشاط التطبيق، وتحديث متجر المنتجات، والإشراف على طباعة الألبومات وطلبات التوصيل.
+        </p>
+
+        <div class="bento-grid">
+          <div class="card col-4">
+            <div class="card-title">الاستضافة السحابية</div>
+            <p class="card-desc">
+              مستضافة ومحمية عبر Firebase Hosting على الرابط الرسمي المخصص للاختبار: <a href="https://luckymam-app-dv.web.app" target="_blank" style="color: inherit; text-decoration: underline;">luckymam-app-dv.web.app</a>.
+            </p>
+          </div>
+
+          <div class="card col-4">
+            <div class="card-title">حسابات المسؤولين</div>
+            <p class="card-desc">
+              تقييد الدخول فقط للحسابات المعتمدة (مثل <code>admin@luckymam.app</code>) مع فحص ادعاءات المسؤول في السحابة قبل فتح لوحة القيادة.
+            </p>
+          </div>
+
+          <div class="card col-4">
+            <div class="card-title">إدارة المتجر والطلبات</div>
+            <p class="card-desc">
+              نظام متكامل لإضافة وتعديل المنتجات الشريكة، متابعة طلبات طباعة الكتب الورقية وتحديث حالات الشحن والتوصيل للزبائن.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <footer class="page-nav">
+        <a href="index.html" class="page-nav-item">
+          <span class="page-nav-label">السابق · الفهرس</span>
+          <span class="page-nav-title">→ نظرة عامة وفهرس شامل</span>
+        </a>
+        <a href="02_release_mvp_v1.html" class="page-nav-item next">
+          <span class="page-nav-label">التالي · الفصل ٠٢</span>
+          <span class="page-nav-title">تسليم الإصدار الأولي v1.0.0 ←</span>
+        </a>
+      </footer>
+
+    </main>
+
+  </div>
+
+  <div id="search-modal" class="search-modal">
+    <div class="search-box">
+      <div class="search-input-wrapper">
+        <span class="mono" style="font-size: 0.85rem; color: var(--text-muted);">بحث:</span>
+        <input type="text" id="search-input" class="search-input" placeholder="اكتب كلمة مفتاحية..." autocomplete="off">
+        <kbd>Esc</kbd>
+      </div>
+      <div id="search-results" class="search-results"></div>
+    </div>
+  </div>
+
+  <button class="mobile-toggle" aria-label="قائمة التصفح">
+    <span class="mono" style="font-size: 1.1rem; line-height: 1;">☰</span>
+  </button>
+
+  <script src="book.js"></script>
+</body>
+</html>

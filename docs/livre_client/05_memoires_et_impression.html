@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Chapitre 05 — Mémoires & Impression Photo (Bridge PDF) · LuckyMam</title>
+  <meta name="description" content="Modèles d'albums, moteur de génération PDF AlbumPdfService, aperçu natif et tunnel de commande d'impression VIP.">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+  <div id="reading-progress"></div>
+
+  <div class="app-layout">
+    
+    <aside class="sidebar">
+      <div class="sidebar-brand">
+        <div class="sidebar-title">LuckyMam</div>
+        <div class="sidebar-subtitle">Livre de Bord Client · MVP</div>
+      </div>
+
+      <button class="sidebar-search-btn trigger-search" type="button">
+        <span>Rechercher dans le livre...</span>
+        <kbd>/</kbd>
+      </button>
+
+      <nav class="sidebar-nav">
+        <div class="nav-section-label">Sommaire Général</div>
+        <a href="index.html" class="nav-link">
+          <span class="nav-number">00</span>
+          <span>Vue d’Ensemble & Sommaire</span>
+        </a>
+        <a href="01_architecture_et_produit.html" class="nav-link">
+          <span class="nav-number">01</span>
+          <span>Vision & Socle Technique</span>
+        </a>
+        <a href="02_release_mvp_v1.html" class="nav-link">
+          <span class="nav-number">02</span>
+          <span>La Release MVP v1.0.0</span>
+        </a>
+        <a href="03_conformite_loi_18_07.html" class="nav-link">
+          <span class="nav-number">03</span>
+          <span>Conformité Loi 18-07 & i18n</span>
+        </a>
+        <a href="04_backlog_addendum.html" class="nav-link">
+          <span class="nav-number">04</span>
+          <span>Le Backlog Addendum (22 T.)</span>
+        </a>
+        <a href="05_memoires_et_impression.html" class="nav-link active">
+          <span class="nav-number">05</span>
+          <span>Mémoires & Impression PDF</span>
+        </a>
+        <a href="06_marketplace_et_monetisation.html" class="nav-link">
+          <span class="nav-number">06</span>
+          <span>Marketplace & Monétisation</span>
+        </a>
+        <a href="07_guide_recette_et_production.html" class="nav-link">
+          <span class="nav-number">07</span>
+          <span>Recette Client & Production</span>
+        </a>
+      </nav>
+
+      <div class="sidebar-footer">
+        <a href="../livre_client_ar/05_memoires_et_impression.html" class="btn btn-secondary" style="padding: 4px 8px; font-size: 0.72rem;">العربية</a>
+        <button class="btn btn-secondary" onclick="window.print()" style="padding: 4px 8px; font-size: 0.72rem;">Imprimer</button>
+      </div>
+    </aside>
+
+    <main class="main-content">
+      
+      <header class="chapter-header">
+        <div class="chapter-meta">
+          <span class="badge badge-blue">EXPÉRIENCE ÉMOTIONNELLE</span>
+          <span class="chapter-number">CHAPITRE 05</span>
+        </div>
+        <h1 class="chapter-title">Livre de Souvenirs & Impression Photo</h1>
+        <p class="chapter-lead">
+          Le passage du souvenir numérique sur écran tactile à un livre photographique tangible constitue le cœur battant de la promesse LuckyMam. Grâce au développement d'un moteur de composition PDF dédié, l'application produit de véritables ouvrages soignés, prêts pour l'impression haute définition chez les ateliers partenaires.
+        </p>
+      </header>
+
+      <!-- Section 1 : Modèles d'albums -->
+      <section>
+        <h2>1. Architecture des Albums : Prédéfinis & Standards</h2>
+        <p>
+          L'application propose deux approches complémentaires pour répondre aux envies des parents : des parcours scénarisés pas-à-pas ou une totale liberté éditoriale.
+        </p>
+
+        <div class="bento-grid">
+          
+          <div class="card col-7">
+            <div class="card-title">
+              <span>Les 3 Modèles Prédéfinis (LM2-134)</span>
+              <span class="badge badge-green">14 JALONS GUIDÉS</span>
+            </div>
+            <p class="card-desc">
+              Conçus pour guider la maman sans la surcharger mentalement. Chaque modèle comprend une trame chronologique d'événements clés :
+            </p>
+            <div class="table-wrapper" style="margin: 12px 0 0 0;">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Modèle</th>
+                    <th>Événements Canoniques Inclus</th>
+                    <th>Usage Recommandé</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td><strong>Naissance</strong></td>
+                    <td>La première photo, le retour à la maison, la rencontre avec la fratrie, les premiers jours.</td>
+                    <td>Maternité immédiate</td>
+                  </tr>
+                  <tr>
+                    <td><strong>1ère Année</strong></td>
+                    <td>Les 12 mois de croissance, les premières purées, les premiers pas, le 1er anniversaire.</td>
+                    <td>Évolution annuelle</td>
+                  </tr>
+                  <tr>
+                    <td><strong>Aqiqa</strong></td>
+                    <td>La préparation, la cérémonie familiale, le choix du prénom, les vœux et festivités.</td>
+                    <td>Tradition familiale</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <div class="card col-5">
+            <div class="card-title">
+              <span>L'Album Standard Libre (LM2-135)</span>
+              <span class="badge badge-blue">LIBERTÉ TOTALE</span>
+            </div>
+            <p class="card-desc">
+              Pour les événements spécifiques (vacances, sorties en famille, fêtes d'école) :
+            </p>
+            <ul style="margin-top: 10px; margin-left: 18px;">
+              <li>Création sans restriction de slots prédéterminés.</li>
+              <li>Sélecteur universel de capsules existantes ou création immédiate d'un nouveau cliché.</li>
+              <li>Possibilité de renommer, réorganiser ou purger les pages à tout moment.</li>
+            </ul>
+          </div>
+
+        </div>
+      </section>
+
+      <!-- Section 2 : Moteur PDF sur-mesure -->
+      <section>
+        <h2>2. Moteur de Composition PDF Sur-Mesure (AlbumPdfService)</h2>
+        <p>
+          Refusant le piège d'une simple exportation de liste de vignettes d'images, le service <code>AlbumPdfService</code> compose un véritable livre d'art page par page, respectant les règles typographiques de l'édition papier.
+        </p>
+
+        <div class="window-chrome">
+          <div class="window-bar">
+            <span class="window-dot"></span>
+            <span class="window-dot"></span>
+            <span class="window-dot"></span>
+            <span class="window-title">Structure Architecturale du Document PDF</span>
+          </div>
+          <div class="window-body">
+            <div class="bento-grid" style="margin: 0;">
+              
+              <div class="card col-4" style="background: var(--surface-muted); padding: 18px;">
+                <div class="mono" style="font-weight: 600; font-size: 0.8rem;">1. Page de Couverture</div>
+                <p style="font-size: 0.78rem; color: var(--text-secondary); margin-top: 6px;">
+                  Dégradé rose doux aux teintes LuckyMam, médaillon central blanc portant le logo officiel, titre de l'ouvrage, prénom de l'enfant et date d'édition.
+                </p>
+              </div>
+
+              <div class="card col-4" style="background: var(--surface-muted); padding: 18px;">
+                <div class="mono" style="font-weight: 600; font-size: 0.8rem;">2. Pages Intérieures</div>
+                <p style="font-size: 0.78rem; color: var(--text-secondary); margin-top: 6px;">
+                  Chaque page contient une unique photo soigneusement encadrée avec une ombre portée fine, le titre de l'événement et une foliotation formelle "Page X / Y".
+                </p>
+              </div>
+
+              <div class="card col-4" style="background: var(--surface-muted); padding: 18px;">
+                <div class="mono" style="font-weight: 600; font-size: 0.8rem;">3. Page de Clôture</div>
+                <p style="font-size: 0.78rem; color: var(--text-secondary); margin-top: 6px;">
+                  Dégradé harmonisé avec message personnalisé de transmission et de tendresse dédié à l'enfant, prêt à traverser le temps.
+                </p>
+              </div>
+
+            </div>
+          </div>
+        </div>
+
+        <div class="callout">
+          <div class="callout-title">Règle de Filtrage Intelligent des Pages</div>
+          <p>
+            Pour éviter d'imprimer des espaces blancs disgracieux, le moteur de génération ignore automatiquement les emplacements non encore remplis dans les albums prédéfinis. Seuls les souvenirs effectivement documentés sont envoyés au traceur PDF.
+          </p>
+        </div>
+      </section>
+
+      <!-- Section 3 : Visualiseur PDF et Parcours de commande -->
+      <section id="apercu">
+        <h2>3. Prévisualisation Native & Tunnel de Commande (LM2-137)</h2>
+        <p>
+          Pour maximiser la confiance avant achat, l'application intègre le visualiseur natif de Google (<code>PdfPreview</code> du package <code>printing</code>).
+        </p>
+
+        <div class="bento-grid">
+          
+          <div class="card col-6">
+            <div class="card-title">Aperçu Interactif Haute Fidélité</div>
+            <p class="card-desc">
+              L'utilisatrice feuillette son futur livre réel page par page sur son écran :
+            </p>
+            <ul style="margin-top: 8px; margin-left: 18px;">
+              <li>Navigation fluide par bande de vignettes latérales.</li>
+              <li>Zoom multi-touch sur la netteté des photographies.</li>
+              <li>Boutons natifs de partage et d'impression directe sur imprimante Wi-Fi/Bluetooth.</li>
+            </ul>
+          </div>
+
+          <div class="card col-6" id="commande">
+            <div class="card-title">Reconnaissance Automatique VIP</div>
+            <p class="card-desc">
+              Le tunnel de commande analyse instantanément l'abonnement en cours :
+            </p>
+            <ul style="margin-top: 8px; margin-left: 18px;">
+              <li><strong>Membre VIP :</strong> Affichage du bandeau de privilège : <em>« Offert avec votre abonnement VIP »</em>. Le livre est validé sans frais additionnels.</li>
+              <li><strong>Autres Membres :</strong> Confirmation explicite que l'équipe service client contactera la cliente par téléphone pour préciser les finitions de reliure et le tarif.</li>
+            </ul>
+          </div>
+
+          <div class="card col-12">
+            <div class="card-title">Formulaire de Livraison & Immuabilité Atelier</div>
+            <p class="card-desc">
+              Le formulaire recueille le nom complet, le téléphone de contact, la wilaya de destination (parmi les 58 wilayas algériennes) et l'adresse physique exacte. La commande est scellée dans la collection Firestore <code>/print_orders</code> en mode lecture/création seule, garantissant qu'aucune commande ne puisse être supprimée ou falsifiée une fois transmise aux ateliers d'impression.
+            </p>
+          </div>
+
+        </div>
+      </section>
+
+      <!-- Navigation bas de page -->
+      <footer class="page-nav">
+        <a href="04_backlog_addendum.html" class="page-nav-item">
+          <span class="page-nav-label">Précédent · Chapitre 04</span>
+          <span class="page-nav-title">← Le Backlog Addendum (22 Tickets)</span>
+        </a>
+        <a href="06_marketplace_et_monetisation.html" class="page-nav-item next">
+          <span class="page-nav-label">Suivant · Chapitre 06</span>
+          <span class="page-nav-title">Marketplace & Monétisation →</span>
+        </a>
+      </footer>
+
+    </main>
+
+  </div>
+
+  <div id="search-modal" class="search-modal">
+    <div class="search-box">
+      <div class="search-input-wrapper">
+        <span class="mono" style="font-size: 0.85rem; color: var(--text-muted);">Recherche :</span>
+        <input type="text" id="search-input" class="search-input" placeholder="Tapez un mot-clé (ex: Loi 18-07, PDF, Poids, VIP...)" autocomplete="off">
+        <kbd>Échap</kbd>
+      </div>
+      <div id="search-results" class="search-results"></div>
+    </div>
+  </div>
+
+  <button class="mobile-toggle" aria-label="Menu de navigation">
+    <span class="mono" style="font-size: 1.1rem; line-height: 1;">☰</span>
+  </button>
+
+  <script src="book.js"></script>
+</body>
+</html>

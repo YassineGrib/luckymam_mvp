@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>الفصل الثاني — تسليم الإصدار الأولي v1.0.0 · لاكي مام</title>
+  <meta name="description" content="تقرير تفصيلي للتعديلات الـ 36 في إصدار الإطلاق، مشغل الكبسولات الغامر ومفتاح التوقيع الرقمي للإنتاج.">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+  <div id="reading-progress"></div>
+
+  <div class="app-layout">
+    
+    <aside class="sidebar">
+      <div class="sidebar-brand">
+        <div class="sidebar-title">لاكي مام</div>
+        <div class="sidebar-subtitle">دليل العميل المرجعي · النسخة التجريبية</div>
+      </div>
+
+      <button class="sidebar-search-btn trigger-search" type="button">
+        <span>ابحث في الدليل...</span>
+        <kbd>/</kbd>
+      </button>
+
+      <nav class="sidebar-nav">
+        <div class="nav-section-label">فهرس المحتويات</div>
+        <a href="index.html" class="nav-link">
+          <span class="nav-number">٠٠</span>
+          <span>نظرة عامة وفهرس شامل</span>
+        </a>
+        <a href="01_architecture_et_produit.html" class="nav-link">
+          <span class="nav-number">٠١</span>
+          <span>رؤية المنتج والأساس التقني</span>
+        </a>
+        <a href="02_release_mvp_v1.html" class="nav-link active">
+          <span class="nav-number">٠٢</span>
+          <span>تسليم الإصدار الأولي v1.0.0</span>
+        </a>
+        <a href="03_conformite_loi_18_07.html" class="nav-link">
+          <span class="nav-number">٠٣</span>
+          <span>الامتثال للقانون 18-07 واللغات</span>
+        </a>
+        <a href="04_backlog_addendum.html" class="nav-link">
+          <span class="nav-number">٠٤</span>
+          <span>ملحق المهام (22 تذكرة)</span>
+        </a>
+        <a href="05_memoires_et_impression.html" class="nav-link">
+          <span class="nav-number">٠٥</span>
+          <span>ألبوم الذكريات وطباعة PDF</span>
+        </a>
+        <a href="06_marketplace_et_monetisation.html" class="nav-link">
+          <span class="nav-number">٠٦</span>
+          <span>متجر الشركاء والإيرادات</span>
+        </a>
+        <a href="07_guide_recette_et_production.html" class="nav-link">
+          <span class="nav-number">٠٧</span>
+          <span>دليل الفحص والجاهزية</span>
+        </a>
+      </nav>
+
+      <div class="sidebar-footer">
+        <a href="../livre_client/02_release_mvp_v1.html" class="btn btn-secondary" style="padding: 4px 8px; font-size: 0.72rem;">Français</a>
+        <button class="btn btn-secondary" onclick="window.print()" style="padding: 4px 8px; font-size: 0.72rem;">طباعة</button>
+      </div>
+    </aside>
+
+    <main class="main-content">
+      
+      <header class="chapter-header">
+        <div class="chapter-meta">
+          <span class="badge badge-green">الإصدار الأساسي للإنتاج</span>
+          <span class="chapter-number">الفصل الثاني</span>
+        </div>
+        <h1 class="chapter-title">تسليم الإصدار الأولي v1.0.0</h1>
+        <p class="chapter-lead">
+          شكّل تاريخ 02 مارس 2026 موعد أول تسليم رسمي لحزمة التطبيق بحجم 108.2 ميغابايت لنظام أندرويد. تم في هذا الإصدار دمج 36 تعديلاً هيكلياً طلبتها إدارة المشروع، وتلاه في اليوم التالي مباشرة تحديث نوعي أضاف نمط العرض الصوتي الغامر للكبسولات واعتمد التوقيع الأمني الرقمي النهائي.
+        </p>
+      </header>
+
+      <section>
+        <h2>بطاقة التسليم الفنية (مارس 2026)</h2>
+
+        <div class="bento-grid">
+          <div class="card col-3">
+            <span class="badge badge-neutral">الإصدار</span>
+            <div class="card-metric">1.0.0</div>
+            <div class="card-metric-label">البناء الأول لنظام أندرويد</div>
+          </div>
+
+          <div class="card col-3">
+            <span class="badge badge-neutral">حجم الملف</span>
+            <div class="card-metric">108.2 م.ب</div>
+            <div class="card-metric-label">حجم حزمة APK النهائية</div>
+          </div>
+
+          <div class="card col-3">
+            <span class="badge badge-green">الفحص والمطابقة</span>
+            <div class="card-metric">36 / 36</div>
+            <div class="card-metric-label">تعديلاً تم اعتماده بنجاح</div>
+          </div>
+
+          <div class="card col-3">
+            <span class="badge badge-blue">الأمان الرقمي</span>
+            <div class="card-metric">SHA-1</div>
+            <div class="card-metric-label">مفتاح التوقيع الرسمي المعتمد</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- جدول التعديلات الـ 36 -->
+      <section>
+        <h2>سجل التعديلات الـ 36 حسب الفئات الوظيفية</h2>
+        <p>
+          تم تصنيف التحسينات عبر 8 محاور تطويرية شملت الهوية اللفظية، تجربة التسجيل، السياسة السعرية، والشاشات الحيوية:
+        </p>
+
+        <div class="table-wrapper">
+          <table>
+            <thead>
+              <tr>
+                <th style="width: 80px;">الفئة</th>
+                <th>المحور وعدد التعديلات</th>
+                <th>طبيعة التعديل المنجز</th>
+                <th>الأثر على تجربة المستخدم</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td class="mono">فئة ١</td>
+                <td><strong>المحتوى والنصوص</strong> (6 تعديلات)</td>
+                <td>
+                  اعتماد الشعار الرسمي الموحد: <em>«ذكريات تُروى، ومشاعر تُستعاد»</em>. استبدال الكلمات الجافة بعبارات مريحة (مثلاً: استبدال شارة <code>«متأخر»</code> بعبارة <code>«في انتظار التوثيق»</code> واستبدال <code>«اللقاحات»</code> بـ <code>«صحة الطفل»</code>).
+                </td>
+                <td>أسلوب إيجابي ومحفز للأم وخالٍ من لوم التأخير.</td>
+              </tr>
+              <tr>
+                <td class="mono">فئة ٢</td>
+                <td><strong>المصادقة والجانب القانوني</strong> (3 تعديلات)</td>
+                <td>
+                  إدراج خانة الموافقة الصريحة في شاشة التسجيل، إنشاء شاشة مستقلة لسياسة الخصوصية وحماية البيانات، وتثبيت المظهر الفاتح كوضع افتراضي للتطبيق.
+                </td>
+                <td>وضوح قانوني كامل وواجهة مشرقة ومريحة للعين.</td>
+              </tr>
+              <tr>
+                <td class="mono">فئة ٣</td>
+                <td><strong>الأسعار والاشتراكات</strong> (5 تعديلات)</td>
+                <td>
+                  توحيد قائمة الأسعار: <strong>الاشتراك المميز (Premium) بـ 2,490 دج/سنوياً</strong> و<strong>اشتراك كبار الشخصيات (VIP) بـ 9,890 دج/سنوياً</strong> (يشمل بطاقة العضوية وألبوم صور مطبوع)، مع صفحة الشركاء المتميزين.
+                </td>
+                <td>وضوح العروض التجارية وتعزيز قيمة باقة VIP.</td>
+              </tr>
+              <tr>
+                <td class="mono">فئة ٤</td>
+                <td><strong>الشاشة الرئيسية وملف الطفل</strong> (4 تعديلات)</td>
+                <td>
+                  تصميم جديد للوصول السريع بنسق 4×1 بخلفية كاملة. إنشاء <strong>شاشة خاصة لكل طفل</strong> تحتوي على بطاقة رأسية ملونة حسب جنس الطفل، 3 بطاقات إحصائية، شبكة ذكريات 3×3 وسجل اللقاحات الكامل.
+                </td>
+                <td>الوصول السريع لكافة تفاصيل كل طفل بنقرة واحدة.</td>
+              </tr>
+              <tr>
+                <td class="mono">فئة ٥</td>
+                <td><strong>الخط الزمني (Timeline)</strong> (9 تعديلات)</td>
+                <td>
+                  إصلاح مسار الرجوع، تفعيل التمرير المزدوج الأفقي والعمودي، ظهور شعار لاكي مام على نقاط المحطات، وحفظ التاريخ الفعلي للحدث في فايرستور.
+                </td>
+                <td>سلاسة تامة في استعراض تاريخ نمو الطفل.</td>
+              </tr>
+              <tr>
+                <td class="mono">فئة ٦</td>
+                <td><strong>كبسولات الذكريات</strong> (3 تعديلات)</td>
+                <td>
+                  وضع علامة مائية هادئة على الصور، أداة اختيار تاريخ التقاط الصورة الفعلي، وتصنيف الذكريات عبر 5 مراحل حياتية.
+                </td>
+                <td>أرشفة زمنية دقيقة ومرتبة للحظات العائلية.</td>
+              </tr>
+              <tr>
+                <td class="mono">فئة ٧</td>
+                <td><strong>الصحة واللقاحات</strong> (تعديلان)</td>
+                <td>
+                  إدراج تقويم لاختيار تاريخ أخذ اللقاح، وإرفاق صفحات تعريفية طبية لكل لقاح (الهدف منه، طريقة الحقن، والأعراض المتوقعة).
+                </td>
+                <td>دفتر صحي وقائي وتثقيفي متكامل للأم.</td>
+              </tr>
+              <tr>
+                <td class="mono">فئة ٨</td>
+                <td><strong>الفيديوهات التربوية (Reels)</strong> (تعديل واحد)</td>
+                <td>
+                  تنسيق مكتبة الفيديو وربط المقاطع التوعوية بفئات الأعمار واللقاحات المناسبة.
+                </td>
+                <td>محتوى طبي موثوق ومبسط للأمهات.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- الترقية الغامرة للكبسولات -->
+      <section id="capsules">
+        <h2>الترقية التفاعلية للكبسولات الصوتية (03 مارس 2026)</h2>
+        <p>
+          لتحويل لحظة فتح الكبسولة إلى تجربة شعورية حية ومؤثرة، تم تجديد مشغل الوسائط بالكامل ليعمل بالوضع الغامر:
+        </p>
+
+        <div class="bento-grid">
+          <div class="card col-6">
+            <div class="card-title">
+              <span>الوضع الحي الغامر (Live Mode)</span>
+              <span class="badge badge-green">تركيز بصري كامل</span>
+            </div>
+            <p class="card-desc">
+              بمجرد أن تبدأ الأم في الاستماع إلى التسجيل الصوتي للكبسولة، تختفي تلقائياً وبنعومة جميع النصوص والأزرار وأشرطة العناوين، لتملأ صورة الطفل كامل مساحة الشاشة. نقرة خفيفة واحدة على الشاشة تعيد عناصر التحكم فوراً.
+            </p>
+          </div>
+
+          <div class="card col-6">
+            <div class="card-title">
+              <span>حركة كين بيرنز الهادئة (Ken Burns)</span>
+              <span class="badge badge-blue">حيوية المشهد</span>
+            </div>
+            <p class="card-desc">
+              أثناء استماع الأم لصوت طفلها أو مشاعرها المسجلة، تتحرك الصورة ببطء وانسيابية فائقة عبر تقريب هادئ وتدريجي يضفي الحياة على الصورة الثابتة دون أي اهتزاز أو تشويش.
+            </p>
+          </div>
+
+          <div class="card col-12">
+            <div class="card-title">
+              <span>تخصيص المشغل بشعار لاكي مام الرسمي</span>
+              <span class="badge badge-neutral">هوية بصرية متقنة</span>
+            </div>
+            <p class="card-desc">
+              تم استبدال زر التشغيل التقليدي بميدالية محفورة تحمل شعار لاكي مام الرسمي بدقة المتجهات (SVG)، حيث يتواصل مشغل الصوت <code>CapsuleAudioPlayer</code> مباشرة مع الشاشة الرئيسية لإدارة توقيت تلاشي الواجهة.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <!-- أمان الإنتاج و Keystore -->
+      <section>
+        <h2>التوقيع الرقمي للإنتاج وتكامل تسجيل جوجل</h2>
+        <p>
+          للانتقال من مرحلة التطوير إلى متجر التطبيقات الرسمي، تم قفل سلسلة بناء النسخة وتأمين مفاتيح التشفير الرسمية:
+        </p>
+
+        <div class="window-chrome">
+          <div class="window-bar">
+            <span class="window-dot"></span>
+            <span class="window-dot"></span>
+            <span class="window-dot"></span>
+            <span class="window-title">android/app/build.gradle.kts · إعدادات التوقيع الرقمي</span>
+          </div>
+          <div class="window-body">
+            <pre><code>// عزل مفاتيح التوقيع وحمايتها لبيئة الإنتاج
+signingConfigs {
+    create("release") {
+        keyAlias = keystoreProperties["keyAlias"] as String
+        keyPassword = keystoreProperties["keyPassword"] as String
+        storeFile = file(keystoreProperties["storeFile"] as String)
+        storePassword = keystoreProperties["storePassword"] as String
+    }
+}
+buildTypes {
+    getByName("release") {
+        signingConfig = signingConfigs.getByName("release")
+        isMinifyEnabled = true
+        proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
+    }
+}</code></pre>
+          </div>
+        </div>
+
+        <div class="callout">
+          <div class="callout-title">حل مشكلة تسجيل الدخول عبر جوجل في نسخة الإنتاج</div>
+          <p>
+            تسبب اختلاف التوقيع بين نسختي التطوير والإنتاج سابقاً في توقف تسجيل الدخول عبر حسابات جوجل. تم استخراج بصمة SHA-1 الرسمية للإنتاج (<code>2E:AD:C4:88:...</code>) من المفتاح المحمي <code>Luckymam-release.jks</code> وتسجيلها في خوادم فايربيز، مما أمّن تسجيل الدخول بسلاسة وسرعة فائقة.
+          </p>
+        </div>
+      </section>
+
+      <footer class="page-nav">
+        <a href="01_architecture_et_produit.html" class="page-nav-item">
+          <span class="page-nav-label">السابق · الفصل ٠١</span>
+          <span class="page-nav-title">→ رؤية المنتج والأساس التقني</span>
+        </a>
+        <a href="03_conformite_loi_18_07.html" class="page-nav-item next">
+          <span class="page-nav-label">التالي · الفصل ٠٣</span>
+          <span class="page-nav-title">الامتثال للقانون 18-07 واللغات ←</span>
+        </a>
+      </footer>
+
+    </main>
+
+  </div>
+
+  <div id="search-modal" class="search-modal">
+    <div class="search-box">
+      <div class="search-input-wrapper">
+        <span class="mono" style="font-size: 0.85rem; color: var(--text-muted);">بحث:</span>
+        <input type="text" id="search-input" class="search-input" placeholder="اكتب كلمة مفتاحية..." autocomplete="off">
+        <kbd>Esc</kbd>
+      </div>
+      <div id="search-results" class="search-results"></div>
+    </div>
+  </div>
+
+  <button class="mobile-toggle" aria-label="قائمة التصفح">
+    <span class="mono" style="font-size: 1.1rem; line-height: 1;">☰</span>
+  </button>
+
+  <script src="book.js"></script>
+</body>
+</html>

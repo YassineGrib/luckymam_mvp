@@ -10,6 +10,14 @@ import '../../features/home/home_screen.dart';
 import '../../features/marketplace/screens/marketplace_screen.dart';
 import '../../features/reels/screens/reels_screen.dart';
 import '../../features/subscription/screens/diamond_sponsors_screen.dart';
+import '../../features/health/screens/health_hub_screen.dart';
+import '../../features/memory_book/screens/memory_book_screen.dart';
+import '../../features/memory_book/screens/album_template_picker_screen.dart';
+import '../../features/marketplace/screens/cart_screen.dart';
+import '../../features/marketplace/screens/checkout_screen.dart';
+import '../../features/marketplace/screens/my_orders_screen.dart';
+import '../../features/notifications/notifications_screen.dart';
+import '../../features/home/tabs/timeline_tab.dart';
 
 /// App router configuration with soft page transitions.
 class AppRouter {
@@ -122,6 +130,89 @@ class AppRouter {
         pageBuilder: (context, state) => _buildPageWithTransition(
           key: state.pageKey,
           child: const Law1807ConsentScreen(),
+        ),
+      ),
+
+      // Health Hub (Santé Enfant)
+      GoRoute(
+        path: '/health',
+        name: 'health',
+        pageBuilder: (context, state) => _buildPageWithTransition(
+          key: state.pageKey,
+          child: const HealthHubScreen(),
+        ),
+      ),
+
+      // Memory Book
+      GoRoute(
+        path: '/memory-book',
+        name: 'memory-book',
+        pageBuilder: (context, state) => _buildPageWithTransition(
+          key: state.pageKey,
+          child: const MemoryBookScreen(),
+        ),
+      ),
+
+      // Album Template Picker
+      GoRoute(
+        path: '/album-templates',
+        name: 'album-templates',
+        pageBuilder: (context, state) => _buildPageWithTransition(
+          key: state.pageKey,
+          child: const AlbumTemplatePickerScreen(
+            childId: 'c1',
+            childName: 'Amine',
+          ),
+        ),
+      ),
+
+      // Cart
+      GoRoute(
+        path: '/cart',
+        name: 'cart',
+        pageBuilder: (context, state) => _buildPageWithTransition(
+          key: state.pageKey,
+          child: const CartScreen(),
+        ),
+      ),
+
+      // Checkout
+      GoRoute(
+        path: '/checkout',
+        name: 'checkout',
+        pageBuilder: (context, state) => _buildPageWithTransition(
+          key: state.pageKey,
+          child: const CheckoutScreen(),
+        ),
+      ),
+
+      // My Orders
+      GoRoute(
+        path: '/orders',
+        name: 'orders',
+        pageBuilder: (context, state) => _buildPageWithTransition(
+          key: state.pageKey,
+          child: const MyOrdersScreen(),
+        ),
+      ),
+
+      // Notifications
+      GoRoute(
+        path: '/notifications',
+        name: 'notifications',
+        pageBuilder: (context, state) => _buildPageWithTransition(
+          key: state.pageKey,
+          child: const NotificationsScreen(),
+        ),
+      ),
+
+      // Timeline
+      GoRoute(
+        path: '/timeline',
+        name: 'timeline',
+        pageBuilder: (context, state) => _buildPageWithTransition(
+          key: state.pageKey,
+          child: const Scaffold(body: SafeArea(child: TimelineTab())),
         ),
       ),
     ],

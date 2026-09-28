@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Chapitre 01 — Vision Produit & Socle Technique · LuckyMam</title>
+  <meta name="description" content="Vision fonctionnelle, segmentation des personas maternité et architecture technique Flutter / Firebase.">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+  <div id="reading-progress"></div>
+
+  <div class="app-layout">
+    
+    <aside class="sidebar">
+      <div class="sidebar-brand">
+        <div class="sidebar-title">LuckyMam</div>
+        <div class="sidebar-subtitle">Livre de Bord Client · MVP</div>
+      </div>
+
+      <button class="sidebar-search-btn trigger-search" type="button">
+        <span>Rechercher dans le livre...</span>
+        <kbd>/</kbd>
+      </button>
+
+      <nav class="sidebar-nav">
+        <div class="nav-section-label">Sommaire Général</div>
+        <a href="index.html" class="nav-link">
+          <span class="nav-number">00</span>
+          <span>Vue d’Ensemble & Sommaire</span>
+        </a>
+        <a href="01_architecture_et_produit.html" class="nav-link active">
+          <span class="nav-number">01</span>
+          <span>Vision & Socle Technique</span>
+        </a>
+        <a href="02_release_mvp_v1.html" class="nav-link">
+          <span class="nav-number">02</span>
+          <span>La Release MVP v1.0.0</span>
+        </a>
+        <a href="03_conformite_loi_18_07.html" class="nav-link">
+          <span class="nav-number">03</span>
+          <span>Conformité Loi 18-07 & i18n</span>
+        </a>
+        <a href="04_backlog_addendum.html" class="nav-link">
+          <span class="nav-number">04</span>
+          <span>Le Backlog Addendum (22 T.)</span>
+        </a>
+        <a href="05_memoires_et_impression.html" class="nav-link">
+          <span class="nav-number">05</span>
+          <span>Mémoires & Impression PDF</span>
+        </a>
+        <a href="06_marketplace_et_monetisation.html" class="nav-link">
+          <span class="nav-number">06</span>
+          <span>Marketplace & Monétisation</span>
+        </a>
+        <a href="07_guide_recette_et_production.html" class="nav-link">
+          <span class="nav-number">07</span>
+          <span>Recette Client & Production</span>
+        </a>
+      </nav>
+
+      <div class="sidebar-footer">
+        <a href="../livre_client_ar/01_architecture_et_produit.html" class="btn btn-secondary" style="padding: 4px 8px; font-size: 0.72rem;">العربية</a>
+        <button class="btn btn-secondary" onclick="window.print()" style="padding: 4px 8px; font-size: 0.72rem;">Imprimer</button>
+      </div>
+    </aside>
+
+    <main class="main-content">
+      
+      <header class="chapter-header">
+        <div class="chapter-meta">
+          <span class="badge badge-blue">INGÉNIERIE & SOCLE</span>
+          <span class="chapter-number">CHAPITRE 01</span>
+        </div>
+        <h1 class="chapter-title">Vision Produit & Socle Technique</h1>
+        <p class="chapter-lead">
+          LuckyMam est conçu pour accompagner chaque femme avec empathie et précision tout au long de sa trajectoire de maternité : du désir d'enfant à la petite enfance. Cette exigence humaine impose une architecture logicielle hautement adaptative, capable de métamorphoser l'interface selon le profil vécu tout en garantissant un niveau de sécurité militaire.
+        </p>
+      </header>
+
+      <!-- Section 1 : Personas et empathie UI -->
+      <section id="personas">
+        <h2>1. Segmentation Métier & Adaptation Empathique</h2>
+        <p>
+          Contrairement aux applications génériques de parentalité, LuckyMam refuse d'imposer un modèle unique. L'application distingue trois statuts utilisateurs majeurs, chacun disposant d'une expérience visuelle, sémantique et fonctionnelle sur mesure.
+        </p>
+
+        <div class="table-wrapper">
+          <table>
+            <thead>
+              <tr>
+                <th>Statut Utilisateur</th>
+                <th>Phase de Vie</th>
+                <th>Adaptations UX Spécifiques</th>
+                <th>Indicateurs & Widgets Clés</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>HOPE (Espoir)</strong></td>
+                <td>Désir d'enfant · Parcours PMA · Fertilité</td>
+                <td>
+                  <strong>Masquage systématique</strong> de toute mention des enfants dans le tableau de bord et le profil pour éviter toute blessure psychologique. Conseils quotidiens orientés bien-être et sérénité.
+                </td>
+                <td>
+                  <span class="badge badge-yellow">SUIVI DE CYCLE</span>
+                  <span class="badge badge-neutral">TIPS BIEN-ÊTRE</span>
+                </td>
+              </tr>
+              <tr>
+                <td><strong>ENCEINTE</strong></td>
+                <td>Grossesse en cours (1ère à 40ème SA)</td>
+                <td>
+                  Remplacement du module menstruel par le panneau dynamique <strong>Ma Grossesse</strong>. Calcul automatisé du terme et du compte à rebours dès saisie de la Date des Dernières Règles (DDR).
+                </td>
+                <td>
+                  <span class="badge badge-blue">ANNEAU SA / 40</span>
+                  <span class="badge badge-blue">DPA · J-XX</span>
+                </td>
+              </tr>
+              <tr>
+                <td><strong>MAMAN</strong></td>
+                <td>Post-partum & Éducation des enfants</td>
+                <td>
+                  Affichage des profils dédiés par enfant, calendrier vaccinal national algérien interactif, suivi pondéral dynamique et création de capsules souvenirs.
+                </td>
+                <td>
+                  <span class="badge badge-green">PROFIL ENFANTS</span>
+                  <span class="badge badge-green">VACCINS & CAPSULES</span>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="callout">
+          <div class="callout-title">Règle d'Architecture Empathique (Ticket LM2-123)</div>
+          <p>
+            Pour éviter l'affichage intempestif de blocs réservés aux mamans durant le temps de latence de lecture Firestore, la propriété <code>status</code> a été typée comme nullable (<code>UserStatus?</code>). La section « Mes Enfants » ne s'instancie désormais qu'après confirmation explicite par la base de données du profil <code>mom</code>, garantissant une étanchéité psychologique absolue.
+          </p>
+        </div>
+      </section>
+
+      <!-- Section 2 : Architecture Mobile Flutter -->
+      <section id="architecture">
+        <h2>2. Socle Technique de l'Application Mobile (Flutter)</h2>
+        <p>
+          L'application mobile repose sur le framework Google Flutter, structuré selon les principes stricts de la <em>Clean Architecture</em> et du pattern Feature-First.
+        </p>
+
+        <div class="bento-grid">
+          
+          <div class="card col-6">
+            <div class="card-title">
+              <span>Gestion d’État : Riverpod 2</span>
+              <span class="badge badge-blue">RÉACTIVITÉ PURE</span>
+            </div>
+            <p class="card-desc">
+              Utilisation exclusive de <code>StateNotifierProvider</code> et de <code>AsyncNotifier</code>. L'état global est découplé de l'arbre des widgets, garantissant des performances à 60/120 FPS sans re-rendus superflus.
+            </p>
+            <ul style="margin-top: 12px; margin-left: 18px;">
+              <li><code>localeProvider</code> : Basculement instantané AR / FR / EN sans rechargement.</li>
+              <li><code>authControllerProvider</code> : Gestion unifiée des sessions et des privilèges.</li>
+              <li><code>capsuleActionsNotifier</code> : Synchronisation double-sens des médias souvenirs.</li>
+            </ul>
+          </div>
+
+          <div class="card col-6">
+            <div class="card-title">
+              <span>Routage & Gardes de Sécurité</span>
+              <span class="badge badge-green">GOROUTER DÉCLARATIF</span>
+            </div>
+            <p class="card-desc">
+              L'intégralité des flux applicatifs est encadrée par <code>app_router.dart</code>. Un filtre de redirection intercepte chaque tentative d'accès pour vérifier deux conditions sine qua non :
+            </p>
+            <ul style="margin-top: 12px; margin-left: 18px;">
+              <li>Authentification Firebase active et token valide.</li>
+              <li>Signature du consentement légal algérien (Loi 18-07). En cas d'absence, redirection forcée vers <code>/law-consent</code>.</li>
+            </ul>
+          </div>
+
+          <div class="card col-12">
+            <div class="card-title">
+              <span>Cartographie Modulaire des Fonctionnalités (lib/features)</span>
+              <span class="badge badge-neutral">STRUCTURE MODULAIRE</span>
+            </div>
+            <p class="card-desc">
+              Le code source est segmenté en sous-systèmes indépendants respectant le principe de responsabilité unique :
+            </p>
+            <div class="bento-grid" style="margin-bottom: 0;">
+              <div class="card col-3" style="background: var(--surface-muted); padding: 16px;">
+                <strong class="mono" style="font-size: 0.8rem;">/auth</strong>
+                <p style="font-size: 0.75rem; color: var(--text-secondary); margin-top: 4px;">Connexion, inscription, politique de confidentialité & Loi 18-07.</p>
+              </div>
+              <div class="card col-3" style="background: var(--surface-muted); padding: 16px;">
+                <strong class="mono" style="font-size: 0.8rem;">/capsules</strong>
+                <p style="font-size: 0.75rem; color: var(--text-secondary); margin-top: 4px;">Lecteur audio avec logo de marque, zoom Ken Burns et enregistrement vocal.</p>
+              </div>
+              <div class="card col-3" style="background: var(--surface-muted); padding: 16px;">
+                <strong class="mono" style="font-size: 0.8rem;">/health & /vaccines</strong>
+                <p style="font-size: 0.75rem; color: var(--text-secondary); margin-top: 4px;">Courbes de croissance 80 kg, calendrier vaccinal et fiches conseils pédiatriques.</p>
+              </div>
+              <div class="card col-3" style="background: var(--surface-muted); padding: 16px;">
+                <strong class="mono" style="font-size: 0.8rem;">/memory_book & /print</strong>
+                <p style="font-size: 0.75rem; color: var(--text-secondary); margin-top: 4px;">Génération dynamique PDF page par page et bon de commande d'impression.</p>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </section>
+
+      <!-- Section 3 : Backend Firebase & Sécurité -->
+      <section id="firebase">
+        <h2>3. Infrastructure Backend & Sécurité des Données</h2>
+        <p>
+          LuckyMam tire parti d'un backend Serverless managé sur Google Cloud Platform via Firebase, assurant une scalabilité native et une latence réseau minimale pour les utilisatrices en Algérie.
+        </p>
+
+        <div class="window-chrome">
+          <div class="window-bar">
+            <span class="window-dot"></span>
+            <span class="window-dot"></span>
+            <span class="window-dot"></span>
+            <span class="window-title">Schéma d'Architecture Cloud & Flux de Données</span>
+          </div>
+          <div class="window-body">
+            <pre><code>[ Application Mobile Flutter ]
+        │
+        ├── (1) Auth Service ──────────> Firebase Authentication (Email / Google Sign-In)
+        │                                  └─ Claims JWT : { admin: true / false }
+        │
+        ├── (2) Firestore Service ──────> Cloud Firestore Database
+        │                                  ├─ /users/{uid} (Données profil & statut)
+        │                                  ├─ /users/{uid}/children/{childId} (Enfants)
+        │                                  ├─ /consent_logs/{logId} (Immuable · Loi 18-07)
+        │                                  ├─ /capsules/{capsuleId} (Souvenirs & audio)
+        │                                  ├─ /print_orders/{orderId} (Commandes albums)
+        │                                  └─ /marketplace_orders/{orderId} (Commandes COD)
+        │
+        └── (3) Storage Service ────────> Cloud Storage (Buckets chiffrés au repos)
+                                           ├─ /capsule_photos/ (Photos souvenirs)
+                                           ├─ /capsule_audio/ (Enregistrements voix)
+                                           └─ /products/ (Catalogue marketplace)</code></pre>
+          </div>
+        </div>
+
+        <h3>Règles de Sécurité Côté Serveur (firestore.rules)</h3>
+        <p>
+          La sécurité ne repose jamais sur la seule confiance du client mobile. Les règles de sécurité Firestore appliquent un cloisonnement hermétique :
+        </p>
+        <ul style="margin-left: 20px;">
+          <li><strong>Principe du moindre privilège :</strong> Une utilisatrice ne peut lire ou écrire que dans son sous-arbre de données strict (<code>request.auth.uid == userId</code>).</li>
+          <li><strong>Immuabilité des pistes d'audit :</strong> Les collections <code>/consent_logs</code> et <code>/print_orders</code> autorisent l'écriture initiale mais interdisent catégoriquement la modification ou la suppression.</li>
+          <li><strong>Vérification cryptographique des rôles :</strong> Les opérations d'administration exigent la vérification du jeton <code>request.auth.token.admin == true</code>, empêchant tout contournement d'élévation de privilèges.</li>
+        </ul>
+      </section>
+
+      <!-- Section 4 : Console Web d'Administration -->
+      <section id="admin">
+        <h2>4. Plateforme Backoffice Web d’Administration</h2>
+        <p>
+          Une interface web dédiée a été développée pour permettre aux équipes opérationnelles de LuckyMam de superviser l'activité, de gérer le catalogue produits et d'assurer le suivi des commandes d'albums photos et de marketplace.
+        </p>
+
+        <div class="bento-grid">
+          <div class="card col-4">
+            <div class="card-title">Hébergement Dédié</div>
+            <p class="card-desc">
+              Déployé sur Firebase Hosting sous l'adresse officielle de pré-production <a href="https://luckymam-app-dv.web.app" target="_blank" style="color: inherit; text-decoration: underline;">luckymam-app-dv.web.app</a>.
+            </p>
+          </div>
+
+          <div class="card col-4">
+            <div class="card-title">Authentification Admin</div>
+            <p class="card-desc">
+              Filtrage strict via Custom Claims. Seuls les comptes spécifiquement audités (ex : <code>admin@luckymam.app</code>) accèdent au backoffice.
+            </p>
+          </div>
+
+          <div class="card col-4">
+            <div class="card-title">Gestion de Catalogue</div>
+            <p class="card-desc">
+              Interface d'administration complète pour ajouter, désactiver ou modifier les fiches de produits partenaires et modérer le flux des Reels.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <!-- Navigation bas de page -->
+      <footer class="page-nav">
+        <a href="index.html" class="page-nav-item">
+          <span class="page-nav-label">Précédent · Sommaire</span>
+          <span class="page-nav-title">← Vue d’Ensemble & Sommaire</span>
+        </a>
+        <a href="02_release_mvp_v1.html" class="page-nav-item next">
+          <span class="page-nav-label">Suivant · Chapitre 02</span>
+          <span class="page-nav-title">La Livraison Initiale MVP v1.0.0 →</span>
+        </a>
+      </footer>
+
+    </main>
+
+  </div>
+
+  <div id="search-modal" class="search-modal">
+    <div class="search-box">
+      <div class="search-input-wrapper">
+        <span class="mono" style="font-size: 0.85rem; color: var(--text-muted);">Recherche :</span>
+        <input type="text" id="search-input" class="search-input" placeholder="Tapez un mot-clé (ex: Loi 18-07, PDF, Poids, VIP...)" autocomplete="off">
+        <kbd>Échap</kbd>
+      </div>
+      <div id="search-results" class="search-results"></div>
+    </div>
+  </div>
+
+  <button class="mobile-toggle" aria-label="Menu de navigation">
+    <span class="mono" style="font-size: 1.1rem; line-height: 1;">☰</span>
+  </button>
+
+  <script src="book.js"></script>
+</body>
+</html>

@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Chapitre 04 — Le Backlog Addendum (22 Tickets) · LuckyMam</title>
+  <meta name="description" content="Suivi complet des 22 tickets du Backlog Addendum, 167 Story Points, détail des phases M1 à M12 et analyse du ticket bloqué.">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+  <div id="reading-progress"></div>
+
+  <div class="app-layout">
+    
+    <aside class="sidebar">
+      <div class="sidebar-brand">
+        <div class="sidebar-title">LuckyMam</div>
+        <div class="sidebar-subtitle">Livre de Bord Client · MVP</div>
+      </div>
+
+      <button class="sidebar-search-btn trigger-search" type="button">
+        <span>Rechercher dans le livre...</span>
+        <kbd>/</kbd>
+      </button>
+
+      <nav class="sidebar-nav">
+        <div class="nav-section-label">Sommaire Général</div>
+        <a href="index.html" class="nav-link">
+          <span class="nav-number">00</span>
+          <span>Vue d’Ensemble & Sommaire</span>
+        </a>
+        <a href="01_architecture_et_produit.html" class="nav-link">
+          <span class="nav-number">01</span>
+          <span>Vision & Socle Technique</span>
+        </a>
+        <a href="02_release_mvp_v1.html" class="nav-link">
+          <span class="nav-number">02</span>
+          <span>La Release MVP v1.0.0</span>
+        </a>
+        <a href="03_conformite_loi_18_07.html" class="nav-link">
+          <span class="nav-number">03</span>
+          <span>Conformité Loi 18-07 & i18n</span>
+        </a>
+        <a href="04_backlog_addendum.html" class="nav-link active">
+          <span class="nav-number">04</span>
+          <span>Le Backlog Addendum (22 T.)</span>
+        </a>
+        <a href="05_memoires_et_impression.html" class="nav-link">
+          <span class="nav-number">05</span>
+          <span>Mémoires & Impression PDF</span>
+        </a>
+        <a href="06_marketplace_et_monetisation.html" class="nav-link">
+          <span class="nav-number">06</span>
+          <span>Marketplace & Monétisation</span>
+        </a>
+        <a href="07_guide_recette_et_production.html" class="nav-link">
+          <span class="nav-number">07</span>
+          <span>Recette Client & Production</span>
+        </a>
+      </nav>
+
+      <div class="sidebar-footer">
+        <a href="../livre_client_ar/04_backlog_addendum.html" class="btn btn-secondary" style="padding: 4px 8px; font-size: 0.72rem;">العربية</a>
+        <button class="btn btn-secondary" onclick="window.print()" style="padding: 4px 8px; font-size: 0.72rem;">Imprimer</button>
+      </div>
+    </aside>
+
+    <main class="main-content">
+      
+      <header class="chapter-header">
+        <div class="chapter-meta">
+          <span class="badge badge-yellow">GESTION DE PROJET</span>
+          <span class="chapter-number">CHAPITRE 04</span>
+        </div>
+        <h1 class="chapter-title">Le Backlog Addendum (22 Tickets)</h1>
+        <p class="chapter-lead">
+          À la suite de la version 1.0.0, l'addendum contractuel du 27 Avril 2026 a défini une feuille de route ambitieuse de 22 chantiers d'ingénierie représentant 167 Story Points. Ce chapitre dresse le bilan d'exécution détaillé des 4 phases de déploiement, avec 21 chantiers finalisés et une analyse rigoureuse du cas bloqué.
+        </p>
+      </header>
+
+      <!-- Synthèse chiffrée -->
+      <section>
+        <h2>Tableau de Bord Global d’Exécution</h2>
+
+        <div class="bento-grid">
+          <div class="card col-3">
+            <span class="badge badge-green">TAUX D'ACHÈVEMENT</span>
+            <div class="card-metric">95.5%</div>
+            <div class="card-metric-label">21 / 22 Tickets Livrés</div>
+          </div>
+
+          <div class="card col-3">
+            <span class="badge badge-blue">VOLUME D'INGÉNIERIE</span>
+            <div class="card-metric">167 SP</div>
+            <div class="card-metric-label">Story Points Évalués</div>
+          </div>
+
+          <div class="card col-3">
+            <span class="badge badge-green">MUST HAVE</span>
+            <div class="card-metric">100%</div>
+            <div class="card-metric-label">9 / 9 Tickets Terminés</div>
+          </div>
+
+          <div class="card col-3">
+            <span class="badge badge-red">ARBITRAGE INFRA</span>
+            <div class="card-metric">1 Ticket</div>
+            <div class="card-metric-label">LM2-136 (Partage Web)</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Ventilation par Phase et Priorité MoSCoW -->
+      <section>
+        <h2>Ventilation par Phase & Priorité MoSCoW</h2>
+        
+        <div class="bento-grid">
+          
+          <div class="card col-6">
+            <div class="card-title">Progression par Phase Temporelle</div>
+            <div class="table-wrapper" style="margin: 12px 0 0 0;">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Phase</th>
+                    <th>Tickets Couverts</th>
+                    <th>Volume SP</th>
+                    <th>Statut</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td class="mono">M1-M3</td>
+                    <td>LM2-118, 119, 120, 121, 123, 124, 125, 127</td>
+                    <td class="mono">37 SP</td>
+                    <td><span class="badge badge-green">100% TERMINÉ</span></td>
+                  </tr>
+                  <tr>
+                    <td class="mono">M4-M6</td>
+                    <td>LM2-122, 126, 128, 129, 131</td>
+                    <td class="mono">27 SP</td>
+                    <td><span class="badge badge-green">100% TERMINÉ</span></td>
+                  </tr>
+                  <tr>
+                    <td class="mono">M7-M9</td>
+                    <td>LM2-130, 132, 133</td>
+                    <td class="mono">18 SP</td>
+                    <td><span class="badge badge-green">100% TERMINÉ</span></td>
+                  </tr>
+                  <tr>
+                    <td class="mono">M10-M12</td>
+                    <td>LM2-134, 135, 136, 137, 138, 139</td>
+                    <td class="mono">81 SP</td>
+                    <td><span class="badge badge-yellow">5/6 TERMINÉS</span></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <div class="card col-6">
+            <div class="card-title">Respect des Priorités MoSCoW</div>
+            <div class="table-wrapper" style="margin: 12px 0 0 0;">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Niveau</th>
+                    <th>Volume</th>
+                    <th>Taux de Réalisation</th>
+                    <th>Impact Produit</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td><span class="badge badge-red">MUST HAVE</span></td>
+                    <td class="mono">58 SP (9 tickets)</td>
+                    <td><span class="badge badge-green">100% (9/9)</span></td>
+                    <td>Fonctions vitales et conformité légale</td>
+                  </tr>
+                  <tr>
+                    <td><span class="badge badge-yellow">SHOULD HAVE</span></td>
+                    <td class="mono">62 SP (10 tickets)</td>
+                    <td><span class="badge badge-green">100% (10/10)</span></td>
+                    <td>Améliorations majeures d'ergonomie</td>
+                  </tr>
+                  <tr>
+                    <td><span class="badge badge-blue">COULD HAVE</span></td>
+                    <td class="mono">47 SP (3 tickets)</td>
+                    <td><span class="badge badge-yellow">66% (2/3)</span></td>
+                    <td>Marketplace OK, Partage Web en attente</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+        </div>
+      </section>
+
+      <!-- Focus sur les fonctionnalités clés -->
+      <section>
+        <h2>Focus sur les Réalisations Majeures de l'Addendum</h2>
+
+        <div class="bento-grid">
+          
+          <div class="card col-6" id="grossesse">
+            <div class="card-title">
+              <span>LM2-124 : Suivi de Grossesse (DPA & SA)</span>
+              <span class="badge badge-green">LIVRÉ</span>
+            </div>
+            <p class="card-desc">
+              Transformation automatique du profil dès activation du statut <code>ENCEINTE</code> :
+            </p>
+            <ul style="margin-top: 8px; margin-left: 18px;">
+              <li>Sélecteur intuitif de la Date des Dernières Règles (DDR).</li>
+              <li>Calcul automatique en temps réel des Semaines d'Aménorrhée (anneau de progression SA / 40).</li>
+              <li>Badge dynamique affichant la Date Prévisionnelle d'Accouchement (DPA) et le compte à rebours <code>J-XX</code>.</li>
+            </ul>
+          </div>
+
+          <div class="card col-6" id="poids">
+            <div class="card-title">
+              <span>LM2-125 : Courbe de Poids Adaptative (80 kg)</span>
+              <span class="badge badge-green">LIVRÉ</span>
+            </div>
+            <p class="card-desc">
+              Réécriture complète du composant graphique <code>GrowthChartWidget</code> pour éliminer le plafonnement artificiel de l'axe :
+            </p>
+            <ul style="margin-top: 8px; margin-left: 18px;">
+              <li>Plancher minimum fixé à 80 kg, s'adaptant automatiquement au-delà selon les mesures réelles.</li>
+              <li>Graduation temporelle dynamique jusqu'à 60 mois minimum (+ 6 mois selon l'âge de l'enfant).</li>
+            </ul>
+          </div>
+
+          <div class="card col-6">
+            <div class="card-title">
+              <span>LM2-126 : Raccourci Système Notifications</span>
+              <span class="badge badge-green">LIVRÉ</span>
+            </div>
+            <p class="card-desc">
+              Intégration d'un pont natif Android (<code>MethodChannel('luckymam/settings')</code> dans <code>MainActivity.kt</code>) déclenchant directement l'écran de configuration système des alertes de l'application sans contraindre l'utilisatrice à fouiller dans les paramètres du téléphone.
+            </p>
+          </div>
+
+          <div class="card col-6">
+            <div class="card-title">
+              <span>LM2-127 & LM2-129 : Capsules sur Jalons & Miniatures</span>
+              <span class="badge badge-green">LIVRÉ</span>
+            </div>
+            <p class="card-desc">
+              Possibilité d'associer immédiatement une capsule photo/audio à un jalon chronologique précis de l'enfant. La timeline affiche désormais une vignette miniature de la photo avec un effet de chargement Shimmer adapté aux modes clair et sombre.
+            </p>
+          </div>
+
+          <div class="card col-6">
+            <div class="card-title">
+              <span>LM2-131 : Rappels Programmés de Jalons</span>
+              <span class="badge badge-green">LIVRÉ</span>
+            </div>
+            <p class="card-desc">
+              Feuille de préréglages multilingues permettant de programmer une notification d'anticipation pour les jalons pédiatriques essentiels (« Demain », « Dans 3 jours », « Le jour du jalon »).
+            </p>
+          </div>
+
+          <div class="card col-6">
+            <div class="card-title">
+              <span>LM2-132 & LM2-133 : Capsules & Vidéos par Vaccin</span>
+              <span class="badge badge-green">LIVRÉ</span>
+            </div>
+            <p class="card-desc">
+              Chaque groupe vaccinal propose un bouton direct pour consigner la réaction de l'enfant (souriant, fatigué...) et donne accès aux vidéos Reels médicales filtrées par tranche d'âge correspondante.
+            </p>
+          </div>
+
+        </div>
+      </section>
+
+      <!-- Analyse objective du ticket bloqué LM2-136 -->
+      <section>
+        <h2>Analyse Objective du Ticket Bloqué : LM2-136</h2>
+        
+        <div class="callout" style="border-left-color: var(--pastel-red-text);">
+          <div class="callout-title" style="color: var(--pastel-red-text);">Ticket LM2-136 · Album Publié (Lien de Partage Web Expirable)</div>
+          <p>
+            <strong>Statut : 🚫 Bloqué</strong> · Priorité : 🔵 Could Have · Estimation : 13 SP.
+          </p>
+          <p style="margin-top: 8px;">
+            <strong>Cause technique du blocage :</strong> Contrairement à l'application mobile Flutter, générer un lien web de consultation publique en lecture seule sécurisé, horodaté et révocable sans authentification requiert une infrastructure cloud inexistante dans l'architecture actuelle :
+          </p>
+          <ul style="margin: 8px 0 12px 20px;">
+            <li>Nécessite la souscription au <strong>Plan Firebase Blaze</strong> (payant à l'usage) pour exécuter des Cloud Functions NodeJS côté serveur.</li>
+            <li>Nécessite le déploiement d'une application web publique dédiée sur <strong>Firebase Hosting</strong> pour afficher l'album aux proches.</li>
+            <li>Pose une question de sécurité et d'éthique sur l'exposition de photos d'enfants mineurs sur le web public via une simple URL signée.</li>
+          </ul>
+          <p>
+            <strong>Recommandation :</strong> L'équipe technique a choisi de différer ce ticket Could Have plutôt que d'engager des frais d'infrastructure récurrents sans validation expresse du modèle de sécurité par la direction de LuckyMam.
+          </p>
+        </div>
+      </section>
+
+      <!-- Registre Complet des 22 Tickets -->
+      <section>
+        <h2>Registre Intégral des 22 Tickets de l'Addendum</h2>
+        
+        <div class="table-wrapper">
+          <table>
+            <thead>
+              <tr>
+                <th>Ticket ID</th>
+                <th>Fonctionnalité & Module</th>
+                <th>SP</th>
+                <th>Phase</th>
+                <th>Priorité</th>
+                <th>Statut</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr><td class="mono">LM2-118</td><td>Consentement obligatoire Loi 18-07</td><td class="mono">5</td><td class="mono">M1-M3</td><td><span class="badge badge-red">MUST</span></td><td><span class="badge badge-green">TERMINÉ</span></td></tr>
+              <tr><td class="mono">LM2-119</td><td>Splash screen avec branding officiel</td><td class="mono">3</td><td class="mono">M1-M3</td><td><span class="badge badge-yellow">SHOULD</span></td><td><span class="badge badge-green">TERMINÉ</span></td></tr>
+              <tr><td class="mono">LM2-120</td><td>Normalisation des libellés de marque</td><td class="mono">3</td><td class="mono">M1-M3</td><td><span class="badge badge-red">MUST</span></td><td><span class="badge badge-green">TERMINÉ</span></td></tr>
+              <tr><td class="mono">LM2-121</td><td>Agrandissement avatar header Home</td><td class="mono">2</td><td class="mono">M1-M3</td><td><span class="badge badge-yellow">SHOULD</span></td><td><span class="badge badge-green">TERMINÉ</span></td></tr>
+              <tr><td class="mono">LM2-122</td><td>Ad gating & timers selon plan utilisateur</td><td class="mono">8</td><td class="mono">M4-M6</td><td><span class="badge badge-red">MUST</span></td><td><span class="badge badge-green">TERMINÉ</span></td></tr>
+              <tr><td class="mono">LM2-123</td><td>Statut utilisateur « HOPE » bienveillant</td><td class="mono">5</td><td class="mono">M1-M3</td><td><span class="badge badge-red">MUST</span></td><td><span class="badge badge-green">TERMINÉ</span></td></tr>
+              <tr><td class="mono">LM2-124</td><td>Calcul automatique grossesse (DPA & SA)</td><td class="mono">8</td><td class="mono">M1-M3</td><td><span class="badge badge-red">MUST</span></td><td><span class="badge badge-green">TERMINÉ</span></td></tr>
+              <tr><td class="mono">LM2-125</td><td>Graphique de poids avec axes dynamiques 80 kg</td><td class="mono">3</td><td class="mono">M1-M3</td><td><span class="badge badge-yellow">SHOULD</span></td><td><span class="badge badge-green">TERMINÉ</span></td></tr>
+              <tr><td class="mono">LM2-126</td><td>Raccourci système paramètres notifications</td><td class="mono">3</td><td class="mono">M4-M6</td><td><span class="badge badge-yellow">SHOULD</span></td><td><span class="badge badge-green">TERMINÉ</span></td></tr>
+              <tr><td class="mono">LM2-127</td><td>Création de capsule directe sur jalon</td><td class="mono">8</td><td class="mono">M1-M3</td><td><span class="badge badge-red">MUST</span></td><td><span class="badge badge-green">TERMINÉ</span></td></tr>
+              <tr><td class="mono">LM2-128</td><td>Ajout rapide sur la Timeline (Quick add)</td><td class="mono">5</td><td class="mono">M4-M6</td><td><span class="badge badge-yellow">SHOULD</span></td><td><span class="badge badge-green">TERMINÉ</span></td></tr>
+              <tr><td class="mono">LM2-129</td><td>Miniature de capsule sur nœud de jalon</td><td class="mono">5</td><td class="mono">M4-M6</td><td><span class="badge badge-red">MUST</span></td><td><span class="badge badge-green">TERMINÉ</span></td></tr>
+              <tr><td class="mono">LM2-130</td><td>Fiches conseils personnalisées par jalon</td><td class="mono">5</td><td class="mono">M7-M9</td><td><span class="badge badge-yellow">SHOULD</span></td><td><span class="badge badge-green">TERMINÉ</span></td></tr>
+              <tr><td class="mono">LM2-131</td><td>Système de rappels programmés de jalons</td><td class="mono">8</td><td class="mono">M4-M6</td><td><span class="badge badge-red">MUST</span></td><td><span class="badge badge-green">TERMINÉ</span></td></tr>
+              <tr><td class="mono">LM2-132</td><td>Capsules émotionnelles sur les vaccins</td><td class="mono">8</td><td class="mono">M7-M9</td><td><span class="badge badge-yellow">SHOULD</span></td><td><span class="badge badge-green">TERMINÉ</span></td></tr>
+              <tr><td class="mono">LM2-133</td><td>Reels vidéo pédagogiques par vaccin</td><td class="mono">5</td><td class="mono">M7-M9</td><td><span class="badge badge-yellow">SHOULD</span></td><td><span class="badge badge-green">TERMINÉ</span></td></tr>
+              <tr><td class="mono">LM2-134</td><td>Modèles d'albums prédéfinis (14 jalons)</td><td class="mono">13</td><td class="mono">M10-M12</td><td><span class="badge badge-yellow">SHOULD</span></td><td><span class="badge badge-green">TERMINÉ</span></td></tr>
+              <tr><td class="mono">LM2-135</td><td>Création d'album standard sur mesure</td><td class="mono">13</td><td class="mono">M10-M12</td><td><span class="badge badge-yellow">SHOULD</span></td><td><span class="badge badge-green">TERMINÉ</span></td></tr>
+              <tr><td class="mono">LM2-136</td><td>Album publié en ligne (Lien de partage)</td><td class="mono">13</td><td class="mono">M10-M12</td><td><span class="badge badge-blue">COULD</span></td><td><span class="badge badge-red">BLOQUÉ INFRA</span></td></tr>
+              <tr><td class="mono">LM2-137</td><td>Bridge album vers impression livre PDF</td><td class="mono">8</td><td class="mono">M10-M12</td><td><span class="badge badge-red">MUST</span></td><td><span class="badge badge-green">TERMINÉ</span></td></tr>
+              <tr><td class="mono">LM2-138</td><td>Marketplace — catalogue produits puériculture</td><td class="mono">13</td><td class="mono">M10-M12</td><td><span class="badge badge-blue">COULD</span></td><td><span class="badge badge-green">TERMINÉ</span></td></tr>
+              <tr><td class="mono">LM2-139</td><td>Marketplace — tunnel de commande & livraison</td><td class="mono">21</td><td class="mono">M10-M12</td><td><span class="badge badge-blue">COULD</span></td><td><span class="badge badge-green">TERMINÉ</span></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- Navigation bas de page -->
+      <footer class="page-nav">
+        <a href="03_conformite_loi_18_07.html" class="page-nav-item">
+          <span class="page-nav-label">Précédent · Chapitre 03</span>
+          <span class="page-nav-title">← Conformité Loi 18-07 & i18n</span>
+        </a>
+        <a href="05_memoires_et_impression.html" class="page-nav-item next">
+          <span class="page-nav-label">Suivant · Chapitre 05</span>
+          <span class="page-nav-title">Mémoires & Impression PDF →</span>
+        </a>
+      </footer>
+
+    </main>
+
+  </div>
+
+  <div id="search-modal" class="search-modal">
+    <div class="search-box">
+      <div class="search-input-wrapper">
+        <span class="mono" style="font-size: 0.85rem; color: var(--text-muted);">Recherche :</span>
+        <input type="text" id="search-input" class="search-input" placeholder="Tapez un mot-clé (ex: Loi 18-07, PDF, Poids, VIP...)" autocomplete="off">
+        <kbd>Échap</kbd>
+      </div>
+      <div id="search-results" class="search-results"></div>
+    </div>
+  </div>
+
+  <button class="mobile-toggle" aria-label="Menu de navigation">
+    <span class="mono" style="font-size: 1.1rem; line-height: 1;">☰</span>
+  </button>
+
+  <script src="book.js"></script>
+</body>
+</html>

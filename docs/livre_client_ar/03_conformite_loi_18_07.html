@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>الفصل الثالث — الامتثال للقانون 18-07 ودعم اللغات · لاكي مام</title>
+  <meta name="description" content="الامتثال للتشريع الجزائري لحماية البيانات الشخصية، البصمة التشفيرية FNV-1a، وسجل التدقيق المحمي ودعم العربية RTL.">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+  <div id="reading-progress"></div>
+
+  <div class="app-layout">
+    
+    <aside class="sidebar">
+      <div class="sidebar-brand">
+        <div class="sidebar-title">لاكي مام</div>
+        <div class="sidebar-subtitle">دليل العميل المرجعي · النسخة التجريبية</div>
+      </div>
+
+      <button class="sidebar-search-btn trigger-search" type="button">
+        <span>ابحث في الدليل...</span>
+        <kbd>/</kbd>
+      </button>
+
+      <nav class="sidebar-nav">
+        <div class="nav-section-label">فهرس المحتويات</div>
+        <a href="index.html" class="nav-link">
+          <span class="nav-number">٠٠</span>
+          <span>نظرة عامة وفهرس شامل</span>
+        </a>
+        <a href="01_architecture_et_produit.html" class="nav-link">
+          <span class="nav-number">٠١</span>
+          <span>رؤية المنتج والأساس التقني</span>
+        </a>
+        <a href="02_release_mvp_v1.html" class="nav-link">
+          <span class="nav-number">٠٢</span>
+          <span>تسليم الإصدار الأولي v1.0.0</span>
+        </a>
+        <a href="03_conformite_loi_18_07.html" class="nav-link active">
+          <span class="nav-number">٠٣</span>
+          <span>الامتثال للقانون 18-07 واللغات</span>
+        </a>
+        <a href="04_backlog_addendum.html" class="nav-link">
+          <span class="nav-number">٠٤</span>
+          <span>ملحق المهام (22 تذكرة)</span>
+        </a>
+        <a href="05_memoires_et_impression.html" class="nav-link">
+          <span class="nav-number">٠٥</span>
+          <span>ألبوم الذكريات وطباعة PDF</span>
+        </a>
+        <a href="06_marketplace_et_monetisation.html" class="nav-link">
+          <span class="nav-number">٠٦</span>
+          <span>متجر الشركاء والإيرادات</span>
+        </a>
+        <a href="07_guide_recette_et_production.html" class="nav-link">
+          <span class="nav-number">٠٧</span>
+          <span>دليل الفحص والجاهزية</span>
+        </a>
+      </nav>
+
+      <div class="sidebar-footer">
+        <a href="../livre_client/03_conformite_loi_18_07.html" class="btn btn-secondary" style="padding: 4px 8px; font-size: 0.72rem;">Français</a>
+        <button class="btn btn-secondary" onclick="window.print()" style="padding: 4px 8px; font-size: 0.72rem;">طباعة</button>
+      </div>
+    </aside>
+
+    <main class="main-content">
+      
+      <header class="chapter-header">
+        <div class="chapter-meta">
+          <span class="badge badge-green">الحماية القانونية والخصوصية</span>
+          <span class="chapter-number">الفصل الثالث</span>
+        </div>
+        <h1 class="chapter-title">الامتثال القانوني (القانون 18-07) ودعم اللغات</h1>
+        <p class="chapter-lead">
+          يتعامل تطبيق لاكي مام مع بيانات صحية حساسة للغاية تخص الحمل وفترات الرضاعة وصور الأطفال القُصّر. وانطلاقاً من ذلك، طُبقت أعلى المعايير القانونية المتوافقة مع التشريع الجزائري، وتم بناء سجل إثبات غير قابل للتزوير مدعوم ببصمة تشفيرية رياضية، بالتوازي مع دعم كامل ومتقن للغة العربية باتجاه اليمين (RTL).
+        </p>
+      </header>
+
+      <!-- القانون 18-07 -->
+      <section>
+        <h2>١. الإطار التشريعي للقانون الجزائري رقم 18-07</h2>
+        <p>
+          يحدد <strong>القانون رقم 18-07</strong> المؤرخ في 10 يونيو 2018 القواعد الصارمة لحماية الأشخاص الطبيعيين في مجال معالجة المعطيات ذات الطابع الشخصي في الجزائر، ويفرض:
+        </p>
+
+        <div class="bento-grid">
+          <div class="card col-4">
+            <div class="card-title">الموافقة الصريحة المسبقة</div>
+            <p class="card-desc">
+              حظر جمع أو معالجة أي بيانات تخص المستخدمة أو أطفالها دون إقرار خطي رقمي صريح ومسبق ومستنير.
+            </p>
+          </div>
+
+          <div class="card col-4">
+            <div class="card-title">خصوصية المعطيات الصحية</div>
+            <p class="card-desc">
+              فرض حماية مضاعفة على تواريخ التلقيح، نمو الأجنة، وتطور الوزن، مع منع مشاركتها قطعياً مع أي أطراف تجارية.
+            </p>
+          </div>
+
+          <div class="card col-4">
+            <div class="card-title">حق التعديل والنسيان</div>
+            <p class="card-desc">
+              تمكين الوالدين في أي لحظة من تصدير سجلاتهم العائلية، تعديلها، أو طلب الحذف النهائي والشامل من الخوادم.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <!-- شاشة الموافقة الإلزامية -->
+      <section>
+        <h2>٢. شاشة الموافقة الإلزامية وهندسة التفاعل اللمسي</h2>
+        <p>
+          لضمان الحجية القانونية الكاملة، لا تقتصر الموافقة على سطر صغير في أسفل الشاشة، بل تفرض واجهة حصرية مخصصة:
+        </p>
+
+        <div class="bento-grid">
+          <div class="card col-6">
+            <div class="card-title">
+              <span>شاشة الموافقة الحصرية (Law1807ConsentScreen)</span>
+              <span class="badge badge-red">مرور إجباري</span>
+            </div>
+            <p class="card-desc">
+              يتم اعتراض أي حساب يتم إنشاؤه عبر البريد أو تسجيل جوجل بواسطة موجه المسارات <code>app_router.dart</code>. ويبقى الوصول إلى الشاشة الرئيسية <code>/home</code> مقفلاً بالكامل حتى تأكيد الموافقة.
+            </p>
+            <ul style="margin-top: 12px; margin-right: 18px;">
+              <li>عرض النص القانوني الكامل باللغة المحددة للمستخدمة (عربي، فرنسي، إنجليزي).</li>
+              <li>خانة اختيار لمسية بارتفاع مريح (48 بكسل على الأقل) تقع في منطقة الإبهام الطبيعية.</li>
+              <li>تسجيل فوري لحدث <code>law1807_blocked</code> في حال محاولة تجاوز الشاشة دون موافقة.</li>
+            </ul>
+          </div>
+
+          <div class="card col-6">
+            <div class="card-title">
+              <span>تسوية الحسابات المسجلة سابقاً</span>
+              <span class="badge badge-blue">أثر رجعي فوري</span>
+            </div>
+            <p class="card-desc">
+              عند إطلاق التحديث v1.1.0، تم توجيه كافة الحسابات النشطة القديمة التي لم توثق موافقتها قانونياً بشكل آلي نحو شاشة الموافقة، مما حقق نسبة امتثال بلغت 100% لكامل قاعدة المستخدمات.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <!-- البصمة التشفيرية FNV-1a -->
+      <section>
+        <h2>٣. سجل الإثبات غير القابل للتعديل وبصمة FNV-1a الرياضية</h2>
+        <p>
+          عند قيام المستخدمة بالموافقة، يتولى المحرك <code>ComplianceService</code> إنشاء وثيقة إثبات مشفرة تُحفظ في قاعدة البيانات:
+        </p>
+
+        <div class="window-chrome">
+          <div class="window-bar">
+            <span class="window-dot"></span>
+            <span class="window-dot"></span>
+            <span class="window-dot"></span>
+            <span class="window-title">هيكل وثيقة الإثبات في قاعدة البيانات · /consent_logs/{logId}</span>
+          </div>
+          <div class="window-body">
+            <pre><code>{
+  "userId": "bsOKvrjp5yM1JEsHZ19TeEHPw1h2",
+  "consentGiven": true,
+  "timestamp": "2026-06-16T10:14:22.845Z",
+  "lawVersion": "18-07_v1.0",
+  "language": "ar",
+  "ipAddress": "197.200.xx.xx",
+  "integrityHash": "b78f4a12c8e901f4", // بصمة رياضية محكمة بنظام FNV-1a 64-bit
+  "immutableAudit": true
+}</code></pre>
+          </div>
+        </div>
+
+        <div class="callout">
+          <div class="callout-title">حماية النزاهة ببصمة FNV-1a 64-bit التشفيرية</div>
+          <p>
+            تُحسب البصمة <code>integrityHash</code> عبر دمج معرف المستخدم، التوقيت بالمللي ثانية، كود اللغة، والنص الكامل للبنود القانونية. إذا حاول أي طرف تعديل أي حرف داخل قاعدة البيانات لاحقاً، فإن إعادة فحص البصمة الرياضية ستكشف التزوير فوراً أمام لجان التدقيق القضائية.
+          </p>
+        </div>
+
+        <h3>القفل السحابي لمنع التعديل والحذف (firestore.rules)</h3>
+        <p>
+          تم نشر القواعد السحابية لضمان مناعة مطلقة لسجل الموافقات:
+        </p>
+        <pre><code>// قفل سجلات التدقيق القانونية ومنع التعديل أو الحذف نهائياً
+match /consent_logs/{logId} {
+  allow create: if request.auth != null;
+  allow read: if request.auth != null && (request.auth.uid == resource.data.userId || request.auth.token.admin == true);
+  allow update: if false; // ممنوع منعاً باتاً: لا تعديل إطلاقاً
+  allow delete: if false; // ممنوع منعاً باتاً: لا حذف إطلاقاً
+}</code></pre>
+      </section>
+
+      <!-- دعم اللغات و RTL -->
+      <section id="i18n">
+        <h2>٤. نظام اللغات الثلاث والاتجاه العربي من اليمين لليسار (RTL)</h2>
+        <p>
+          احتراماً للهوية الجزائرية، يقدم التطبيق دعماً أصيلاً للغة العربية مع التكيف الهندسي التام لاتجاه الواجهات:
+        </p>
+
+        <div class="bento-grid">
+          <div class="card col-4">
+            <span class="badge badge-green">اللغة العربية الرسمية</span>
+            <div class="card-title" style="margin-top: 10px;">انعكاس الواجهة التام (RTL)</div>
+            <p class="card-desc">
+              تتحول محاذاة القوائم، الأشرطة الجانبية، أشرطة التقدم، والرموز والأسهم تلقائياً لتناسب طبيعة القراءة العربية بكل راحة وتناسق.
+            </p>
+          </div>
+
+          <div class="card col-4">
+            <span class="badge badge-blue">اللغة الفرنسية</span>
+            <div class="card-title" style="margin-top: 10px;">المصطلحات الطبية الدقيقة</div>
+            <p class="card-desc">
+              صياغة طبية احترافية توافق المصطلحات الطبية المتداولة في دفاتر الصحة المعتمدة.
+            </p>
+          </div>
+
+          <div class="card col-4">
+            <span class="badge badge-neutral">اللغة الإنجليزية</span>
+            <div class="card-title" style="margin-top: 10px;">المعايير الدولية</div>
+            <p class="card-desc">
+              تغطية كاملة للمقيمين وتوافق مع متطلبات النشر والوصول العالمية.
+            </p>
+          </div>
+        </div>
+
+        <div class="callout">
+          <div class="callout-title">التبديل الفوري للغة عبر Riverpod</div>
+          <p>
+            تغيير اللغة من شاشة الملف الشخصي يستدعي الإجراء <code>localeProvider.setLocale()</code>، حيث يتم تحميل ملفات <code>.arb</code> وتحديث كافة شاشات التطبيق في أجزاء من الثانية دون أي وميض أو انقطاع في الجلسة.
+          </p>
+        </div>
+      </section>
+
+      <footer class="page-nav">
+        <a href="02_release_mvp_v1.html" class="page-nav-item">
+          <span class="page-nav-label">السابق · الفصل ٠٢</span>
+          <span class="page-nav-title">→ تسليم الإصدار الأولي v1.0.0</span>
+        </a>
+        <a href="04_backlog_addendum.html" class="page-nav-item next">
+          <span class="page-nav-label">التالي · الفصل ٠٤</span>
+          <span class="page-nav-title">ملحق المهام (22 تذكرة) ←</span>
+        </a>
+      </footer>
+
+    </main>
+
+  </div>
+
+  <div id="search-modal" class="search-modal">
+    <div class="search-box">
+      <div class="search-input-wrapper">
+        <span class="mono" style="font-size: 0.85rem; color: var(--text-muted);">بحث:</span>
+        <input type="text" id="search-input" class="search-input" placeholder="اكتب كلمة مفتاحية..." autocomplete="off">
+        <kbd>Esc</kbd>
+      </div>
+      <div id="search-results" class="search-results"></div>
+    </div>
+  </div>
+
+  <button class="mobile-toggle" aria-label="قائمة التصفح">
+    <span class="mono" style="font-size: 1.1rem; line-height: 1;">☰</span>
+  </button>
+
+  <script src="book.js"></script>
+</body>
+</html>

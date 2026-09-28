@@ -18,10 +18,12 @@ class ComplianceService {
   String computeFnv1aHash(String userId, String timestampStr, String textVersion) {
     final input = '$userId|$timestampStr|$textVersion';
     final bytes = utf8.encode(input);
-    int hash = 2305843009213693951; // Offset basis
+    BigInt hash = BigInt.parse('2305843009213693951');
+    final prime = BigInt.parse('1099511628211');
+    final mask = BigInt.parse('18446744073709551615'); // 0xffffffffffffffff
     for (final byte in bytes) {
-      hash ^= byte;
-      hash = (hash * 1099511628211) & 0xffffffffffffffff; // Prime multiplication
+      hash ^= BigInt.from(byte);
+      hash = (hash * prime) & mask;
     }
     return hash.toRadixString(16);
   }

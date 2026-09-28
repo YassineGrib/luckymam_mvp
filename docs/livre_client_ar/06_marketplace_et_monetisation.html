@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>الفصل السادس — متجر الشركاء وخطة تحقيق الإيرادات · لاكي مام</title>
+  <meta name="description" content="نموذج الإيرادات، متجر مستلزمات الأمومة، مسار الشراء بالدفع عند الاستلام لـ 58 ولاية وشبكة الإعلانات الداخلية.">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+  <div id="reading-progress"></div>
+
+  <div class="app-layout">
+    
+    <aside class="sidebar">
+      <div class="sidebar-brand">
+        <div class="sidebar-title">لاكي مام</div>
+        <div class="sidebar-subtitle">دليل العميل المرجعي · النسخة التجريبية</div>
+      </div>
+
+      <button class="sidebar-search-btn trigger-search" type="button">
+        <span>ابحث في الدليل...</span>
+        <kbd>/</kbd>
+      </button>
+
+      <nav class="sidebar-nav">
+        <div class="nav-section-label">فهرس المحتويات</div>
+        <a href="index.html" class="nav-link">
+          <span class="nav-number">٠٠</span>
+          <span>نظرة عامة وفهرس شامل</span>
+        </a>
+        <a href="01_architecture_et_produit.html" class="nav-link">
+          <span class="nav-number">٠١</span>
+          <span>رؤية المنتج والأساس التقني</span>
+        </a>
+        <a href="02_release_mvp_v1.html" class="nav-link">
+          <span class="nav-number">٠٢</span>
+          <span>تسليم الإصدار الأولي v1.0.0</span>
+        </a>
+        <a href="03_conformite_loi_18_07.html" class="nav-link">
+          <span class="nav-number">٠٣</span>
+          <span>الامتثال للقانون 18-07 واللغات</span>
+        </a>
+        <a href="04_backlog_addendum.html" class="nav-link">
+          <span class="nav-number">٠٤</span>
+          <span>ملحق المهام (22 تذكرة)</span>
+        </a>
+        <a href="05_memoires_et_impression.html" class="nav-link">
+          <span class="nav-number">٠٥</span>
+          <span>ألبوم الذكريات وطباعة PDF</span>
+        </a>
+        <a href="06_marketplace_et_monetisation.html" class="nav-link active">
+          <span class="nav-number">٠٦</span>
+          <span>متجر الشركاء والإيرادات</span>
+        </a>
+        <a href="07_guide_recette_et_production.html" class="nav-link">
+          <span class="nav-number">٠٧</span>
+          <span>دليل الفحص والجاهزية</span>
+        </a>
+      </nav>
+
+      <div class="sidebar-footer">
+        <a href="../livre_client/06_marketplace_et_monetisation.html" class="btn btn-secondary" style="padding: 4px 8px; font-size: 0.72rem;">Français</a>
+        <button class="btn btn-secondary" onclick="window.print()" style="padding: 4px 8px; font-size: 0.72rem;">طباعة</button>
+      </div>
+    </aside>
+
+    <main class="main-content">
+      
+      <header class="chapter-header">
+        <div class="chapter-meta">
+          <span class="badge badge-yellow">التجارة الإلكترونية والعوائد</span>
+          <span class="chapter-number">الفصل السادس</span>
+        </div>
+        <h1 class="chapter-title">متجر الشركاء وخطة تحقيق الإيرادات</h1>
+        <p class="chapter-lead">
+          يقوم النموذج الاقتصادي لتطبيق لاكي مام على منظومة ثلاثية الأبعاد تمزج بين الاشتراكات السنوية الدورية، شراكات الرعاية مع العلامات الكبرى، والتجارة الإلكترونية المباشرة. يستعرض هذا الفصل آليات عمل متجر المستلزمات المزود بالدفع عند الاستلام، إلى جانب نظام الإعلانات الداخلي المصمم لحماية خصوصية الأسر.
+        </p>
+      </header>
+
+      <!-- باقات الاشتراك -->
+      <section>
+        <h2>١. هيكل الأسعار وباقات الاشتراك السنوية</h2>
+        <p>
+          تمت دراسة الباقات بعناية لتناسب القدرة الشرائية في الجزائر مع تقديم قيمة مضافة عالية في الباقة الشاملة:
+        </p>
+
+        <div class="bento-grid">
+          
+          <div class="card col-4">
+            <span class="badge badge-neutral">المجاني</span>
+            <div class="card-metric" style="font-size: 2.1rem;">٠ دج</div>
+            <div class="card-metric-label">الباقة المجانية</div>
+            <p class="card-desc" style="margin-top: 10px;">
+              تتبع أساسي لنمو الطفل، دفتر اللقاحات البسيط، مع ظهور إعلانات داخلية تتطلب 3 ثوانٍ قبل التخطي.
+            </p>
+          </div>
+
+          <div class="card col-4">
+            <span class="badge badge-blue">المميز</span>
+            <div class="card-metric" style="font-size: 2.1rem;">٢,٤٩٠ دج</div>
+            <div class="card-metric-label">اشتراك سنوي Premium</div>
+            <p class="card-desc" style="margin-top: 10px;">
+              تسجيل غير محدود للكبسولات الصوتية والصور بدقة عالية، وتصدير التقارير الطبية ومتابعة المنحنيات.
+            </p>
+          </div>
+
+          <div class="card col-4">
+            <span class="badge badge-green">كبار الشخصيات</span>
+            <div class="card-metric" style="font-size: 2.1rem;">٩,٨٩٠ دج</div>
+            <div class="card-metric-label">عضوية سنوية VIP</div>
+            <p class="card-desc" style="margin-top: 10px;">
+              إعفاء كامل من الإعلانات، بطاقة عضوية VIP فيزيائية، <strong>طباعة وتجليد ألبوم ورقي فاخر مجاناً</strong>، وتخفيضات شركاء.
+            </p>
+          </div>
+
+        </div>
+      </section>
+
+      <!-- متجر الشركاء -->
+      <section>
+        <h2>٢. كتالوج مستلزمات الأمومة والرضع (LM2-138)</h2>
+        <p>
+          يوفر المتجر المدمج للأمهات إمكانية تصفح واقتناء منتجات منتقاة بعناية (رعاية، نظافة، ألعاب تربوية، ومكملات صحية):
+        </p>
+
+        <div class="bento-grid">
+          <div class="card col-6">
+            <div class="card-title">تصفح سلس حسب الفئات</div>
+            <p class="card-desc">
+              شريط تصنيفات ديناميكي (<em>الرضيع، الأم، العناية، الألعاب</em>) تترجم مسمياته تلقائياً بحسب اللغة النشطة للتطبيق عبر الدالة البرمجية <code>getLabel(locale)</code>.
+            </p>
+          </div>
+
+          <div class="card col-6">
+            <div class="card-title">صفحات تفصيلية للمنتجات</div>
+            <p class="card-desc">
+              تتضمن صفحة المنتج (<code>ProductDetailScreen</code>) صوراً واضحة، المزايا الصحية الموصى بها طبياً، السعر بالدينار الجزائري (DZD)، ومحدد الكميات المتفاعل.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <!-- سلة الشراء والدفع عند الاستلام -->
+      <section id="panier">
+        <h2>٣. سلة الشراء والدفع عند الاستلام (LM2-139)</h2>
+        <p>
+          لتجاوز عقبات الدفع الإلكتروني البنكي وتحقيق أعلى معدل إتمام للطلبات في الجزائر، صُمم مسار الطلب بالدفع نقداً عند استلام الطرد:
+        </p>
+
+        <div class="table-wrapper">
+          <table>
+            <thead>
+              <tr>
+                <th>المرحلة</th>
+                <th>المكون البرمجي</th>
+                <th>المعايير المطبقة</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>١. سلة الشراء</strong></td>
+                <td class="mono">CartScreen</td>
+                <td>أزرار تعديل الكميات (+ / -)، حساب المجموع آلياً، وتأكيد الحذف قبل إفراغ السلة.</td>
+              </tr>
+              <tr>
+                <td><strong>٢. نموذج التوصيل</strong></td>
+                <td class="mono">CheckoutScreen</td>
+                <td>
+                  قائمة منسدلة تضم <strong>الولايات الـ 58 للجزائر</strong> مع خانات البلدية والحي.
+                </td>
+              </tr>
+              <tr>
+                <td><strong>٣. فحص رقم الهاتف</strong></td>
+                <td class="mono">RegExp Checker</td>
+                <td>تحقق برمجي صارم من أرقام الهواتف النقالة الجزائرية (تبدأ بـ <code>05</code>، <code>06</code>، أو <code>07</code> متبوعة بـ 8 أرقام).</td>
+              </tr>
+              <tr>
+                <td><strong>٤. الدفع عند الاستلام</strong></td>
+                <td class="mono">COD Provider</td>
+                <td>ظهور تنبيه واضح ومطمئن: <em>«الدفع نقداً عند استلام طلبيتكم أمام باب المنزل»</em>.</td>
+              </tr>
+              <tr>
+                <td><strong>٥. تتبع حالة الطلب</strong></td>
+                <td class="mono">MyOrdersScreen</td>
+                <td>
+                  متابعة مسار الطلب بخمس حالات ملونة: <span class="badge badge-yellow">قيد الانتظار</span> <span class="badge badge-blue">مؤكد</span> <span class="badge badge-blue">قيد التجهيز</span> <span class="badge badge-green">تم التوصيل</span> <span class="badge badge-red">ملغى</span>.
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- شبكة الإعلانات الداخلية -->
+      <section id="ads">
+        <h2>٤. شبكة الإعلانات الداخلية المحمية ومؤقتات الباقات (LM2-122)</h2>
+        <p>
+          حمايةً لخصوصية العائلات وتفادياً لدمج برمجيات تتبع خارجية من شركات أجنبية، تم اعتماد شبكة إعلانات داخلية (House Ads) تديرها المنظومة مباشرة دون أي وسيط خارجي:
+        </p>
+
+        <div class="bento-grid">
+          
+          <div class="card col-4">
+            <span class="badge badge-yellow">الباقة المجانية</span>
+            <div class="card-title" style="margin-top: 10px;">مؤقت إلزام 3 ثوانٍ</div>
+            <p class="card-desc">
+              عرض إعلان داخلي لمنتجات الشركاء، مع قفل زر الإغلاق لمدة 3 ثوانٍ إجبارية يظهر خلالها عداد زمني تنازلي.
+            </p>
+          </div>
+
+          <div class="card col-4">
+            <span class="badge badge-blue">الباقة العادية</span>
+            <div class="card-title" style="margin-top: 10px;">مؤقت إلزام 5 ثوانٍ</div>
+            <p class="card-desc">
+              عرض الإعلان مع اشتراط 5 ثوانٍ قبل التخطي، مما يحفز الترقية نحو باقة كبار الشخصيات.
+            </p>
+          </div>
+
+          <div class="card col-4">
+            <span class="badge badge-green">عضوية VIP</span>
+            <div class="card-title" style="margin-top: 10px;">إعفاء تام ومطلق (٠ ثانية)</div>
+            <p class="card-desc">
+              إلغاء تام لجميع نداءات الإعلانات في الشيفرة البرمجية. تصفح نقي وسريع وخالٍ من أي انقطاع.
+            </p>
+          </div>
+
+        </div>
+
+        <div class="callout">
+          <div class="callout-title">حماية الخصوصية والمعطيات الشخصية</div>
+          <p>
+            تضمن هذه البنية <strong>عدم تسريب أي معرفات هاتفية أو بيانات جغرافية أو سلوكيات تصفح</strong> لشركات الإعلانات الدولية، مما يجعل المنظومة متوافقة تماماً مع روح ونصوص القانون 18-07.
+          </p>
+        </div>
+      </section>
+
+      <footer class="page-nav">
+        <a href="05_memoires_et_impression.html" class="page-nav-item">
+          <span class="page-nav-label">السابق · الفصل ٠٥</span>
+          <span class="page-nav-title">→ ألبوم الذكريات وطباعة PDF</span>
+        </a>
+        <a href="07_guide_recette_et_production.html" class="page-nav-item next">
+          <span class="page-nav-label">التالي · الفصل ٠٧</span>
+          <span class="page-nav-title">دليل الفحص والجاهزية ←</span>
+        </a>
+      </footer>
+
+    </main>
+
+  </div>
+
+  <div id="search-modal" class="search-modal">
+    <div class="search-box">
+      <div class="search-input-wrapper">
+        <span class="mono" style="font-size: 0.85rem; color: var(--text-muted);">بحث:</span>
+        <input type="text" id="search-input" class="search-input" placeholder="اكتب كلمة مفتاحية..." autocomplete="off">
+        <kbd>Esc</kbd>
+      </div>
+      <div id="search-results" class="search-results"></div>
+    </div>
+  </div>
+
+  <button class="mobile-toggle" aria-label="قائمة التصفح">
+    <span class="mono" style="font-size: 1.1rem; line-height: 1;">☰</span>
+  </button>
+
+  <script src="book.js"></script>
+</body>
+</html>

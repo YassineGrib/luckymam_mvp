@@ -15,20 +15,24 @@ import 'features/profile/providers/profile_providers.dart';
 import 'features/timeline/data/milestones_data.dart';
 import 'features/timeline/screens/milestone_detail_screen.dart';
 import 'features/timeline/services/timeline_service.dart';
+import 'package:flutter/foundation.dart';
 import 'package:timezone/data/latest.dart' as tz;
+import 'firebase_options.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  // Initialize Firebase
-  await Firebase.initializeApp();
+  // Initialize Firebase with platform-specific options
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
 
-  // Initialize Timezone (also done inside NotificationService, but belt+suspenders)
-  tz.initializeTimeZones();
-
-  // Initialize notification service and request permissions
-  final notificationService = NotificationService();
-  await notificationService.requestPermissions();
+  // Initialize Timezone (mobile only)
+  if (!kIsWeb) {
+    tz.initializeTimeZones();
+    final notificationService = NotificationService();
+    await notificationService.requestPermissions();
+  }
 
   runApp(const ProviderScope(child: LuckymamApp()));
 }
@@ -45,21 +49,25 @@ class _LuckymamAppState extends ConsumerState<LuckymamApp> {
   @override
   void initState() {
     super.initState();
-    NotificationService.onNotificationTapped.addListener(
-      _onNotificationTapped,
-    );
-    // Handle the case where a notification launched the app from terminated.
-    WidgetsBinding.instance.addPostFrameCallback((_) async {
-      final launchPayload = await NotificationService().getLaunchPayload();
-      _handleDeepLink(launchPayload);
-    });
+    if (!kIsWeb) {
+      NotificationService.onNotificationTapped.addListener(
+        _onNotificationTapped,
+      );
+      // Handle the case where a notification launched the app from terminated.
+      WidgetsBinding.instance.addPostFrameCallback((_) async {
+        final launchPayload = await NotificationService().getLaunchPayload();
+        _handleDeepLink(launchPayload);
+      });
+    }
   }
 
   @override
   void dispose() {
-    NotificationService.onNotificationTapped.removeListener(
-      _onNotificationTapped,
-    );
+    if (!kIsWeb) {
+      NotificationService.onNotificationTapped.removeListener(
+        _onNotificationTapped,
+      );
+    }
     super.dispose();
   }
 

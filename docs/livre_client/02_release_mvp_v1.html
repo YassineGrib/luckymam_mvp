@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Chapitre 02 — La Livraison Initiale MVP v1.0.0 · LuckyMam</title>
+  <meta name="description" content="Rapport détaillé des 36 modifications de la release v1.0.0, Keystore de production et lecteur audio immersif.">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+  <div id="reading-progress"></div>
+
+  <div class="app-layout">
+    
+    <aside class="sidebar">
+      <div class="sidebar-brand">
+        <div class="sidebar-title">LuckyMam</div>
+        <div class="sidebar-subtitle">Livre de Bord Client · MVP</div>
+      </div>
+
+      <button class="sidebar-search-btn trigger-search" type="button">
+        <span>Rechercher dans le livre...</span>
+        <kbd>/</kbd>
+      </button>
+
+      <nav class="sidebar-nav">
+        <div class="nav-section-label">Sommaire Général</div>
+        <a href="index.html" class="nav-link">
+          <span class="nav-number">00</span>
+          <span>Vue d’Ensemble & Sommaire</span>
+        </a>
+        <a href="01_architecture_et_produit.html" class="nav-link">
+          <span class="nav-number">01</span>
+          <span>Vision & Socle Technique</span>
+        </a>
+        <a href="02_release_mvp_v1.html" class="nav-link active">
+          <span class="nav-number">02</span>
+          <span>La Release MVP v1.0.0</span>
+        </a>
+        <a href="03_conformite_loi_18_07.html" class="nav-link">
+          <span class="nav-number">03</span>
+          <span>Conformité Loi 18-07 & i18n</span>
+        </a>
+        <a href="04_backlog_addendum.html" class="nav-link">
+          <span class="nav-number">04</span>
+          <span>Le Backlog Addendum (22 T.)</span>
+        </a>
+        <a href="05_memoires_et_impression.html" class="nav-link">
+          <span class="nav-number">05</span>
+          <span>Mémoires & Impression PDF</span>
+        </a>
+        <a href="06_marketplace_et_monetisation.html" class="nav-link">
+          <span class="nav-number">06</span>
+          <span>Marketplace & Monétisation</span>
+        </a>
+        <a href="07_guide_recette_et_production.html" class="nav-link">
+          <span class="nav-number">07</span>
+          <span>Recette Client & Production</span>
+        </a>
+      </nav>
+
+      <div class="sidebar-footer">
+        <a href="../livre_client_ar/02_release_mvp_v1.html" class="btn btn-secondary" style="padding: 4px 8px; font-size: 0.72rem;">العربية</a>
+        <button class="btn btn-secondary" onclick="window.print()" style="padding: 4px 8px; font-size: 0.72rem;">Imprimer</button>
+      </div>
+    </aside>
+
+    <main class="main-content">
+      
+      <header class="chapter-header">
+        <div class="chapter-meta">
+          <span class="badge badge-green">LIVRAISON SOCLE</span>
+          <span class="chapter-number">CHAPITRE 02</span>
+        </div>
+        <h1 class="chapter-title">La Livraison Initiale MVP v1.0.0</h1>
+        <p class="chapter-lead">
+          Le 02 Mars 2026 marquait la première livraison formelle de l'application LuckyMam sous format APK Release Android de 108.2 MB. Cette version a consolidé 36 évolutions majeures issues des retours clients, complétée dès le lendemain par une refonte immersive du lecteur audio et la signature cryptographique définitive pour Google Play.
+        </p>
+      </header>
+
+      <!-- Synthèse Exécutive de la Release -->
+      <section>
+        <h2>Fiche Technique de Livraison (Mars 2026)</h2>
+
+        <div class="bento-grid">
+          <div class="card col-3">
+            <span class="badge badge-neutral">VERSION</span>
+            <div class="card-metric">1.0.0</div>
+            <div class="card-metric-label">Build 1 (Android Release)</div>
+          </div>
+
+          <div class="card col-3">
+            <span class="badge badge-neutral">TAILLE LIVRABLE</span>
+            <div class="card-metric">108.2 Mo</div>
+            <div class="card-metric-label">Poids du binaire APK</div>
+          </div>
+
+          <div class="card col-3">
+            <span class="badge badge-green">RECETTE</span>
+            <div class="card-metric">36 / 36</div>
+            <div class="card-metric-label">Modifications Validées</div>
+          </div>
+
+          <div class="card col-3">
+            <span class="badge badge-blue">SÉCURITÉ</span>
+            <div class="card-metric">SHA-1</div>
+            <div class="card-metric-label">Keystore Release Officiel</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Répertoire des 36 modifications par catégorie -->
+      <section>
+        <h2>Inventaire des 36 Modifications Structurantes</h2>
+        <p>
+          Les améliorations ont été réparties en 8 axes fonctionnels pour refondre la présentation, la conformité, la grille tarifaire et l'ergonomie globale.
+        </p>
+
+        <div class="table-wrapper">
+          <table>
+            <thead>
+              <tr>
+                <th style="width: 80px;">Catégorie</th>
+                <th>Périmètre & Intitulé</th>
+                <th>Détail de la Transformation</th>
+                <th>Bénéfice Utilisateur</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td class="mono">CAT. 1</td>
+                <td><strong>Contenu & Slogans</strong> (6 modifications)</td>
+                <td>
+                  Adoption du slogan officiel : <em>« Des souvenirs à transmettre, des émotions à revivre »</em>. Remplacement des termes techniques par des libellés positifs (ex : le badge <code>« En retard »</code> devient <code>« À rattraper »</code> ; <code>« Vaccins »</code> devient <code>« Santé Enfant »</code>).
+                </td>
+                <td>Tonalité valorisante et déculpabilisante pour les mamans.</td>
+              </tr>
+              <tr>
+                <td class="mono">CAT. 2</td>
+                <td><strong>Authentification & Légal</strong> (3 modifications)</td>
+                <td>
+                  Bloc de consentement explicite à l'inscription, création d'une page de politique de confidentialité détaillée (<code>privacy_policy_screen.dart</code>) et configuration du thème clair par défaut.
+                </td>
+                <td>Clarté juridique et accueil visuel lumineux.</td>
+              </tr>
+              <tr>
+                <td class="mono">CAT. 3</td>
+                <td><strong>Tarifs & Abonnements</strong> (5 modifications)</td>
+                <td>
+                  Harmonisation de la grille : <strong>Plan Premium à 2 490 DZD/an</strong> et <strong>Plan VIP à 9 890 DZD/an</strong> (avec carte membre physique et album imprimé inclus). Intégration de la page des Sponsors Diamant.
+                </td>
+                <td>Modèle commercial transparent et valorisation du panier VIP.</td>
+              </tr>
+              <tr>
+                <td class="mono">CAT. 4</td>
+                <td><strong>Accueil & Profil Enfant</strong> (4 modifications)</td>
+                <td>
+                  Redesign de l'accès rapide en ligne 4×1 sans fond blanc. Création d'un <strong>écran dédié au profil individuel de l'enfant</strong> comprenant un en-tête hero coloré (bleu/rose), 3 cartes statistiques, une grille 3×3 de souvenirs et le suivi vaccinal complet.
+                </td>
+                <td>Centralisation de l'historique complet de chaque enfant en un tap.</td>
+              </tr>
+              <tr>
+                <td class="mono">CAT. 5</td>
+                <td><strong>Timeline des Jalons</strong> (9 modifications)</td>
+                <td>
+                  Correction de l'historique de retour, implémentation du double scroll fluide horizontal et vertical, logo sur chaque nœud, enregistrement de la date réelle en base et navigation par phases de vie (prégestation, gestation, post-partum, enfance).
+                </td>
+                <td>Fluidité de consultation de la naissance aux premières années.</td>
+              </tr>
+              <tr>
+                <td class="mono">CAT. 6</td>
+                <td><strong>Capsules Émotionnelles</strong> (3 modifications)</td>
+                <td>
+                  Filigrane de marque discret, sélecteur de date de prise de vue réelle, et catégorisation en 5 jalons de vie (Pré-gestation, Gestation, Post-partum, Enfance, Adulte).
+                </td>
+                <td>Archivage chronologique fidèle des moments familiaux.</td>
+              </tr>
+              <tr>
+                <td class="mono">CAT. 7</td>
+                <td><strong>Santé & Vaccins</strong> (2 modifications)</td>
+                <td>
+                  Sélecteur de date calendaire lors de la validation d'un vaccin et génération de fiches descriptives complètes (utilité médicale, mode d'administration, effets secondaires normaux).
+                </td>
+                <td>Véritable carnet de santé numérique pédagogique.</td>
+              </tr>
+              <tr>
+                <td class="mono">CAT. 8</td>
+                <td><strong>Reels Éducatifs</strong> (1 modification)</td>
+                <td>
+                  Harmonisation du catalogue vidéo avec filtres d'âge pédiatrique et association directe aux thématiques vaccinales.
+                </td>
+                <td>Contenu médical vulgarisé par des professionnels.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- Évolution Immersive du 03 Mars 2026 -->
+      <section id="capsules">
+        <h2>L'Évolution Immersive des Capsules (03 Mars 2026)</h2>
+        <p>
+          Pour transformer la consultation d'un souvenir en une véritable expérience émotionnelle, la section Capsule a bénéficié d'une refonte complète de son lecteur multimédia.
+        </p>
+
+        <div class="bento-grid">
+          <div class="card col-6">
+            <div class="card-title">
+              <span>Mode « Live » Immersif</span>
+              <span class="badge badge-green">EXPÉRIENCE VISUELLE</span>
+            </div>
+            <p class="card-desc">
+              Dès que l'utilisatrice déclenche la lecture du mémo vocal, l'interface technique (boutons, en-têtes, textes de description) s'estompe progressivement. La photo de l'enfant occupe la totalité de l'écran, plongeant le regard dans le souvenir sans pollution visuelle. Un simple effleurement rétablit immédiatement les contrôles.
+            </p>
+          </div>
+
+          <div class="card col-6">
+            <div class="card-title">
+              <span>Animation Ken Burns (Zoom Doux)</span>
+              <span class="badge badge-blue">MICRO-MOUVEMENT</span>
+            </div>
+            <p class="card-desc">
+              Pendant l'écoute de la voix de la maman ou des premiers babillages de l'enfant, l'image bénéficie d'un mouvement lent et imperceptible de travelling avant (effet Ken Burns), donnant vie à la photographie statique sans saccade.
+            </p>
+          </div>
+
+          <div class="card col-12">
+            <div class="card-title">
+              <span>Personnalisation du Lecteur & Branding Officiel</span>
+              <span class="badge badge-neutral">AUDIO BRANDING</span>
+            </div>
+            <p class="card-desc">
+              Le bouton générique de lecture a été substitué par le médaillon officiel LuckyMam gravé au format SVG vectoriel. Le composant <code>CapsuleAudioPlayer</code> synchronise son état en temps réel avec l'écran parent <code>CapsuleDetailScreen</code> pour orchestrer la transition lumineuse du mode immersif.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <!-- Signature Release et Sécurisation Keystore -->
+      <section>
+        <h2>Signature de Production & Google Play Readiness</h2>
+        <p>
+          Afin de basculer de l'environnement de test vers une distribution publique sécurisée, la chaîne de compilation Android a été entièrement verrouillée :
+        </p>
+
+        <div class="window-chrome">
+          <div class="window-bar">
+            <span class="window-dot"></span>
+            <span class="window-dot"></span>
+            <span class="window-dot"></span>
+            <span class="window-title">android/app/build.gradle.kts · Configuration de Signature</span>
+          </div>
+          <div class="window-body">
+            <pre><code>// Isolation des clés cryptographiques de release
+signingConfigs {
+    create("release") {
+        keyAlias = keystoreProperties["keyAlias"] as String
+        keyPassword = keystoreProperties["keyPassword"] as String
+        storeFile = file(keystoreProperties["storeFile"] as String)
+        storePassword = keystoreProperties["storePassword"] as String
+    }
+}
+buildTypes {
+    getByName("release") {
+        signingConfig = signingConfigs.getByName("release")
+        isMinifyEnabled = true
+        proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
+    }
+}</code></pre>
+          </div>
+        </div>
+
+        <div class="callout">
+          <div class="callout-title">Résolution Critique Google Sign-In Release</div>
+          <p>
+            Lors du passage en mode release, la connexion Google échouait en raison de la divergence d'empreintes numériques avec le mode debug. L'empreinte SHA-1 de production (<code>2E:AD:C4:88:...</code>) a été extraite du Keystore officiel <code>Luckymam-release.jks</code> et inscrite dans les paramètres de l'application Firebase, garantissant une authentification Google fluide et sans incident sur l'APK de release.
+          </p>
+        </div>
+      </section>
+
+      <!-- Navigation bas de page -->
+      <footer class="page-nav">
+        <a href="01_architecture_et_produit.html" class="page-nav-item">
+          <span class="page-nav-label">Précédent · Chapitre 01</span>
+          <span class="page-nav-title">← Vision Produit & Socle Technique</span>
+        </a>
+        <a href="03_conformite_loi_18_07.html" class="page-nav-item next">
+          <span class="page-nav-label">Suivant · Chapitre 03</span>
+          <span class="page-nav-title">Conformité Loi 18-07 & i18n →</span>
+        </a>
+      </footer>
+
+    </main>
+
+  </div>
+
+  <div id="search-modal" class="search-modal">
+    <div class="search-box">
+      <div class="search-input-wrapper">
+        <span class="mono" style="font-size: 0.85rem; color: var(--text-muted);">Recherche :</span>
+        <input type="text" id="search-input" class="search-input" placeholder="Tapez un mot-clé (ex: Loi 18-07, PDF, Poids, VIP...)" autocomplete="off">
+        <kbd>Échap</kbd>
+      </div>
+      <div id="search-results" class="search-results"></div>
+    </div>
+  </div>
+
+  <button class="mobile-toggle" aria-label="Menu de navigation">
+    <span class="mono" style="font-size: 1.1rem; line-height: 1;">☰</span>
+  </button>
+
+  <script src="book.js"></script>
+</body>
+</html>

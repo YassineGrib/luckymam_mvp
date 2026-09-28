@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Chapitre 03 — Conformité Légale (Loi 18-07) & i18n · LuckyMam</title>
+  <meta name="description" content="Conformité réglementaire Loi Algérienne 18-07, journal d'audit immuable, hachage FNV-1a et support multilingue réactif.">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+  <div id="reading-progress"></div>
+
+  <div class="app-layout">
+    
+    <aside class="sidebar">
+      <div class="sidebar-brand">
+        <div class="sidebar-title">LuckyMam</div>
+        <div class="sidebar-subtitle">Livre de Bord Client · MVP</div>
+      </div>
+
+      <button class="sidebar-search-btn trigger-search" type="button">
+        <span>Rechercher dans le livre...</span>
+        <kbd>/</kbd>
+      </button>
+
+      <nav class="sidebar-nav">
+        <div class="nav-section-label">Sommaire Général</div>
+        <a href="index.html" class="nav-link">
+          <span class="nav-number">00</span>
+          <span>Vue d’Ensemble & Sommaire</span>
+        </a>
+        <a href="01_architecture_et_produit.html" class="nav-link">
+          <span class="nav-number">01</span>
+          <span>Vision & Socle Technique</span>
+        </a>
+        <a href="02_release_mvp_v1.html" class="nav-link">
+          <span class="nav-number">02</span>
+          <span>La Release MVP v1.0.0</span>
+        </a>
+        <a href="03_conformite_loi_18_07.html" class="nav-link active">
+          <span class="nav-number">03</span>
+          <span>Conformité Loi 18-07 & i18n</span>
+        </a>
+        <a href="04_backlog_addendum.html" class="nav-link">
+          <span class="nav-number">04</span>
+          <span>Le Backlog Addendum (22 T.)</span>
+        </a>
+        <a href="05_memoires_et_impression.html" class="nav-link">
+          <span class="nav-number">05</span>
+          <span>Mémoires & Impression PDF</span>
+        </a>
+        <a href="06_marketplace_et_monetisation.html" class="nav-link">
+          <span class="nav-number">06</span>
+          <span>Marketplace & Monétisation</span>
+        </a>
+        <a href="07_guide_recette_et_production.html" class="nav-link">
+          <span class="nav-number">07</span>
+          <span>Recette Client & Production</span>
+        </a>
+      </nav>
+
+      <div class="sidebar-footer">
+        <a href="../livre_client_ar/03_conformite_loi_18_07.html" class="btn btn-secondary" style="padding: 4px 8px; font-size: 0.72rem;">العربية</a>
+        <button class="btn btn-secondary" onclick="window.print()" style="padding: 4px 8px; font-size: 0.72rem;">Imprimer</button>
+      </div>
+    </aside>
+
+    <main class="main-content">
+      
+      <header class="chapter-header">
+        <div class="chapter-meta">
+          <span class="badge badge-green">CADRE LÉGAL & PROTECTION</span>
+          <span class="chapter-number">CHAPITRE 03</span>
+        </div>
+        <h1 class="chapter-title">Conformité Légale (Loi 18-07) & i18n</h1>
+        <p class="chapter-lead">
+          En traitant des données de santé périnatale, des photographies d'enfants mineurs et des jalons de vie intimes, LuckyMam est assujetti aux exigences les plus rigoureuses du droit du numérique. L'application intègre un dispositif de recueil de consentement juridiquement infalsifiable, appuyé par un registre d'audit immuable et une localisation trilingue native.
+        </p>
+      </header>
+
+      <!-- Section 1 : Contexte réglementaire -->
+      <section>
+        <h2>1. Le Cadre Juridique de la Loi Algérienne n° 18-07</h2>
+        <p>
+          Promulguée le 10 juin 2018, la <strong>Loi n° 18-07</strong> encadre la protection des personnes physiques dans le traitement des données à caractère personnel en Algérie. Les articles de référence imposent :
+        </p>
+
+        <div class="bento-grid">
+          <div class="card col-4">
+            <div class="card-title">Consentement Éclairé</div>
+            <p class="card-desc">
+              L'accord de l'utilisatrice doit être recueilli de manière expresse, préalable, libre et non équivoque avant tout traitement de données.
+            </p>
+          </div>
+
+          <div class="card col-4">
+            <div class="card-title">Données Sensibles de Santé</div>
+            <p class="card-desc">
+              Le suivi de grossesse, les dates de vaccination et les mensurations pondérales font l'objet d'un statut renforcé interdisant toute cession à des tiers.
+            </p>
+          </div>
+
+          <div class="card col-4">
+            <div class="card-title">Droit à l'Oubli & Rectification</div>
+            <p class="card-desc">
+              Capacité permanente pour chaque parent d'exporter, modifier ou demander la purge complète de son historique familial.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <!-- Section 2 : Dispositif technique de recueil -->
+      <section>
+        <h2>2. Parcours Utilisateur Bloquant & Ergonomie Tactile</h2>
+        <p>
+          Pour garantir une valeur probante indiscutable en cas d'audit réglementaire, le consentement n'est pas une simple clause dissimulée au bas d'un formulaire, mais un écran dédié infranchissable.
+        </p>
+
+        <div class="bento-grid">
+          <div class="card col-6">
+            <div class="card-title">
+              <span>Écran Bloquant Law1807ConsentScreen</span>
+              <span class="badge badge-red">PASSAGE OBLIGATOIRE</span>
+            </div>
+            <p class="card-desc">
+              Tout compte créé (par e-mail ou via Google Sign-In) est automatiquement intercepté par le routeur <code>app_router.dart</code>. Tant que la case n'est pas cochée et validée, l'accès au tableau de bord <code>/home</code> demeure totalement verrouillé.
+            </p>
+            <ul style="margin-top: 12px; margin-left: 18px;">
+              <li>Affichage du texte légal intégral dans la langue active de l'utilisatrice.</li>
+              <li>Case à cocher tactile de 48px de hauteur minimale (norme Thumb Zone).</li>
+              <li>Avertissement contextuel et enregistrement de l'événement <code>law1807_blocked</code> en cas de tentative de contournement.</li>
+            </ul>
+          </div>
+
+          <div class="card col-6">
+            <div class="card-title">
+              <span>Régularisation des Comptes Existants</span>
+              <span class="badge badge-blue">RÉTROACTIVITÉ</span>
+            </div>
+            <p class="card-desc">
+              Lors de la mise à jour v1.1.0, les utilisatrices disposant déjà d'une session active mais n'ayant pas encore signé le consentement ont été redirigées dès l'ouverture de l'application vers l'écran légal, assurant une conformité à 100% de la base active.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <!-- Section 3 : Hash FNV-1a et immuabilité -->
+      <section>
+        <h2>3. Registre d'Audit Immuable & Empreinte Numérique FNV-1a</h2>
+        <p>
+          Chaque consentement accepté déclenche l'exécution du service <code>ComplianceService</code>. Un enregistrement probatoire est généré et scellé cryptographiquement dans Firestore.
+        </p>
+
+        <div class="window-chrome">
+          <div class="window-bar">
+            <span class="window-dot"></span>
+            <span class="window-dot"></span>
+            <span class="window-dot"></span>
+            <span class="window-title">Modèle d'Enregistrement Firestore · /consent_logs/{logId}</span>
+          </div>
+          <div class="window-body">
+            <pre><code>{
+  "userId": "bsOKvrjp5yM1JEsHZ19TeEHPw1h2",
+  "consentGiven": true,
+  "timestamp": "2026-06-16T10:14:22.845Z",
+  "lawVersion": "18-07_v1.0",
+  "language": "fr",
+  "ipAddress": "197.200.xx.xx",
+  "integrityHash": "b78f4a12c8e901f4", // Hash déterministe FNV-1a 64-bit
+  "immutableAudit": true
+}</code></pre>
+          </div>
+        </div>
+
+        <div class="callout">
+          <div class="callout-title">Garantie d'Intégrité par Algorithme FNV-1a 64-bit</div>
+          <p>
+            Le hash <code>integrityHash</code> est calculé en injectant la concaténation de l'ID utilisateur, du timestamp exact, du code de langue et du texte intégral de la loi. Si un quelconque champ de cet enregistrement est altéré en base de données, le recalcul de l'empreinte échoue immédiatement, prouvant la tentative de falsification lors des contrôles de conformité.
+          </p>
+        </div>
+
+        <h3>Verrouillage Côté Serveur (firestore.rules)</h3>
+        <p>
+          Les règles de sécurité du projet ont été modifiées et publiées sur Firebase pour sceller la collection :
+        </p>
+        <pre><code>// Règle de scellement strict du registre de consentement
+match /consent_logs/{logId} {
+  allow create: if request.auth != null;
+  allow read: if request.auth != null && (request.auth.uid == resource.data.userId || request.auth.token.admin == true);
+  allow update: if false; // Strictement interdit : aucune modification
+  allow delete: if false; // Strictement interdit : aucune suppression
+}</code></pre>
+      </section>
+
+      <!-- Section 4 : Localisation trilingue -->
+      <section id="i18n">
+        <h2>4. Architecture de Localisation Dynamique (i18n) & Support RTL</h2>
+        <p>
+          Pour respecter la diversité culturelle et linguistique de l'Algérie, l'application prend en charge trois langues de manière native et réactive, sans exiger de redémarrage.
+        </p>
+
+        <div class="bento-grid">
+          <div class="card col-4">
+            <span class="badge badge-green">ARABE ALGÉRIEN</span>
+            <div class="card-title" style="margin-top: 10px;">Support Arabe & RTL</div>
+            <p class="card-desc">
+              Inversion automatique de l'interface en mode Right-to-Left (RTL) : barre de navigation, menus déroulants, barres de progression et alignements typographiques s'adaptent fidèlement.
+            </p>
+          </div>
+
+          <div class="card col-4">
+            <span class="badge badge-blue">FRANÇAIS</span>
+            <div class="card-title" style="margin-top: 10px;">Français Médical</div>
+            <p class="card-desc">
+              Terminologie pédiatrique soignée, formulation empathique et respect des standards éditoriaux de puériculture francophones.
+            </p>
+          </div>
+
+          <div class="card col-4">
+            <span class="badge badge-neutral">ANGLAIS</span>
+            <div class="card-title" style="margin-top: 10px;">Anglais International</div>
+            <p class="card-desc">
+              Traduction complète pour les familles expatriées et conformité avec les directives internationales d'accessibilité.
+            </p>
+          </div>
+        </div>
+
+        <div class="callout">
+          <div class="callout-title">Changement de Langue à Chaud (StateNotifier)</div>
+          <p>
+            Le sélecteur de langue accessible depuis l'écran de profil déclenche l'action <code>localeProvider.setLocale()</code>. Le nouveau dictionnaire <code>.arb</code> est appliqué instantanément dans l'ensemble de l'arbre Flutter sans scintillement ni déconnexion de l'utilisatrice.
+          </p>
+        </div>
+      </section>
+
+      <!-- Navigation bas de page -->
+      <footer class="page-nav">
+        <a href="02_release_mvp_v1.html" class="page-nav-item">
+          <span class="page-nav-label">Précédent · Chapitre 02</span>
+          <span class="page-nav-title">← La Livraison Initiale MVP v1.0.0</span>
+        </a>
+        <a href="04_backlog_addendum.html" class="page-nav-item next">
+          <span class="page-nav-label">Suivant · Chapitre 04</span>
+          <span class="page-nav-title">Le Backlog Addendum (22 Tickets) →</span>
+        </a>
+      </footer>
+
+    </main>
+
+  </div>
+
+  <div id="search-modal" class="search-modal">
+    <div class="search-box">
+      <div class="search-input-wrapper">
+        <span class="mono" style="font-size: 0.85rem; color: var(--text-muted);">Recherche :</span>
+        <input type="text" id="search-input" class="search-input" placeholder="Tapez un mot-clé (ex: Loi 18-07, PDF, Poids, VIP...)" autocomplete="off">
+        <kbd>Échap</kbd>
+      </div>
+      <div id="search-results" class="search-results"></div>
+    </div>
+  </div>
+
+  <button class="mobile-toggle" aria-label="Menu de navigation">
+    <span class="mono" style="font-size: 1.1rem; line-height: 1;">☰</span>
+  </button>
+
+  <script src="book.js"></script>
+</body>
+</html>

@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>لاكي مام — الدليل الشامل وسجل تسليمات المشروع</title>
+  <meta name="description" content="الملخص التنفيذي، الأساس الهندسي والتقرير الشامل لتسليمات تطبيق لاكي مام (LuckyMam MVP).">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+  <!-- شريط تقدم القراءة -->
+  <div id="reading-progress"></div>
+
+  <div class="app-layout">
+    
+    <!-- شريط التنقل الجانبي الأيمن -->
+    <aside class="sidebar">
+      <div class="sidebar-brand">
+        <div class="sidebar-title">لاكي مام</div>
+        <div class="sidebar-subtitle">دليل العميل المرجعي · النسخة التجريبية</div>
+      </div>
+
+      <button class="sidebar-search-btn trigger-search" type="button">
+        <span>ابحث في الدليل...</span>
+        <kbd>/</kbd>
+      </button>
+
+      <nav class="sidebar-nav">
+        <div class="nav-section-label">فهرس المحتويات</div>
+        <a href="index.html" class="nav-link active">
+          <span class="nav-number">٠٠</span>
+          <span>نظرة عامة وفهرس شامل</span>
+        </a>
+        <a href="01_architecture_et_produit.html" class="nav-link">
+          <span class="nav-number">٠١</span>
+          <span>رؤية المنتج والأساس التقني</span>
+        </a>
+        <a href="02_release_mvp_v1.html" class="nav-link">
+          <span class="nav-number">٠٢</span>
+          <span>تسليم الإصدار الأولي v1.0.0</span>
+        </a>
+        <a href="03_conformite_loi_18_07.html" class="nav-link">
+          <span class="nav-number">٠٣</span>
+          <span>الامتثال للقانون 18-07 واللغات</span>
+        </a>
+        <a href="04_backlog_addendum.html" class="nav-link">
+          <span class="nav-number">٠٤</span>
+          <span>ملحق المهام (22 تذكرة)</span>
+        </a>
+        <a href="05_memoires_et_impression.html" class="nav-link">
+          <span class="nav-number">٠٥</span>
+          <span>ألبوم الذكريات وطباعة PDF</span>
+        </a>
+        <a href="06_marketplace_et_monetisation.html" class="nav-link">
+          <span class="nav-number">٠٦</span>
+          <span>متجر الشركاء والإيرادات</span>
+        </a>
+        <a href="07_guide_recette_et_production.html" class="nav-link">
+          <span class="nav-number">٠٧</span>
+          <span>دليل الفحص والجاهزية</span>
+        </a>
+      </nav>
+
+      <div class="sidebar-footer">
+        <a href="../livre_client/index.html" class="btn btn-secondary" style="padding: 4px 8px; font-size: 0.72rem;">Français</a>
+        <button class="btn btn-secondary" onclick="window.print()" style="padding: 4px 8px; font-size: 0.72rem;">طباعة</button>
+      </div>
+    </aside>
+
+    <!-- المحتوى الرئيسي -->
+    <main class="main-content">
+      
+      <header class="chapter-header">
+        <div class="chapter-meta">
+          <span class="badge badge-neutral">وثيقة مرجعية للعميل</span>
+          <span class="chapter-number">الفهرس العام</span>
+        </div>
+        <h1 class="chapter-title">الدليل الشامل لمشروع تطبيق لاكي مام (LuckyMam)</h1>
+        <p class="chapter-lead">
+          تمثل هذه الوثيقة المرجع الرسمي الشامل لجميع مخرجات مشروع تطبيق لاكي مام للأمومة والأسرة. صُمم هذا الدليل خصيصاً لأصحاب القرار وفرق الإدارة لتقديم ملخص تنفيذي دقيق لمراحل التطوير الهندسي، وتقارير الامتثال القانوني، ومعمارية تطبيق فلاتر للهواتف الذكية ولوحة التحكم السحابية لإدارة المنظومة.
+        </p>
+      </header>
+
+      <!-- المؤشرات الرئيسية -->
+      <section>
+        <h2>مؤشرات الإنجاز الرئيسية</h2>
+        <p>
+          شهد المشروع دورتي تسليم رئيسيتين: استقرار حزمة الإصدار الأساسي v1.0.0 (مارس 2026)، وتطوير ملحق المهام الإضافي الذي شمل 22 محوراً برمجياً متقدماً (جوان - جويلية 2026).
+        </p>
+
+        <div class="bento-grid">
+          <div class="card col-4">
+            <span class="badge badge-green">تم التسليم والاعتماد</span>
+            <div class="card-metric">167 نقطة</div>
+            <div class="card-metric-label">نقاط القصة البرمجية (Story Points)</div>
+            <p class="card-desc" style="margin-top: 10px;">
+              إنجاز 21 تذكرة من أصل 22 تذكرة برمجية بالكامل واختبارها. بقاء تذكرة واحدة فقط (LM2-136) قيد التعليق التقني المبرر لدراسة البنية السحابية المدفوعة.
+            </p>
+          </div>
+
+          <div class="card col-4">
+            <span class="badge badge-blue">الأساس الوظيفي</span>
+            <div class="card-metric">36</div>
+            <div class="card-metric-label">تحديثاً جذرياً في الإصدار الأول</div>
+            <p class="card-desc" style="margin-top: 10px;">
+              إعادة هندسة الواجهة الرئيسية، ملفات تعريف الأطفال المستقلة، الخطوط الزمنية التفاعلية، كبسولات الذكريات الغامرة وجداول التلقيح الوطنية.
+            </p>
+          </div>
+
+          <div class="card col-4">
+            <span class="badge badge-green">امتثال قانوني 100%</span>
+            <div class="card-metric">القانون 18-07</div>
+            <div class="card-metric-label">حماية البيانات الشخصية</div>
+            <p class="card-desc" style="margin-top: 10px;">
+              نظام موافقة إلزامي غير قابل للتزوير مع سجل تدقيق غير قابل للتعديل وبصمة تشفيرية رياضية بنظام FNV-1a 64-bit.
+            </p>
+          </div>
+
+          <div class="card col-6">
+            <div class="card-title">
+              <span>الدعم اللغوي الثلاثي والاتجاه العربي</span>
+              <span class="badge badge-neutral">عربي · فرنسي · إنجليزي</span>
+            </div>
+            <p class="card-desc">
+              تعريب وترجمة شاملة لكافة المكونات والنصوص ورسائل الخطأ والقوائم التفاعلية، مع التبديل التلقائي لاتجاه الواجهة (RTL) دون الحاجة لإعادة تشغيل التطبيق.
+            </p>
+          </div>
+
+          <div class="card col-6">
+            <div class="card-title">
+              <span>لوحة التحكم الإدارية عبر الويب</span>
+              <span class="badge badge-yellow">جاهزية 88% للإنتاج</span>
+            </div>
+            <p class="card-desc">
+              بوابة ويب مستقلة مستضافة على Firebase Hosting مع حماية صلاحيات دقيقة للمسؤولين فقط، ومراقبة فورية للكتالوج وطلبات طباعة الألبومات ومتجر الشركاء.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <!-- فهرس الفصول -->
+      <section>
+        <h2>أقسام وفصول الدليل</h2>
+        <p>
+          يتناول كل فصل جانباً استراتيجياً وتقنياً محدداً. يمكنكم التنقل مباشرة عبر الشريط الجانبي أو من خلال البطاقات أدناه:
+        </p>
+
+        <div class="bento-grid">
+          
+          <div class="card col-6">
+            <span class="chapter-number">الفصل الأول</span>
+            <div class="card-title" style="margin-top: 6px;">
+              <a href="01_architecture_et_produit.html" style="color: inherit; text-decoration: none;">رؤية المنتج والأساس التقني</a>
+            </div>
+            <p class="card-desc">
+              تحديد شخصيات المستخدمين الثلاث (أمل، حامل، أم)، معمارية فلاتر المعتمدة على Riverpod 2، آليات العزل في فايربيز ولوحة التحكم الإدارية.
+            </p>
+            <div style="margin-top: 16px;">
+              <a href="01_architecture_et_produit.html" class="btn btn-secondary" style="font-size: 0.78rem;">تصفح الفصل الأول ←</a>
+            </div>
+          </div>
+
+          <div class="card col-6">
+            <span class="chapter-number">الفصل الثاني</span>
+            <div class="card-title" style="margin-top: 6px;">
+              <a href="02_release_mvp_v1.html" style="color: inherit; text-decoration: none;">تسليم الإصدار الأولي v1.0.0</a>
+            </div>
+            <p class="card-desc">
+              استعراض التعديلات الـ 36 للإصدار الأول: العناوين والمحتوى، نمط الاستماع الصوتي الغامر للكبسولات، اعتماد الأسعار الرسمية ومفتاح التوقيع الرقمي.
+            </p>
+            <div style="margin-top: 16px;">
+              <a href="02_release_mvp_v1.html" class="btn btn-secondary" style="font-size: 0.78rem;">تصفح الفصل الثاني ←</a>
+            </div>
+          </div>
+
+          <div class="card col-6">
+            <span class="chapter-number">الفصل الثالث</span>
+            <div class="card-title" style="margin-top: 6px;">
+              <a href="03_conformite_loi_18_07.html" style="color: inherit; text-decoration: none;">الامتثال للقانون 18-07 والتعريب</a>
+            </div>
+            <p class="card-desc">
+              تطبيق نصوص التشريع الجزائري لحماية المعطيات الشخصية: شاشة الموافقة الإلزامية، سجل البصمة التشفيرية والبنية التحتية متعددة اللغات.
+            </p>
+            <div style="margin-top: 16px;">
+              <a href="03_conformite_loi_18_07.html" class="btn btn-secondary" style="font-size: 0.78rem;">تصفح الفصل الثالث ←</a>
+            </div>
+          </div>
+
+          <div class="card col-6">
+            <span class="chapter-number">الفصل الرابع</span>
+            <div class="card-title" style="margin-top: 6px;">
+              <a href="04_backlog_addendum.html" style="color: inherit; text-decoration: none;">ملحق المهام والميزات (22 تذكرة)</a>
+            </div>
+            <p class="card-desc">
+              تقرير الـ 167 نقطة برمجية: حساب عمر الحمل وموعد الولادة، مخططات الوزن حتى 80 كغ، تذكيرات المحطات، واختصار إعدادات التنبيهات.
+            </p>
+            <div style="margin-top: 16px;">
+              <a href="04_backlog_addendum.html" class="btn btn-secondary" style="font-size: 0.78rem;">تصفح الفصل الرابع ←</a>
+            </div>
+          </div>
+
+          <div class="card col-6">
+            <span class="chapter-number">الفصل الخامس</span>
+            <div class="card-title" style="margin-top: 6px;">
+              <a href="05_memoires_et_impression.html" style="color: inherit; text-decoration: none;">ألبوم الذكريات وطباعة كتب الصور PDF</a>
+            </div>
+            <p class="card-desc">
+              تحويل الذكريات الرقمية إلى كتاب ورقي فاخر: نماذج الألبومات المجهزة والخيارات الحرة، محرك تصميم ملفات PDF الاحترافي ومسار طلب الطباعة لأعضاء VIP.
+            </p>
+            <div style="margin-top: 16px;">
+              <a href="05_memoires_et_impression.html" class="btn btn-secondary" style="font-size: 0.78rem;">تصفح الفصل الخامس ←</a>
+            </div>
+          </div>
+
+          <div class="card col-6">
+            <span class="chapter-number">الفصل السادس</span>
+            <div class="card-title" style="margin-top: 6px;">
+              <a href="06_marketplace_et_monetisation.html" style="color: inherit; text-decoration: none;">متجر الشركاء وخطة تحقيق الإيرادات</a>
+            </div>
+            <p class="card-desc">
+              متجر مستلزمات الأم والطفل، سلة التسوق، الدفع نقداً عند الاستلام لـ 58 ولاية، وشبكة الإعلانات الداخلية الموزعة حسب فئة الاشتراك.
+            </p>
+            <div style="margin-top: 16px;">
+              <a href="06_marketplace_et_monetisation.html" class="btn btn-secondary" style="font-size: 0.78rem;">تصفح الفصل السادس ←</a>
+            </div>
+          </div>
+
+          <div class="card col-12">
+            <span class="chapter-number">الفصل السابع</span>
+            <div class="card-title" style="margin-top: 6px;">
+              <a href="07_guide_recette_et_production.html" style="color: inherit; text-decoration: none;">دليل الفحص اليدوي وجاهزية النشر للإنتاج</a>
+            </div>
+            <p class="card-desc">
+              دليل الفحص والمطابقة التفاعلي المتضمن 14 اختباراً عملياً يُحفظ تقدمها آلياً في المتصفح، مع تدقيق لوحة الإدارة وخارطة طريق إطلاق التطبيق.
+            </p>
+            <div style="margin-top: 16px;">
+              <a href="07_guide_recette_et_production.html" class="btn btn-primary" style="font-size: 0.78rem;">بدء الفحص التفاعلي للتطبيق ←</a>
+            </div>
+          </div>
+
+        </div>
+      </section>
+
+      <!-- التسلسل الزمني -->
+      <section>
+        <h2>التسلسل الزمني للتسليمات والإصدارات</h2>
+        
+        <div class="table-wrapper">
+          <table>
+            <thead>
+              <tr>
+                <th>التاريخ</th>
+                <th>الإصدار</th>
+                <th>طبيعة المخرجات البرمجية</th>
+                <th>الحالة</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td class="mono">02/03/2026</td>
+                <td class="mono">v1.0.0 (Build 1)</td>
+                <td>تسليم حزمة APK الرسمية لنظام أندرويد (108.2 ميغابايت) متضمنة 36 تعديلاً هيكلياً وجمالياً.</td>
+                <td><span class="badge badge-green">تم التسليم</span></td>
+              </tr>
+              <tr>
+                <td class="mono">03/03/2026</td>
+                <td class="mono">v1.0.1</td>
+                <td>إطلاق الوضع الغامر لمشغل الكبسولات، توقيع Keystore الرسمي وحل بصمة SHA-1 لجوجل.</td>
+                <td><span class="badge badge-green">تم التسليم</span></td>
+              </tr>
+              <tr>
+                <td class="mono">16/06/2026</td>
+                <td class="mono">v1.1.0</td>
+                <td>تطبيق الامتثال للقانون 18-07، سجل التدقيق المحمي وبصمة FNV-1a ونظام التعريب المتفاعل.</td>
+                <td><span class="badge badge-green">تم التسليم</span></td>
+              </tr>
+              <tr>
+                <td class="mono">20/06/2026</td>
+                <td class="mono">v1.2.0 (المرحلة 1)</td>
+                <td>تذاكر الملحق M1-M3: حالة أمل، حاسبة الحمل بالأسبوع وتاريخ الولادة، ومخطط الوزن 80 كغ.</td>
+                <td><span class="badge badge-green">تم التسليم</span></td>
+              </tr>
+              <tr>
+                <td class="mono">21/06/2026</td>
+                <td class="mono">v1.2.0 (المرحلة 2)</td>
+                <td>تذاكر الملحق M4-M12: محرك طباعة كتب الصور، متجر المنتجات، ومسار الشراء والتوصيل.</td>
+                <td><span class="badge badge-green">تم التسليم</span></td>
+              </tr>
+              <tr>
+                <td class="mono">20/07/2026</td>
+                <td class="mono">v1.2.5</td>
+                <td>إتمام حملة التعريب الشاملة لجميع شاشات التذاكر الـ 22 ودليل التحقق اليدوي.</td>
+                <td><span class="badge badge-green">تم التسليم</span></td>
+              </tr>
+              <tr>
+                <td class="mono">17/08/2026</td>
+                <td class="mono">Admin Web</td>
+                <td>تدقيق جاهزية لوحة التحكم بنسبة 88%، تدوير مفاتيح حسابات الخدمة وملء البيانات الأولية.</td>
+                <td><span class="badge badge-yellow">قيد الاعتماد النهائي</span></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- نصيحة القراءة -->
+      <div class="callout">
+        <div class="callout-title">توجيهات القراءة</div>
+        <p>
+          للحصول على رؤية شاملة للمشروع، نوصي بالاطلاع أولاً على <strong>الفصل الأول</strong> لاستيعاب فلسفة التصميم والأساس البرمجي، ثم التدرج تباعاً في الفصول حتى الوصول إلى بنك الفحص اليدوي في <strong>الفصل السابع</strong>.
+        </p>
+      </div>
+
+      <!-- أسفل الصفحة -->
+      <footer class="page-nav">
+        <div></div>
+        <a href="01_architecture_et_produit.html" class="page-nav-item next">
+          <span class="page-nav-label">التالي · الفصل ٠١</span>
+          <span class="page-nav-title">رؤية المنتج والأساس التقني ←</span>
+        </a>
+      </footer>
+
+    </main>
+
+  </div>
+
+  <div id="search-modal" class="search-modal">
+    <div class="search-box">
+      <div class="search-input-wrapper">
+        <span class="mono" style="font-size: 0.85rem; color: var(--text-muted);">بحث:</span>
+        <input type="text" id="search-input" class="search-input" placeholder="اكتب كلمة مفتاحية (مثال: القانون 18-07، طباعة، وزن، VIP...)" autocomplete="off">
+        <kbd>Esc</kbd>
+      </div>
+      <div id="search-results" class="search-results"></div>
+    </div>
+  </div>
+
+  <button class="mobile-toggle" aria-label="قائمة التصفح">
+    <span class="mono" style="font-size: 1.1rem; line-height: 1;">☰</span>
+  </button>
+
+  <script src="book.js"></script>
+</body>
+</html>
