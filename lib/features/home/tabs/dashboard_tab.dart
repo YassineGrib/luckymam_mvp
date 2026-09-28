@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../core/extensions/l10n_extension.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../l10n/app_localizations.dart';
+import '../../../shared/widgets/top_ambient_gradient.dart';
 import '../../profile/models/profile_models.dart';
 import '../../profile/providers/profile_providers.dart';
 import '../widgets/children_overview.dart';
@@ -35,12 +36,15 @@ class DashboardTab extends ConsumerWidget {
 
     return Container(
       color: backgroundColor,
-      child: SafeArea(
-        child: CustomScrollView(
-          physics: const BouncingScrollPhysics(
-            parent: AlwaysScrollableScrollPhysics(),
-          ),
-          slivers: [
+      child: Stack(
+        children: [
+          const TopAmbientGradient(height: 380),
+          SafeArea(
+            child: CustomScrollView(
+              physics: const BouncingScrollPhysics(
+                parent: AlwaysScrollableScrollPhysics(),
+              ),
+              slivers: [
             // ─── Welcome ─────────────────────────────────────────────
             const SliverToBoxAdapter(child: PersonalHeader()),
 
@@ -116,7 +120,9 @@ class DashboardTab extends ConsumerWidget {
           ],
         ),
       ),
-    );
+    ],
+  ),
+);
   }
 
   String _healthSectionTitle(AppLocalizations l10n, UserStatus? status) {

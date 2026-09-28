@@ -11,6 +11,7 @@ import '../../home/tabs/vaccinations_tab.dart';
 import '../screens/appointments_screen.dart';
 import '../screens/growth_screen.dart';
 import '../../../core/theme/app_typography.dart';
+import '../../../shared/widgets/top_ambient_gradient.dart';
 
 /// Main "Santé" tab — health hub with Vaccines, Growth & Appointments sub-tabs.
 class HealthTab extends ConsumerStatefulWidget {
@@ -54,8 +55,11 @@ class _HealthTabState extends ConsumerState<HealthTab>
 
     return Scaffold(
       backgroundColor: bgColor,
-      body: SafeArea(
-        child: childrenAsync.when(
+      body: Stack(
+        children: [
+          const TopAmbientGradient(height: 380),
+          SafeArea(
+            child: childrenAsync.when(
           loading: () => const Center(child: CircularProgressIndicator()),
           error: (_, _) => _buildError(l10n),
           data: (children) {
@@ -112,7 +116,9 @@ class _HealthTabState extends ConsumerState<HealthTab>
           },
         ),
       ),
-    );
+    ],
+  ),
+);
   }
 
   // ─── Header ──────────────────────────────────────────────────────────────

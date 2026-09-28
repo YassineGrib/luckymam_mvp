@@ -28,6 +28,7 @@ import '../../core/extensions/l10n_extension.dart';
 import '../../core/providers/display_provider.dart';
 import '../timeline/widgets/timeline_rail.dart';
 import '../../core/theme/app_typography.dart';
+import '../../shared/widgets/top_ambient_gradient.dart';
 
 /// Full profile screen with Firestore integration.
 class ProfileScreen extends ConsumerWidget {
@@ -77,8 +78,12 @@ class ProfileScreen extends ConsumerWidget {
     final l10n = context.l10n;
 
     return Scaffold(
-      body: CustomScrollView(
-        slivers: [
+      backgroundColor: isDark ? AppColors.backgroundDark : AppColors.backgroundLight,
+      body: Stack(
+        children: [
+          const TopAmbientGradient(height: 380),
+          CustomScrollView(
+            slivers: [
           // Custom App Bar with profile header
           SliverToBoxAdapter(
             child: profileAsync.when(
@@ -243,7 +248,9 @@ class ProfileScreen extends ConsumerWidget {
           ),
         ],
       ),
-    );
+    ],
+  ),
+);
   }
 
   void _showEditPersonalInfo(
@@ -435,13 +442,6 @@ class _ProfileHeader extends StatelessWidget {
         MediaQuery.of(context).padding.top + AppSpacing.lg,
         AppSpacing.screenPaddingH,
         AppSpacing.lg,
-      ),
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
-          begin: Alignment.topCenter,
-          end: Alignment.bottomCenter,
-          colors: [primaryColor.withValues(alpha: 0.2), Colors.transparent],
-        ),
       ),
       child: Row(
         children: [

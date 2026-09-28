@@ -14,6 +14,7 @@ import '../widgets/emotion_picker.dart';
 import 'capsule_detail_screen.dart';
 import 'create_capsule_screen.dart';
 import '../../../shared/widgets/page_header_with_filter.dart';
+import '../../../shared/widgets/top_ambient_gradient.dart';
 
 /// Gallery screen for viewing all capsules.
 class CapsulesGallery extends ConsumerWidget {
@@ -40,8 +41,11 @@ class CapsulesGallery extends ConsumerWidget {
 
     return Scaffold(
       backgroundColor: bgColor,
-      body: SafeArea(
-        child: Column(
+      body: Stack(
+        children: [
+          const TopAmbientGradient(height: 380),
+          SafeArea(
+            child: Column(
           children: [
             // Header and Child filter using shared component
             childrenAsync.when(
@@ -160,7 +164,9 @@ class CapsulesGallery extends ConsumerWidget {
           ],
         ),
       ),
-    );
+    ],
+  ),
+);
   }
 
   void _showQuotaExceededDialog(BuildContext context) {

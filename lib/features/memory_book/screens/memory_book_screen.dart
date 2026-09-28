@@ -15,6 +15,7 @@ import 'album_detail_screen.dart';
 import 'album_template_picker_screen.dart';
 import 'standard_album_detail_screen.dart';
 import '../../../shared/widgets/page_header_with_filter.dart';
+import '../../../shared/widgets/top_ambient_gradient.dart';
 
 /// Main Memory Book screen showing auto-generated album suggestions.
 class MemoryBookScreen extends ConsumerWidget {
@@ -39,8 +40,11 @@ class MemoryBookScreen extends ConsumerWidget {
 
     return Scaffold(
       backgroundColor: bgColor,
-      body: SafeArea(
-        child: Column(
+      body: Stack(
+        children: [
+          const TopAmbientGradient(height: 380),
+          SafeArea(
+            child: Column(
           children: [
             childrenAsync.when(
               loading: () => const SizedBox(height: 50),
@@ -133,7 +137,9 @@ class MemoryBookScreen extends ConsumerWidget {
           ],
         ),
       ),
-    );
+    ],
+  ),
+);
   }
 
   void _openTemplatePicker(BuildContext context, List<Child> children) {

@@ -17,6 +17,7 @@ import '../../../core/extensions/l10n_extension.dart';
 import '../../../core/services/analytics_service.dart';
 import '../../../core/providers/display_provider.dart';
 import '../../../shared/widgets/page_header_with_filter.dart';
+import '../../../shared/widgets/top_ambient_gradient.dart';
 
 /// Main Timeline screen - "Le Livre de Vie"
 class TimelineScreen extends ConsumerStatefulWidget {
@@ -49,8 +50,11 @@ class _TimelineScreenState extends ConsumerState<TimelineScreen> {
 
     return Scaffold(
       backgroundColor: bgColor,
-      body: SafeArea(
-        child: childrenAsync.when(
+      body: Stack(
+        children: [
+          const TopAmbientGradient(height: 380),
+          SafeArea(
+            child: childrenAsync.when(
           loading: () => const Center(child: CircularProgressIndicator()),
           error: (e, _) => _buildError(context, textColor, secondaryText),
           data: (children) {
@@ -141,7 +145,9 @@ class _TimelineScreenState extends ConsumerState<TimelineScreen> {
           },
         ),
       ),
-    );
+    ],
+  ),
+);
   }
 
   Widget _buildMilestonesContent(

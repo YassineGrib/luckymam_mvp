@@ -11,6 +11,7 @@ import '../../profile/providers/profile_providers.dart';
 import '../../vaccines/providers/vaccine_providers.dart';
 import '../../vaccines/widgets/vaccine_card.dart';
 import '../../../shared/widgets/page_header_with_filter.dart';
+import '../../../shared/widgets/top_ambient_gradient.dart';
 import '../../../core/theme/app_typography.dart';
 
 /// Vaccinations tab - vaccine calendar with child selector.
@@ -42,8 +43,11 @@ class _VaccinationsTabState extends ConsumerState<VaccinationsTab> {
 
     return Scaffold(
       backgroundColor: bgColor,
-      body: SafeArea(
-        child: childrenAsync.when(
+      body: Stack(
+        children: [
+          const TopAmbientGradient(height: 380),
+          SafeArea(
+            child: childrenAsync.when(
           loading: () => const Center(child: CircularProgressIndicator()),
           error: (error, _) => _buildErrorState(l10n, textColor, secondaryText),
           data: (children) {
@@ -89,7 +93,9 @@ class _VaccinationsTabState extends ConsumerState<VaccinationsTab> {
           },
         ),
       ),
-    );
+    ],
+  ),
+);
   }
 
   Widget _buildVaccineList(

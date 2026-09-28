@@ -12,6 +12,7 @@ import '../providers/order_providers.dart';
 import 'cart_screen.dart';
 import 'my_orders_screen.dart';
 import 'product_detail_screen.dart';
+import '../../../shared/widgets/top_ambient_gradient.dart';
 
 /// Partner marketplace — browsable catalogue of partner products.
 class MarketplaceScreen extends ConsumerStatefulWidget {
@@ -47,8 +48,11 @@ class _MarketplaceScreenState extends ConsumerState<MarketplaceScreen> {
 
     return Scaffold(
       backgroundColor: bgColor,
-      body: SafeArea(
-        child: Column(
+      body: Stack(
+        children: [
+          const TopAmbientGradient(height: 380),
+          SafeArea(
+            child: Column(
           children: [
             // ── Header ────────────────────────────────────────────────
             Padding(
@@ -194,7 +198,9 @@ class _MarketplaceScreenState extends ConsumerState<MarketplaceScreen> {
           ],
         ),
       ),
-    );
+    ],
+  ),
+);
   }
 
   Widget _buildEmptyState(Color secondaryText, String message) {
