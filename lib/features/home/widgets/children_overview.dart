@@ -7,30 +7,21 @@ import '../../profile/child_profile_screen.dart';
 import '../../profile/profile_screen.dart';
 import '../providers/home_providers.dart';
 import 'child_summary_card.dart';
-import '../../../core/theme/app_typography.dart';
 
-/// Horizontal list of children summaries.
+/// Redesigned horizontal list of children summaries.
+/// Features boutique squircle cards, soft pastel surfaces, and smooth scrolling.
 class ChildrenOverview extends ConsumerWidget {
   const ChildrenOverview({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final summariesAsync = ref.watch(childrenSummaryProvider);
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-    final titleColor = isDark ? Colors.white : AppColors.onSurfaceLight;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
-          child: Text(
-            context.l10n.homeYourChildren,
-            style: AppTypography.fromContext(context, fontSize: 18, fontWeight: FontWeight.bold, color: titleColor),
-          ),
-        ),
         SizedBox(
-          height: 180, // Height for the cards
+          height: 168,
           child: summariesAsync.when(
             loading: () => ListView.builder(
               scrollDirection: Axis.horizontal,
@@ -80,22 +71,26 @@ class ChildrenOverview extends ConsumerWidget {
         : Colors.black.withValues(alpha: 0.05);
 
     return Container(
-      width: 160,
-      margin: const EdgeInsetsDirectional.only(end: 12),
+      width: 152,
+      margin: const EdgeInsetsDirectional.only(end: 14),
       decoration: BoxDecoration(
         color: color,
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: BorderRadius.circular(24),
       ),
     );
   }
 
   Widget _buildAddButton(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final cardColor = isDark ? AppColors.surfaceDark : Colors.white;
     final primaryColor = isDark
         ? AppColors.primaryDark
         : AppColors.primaryLight;
     final l10n = context.l10n;
+
+    final bg = isDark ? const Color(0xFF241C20) : const Color(0xFFFFF4EE);
+    final borderColor = isDark
+        ? Colors.white.withValues(alpha: 0.08)
+        : const Color(0xFFFFDFD0);
 
     return GestureDetector(
       onTap: () {
@@ -104,20 +99,22 @@ class ChildrenOverview extends ConsumerWidget {
         ).push(MaterialPageRoute(builder: (_) => const ProfileScreen()));
       },
       child: Container(
-        width: 160,
+        width: 130,
         margin: const EdgeInsetsDirectional.only(end: 20),
         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 16),
         decoration: BoxDecoration(
-          color: cardColor,
-          borderRadius: BorderRadius.circular(20),
+          color: bg,
+          borderRadius: BorderRadius.circular(24),
           border: Border.all(
-            color: primaryColor.withValues(alpha: 0.35),
-            width: 1.5,
+            color: borderColor,
+            width: 1.2,
           ),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withValues(alpha: isDark ? 0.05 : 0.06),
-              blurRadius: 10,
+              color: isDark
+                  ? Colors.black.withValues(alpha: 0.15)
+                  : const Color(0xFFF7DCD0).withValues(alpha: 0.35),
+              blurRadius: 12,
               offset: const Offset(0, 4),
             ),
           ],
@@ -127,31 +124,40 @@ class ChildrenOverview extends ConsumerWidget {
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             Container(
-              width: 52,
-              height: 52,
+              width: 44,
+              height: 44,
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
-                color: primaryColor.withValues(alpha: isDark ? 0.2 : 0.1),
+                color: isDark
+                    ? Colors.white.withValues(alpha: 0.1)
+                    : Colors.white,
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withValues(alpha: 0.05),
+                    blurRadius: 6,
+                    offset: const Offset(0, 2),
+                  ),
+                ],
               ),
               child: Center(
                 child: Icon(
                   Icons.add_rounded,
                   color: primaryColor,
-                  size: 28,
+                  size: 24,
                 ),
               ),
             ),
-            const SizedBox(height: 12),
+            const SizedBox(height: 10),
             Text(
               l10n.addChild,
               textAlign: TextAlign.center,
               maxLines: 2,
               overflow: TextOverflow.ellipsis,
-              style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                    fontWeight: FontWeight.bold,
-                    color: primaryColor,
-                    letterSpacing: -0.2,
-                  ),
+              style: TextStyle(
+                fontSize: 12,
+                fontWeight: FontWeight.w700,
+                color: primaryColor,
+              ),
             ),
           ],
         ),

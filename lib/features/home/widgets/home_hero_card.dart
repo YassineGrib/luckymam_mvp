@@ -7,6 +7,7 @@ import '../../capsules/screens/create_capsule_screen.dart';
 import '../../health/screens/health_hub_screen.dart';
 import '../../profile/models/profile_models.dart';
 import '../../profile/providers/profile_providers.dart';
+import '../providers/home_providers.dart';
 
 /// Central Hero Companion Card on the Home Dashboard.
 /// Inspired by the flagship cards in modern lifestyle/health mobile apps.
@@ -29,6 +30,7 @@ class _HomeHeroCompanionCardState extends ConsumerState<HomeHeroCompanionCard> {
     final profileAsync = ref.watch(profileProvider);
     final profile = profileAsync.valueOrNull;
     final status = profile?.status ?? UserStatus.mom;
+    final tip = ref.watch(dailyTipProvider);
 
     final l10n = context.l10n;
 
@@ -217,7 +219,55 @@ class _HomeHeroCompanionCardState extends ConsumerState<HomeHeroCompanionCard> {
                         ),
                       ),
 
-                      const SizedBox(height: 20),
+                      const SizedBox(height: 12),
+
+                      // ─── Integrated Daily Tip Bubble ─────────────────
+                      Container(
+                        width: double.infinity,
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 13,
+                          vertical: 9,
+                        ),
+                        decoration: BoxDecoration(
+                          color: isDark
+                              ? Colors.white.withValues(alpha: 0.07)
+                              : Colors.white.withValues(alpha: 0.75),
+                          borderRadius: BorderRadius.circular(16),
+                          border: Border.all(
+                            color: isDark
+                                ? Colors.white.withValues(alpha: 0.05)
+                                : const Color(0xFFD6C8E6).withValues(alpha: 0.4),
+                            width: 1,
+                          ),
+                        ),
+                        child: Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const Icon(
+                              Icons.lightbulb_rounded,
+                              size: 15,
+                              color: AppColors.casablanca,
+                            ),
+                            const SizedBox(width: 8),
+                            Expanded(
+                              child: Text(
+                                tip,
+                                maxLines: 2,
+                                overflow: TextOverflow.ellipsis,
+                                style: TextStyle(
+                                  fontSize: 11.5,
+                                  fontStyle: FontStyle.italic,
+                                  fontWeight: FontWeight.w500,
+                                  color: subtextColor,
+                                  height: 1.35,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+
+                      const SizedBox(height: 18),
 
                       // Bottom Row: Avatar stack + tactile action pill
                       Row(

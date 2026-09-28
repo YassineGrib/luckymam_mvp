@@ -7,10 +7,9 @@ import '../../../shared/widgets/top_ambient_gradient.dart';
 import '../../profile/models/profile_models.dart';
 import '../../profile/providers/profile_providers.dart';
 import '../widgets/children_overview.dart';
-import '../widgets/daily_tip_card.dart';
 import '../widgets/home_bento_grid.dart';
+import '../widgets/home_bottom_bento.dart';
 import '../widgets/home_hero_card.dart';
-import '../widgets/marketplace_shortcut_card.dart';
 import '../widgets/personal_header.dart';
 import '../widgets/recent_capsules.dart';
 import '../widgets/section_header.dart';
@@ -109,19 +108,16 @@ class DashboardTab extends ConsumerWidget {
                 ),
                 const SliverToBoxAdapter(child: RecentCapsules()),
 
-                // 8. Boutique Partenaires
+                // 8. Boutique Partenaires & Livre de Vie (Bento Row)
                 SliverToBoxAdapter(
                   child: SectionHeader(
                     title: l10n.dashboardPartnerShop,
                     icon: Icons.storefront_rounded,
                   ),
                 ),
-                const SliverToBoxAdapter(child: MarketplaceShortcutCard()),
+                const SliverToBoxAdapter(child: HomeBottomBento()),
 
-                // 9. Daily Tip Card
-                const SliverToBoxAdapter(child: DailyTipCard()),
-
-                // 10. Upgrade Prompt for free-tier users
+                // 9. Upgrade Prompt for free-tier users
                 const SliverToBoxAdapter(child: UpgradePromptBanner()),
 
                 // Bottom padding for floating navigation bar
