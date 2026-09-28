@@ -1,261 +1,285 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:intl/intl.dart';
 
 import '../../../core/extensions/l10n_extension.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../l10n/app_localizations.dart';
 import '../../notifications/notifications_screen.dart';
 import '../../profile/models/profile_models.dart';
+import '../../profile/profile_screen.dart';
 import '../../profile/providers/profile_providers.dart';
 import '../providers/home_providers.dart';
-import '../../profile/profile_screen.dart';
 
-/// Personal greeting header with user context.
+/// Redesigned airy modern top header bar for the Home Dashboard.
+/// Directly mirrors the clean, non-boxed, agency-grade header style
+/// from flagship mobile inspirations (Avatar with ring + Greeting + Notification Bell).
 class PersonalHeader extends ConsumerWidget {
   const PersonalHeader({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final textColor = isDark ? Colors.white : AppColors.onSurfaceLight;
+    final textColor = isDark ? Colors.white : const Color(0xFF161618);
     final secondaryColor = isDark
         ? AppColors.textSecondaryDark
         : AppColors.textSecondaryLight;
+    final primary = isDark ? AppColors.primaryDark : AppColors.primaryLight;
 
     final profileAsync = ref.watch(profileProvider);
 
     return Padding(
-      padding: const EdgeInsetsDirectional.fromSTEB(20, 16, 20, 8),
+      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
       child: profileAsync.when(
-        loading: () => _buildSkeleton(textColor),
-        error: (_, _) =>
-            _buildGreeting(context, ref, textColor, secondaryColor, null),
-        data: (profile) =>
-            _buildGreeting(context, ref, textColor, secondaryColor, profile),
+        loading: () => _buildSkeleton(isDark),
+        error: (_, _) => _buildBar(context, ref, textColor, secondaryColor, primary, null),
+        data: (profile) => _buildBar(context, ref, textColor, secondaryColor, primary, profile),
       ),
     );
   }
 
-  Widget _buildSkeleton(Color textColor) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
+  Widget _buildSkeleton(bool isDark) {
+    return Row(
       children: [
         Container(
-          width: 180,
-          height: 32,
+          width: 48,
+          height: 48,
           decoration: BoxDecoration(
-            color: textColor.withValues(alpha: 0.1),
-            borderRadius: BorderRadius.circular(8),
+            shape: BoxShape.circle,
+            color: (isDark ? Colors.white : Colors.black).withValues(alpha: 0.08),
           ),
         ),
-        const SizedBox(height: 8),
-        Container(
-          width: 140,
-          height: 20,
-          decoration: BoxDecoration(
-            color: textColor.withValues(alpha: 0.05),
-            borderRadius: BorderRadius.circular(4),
+        const SizedBox(width: 14),
+        Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Container(
+              width: 130,
+              height: 18,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(6),
+                color: (isDark ? Colors.white : Colors.black).withValues(alpha: 0.08),
+              ),
+            ),
+            const SizedBox(height: 6),
+            Container(
+              width: 90,
+              height: 13,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(4),
+                color: (isDark ? Colors.white : Colors.black).withValues(alpha: 0.05),
+              ),
+            ),
+          ],
+        ),
+      ],
+    );
+  }
+
+  Widget _buildBar(
+    BuildContext context,
+    WidgetRef ref,
+    Color textColor,
+    Color secondaryColor,
+    Color primary,
+    UserProfile? profile,
+  ) {
+    final l10n = context.l10n;
+    final greeting = getTimeBasedGreeting(l10n);
+    final name = profile?.displayName ?? l10n.defaultMotherName;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
+    final locale = Localizations.localeOf(context).toString();
+    final todayFormatted = DateFormat('d MMM', locale).format(DateTime.now());
+
+    final statusLabel = _statusLabel(l10n, profile);
+
+    return Row(
+      children: [
+        // ─── Circular User Avatar ────────────────────────────────────
+        GestureDetector(
+          onTap: () {
+            Navigator.of(context).push(
+              MaterialPageRoute(builder: (_) => const ProfileScreen()),
+            );
+          },
+          child: Stack(
+            children: [
+              Container(
+                width: 48,
+                height: 48,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  border: Border.all(
+                    color: primary.withValues(alpha: 0.35),
+                    width: 2,
+                  ),
+                  boxShadow: [
+                    BoxShadow(
+                      color: primary.withValues(alpha: 0.2),
+                      blurRadius: 10,
+                      offset: const Offset(0, 3),
+                    ),
+                  ],
+                ),
+                child: ClipOval(
+                  child: profile?.photoUrl != null
+                      ? Image.network(
+                          profile!.photoUrl!,
+                          fit: BoxFit.cover,
+                          errorBuilder: (c, e, s) => _fallbackAvatar(name, primary),
+                        )
+                      : _fallbackAvatar(name, primary),
+                ),
+              ),
+              // Active status dot
+              Positioned(
+                bottom: 1,
+                right: 1,
+                child: Container(
+                  width: 12,
+                  height: 12,
+                  decoration: BoxDecoration(
+                    color: const Color(0xFF2ECC71),
+                    shape: BoxShape.circle,
+                    border: Border.all(
+                      color: isDark ? const Color(0xFF161618) : Colors.white,
+                      width: 2,
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+
+        const SizedBox(width: 14),
+
+        // ─── Greeting & Date Subtitle ────────────────────────────────
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                '$greeting, $name 👋',
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.w800,
+                  color: textColor,
+                  letterSpacing: -0.2,
+                ),
+              ),
+              const SizedBox(height: 3),
+              Row(
+                children: [
+                  Text(
+                    'Aujourd\'hui, $todayFormatted',
+                    style: TextStyle(
+                      fontSize: 12,
+                      fontWeight: FontWeight.w500,
+                      color: secondaryColor,
+                    ),
+                  ),
+                  const SizedBox(width: 6),
+                  Container(
+                    width: 3,
+                    height: 3,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      color: secondaryColor.withValues(alpha: 0.6),
+                    ),
+                  ),
+                  const SizedBox(width: 6),
+                  Flexible(
+                    child: Text(
+                      statusLabel,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: TextStyle(
+                        fontSize: 11.5,
+                        fontWeight: FontWeight.w600,
+                        color: primary,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ),
+
+        const SizedBox(width: 10),
+
+        // ─── Circular Notification Button ────────────────────────────
+        GestureDetector(
+          onTap: () {
+            Navigator.of(context).push(
+              MaterialPageRoute(builder: (_) => const NotificationsScreen()),
+            );
+          },
+          child: Container(
+            width: 42,
+            height: 42,
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              color: isDark
+                  ? Colors.white.withValues(alpha: 0.1)
+                  : Colors.white.withValues(alpha: 0.85),
+              border: Border.all(
+                color: isDark
+                    ? Colors.white.withValues(alpha: 0.1)
+                    : Colors.black.withValues(alpha: 0.06),
+                width: 1,
+              ),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withValues(alpha: 0.04),
+                  blurRadius: 8,
+                  offset: const Offset(0, 2),
+                ),
+              ],
+            ),
+            child: Stack(
+              alignment: Alignment.center,
+              children: [
+                Icon(
+                  Icons.notifications_none_rounded,
+                  color: isDark ? Colors.white : const Color(0xFF161618),
+                  size: 21,
+                ),
+                // Glowing orange/coral unread indicator dot
+                Positioned(
+                  top: 9,
+                  right: 10,
+                  child: Container(
+                    width: 7,
+                    height: 7,
+                    decoration: const BoxDecoration(
+                      color: Color(0xFFFF5252),
+                      shape: BoxShape.circle,
+                    ),
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
       ],
     );
   }
 
-  Widget _buildGreeting(
-    BuildContext context,
-    WidgetRef ref,
-    Color textColor,
-    Color secondaryColor,
-    UserProfile? profile,
-  ) {
-    final l10n = context.l10n;
-    final greeting = getTimeBasedGreeting(l10n);
-    final name = profile?.displayName ?? l10n.defaultMotherName;
-    final status = _statusLabel(l10n, profile);
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-    final primary = isDark ? AppColors.primaryDark : AppColors.primaryLight;
-    final cardColor = isDark ? AppColors.surfaceDark : Colors.white;
-
+  Widget _fallbackAvatar(String name, Color primary) {
     return Container(
-      width: double.infinity,
-      decoration: BoxDecoration(
-        color: cardColor,
-        borderRadius: BorderRadius.circular(24),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.05),
-            blurRadius: 15,
-            offset: const Offset(0, 5),
-          ),
-        ],
-      ),
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(24),
-        child: Stack(
-          children: [
-            // Background Pattern Overlay
-            Positioned.fill(
-              child: Opacity(
-                opacity: isDark ? 0.15 : 0.25,
-                child: Image.asset(
-                  'assets/images/heroPatern.png',
-                  fit: BoxFit.cover,
-                  repeat: ImageRepeat.repeat,
-                ),
-              ),
-            ),
-            // Content
-            Padding(
-              padding: const EdgeInsets.all(20),
-              child: Row(
-                children: [
-                  // Left content
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        // Brand logo (PNG includes wordmark)
-                        Image.asset(
-                          'assets/logo/herizontal_logo.png',
-                          height: 42,
-                          fit: BoxFit.contain,
-                          alignment: AlignmentDirectional.centerStart,
-                          filterQuality: FilterQuality.high,
-                        ),
-                        const SizedBox(height: 8),
-                        // Greeting
-                        Text(
-                          '$greeting,',
-                          style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                            color: secondaryColor,
-                          ),
-                        ),
-                        Text(
-                          '$name! 👋',
-                          style: Theme.of(context).textTheme.headlineSmall
-                              ?.copyWith(
-                                fontWeight: FontWeight.bold,
-                                color: textColor,
-                              ),
-                        ),
-                        const SizedBox(height: 8),
-                        // Profile Status
-                        GestureDetector(
-                          onTap: () {
-                            Navigator.of(context).push(
-                              MaterialPageRoute(
-                                builder: (_) => const ProfileScreen(),
-                              ),
-                            );
-                          },
-                          child: Container(
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 10,
-                              vertical: 4,
-                            ),
-                            decoration: BoxDecoration(
-                              color: primary.withValues(alpha: 0.1),
-                              borderRadius: BorderRadius.circular(12),
-                            ),
-                            child: Row(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                if (profile?.status == UserStatus.pregnant)
-                                  const Icon(
-                                    Icons.pregnant_woman_rounded,
-                                    size: 14,
-                                    color: Colors.pink,
-                                  )
-                                else if (profile?.status == UserStatus.hope)
-                                  const Icon(
-                                    Icons.favorite_border_rounded,
-                                    size: 14,
-                                    color: Colors.purple,
-                                  )
-                                else
-                                  const Icon(
-                                    Icons.child_friendly_rounded,
-                                    size: 14,
-                                    color: Colors.green,
-                                  ),
-                                const SizedBox(width: 6),
-                                Text(
-                                  status,
-                                  style: Theme.of(context).textTheme.labelMedium
-                                      ?.copyWith(
-                                        color: textColor.withValues(alpha: 0.8),
-                                        fontWeight: FontWeight.w600,
-                                      ),
-                                ),
-                                const SizedBox(width: 4),
-                                Icon(
-                                  Icons.chevron_right_rounded,
-                                  size: 14,
-                                  color: secondaryColor,
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-
-                  // Notification bell
-                  _NotifBell(primary: primary),
-                  const SizedBox(width: 8),
-
-                  // Avatar circle
-                  GestureDetector(
-                    onTap: () {
-                      Navigator.of(context).push(
-                        MaterialPageRoute(
-                          builder: (_) => const ProfileScreen(),
-                        ),
-                      );
-                    },
-                    child: Container(
-                      width: 92,
-                      height: 92,
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        border: Border.all(
-                          color: primary.withValues(alpha: 0.2),
-                          width: 3,
-                        ),
-                        boxShadow: [
-                          BoxShadow(
-                            color: primary.withValues(alpha: 0.25),
-                            blurRadius: 14,
-                            offset: const Offset(0, 5),
-                          ),
-                        ],
-                      ),
-                      child: ClipOval(
-                        child: profile?.photoUrl != null
-                            ? Image.network(
-                                profile!.photoUrl!,
-                                fit: BoxFit.cover,
-                              )
-                            : Container(
-                                color: primary,
-                                alignment: Alignment.center,
-                                child: Text(
-                                  name.isNotEmpty ? name[0].toUpperCase() : 'M',
-                                  style: Theme.of(context).textTheme.headlineMedium
-                                      ?.copyWith(
-                                        fontWeight: FontWeight.bold,
-                                        color: Colors.white,
-                                      ),
-                                ),
-                              ),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ],
+      color: primary,
+      alignment: Alignment.center,
+      child: Text(
+        name.isNotEmpty ? name[0].toUpperCase() : 'M',
+        style: const TextStyle(
+          fontWeight: FontWeight.w800,
+          color: Colors.white,
+          fontSize: 18,
         ),
       ),
     );
@@ -271,33 +295,5 @@ class PersonalHeader extends ConsumerWidget {
       case UserStatus.mom:
         return l10n.statusMom;
     }
-  }
-}
-
-// ─── Bell icon widget ─────────────────────────────────────────────────────────
-
-class _NotifBell extends StatelessWidget {
-  const _NotifBell({required this.primary});
-  final Color primary;
-
-  @override
-  Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: () {
-        Navigator.of(
-          context,
-        ).push(MaterialPageRoute(builder: (_) => const NotificationsScreen()));
-      },
-      child: Container(
-        width: 44,
-        height: 44,
-        decoration: BoxDecoration(
-          shape: BoxShape.circle,
-          color: primary.withValues(alpha: 0.1),
-          border: Border.all(color: primary.withValues(alpha: 0.2), width: 1),
-        ),
-        child: Icon(Icons.notifications_outlined, color: primary, size: 22),
-      ),
-    );
   }
 }
