@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<network-security-config>
+    <base-config cleartextTrafficPermitted="true">
+        <trust-anchors>
+            <certificates src="system" />
+            <certificates src="user" />
+        </trust-anchors>
+    </base-config>
+    <domain-config cleartextTrafficPermitted="true">
+        <domain includeSubdomains="true">chargily.dz</domain>
+        <domain includeSubdomains="true">chargily.net</domain>
+        <domain includeSubdomains="true">chargily.com</domain>
+        <domain includeSubdomains="true">satim.dz</domain>
+        <domain includeSubdomains="true">poste.dz</domain>
+    </domain-config>
+</network-security-config>

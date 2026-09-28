@@ -3,12 +3,15 @@ import '../../../core/theme/app_typography.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import 'package:firebase_auth/firebase_auth.dart';
 import '../../../core/extensions/l10n_extension.dart';
+import '../../../core/services/chargily_payment_service.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../l10n/app_localizations.dart';
 import '../subscription_plan_l10n.dart';
 import '../models/subscription_models.dart';
 import '../providers/subscription_providers.dart';
+import 'chargily_checkout_screen.dart';
 
 /// BaridiMob payment screen (CIB / Edahabia) — UI only, no real processing.
 class PaymentScreen extends ConsumerStatefulWidget {
@@ -488,15 +491,72 @@ class _PaymentScreenState extends ConsumerState<PaymentScreen> {
     );
   }
 
-  void _onConfirm() {
+  Future<void> _onConfirm() async {
     final l10n = context.l10n;
     final plan = widget.selectedPlan;
-    ref.read(subscriptionActionsProvider.notifier).upgradeTo(
-          plan.tier,
-          successMessage: l10n.subscriptionSnackUpgradeSuccess(
-            plan.localizedTitle(l10n),
+    final uid = FirebaseAuth.instance.currentUser?.uid ?? 'guest_user';
+
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (_) => const Center(
+        child: Card(
+          child: Padding(
+            padding: EdgeInsets.all(24.0),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                CircularProgressIndicator(color: Color(0xFF5801A2)),
+                SizedBox(height: 16),
+                Text('جاري فتح بوابة الدفع Chargily Pay...'),
+              ],
+            ),
           ),
-        );
+        ),
+      ),
+    );
+
+    final result = await ChargilyPaymentService.createCheckout(
+      amount: plan.priceDZD,
+      userId: uid,
+      type: 'subscription',
+      planTier: plan.tier.name,
+      customerName: _holderCtrl.text.isNotEmpty ? _holderCtrl.text : null,
+    );
+
+    if (!mounted) return;
+    Navigator.pop(context); // Close loading dialog
+
+    if (result.success && result.checkoutUrl != null) {
+      final paid = await Navigator.push<bool>(
+        context,
+        MaterialPageRoute(
+          builder: (_) => ChargilyCheckoutScreen(
+            checkoutUrl: result.checkoutUrl!,
+            checkoutId: result.checkoutId,
+            onSuccess: () {
+              ref.read(subscriptionActionsProvider.notifier).upgradeTo(
+                    plan.tier,
+                    successMessage: l10n.subscriptionSnackUpgradeSuccess(
+                      plan.localizedTitle(l10n),
+                    ),
+                  );
+            },
+          ),
+        ),
+      );
+
+      if (paid == true) {
+        setState(() => _showSuccess = true);
+      }
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(result.errorMessage ?? l10n.checkoutErrorGeneric),
+          backgroundColor: AppColors.error,
+        ),
+      );
+    }
   }
 
   Widget _buildSuccessView(
