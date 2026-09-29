@@ -373,51 +373,6 @@ class _EditMotherProfileScreenState extends ConsumerState<EditMotherProfileScree
                             ],
                           ),
                         ),
-                        // Quick Save Top Action
-                        GestureDetector(
-                          onTap: _isSaving ? null : _saveProfile,
-                          child: AnimatedContainer(
-                            duration: const Duration(milliseconds: 200),
-                            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8.5),
-                            decoration: BoxDecoration(
-                              gradient: LinearGradient(
-                                colors: [accent, accent.withValues(alpha: 0.88)],
-                                begin: Alignment.topLeft,
-                                end: Alignment.bottomRight,
-                              ),
-                              borderRadius: BorderRadius.circular(12),
-                              boxShadow: [
-                                BoxShadow(
-                                  color: accent.withValues(alpha: 0.35),
-                                  blurRadius: 8,
-                                  offset: const Offset(0, 2),
-                                ),
-                              ],
-                            ),
-                            child: Row(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                if (_isSaving)
-                                  const SizedBox(
-                                    width: 14,
-                                    height: 14,
-                                    child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white),
-                                  )
-                                else
-                                  const Icon(Icons.check_rounded, size: 16, color: Colors.white),
-                                const SizedBox(width: 6),
-                                Text(
-                                  lang == 'ar' ? 'حفظ' : 'Enregistrer',
-                                  style: const TextStyle(
-                                    fontSize: 12.5,
-                                    fontWeight: FontWeight.w800,
-                                    color: Colors.white,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
                       ],
                     ),
                   ),
