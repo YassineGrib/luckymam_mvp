@@ -14,6 +14,7 @@ import '../../core/theme/app_spacing.dart';
 import 'models/profile_models.dart';
 import 'privacy_screen.dart';
 import 'help_screen.dart';
+import 'edit_child_screen.dart';
 import 'providers/profile_providers.dart';
 import 'widgets/edit_dialogs.dart';
 import '../subscription/models/subscription_models.dart';
@@ -172,15 +173,15 @@ class ProfileScreen extends ConsumerWidget {
                   data: (children) => _ChildrenSection(
                     children: children,
                     primaryColor: primaryColor,
-                    onAddChild: () => _showAddChildDialog(context, ref),
+                    onAddChild: () => _openChildScreen(context),
                     onEditChild: (child) =>
-                        _showAddChildDialog(context, ref, child),
+                        _openChildScreen(context, child),
                   ),
                   loading: () =>
                       _LoadingSectionCard(title: l10n.myChildren),
                   error: (_, _) => _EmptyChildrenSection(
                     primaryColor: primaryColor,
-                    onAddChild: () => _showAddChildDialog(context, ref),
+                    onAddChild: () => _openChildScreen(context),
                   ),
                 ),
 
@@ -294,33 +295,13 @@ class ProfileScreen extends ConsumerWidget {
     );
   }
 
-  void _showAddChildDialog(
-    BuildContext context,
-    WidgetRef ref, [
+  void _openChildScreen(
+    BuildContext context, [
     Child? existingChild,
   ]) {
-    showDialog(
-      context: context,
-      builder: (context) => AddEditChildDialog(
-        child: existingChild,
-        onSave: (child, {imageFile}) async {
-          if (existingChild != null) {
-            await ref
-                .read(profileActionsProvider.notifier)
-                .updateChild(child, imageFile: imageFile);
-          } else {
-            await ref
-                .read(profileActionsProvider.notifier)
-                .addChild(child, imageFile: imageFile);
-          }
-        },
-        onDelete: existingChild != null
-            ? () async {
-                await ref
-                    .read(profileActionsProvider.notifier)
-                    .deleteChild(existingChild.id);
-              }
-            : null,
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (_) => EditChildScreen(child: existingChild),
       ),
     );
   }

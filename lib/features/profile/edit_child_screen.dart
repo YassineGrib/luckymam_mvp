@@ -36,9 +36,9 @@ const List<String> _kBloodTypes = ['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', '
 /// - Medical vitals (Blood Type selector & Special health/allergy notes)
 /// - Irreversible action danger zone (Permanent deletion with safe confirmation)
 class EditChildScreen extends ConsumerStatefulWidget {
-  const EditChildScreen({super.key, required this.child});
+  const EditChildScreen({super.key, this.child});
 
-  final Child child;
+  final Child? child;
 
   @override
   ConsumerState<EditChildScreen> createState() => _EditChildScreenState();
@@ -56,16 +56,18 @@ class _EditChildScreenState extends ConsumerState<EditChildScreen> {
   bool _isSaving = false;
   bool _isDeleting = false;
 
+  bool get _isEditing => widget.child != null;
+
   @override
   void initState() {
     super.initState();
-    _nameController = TextEditingController(text: widget.child.name);
-    _notesController = TextEditingController(text: widget.child.notes ?? '');
-    _birthDate = widget.child.birthDate;
-    _gender = widget.child.gender;
-    _bloodType = widget.child.bloodType;
-    _themeColorHex = widget.child.themeColorHex ??
-        (widget.child.gender == ChildGender.boy ? '#00B0FF' : '#FF5252');
+    _nameController = TextEditingController(text: widget.child?.name ?? '');
+    _notesController = TextEditingController(text: widget.child?.notes ?? '');
+    _birthDate = widget.child?.birthDate ?? DateTime.now();
+    _gender = widget.child?.gender ?? ChildGender.boy;
+    _bloodType = widget.child?.bloodType;
+    _themeColorHex = widget.child?.themeColorHex ??
+        (_gender == ChildGender.boy ? '#00B0FF' : '#FF5252');
   }
 
   @override
@@ -117,11 +119,12 @@ class _EditChildScreenState extends ConsumerState<EditChildScreen> {
   }
 
   Future<void> _saveChild() async {
+    final lang = Localizations.localeOf(context).languageCode;
     final name = _nameController.text.trim();
     if (name.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('يرجى إدخال اسم الطفل'),
+        SnackBar(
+          content: Text(lang == 'ar' ? 'يرجى إدخال اسم الطفل' : 'Veuillez saisir le nom de l\'enfant'),
           behavior: SnackBarBehavior.floating,
         ),
       );
@@ -130,28 +133,47 @@ class _EditChildScreenState extends ConsumerState<EditChildScreen> {
 
     setState(() => _isSaving = true);
     try {
-      final updatedChild = widget.child.copyWith(
-        name: name,
-        birthDate: _birthDate,
-        gender: _gender,
-        photoUrl: _removePhoto ? '' : widget.child.photoUrl,
-        bloodType: _bloodType,
-        themeColorHex: _themeColorHex,
-        notes: _notesController.text.trim(),
-      );
+      if (_isEditing) {
+        final updatedChild = widget.child!.copyWith(
+          name: name,
+          birthDate: _birthDate,
+          gender: _gender,
+          photoUrl: _removePhoto ? '' : widget.child!.photoUrl,
+          bloodType: _bloodType,
+          themeColorHex: _themeColorHex,
+          notes: _notesController.text.trim(),
+        );
 
-      await ref.read(profileActionsProvider.notifier).updateChild(
-            updatedChild,
-            imageFile: _newImageFile,
-          );
+        await ref.read(profileActionsProvider.notifier).updateChild(
+              updatedChild,
+              imageFile: _newImageFile,
+            );
+      } else {
+        final newChild = Child(
+          id: '',
+          name: name,
+          birthDate: _birthDate,
+          gender: _gender,
+          bloodType: _bloodType,
+          themeColorHex: _themeColorHex,
+          notes: _notesController.text.trim(),
+        );
+
+        await ref.read(profileActionsProvider.notifier).addChild(
+              newChild,
+              imageFile: _newImageFile,
+            );
+      }
 
       if (mounted) {
         HapticFeedback.mediumImpact();
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('تم حفظ بيانات الطفل بنجاح'),
+          SnackBar(
+            content: Text(_isEditing
+                ? (lang == 'ar' ? 'تم حفظ بيانات الطفل بنجاح' : 'Profil mis à jour')
+                : (lang == 'ar' ? 'تمت إضافة الطفل بنجاح' : 'Enfant ajouté avec succès')),
             behavior: SnackBarBehavior.floating,
-            backgroundColor: Color(0xFF00C853),
+            backgroundColor: const Color(0xFF00C853),
           ),
         );
         Navigator.of(context).pop();
@@ -172,6 +194,7 @@ class _EditChildScreenState extends ConsumerState<EditChildScreen> {
   }
 
   Future<void> _confirmDelete() async {
+    if (!_isEditing) return;
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final lang = Localizations.localeOf(context).languageCode;
 
@@ -202,8 +225,8 @@ class _EditChildScreenState extends ConsumerState<EditChildScreen> {
         ),
         content: Text(
           lang == 'ar'
-              ? 'هل أنتِ متأكدة من حذف ملف ${widget.child.name}؟ هذا الإجراء لا يمكن التراجع عنه وسيحذف كافة القياسات والبيانات المسجلة.'
-              : 'Êtes-vous sûre de vouloir supprimer le profil de ${widget.child.name} ? Cette action est irréversible.',
+              ? 'هل أنتِ متأكدة من حذف ملف ${widget.child!.name}؟ هذا الإجراء لا يمكن التراجع عنه وسيحذف كافة القياسات والبيانات المسجلة.'
+              : 'Êtes-vous sûre de vouloir supprimer le profil de ${widget.child!.name} ? Cette action est irréversible.',
           style: TextStyle(
             fontSize: 13,
             color: isDark ? AppColors.textSecondaryDark : AppColors.textSecondaryLight,
@@ -234,11 +257,9 @@ class _EditChildScreenState extends ConsumerState<EditChildScreen> {
     if (confirmed == true && mounted) {
       setState(() => _isDeleting = true);
       try {
-        await ref.read(profileActionsProvider.notifier).deleteChild(widget.child.id);
+        await ref.read(profileActionsProvider.notifier).deleteChild(widget.child!.id);
         if (mounted) {
-          // Pop out of edit screen and out of child profile screen back to home
           Navigator.of(context).pop(); // Edit screen
-          Navigator.of(context).pop(); // Child profile screen
         }
       } catch (e) {
         if (mounted) {
@@ -320,7 +341,9 @@ class _EditChildScreenState extends ConsumerState<EditChildScreen> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              lang == 'ar' ? 'تعديل ملف الطفل' : 'Modifier le profil',
+                              _isEditing
+                                  ? (lang == 'ar' ? 'تعديل ملف الطفل' : 'Modifier le profil')
+                                  : (lang == 'ar' ? 'إضافة طفل جديد' : 'Ajouter un enfant'),
                               style: AppTypography.fromContext(
                                 context,
                                 fontSize: 18,
@@ -330,7 +353,9 @@ class _EditChildScreenState extends ConsumerState<EditChildScreen> {
                             ),
                             const SizedBox(height: 2),
                             Text(
-                              widget.child.name,
+                              _isEditing
+                                  ? widget.child!.name
+                                  : (lang == 'ar' ? 'أهلاً بكِ في عائلة LuckyMam' : 'Nouveau membre de la famille'),
                               style: TextStyle(
                                 fontSize: 11.5,
                                 fontWeight: FontWeight.w600,
@@ -419,7 +444,10 @@ class _EditChildScreenState extends ConsumerState<EditChildScreen> {
                         const SizedBox(height: 24),
 
                         // ── 5. Danger Zone (Delete) ──
-                        _buildDangerZoneSection(isDark, surfaceColor, lang),
+                        if (_isEditing) ...[
+                          _buildDangerZoneSection(isDark, surfaceColor, lang),
+                          const SizedBox(height: 24),
+                        ],
 
                         const SizedBox(height: 80),
                       ],
@@ -472,7 +500,9 @@ class _EditChildScreenState extends ConsumerState<EditChildScreen> {
                           const Icon(Icons.check_circle_rounded, size: 18, color: Colors.white),
                           const SizedBox(width: 8),
                           Text(
-                            lang == 'ar' ? 'حفظ بيانات الطفل' : 'Enregistrer les modifications',
+                            _isEditing
+                                ? (lang == 'ar' ? 'حفظ بيانات الطفل' : 'Enregistrer les modifications')
+                                : (lang == 'ar' ? 'إضافة الطفل' : 'Ajouter l\'enfant'),
                             style: const TextStyle(
                               fontSize: 14.5,
                               fontWeight: FontWeight.w800,
@@ -503,8 +533,8 @@ class _EditChildScreenState extends ConsumerState<EditChildScreen> {
     ImageProvider? imageProvider;
     if (_newImageFile != null) {
       imageProvider = FileImage(_newImageFile!);
-    } else if (!_removePhoto && widget.child.photoUrl != null && widget.child.photoUrl!.isNotEmpty) {
-      imageProvider = CachedNetworkImageProvider(widget.child.photoUrl!);
+    } else if (!_removePhoto && widget.child?.photoUrl != null && widget.child!.photoUrl!.isNotEmpty) {
+      imageProvider = CachedNetworkImageProvider(widget.child!.photoUrl!);
     }
 
     return Center(
