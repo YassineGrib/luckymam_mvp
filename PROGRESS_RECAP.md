@@ -123,6 +123,7 @@
 | `SignUpScreen` | `lib/features/auth/signup_screen.dart` | 🟢 جاهز | إنشاء حساب جديد |
 | `Law1807ConsentScreen` | `lib/features/auth/law_1807_consent_screen.dart` | 🟢 جاهز | موافقة حماية البيانات الجزائرية 18-07 |
 | `PrivacyPolicyScreen` | `lib/features/auth/privacy_policy_screen.dart` | 🟢 جاهز | سياسة الخصوصية الرسمية |
+| `ForgotPasswordScreen` | `lib/features/auth/forgot_password_screen.dart` | 🟢 **جديد** | استعادة كلمة المرور، التحقق من البريد، ومؤقت إعادة الإرسال |
 | `NotificationsScreen` | `lib/features/notifications/notifications_screen.dart` | 🟢 جاهز | مركز الإشعارات الفوري والفلترة |
 
 ---
@@ -131,12 +132,7 @@
 
 بناءً على الفحص الفني للكود، فيما يلي **الصفحات والميزات التي لا تزال تحتاج إلى لمسات إضافية أو تطوير**:
 
-### 1. شاشة استرجاع كلمة المرور (`ForgotPasswordScreen`)
-* **القسم:** `lib/features/auth/`
-* **الحالة الحالية:** غير متوفرة كشاشة مستقلة أنيقة.
-* **ما تحتاجه:** صفحة مخصصة تتيح للأم إدخال بريدها الإلكتروني لاستلام رابط إعادة تعيين كلمة المرور بسهولة وأمان.
-
-### 2. شاشة قص وتعديل الصور (`ImageCropScreen`)
+### 1. شاشة قص وتعديل الصور (`ImageCropScreen`)
 * **المسار:** `lib/features/capsules/widgets/image_crop_screen.dart`
 * **الحالة الحالية:** واجهة بسيطة تحتاج إلى ترقية مرئية.
 * **ما تحتاجه:** تجربة مستخدم أكثر فخامة وسلاسة عند قص الصور للكبسولات أو لطباعة الألبوم، مع نسب أبعاد واضحة (1:1، 4:5 لطباعة الألبوم).
