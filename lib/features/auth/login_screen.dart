@@ -272,7 +272,12 @@ class _LoginScreenState extends State<LoginScreen> {
                         // Forgot Password
                         TextButton(
                           onPressed: () {
-                            // TODO: Navigate to forgot password
+                            final currentEmail = _emailController.text.trim();
+                            if (currentEmail.isNotEmpty) {
+                              context.push('/forgot-password?email=${Uri.encodeComponent(currentEmail)}');
+                            } else {
+                              context.push('/forgot-password');
+                            }
                           },
                           child: Text(
                             l10n.forgotPassword,
@@ -281,6 +286,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                   ? AppColors.primaryDark
                                   : AppColors.primaryLight,
                               fontSize: 13,
+                              fontWeight: FontWeight.w600,
                             ),
                           ),
                         ),

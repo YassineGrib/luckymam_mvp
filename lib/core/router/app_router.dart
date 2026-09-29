@@ -4,6 +4,7 @@ import '../../features/splash/splash_screen.dart';
 import '../../features/onboarding/onboarding_screen.dart';
 import '../../features/auth/login_screen.dart';
 import '../../features/auth/signup_screen.dart';
+import '../../features/auth/forgot_password_screen.dart';
 import '../../features/auth/privacy_policy_screen.dart';
 import '../../features/auth/law_1807_consent_screen.dart';
 import '../../features/home/home_screen.dart';
@@ -71,6 +72,19 @@ class AppRouter {
           key: state.pageKey,
           child: const SignUpScreen(),
         ),
+      ),
+
+      // Forgot Password
+      GoRoute(
+        path: '/forgot-password',
+        name: 'forgot-password',
+        pageBuilder: (context, state) {
+          final email = state.uri.queryParameters['email'];
+          return _buildPageWithTransition(
+            key: state.pageKey,
+            child: ForgotPasswordScreen(initialEmail: email),
+          );
+        },
       ),
 
       // Home (Main app with bottom nav)

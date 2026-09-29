@@ -157,6 +157,19 @@ class AuthService {
     });
   }
 
+  /// Send password reset email
+  Future<AuthResult> sendPasswordResetEmail(String email) async {
+    try {
+      await _auth.sendPasswordResetEmail(email: email.trim());
+      return AuthResult.success();
+    } on FirebaseAuthException catch (e) {
+      return AuthResult.failure(_mapFirebaseAuthError(e.code));
+    } catch (e) {
+      debugPrint('ResetPassword Error: $e');
+      return AuthResult.failure('Une erreur est survenue lors de l\'envoi du lien');
+    }
+  }
+
   /// Map Firebase Auth error codes to French messages
   String _mapFirebaseAuthError(String code) {
     switch (code) {
@@ -190,7 +203,7 @@ class AuthResult {
 
   AuthResult._({this.user, this.errorMessage, required this.isSuccess});
 
-  factory AuthResult.success(User user) {
+  factory AuthResult.success([User? user]) {
     return AuthResult._(user: user, isSuccess: true);
   }
 
