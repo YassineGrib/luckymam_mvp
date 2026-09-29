@@ -39,37 +39,8 @@
 | `EditChildScreen` | `lib/features/profile/edit_child_screen.dart` | 🟢 **جديد** | صفحة كاملة Bento للطفل، ألوان السمة، الصور، فصيلة الدم |
 | `ChildProfileScreen` | `lib/features/profile/child_profile_screen.dart` | 🟢 جاهز | السجل الصحي الرقمي الشامل للطفل |
 | `PrivacyScreen` | `lib/features/profile/privacy_screen.dart` | 🟢 جاهز | سياسة الخصوصية من الإعدادات |
-| `HelpScreen` | `lib/features/profile/help_screen.dart` | 🟢 جاهز | الأسئلة الشائعة والمساعدة |
-
----
-
-### ب. الرئيسية والداشبورد (Home & Navigation)
-| الشاشة | المسار | الحالة | الملاحظات |
-| :--- | :--- | :---: | :--- |
-| `HomeScreen` | `lib/features/home/home_screen.dart` | 🟢 جاهز | شريط التنقل السفلي المخصص وحاوية التبويبات |
-| `DashboardTab` | `lib/features/home/tabs/dashboard_tab.dart` | 🟢 جاهز | الداشبورد التفاعلي المليء بالبيانات الذكية |
-| `VaccinationsTab` | `lib/features/home/tabs/vaccinations_tab.dart` | 🟢 جاهز | التبويب السريع لجدول التطعيمات في الرئيسية |
-
----
-
-### ج. الصحة والنمو (Health & Growth)
-| الشاشة | المسار | الحالة | الملاحظات |
-| :--- | :--- | :---: | :--- |
-| `HealthHubScreen` | `lib/features/health/screens/health_hub_screen.dart` | 🟡 يحتاج توسيع | بوابة الصحة المجمعة (النمو + المواعيد) |
-| `GrowthScreen` | `lib/features/health/screens/growth_screen.dart` | 🟢 جاهز | منحنيات منظمة الصحة العالمية WHO الذكية |
-| `AppointmentsScreen` | `lib/features/health/screens/appointments_screen.dart` | 🟢 جاهز | جدولة مواعيد الأطباء والمرفقات الطبية |
-| `VaccineDetailScreen` | `lib/features/vaccines/screens/vaccine_detail_screen.dart` | 🟢 جاهز | بطاقة تفاصيل اللقاح الطبية الكاملة |
-
----
-
-### د. الذكريات والألبومات (Memories & Albums)
-| الشاشة | المسار | الحالة | الملاحظات |
-| :--- | :--- | :---: | :--- |
-| `CreateCapsuleScreen` | `lib/features/capsules/screens/create_capsule_screen.dart` | 🟢 جاهز | إنشاء كبسولة (صوت + صورة + مشاعر + ربط) |
-| `CapsuleDetailScreen` | `lib/features/capsules/screens/capsule_detail_screen.dart` | 🟢 جاهز | استعراض الكبسولة وتشغيل الصوت |
-| `MemoryBookScreen` | `lib/features/memory_book/screens/memory_book_screen.dart` | 🟢 جاهز | المعرض المركزي لألبومات الطفل |
-| `PredefinedAlbumDetailScreen` | `lib/features/memory_book/screens/predefined_album_detail_screen.dart` | 🟢 جاهز | ألبوم ذكريات VIP المبوب |
-| `StandardAlbumDetailScreen` | `lib/features/memory_book/screens/standard_album_detail_screen.dart` | 🟡 يحتاج ترقية | ألبوم الصور العادي المفتوح (يحتاج تنسيق بنمط Bento) |
+| `HelpScreen` | `lib/features/profile/help_screen.dart` | 🟢 جاهز | الأس| `PredefinedAlbumDetailScreen` | `lib/features/memory_book/screens/predefined_album_detail_screen.dart` | 🟢 جاهز | ألبوم ذكريات VIP المبوب |
+| `StandardAlbumDetailScreen` | `lib/features/memory_book/screens/standard_album_detail_screen.dart` | 🟢 **مكتمل ومطور** | تجربة ثنائية فاخرة (تقليب كتاب الذكريات Book Flip + شبكة فسيفساء Bento)، إضافة وتوسيع صفحات، وتعديل وحفظ فوري |
 | `AlbumTemplatePickerScreen` | `lib/features/memory_book/screens/album_template_picker_screen.dart` | 🟢 جاهز | اختيار تصاميم الألبومات |
 | `AlbumPrintPreviewScreen` | `lib/features/print_album/screens/album_print_preview_screen.dart` | 🟢 جاهز | تقليب وتصفح صفحات الألبوم قبل الطباعة |
 | `PrintOrderScreen` | `lib/features/print_album/screens/print_order_screen.dart` | 🟢 جاهز | نموذج طلب وطباعة الألبوم مع بيانات التوصيل |
@@ -104,6 +75,56 @@
 | `PaymentScreen` | `lib/features/subscription/screens/payment_screen.dart` | 🟢 جاهز | اختيار وسيلة الدفع (بطاقة ذهبية / CIB) |
 | `ChargilyCheckoutScreen` | `lib/features/subscription/screens/chargily_checkout_screen.dart` | 🟡 يحتاج ربط نهائي | بوابة الدفع التفاعلية عبر Chargily Pay |
 | `DiamondSponsorsScreen` | `lib/features/subscription/screens/diamond_sponsors_screen.dart` | 🟢 جاهز | عرض الرعاة المعتمدين |
+
+---
+
+### ح. الفيديو والتوعية (Reels)
+| الشاشة | المسار | الحالة | الملاحظات |
+| :--- | :--- | :---: | :--- |
+| `ReelsScreen` | `lib/features/reels/screens/reels_screen.dart` | 🟢 جاهز بالكامل | واجهة ريلز عمودية TikTok-style مربوطة حياً بـ Cloud Firestore تدعم بث الفيديوهات السحابية (CDN/HTTPS)، التفاعل والإعجابات المتزامنة، الإعلانات، وفلترة اللقاحات |
+
+---
+
+### ط. التنبيهات والدخول (Auth, Onboarding & Notifications)
+| الشاشة | المسار | الحالة | الملاحظات |
+| :--- | :--- | :---: | :--- |
+| `SplashScreen` | `lib/features/splash/splash_screen.dart` | 🟢 جاهز | شاشة البداية والتحقق من جلسة المستخدم |
+| `OnboardingScreen` | `lib/features/onboarding/onboarding_screen.dart` | 🟢 جاهز | السحب للبدء والتعريف بالتطبيق |
+| `LoginScreen` | `lib/features/auth/login_screen.dart` | 🟢 جاهز | تسجيل الدخول بالبريد أو Google |
+| `SignUpScreen` | `lib/features/auth/signup_screen.dart` | 🟢 جاهز | إنشاء حساب جديد |
+| `Law1807ConsentScreen` | `lib/features/auth/law_1807_consent_screen.dart` | 🟢 جاهز | موافقة حماية البيانات الجزائرية 18-07 |
+| `PrivacyPolicyScreen` | `lib/features/auth/privacy_policy_screen.dart` | 🟢 جاهز | سياسة الخصوصية الرسمية |
+| `ForgotPasswordScreen` | `lib/features/auth/forgot_password_screen.dart` | 🟢 **جديد** | استعادة كلمة المرور، التحقق من البريد، ومؤقت إعادة الإرسال |
+| `NotificationsScreen` | `lib/features/notifications/notifications_screen.dart` | 🟢 جاهز | مركز الإشعارات الفوري والفلترة |
+
+---
+
+## 3. الصفحات والميزات المتبقية للتحسين 🎯
+
+بناءً على الفحص الفني للكود، تم إنجاز الألبوم العادي، استعادة كلمة المرور، قص الصور، وتأكيد الربط السحابي للريلز بنجاح. فيما يلي الصفحات المتبقية للمرحلة النهائية:
+
+### 1. بوابة دفع Chargily Pay والتحقق الحي (`ChargilyCheckoutScreen`)
+* **المسار:** `lib/features/subscription/screens/chargily_checkout_screen.dart`
+* **ما تحتاجه:** ربط مفاتيح Chargily الحية (Production Keys) والتأكد من استقبال Webhook أو Callback بنجاح لتفعيل اشتراك الـ VIP تلقائياً عند الدفع بالبطاقة الذهبية أو CIB.
+
+### 2. تصدير الدفتر الصحي الرقمي إلى PDF (Carnet de Santé PDF)
+* **المقترح:** إضافة ميزة تحميل وطباعة تقرير طبي شامل بصيغة PDF من داخل `ChildProfileScreen` لتقديمه لطبيب الأطفال عند الزيارة.
+
+---
+
+## 4. خارطة الأولويات المقترحة للمرحلة القادمة 🚀
+
+```
+[ منجز حديثاً ومؤكد ✅ ]
+ ├── [x] إنشاء شاشة استعادة كلمة المرور مع الربط السحابي (ForgotPasswordScreen)
+ ├── [x] ترقية واجهة قص وتعديل الصور ونظام الستوري التلقائي (ImageCropScreen)
+ ├── [x] تأكيد تغذية الريلز سحابياً عبر Firestore وبث الفيديو CDN (ReelsScreen)
+ └── [x] مواءمة وترقية ألبوم الصور القياسي بنمط Dual-Mode الفاخر (StandardAlbumDetailScreen)
+
+[ المرحلة النهائية (الإنتاج والإطلاق) ]
+ ├── 1. فحص ومراجعة دورة دفع Chargily Pay الفعلية مع ترقية الحساب
+ └── 2. توليد دفتر الصحة الرقمي PDF
+```�ز | عرض الرعاة المعتمدين |
 
 ---
 

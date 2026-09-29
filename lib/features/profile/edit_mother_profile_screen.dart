@@ -81,12 +81,12 @@ const List<({int code, String fr, String ar})> _kAlgerianWilayas = [
 
 const List<String> _kBloodTypes = ['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-'];
 
-const List<({String ar, String fr})> _kCommonAllergies = [
-  (ar: 'البنسلين', fr: 'Pénicilline'),
-  (ar: 'الغلوتين', fr: 'Gluten'),
-  (ar: 'الفول السوداني', fr: 'Arachides'),
-  (ar: 'الأسبرين', fr: 'Aspirine'),
-  (ar: 'اللاكتوز', fr: 'Lactose'),
+const List<({String ar, String fr, String en})> _kCommonAllergies = [
+  (ar: 'البنسلين', fr: 'Pénicilline', en: 'Penicillin'),
+  (ar: 'الغلوتين', fr: 'Gluten', en: 'Gluten'),
+  (ar: 'الفول السوداني', fr: 'Arachides', en: 'Peanuts'),
+  (ar: 'الأسبرين', fr: 'Aspirine', en: 'Aspirin'),
+  (ar: 'اللاكتوز', fr: 'Lactose', en: 'Lactose'),
 ];
 
 /// Flagship Full-Page Screen for editing the Mother's Profile.
@@ -209,12 +209,13 @@ class _EditMotherProfileScreenState extends ConsumerState<EditMotherProfileScree
     final name = _nameController.text.trim();
     if (name.isEmpty) {
       HapticFeedback.heavyImpact();
+      final lang = Localizations.localeOf(context).languageCode;
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(
-            Localizations.localeOf(context).languageCode == 'ar'
+            lang == 'ar'
                 ? 'يرجى إدخال اسمكِ الكريم'
-                : 'Veuillez saisir votre nom',
+                : (lang == 'en' ? 'Please enter your name' : 'Veuillez saisir votre nom'),
           ),
           backgroundColor: AppColors.error,
         ),
@@ -253,12 +254,15 @@ class _EditMotherProfileScreenState extends ConsumerState<EditMotherProfileScree
       if (mounted) {
         HapticFeedback.lightImpact();
         Navigator.of(context).pop();
+        final lang = Localizations.localeOf(context).languageCode;
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(
-              Localizations.localeOf(context).languageCode == 'ar'
+              lang == 'ar'
                   ? 'تم حفظ وتحديث ملفكِ الشخصي بنجاح 💖'
-                  : 'Votre profil a été mis à jour avec succès ✨',
+                  : (lang == 'en'
+                      ? 'Profile successfully updated 💖'
+                      : 'Votre profil a été mis à jour avec succès ✨'),
             ),
             backgroundColor: const Color(0xFF00C853),
           ),
@@ -353,17 +357,23 @@ class _EditMotherProfileScreenState extends ConsumerState<EditMotherProfileScree
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
-                                lang == 'ar' ? 'الملف الشخصي للأم' : 'Profil de la Maman',
+                                lang == 'ar'
+                                    ? 'الملف الشخصي للأم'
+                                    : (lang == 'en' ? 'Mother\'s Profile' : 'Profil de la Maman'),
                                 style: AppTypography.fromContext(
-                                  context,
-                                  fontSize: 18,
-                                  fontWeight: FontWeight.w900,
-                                  color: textColor,
-                                ),
+                                   context,
+                                   fontSize: 18,
+                                   fontWeight: FontWeight.w900,
+                                   color: textColor,
+                                 ),
                               ),
                               const SizedBox(height: 2),
                               Text(
-                                lang == 'ar' ? 'المعلومات الشخصية والطبية' : 'Informations personnelles & médicales',
+                                lang == 'ar'
+                                    ? 'المعلومات الشخصية والطبية'
+                                    : (lang == 'en'
+                                        ? 'Personal & Medical Information'
+                                        : 'Informations personnelles & médicales'),
                                 style: TextStyle(
                                   fontSize: 11.5,
                                   fontWeight: FontWeight.w600,
@@ -460,7 +470,9 @@ class _EditMotherProfileScreenState extends ConsumerState<EditMotherProfileScree
                     const Icon(Icons.check_circle_rounded, size: 20, color: Colors.white),
                     const SizedBox(width: 8),
                     Text(
-                      lang == 'ar' ? 'حفظ بيانات الملف الشخصي' : 'Enregistrer les modifications',
+                      lang == 'ar'
+                          ? 'حفظ بيانات الملف الشخصي'
+                          : (lang == 'en' ? 'Save Profile' : 'Enregistrer les modifications'),
                       style: const TextStyle(
                         fontSize: 15,
                         fontWeight: FontWeight.w800,
@@ -573,7 +585,7 @@ class _EditMotherProfileScreenState extends ConsumerState<EditMotherProfileScree
             children: [
               _MotherPhotoChip(
                 icon: Icons.photo_camera_rounded,
-                label: lang == 'ar' ? 'كاميرا' : 'Caméra',
+                label: lang == 'ar' ? 'كاميرا' : (lang == 'en' ? 'Camera' : 'Caméra'),
                 textColor: textColor,
                 isDark: isDark,
                 onTap: () => _pickImage(ImageSource.camera),
@@ -581,7 +593,7 @@ class _EditMotherProfileScreenState extends ConsumerState<EditMotherProfileScree
               const SizedBox(width: 10),
               _MotherPhotoChip(
                 icon: Icons.photo_library_rounded,
-                label: lang == 'ar' ? 'المعرض' : 'Galerie',
+                label: lang == 'ar' ? 'المعرض' : (lang == 'en' ? 'Gallery' : 'Galerie'),
                 textColor: textColor,
                 isDark: isDark,
                 onTap: () => _pickImage(ImageSource.gallery),
@@ -636,13 +648,17 @@ class _EditMotherProfileScreenState extends ConsumerState<EditMotherProfileScree
       if (now.month < _birthDate!.month || (now.month == _birthDate!.month && now.day < _birthDate!.day)) {
         age--;
       }
-      ageText = lang == 'ar' ? '$age سنة' : '$age ans';
+      ageText = lang == 'ar'
+          ? '$age سنة'
+          : (lang == 'en' ? '$age years' : '$age ans');
     }
 
     return _MotherBentoCard(
       surfaceColor: surfaceColor,
       isDark: isDark,
-      title: lang == 'ar' ? 'المعلومات الشخصية' : 'Informations personnelles',
+      title: lang == 'ar'
+          ? 'المعلومات الشخصية'
+          : (lang == 'en' ? 'Personal Information' : 'Informations personnelles'),
       icon: Icons.person_rounded,
       accentColor: accent,
       textColor: textColor,
@@ -653,8 +669,12 @@ class _EditMotherProfileScreenState extends ConsumerState<EditMotherProfileScree
           // Name Field
           _buildInputField(
             controller: _nameController,
-            label: lang == 'ar' ? 'الاسم الكامل' : 'Nom complet',
-            hint: lang == 'ar' ? 'مثال: سارة بن علي' : 'Ex: Sarah Benali',
+            label: lang == 'ar'
+                ? 'الاسم الكامل'
+                : (lang == 'en' ? 'Full Name' : 'Nom complet'),
+            hint: lang == 'ar'
+                ? 'مثال: سارة بن علي'
+                : (lang == 'en' ? 'e.g. Sarah Benali' : 'Ex: Sarah Benali'),
             icon: Icons.badge_outlined,
             isDark: isDark,
             textColor: textColor,
@@ -666,7 +686,9 @@ class _EditMotherProfileScreenState extends ConsumerState<EditMotherProfileScree
 
           // Date of Birth Field
           Text(
-            lang == 'ar' ? 'تاريخ الميلاد' : 'Date de naissance',
+            lang == 'ar'
+                ? 'تاريخ الميلاد'
+                : (lang == 'en' ? 'Date of Birth' : 'Date de naissance'),
             style: TextStyle(
               fontSize: 12.5,
               fontWeight: FontWeight.w700,
@@ -692,8 +714,12 @@ class _EditMotherProfileScreenState extends ConsumerState<EditMotherProfileScree
                   Expanded(
                     child: Text(
                       _birthDate != null
-                          ? DateFormat('dd MMMM yyyy', lang == 'ar' ? 'ar' : 'fr').format(_birthDate!)
-                          : (lang == 'ar' ? 'حددي تاريخ ميلادكِ' : 'Sélectionnez votre date de naissance'),
+                          ? DateFormat('dd MMMM yyyy', lang == 'ar' ? 'ar' : (lang == 'en' ? 'en' : 'fr')).format(_birthDate!)
+                          : (lang == 'ar'
+                              ? 'حددي تاريخ ميلادكِ'
+                              : (lang == 'en'
+                                  ? 'Select your date of birth'
+                                  : 'Sélectionnez votre date de naissance')),
                       style: TextStyle(
                         fontSize: 14,
                         fontWeight: FontWeight.w600,
@@ -727,8 +753,12 @@ class _EditMotherProfileScreenState extends ConsumerState<EditMotherProfileScree
           // Phone Field
           _buildInputField(
             controller: _phoneController,
-            label: lang == 'ar' ? 'رقم الهاتف' : 'Numéro de téléphone',
-            hint: lang == 'ar' ? '05 / 06 / 07 XX XX XX XX' : '05 / 06 / 07 XX XX XX XX',
+            label: lang == 'ar'
+                ? 'رقم الهاتف'
+                : (lang == 'en' ? 'Phone Number' : 'Numéro de téléphone'),
+            hint: lang == 'ar'
+                ? '05 / 06 / 07 XX XX XX XX'
+                : '05 / 06 / 07 XX XX XX XX',
             icon: Icons.phone_outlined,
             keyboardType: TextInputType.phone,
             isDark: isDark,
@@ -741,7 +771,9 @@ class _EditMotherProfileScreenState extends ConsumerState<EditMotherProfileScree
 
           // Algerian Wilaya Dropdown
           Text(
-            lang == 'ar' ? 'الولاية' : 'Wilaya',
+            lang == 'ar'
+                ? 'الولاية'
+                : (lang == 'en' ? 'Wilaya / Province' : 'Wilaya'),
             style: TextStyle(
               fontSize: 12.5,
               fontWeight: FontWeight.w700,
@@ -768,7 +800,9 @@ class _EditMotherProfileScreenState extends ConsumerState<EditMotherProfileScree
                     child: Text(
                       _wilaya != null && _wilaya!.isNotEmpty
                           ? _wilaya!
-                          : (lang == 'ar' ? 'اختاري ولايتكِ' : 'Sélectionnez votre wilaya'),
+                          : (lang == 'ar'
+                              ? 'اختاري ولايتكِ'
+                              : (lang == 'en' ? 'Select your wilaya' : 'Sélectionnez votre wilaya')),
                       style: TextStyle(
                         fontSize: 14,
                         fontWeight: FontWeight.w600,
@@ -801,7 +835,9 @@ class _EditMotherProfileScreenState extends ConsumerState<EditMotherProfileScree
     return _MotherBentoCard(
       surfaceColor: surfaceColor,
       isDark: isDark,
-      title: lang == 'ar' ? 'حالة الأم الحالية' : 'Votre statut actuel',
+      title: lang == 'ar'
+          ? 'حالة الأم الحالية'
+          : (lang == 'en' ? 'Current Status' : 'Votre statut actuel'),
       icon: Icons.favorite_rounded,
       accentColor: const Color(0xFFE91E63),
       textColor: textColor,
@@ -813,7 +849,9 @@ class _EditMotherProfileScreenState extends ConsumerState<EditMotherProfileScree
             children: [
               _buildStatusOption(
                 status: UserStatus.mom,
-                label: lang == 'ar' ? 'أم' : 'Maman',
+                label: lang == 'ar'
+                    ? 'أم'
+                    : (lang == 'en' ? 'Mother' : 'Maman'),
                 icon: Icons.child_friendly_rounded,
                 color: const Color(0xFF00C853),
                 isDark: isDark,
@@ -821,7 +859,9 @@ class _EditMotherProfileScreenState extends ConsumerState<EditMotherProfileScree
               const SizedBox(width: 8),
               _buildStatusOption(
                 status: UserStatus.pregnant,
-                label: lang == 'ar' ? 'حامل' : 'Enceinte',
+                label: lang == 'ar'
+                    ? 'حامل'
+                    : (lang == 'en' ? 'Pregnant' : 'Enceinte'),
                 icon: Icons.pregnant_woman_rounded,
                 color: const Color(0xFFE91E63),
                 isDark: isDark,
@@ -829,7 +869,9 @@ class _EditMotherProfileScreenState extends ConsumerState<EditMotherProfileScree
               const SizedBox(width: 8),
               _buildStatusOption(
                 status: UserStatus.hope,
-                label: lang == 'ar' ? 'تخطط للحمل' : 'En espoir',
+                label: lang == 'ar'
+                    ? 'تخطط للحمل'
+                    : (lang == 'en' ? 'Expecting / Hope' : 'En espoir'),
                 icon: Icons.favorite_border_rounded,
                 color: const Color(0xFFFF9100),
                 isDark: isDark,
@@ -858,7 +900,11 @@ class _EditMotherProfileScreenState extends ConsumerState<EditMotherProfileScree
                       const SizedBox(width: 8),
                       Expanded(
                         child: Text(
-                          lang == 'ar' ? 'تاريخ آخر دورة شهرية (DDR)' : 'Date des Dernières Règles (DDR)',
+                          lang == 'ar'
+                              ? 'تاريخ آخر دورة شهرية (DDR)'
+                              : (lang == 'en'
+                                  ? 'Last Menstrual Period (LMP)'
+                                  : 'Date des Dernières Règles (DDR)'),
                           style: const TextStyle(
                             fontSize: 13,
                             fontWeight: FontWeight.w700,
@@ -885,8 +931,10 @@ class _EditMotherProfileScreenState extends ConsumerState<EditMotherProfileScree
                           Expanded(
                             child: Text(
                               _pregnancyDate != null
-                                  ? DateFormat('dd MMMM yyyy', lang == 'ar' ? 'ar' : 'fr').format(_pregnancyDate!)
-                                  : (lang == 'ar' ? 'اضغطي لتحديد التاريخ' : 'Sélectionner la date'),
+                                  ? DateFormat('dd MMMM yyyy', lang == 'ar' ? 'ar' : (lang == 'en' ? 'en' : 'fr')).format(_pregnancyDate!)
+                                  : (lang == 'ar'
+                                      ? 'اضغطي لتحديد التاريخ'
+                                      : (lang == 'en' ? 'Select Date' : 'Sélectionner la date')),
                               style: TextStyle(
                                 fontSize: 13.5,
                                 fontWeight: FontWeight.w600,
@@ -991,7 +1039,9 @@ class _EditMotherProfileScreenState extends ConsumerState<EditMotherProfileScree
     return _MotherBentoCard(
       surfaceColor: surfaceColor,
       isDark: isDark,
-      title: lang == 'ar' ? 'السجل الطبي والصحي' : 'Dossier médical & santé',
+      title: lang == 'ar'
+          ? 'السجل الطبي والصحي'
+          : (lang == 'en' ? 'Medical & Health Record' : 'Dossier médical & santé'),
       icon: Icons.medical_services_rounded,
       accentColor: const Color(0xFF00B0FF),
       textColor: textColor,
@@ -1001,7 +1051,9 @@ class _EditMotherProfileScreenState extends ConsumerState<EditMotherProfileScree
         children: [
           // Blood Type Header
           Text(
-            lang == 'ar' ? 'فصيلة الدم' : 'Groupe sanguin',
+            lang == 'ar'
+                ? 'فصيلة الدم'
+                : (lang == 'en' ? 'Blood Group' : 'Groupe sanguin'),
             style: TextStyle(
               fontSize: 12.5,
               fontWeight: FontWeight.w700,
@@ -1055,7 +1107,9 @@ class _EditMotherProfileScreenState extends ConsumerState<EditMotherProfileScree
 
           // Allergies Section
           Text(
-            lang == 'ar' ? 'الحساسية (Allergies)' : 'Allergies connues',
+            lang == 'ar'
+                ? 'الحساسية (Allergies)'
+                : (lang == 'en' ? 'Known Allergies' : 'Allergies connues'),
             style: TextStyle(
               fontSize: 12.5,
               fontWeight: FontWeight.w700,
@@ -1082,7 +1136,9 @@ class _EditMotherProfileScreenState extends ConsumerState<EditMotherProfileScree
                     onSubmitted: _addAllergy,
                     style: TextStyle(fontSize: 13.5, color: textColor),
                     decoration: InputDecoration(
-                      hintText: lang == 'ar' ? 'أضيفي حساسية (مثال: البنسلين)' : 'Ex: Pénicilline',
+                      hintText: lang == 'ar'
+                          ? 'أضيفي حساسية (مثال: البنسلين)'
+                          : (lang == 'en' ? 'Add allergy (e.g. Penicillin)' : 'Ex: Pénicilline'),
                       hintStyle: TextStyle(fontSize: 12.5, color: secondaryText.withValues(alpha: 0.7)),
                       border: InputBorder.none,
                       contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
@@ -1112,7 +1168,7 @@ class _EditMotherProfileScreenState extends ConsumerState<EditMotherProfileScree
             spacing: 6,
             runSpacing: 6,
             children: _kCommonAllergies.map((item) {
-              final label = lang == 'ar' ? item.ar : item.fr;
+              final label = lang == 'ar' ? item.ar : (lang == 'en' ? item.en : item.fr);
               final alreadyAdded = _allergies.contains(label);
               if (alreadyAdded) return const SizedBox.shrink();
               return GestureDetector(
@@ -1170,8 +1226,12 @@ class _EditMotherProfileScreenState extends ConsumerState<EditMotherProfileScree
           // Chronic conditions / notes
           _buildInputField(
             controller: _conditionsController,
-            label: lang == 'ar' ? 'حالات صحية أو أمراض مزمنة' : 'Conditions médicales ou maladies chroniques',
-            hint: lang == 'ar' ? 'مثال: السكري، ضغط الدم، فقر الدم' : 'Ex: Diabète, Asthme, Hypertension',
+            label: lang == 'ar'
+                ? 'حالات صحية أو أمراض مزمنة'
+                : (lang == 'en' ? 'Chronic conditions or medical history' : 'Conditions médicales ou maladies chroniques'),
+            hint: lang == 'ar'
+                ? 'مثال: السكري، ضغط الدم، فقر الدم'
+                : (lang == 'en' ? 'e.g. Diabetes, Asthma, Anemia' : 'Ex: Diabète, Asthme, Hypertension'),
             icon: Icons.healing_outlined,
             isDark: isDark,
             textColor: textColor,
@@ -1183,7 +1243,9 @@ class _EditMotherProfileScreenState extends ConsumerState<EditMotherProfileScree
 
           // Attending Doctor Details
           Text(
-            lang == 'ar' ? 'الطبيب المتابع' : 'Médecin traitant',
+            lang == 'ar'
+                ? 'الطبيب المتابع'
+                : (lang == 'en' ? 'Attending Physician' : 'Médecin traitant'),
             style: TextStyle(
               fontSize: 12.5,
               fontWeight: FontWeight.w700,
@@ -1194,8 +1256,12 @@ class _EditMotherProfileScreenState extends ConsumerState<EditMotherProfileScree
 
           _buildInputField(
             controller: _doctorNameController,
-            label: lang == 'ar' ? 'اسم الطبيب' : 'Nom du médecin',
-            hint: lang == 'ar' ? 'د. فلان بن فلان' : 'Dr. Martin',
+            label: lang == 'ar'
+                ? 'اسم الطبيب'
+                : (lang == 'en' ? 'Doctor\'s Name' : 'Nom du médecin'),
+            hint: lang == 'ar'
+                ? 'د. فلان بن فلان'
+                : (lang == 'en' ? 'Dr. Smith' : 'Dr. Martin'),
             icon: Icons.person_search_outlined,
             isDark: isDark,
             textColor: textColor,
@@ -1205,8 +1271,12 @@ class _EditMotherProfileScreenState extends ConsumerState<EditMotherProfileScree
           const SizedBox(height: 10),
           _buildInputField(
             controller: _doctorPhoneController,
-            label: lang == 'ar' ? 'هاتف الطبيب' : 'Téléphone du médecin',
-            hint: lang == 'ar' ? '05 / 06 / 07 XX XX XX XX' : 'Numéro du médecin',
+            label: lang == 'ar'
+                ? 'هاتف الطبيب'
+                : (lang == 'en' ? 'Doctor\'s Phone' : 'Téléphone du médecin'),
+            hint: lang == 'ar'
+                ? '05 / 06 / 07 XX XX XX XX'
+                : (lang == 'en' ? 'Phone number' : 'Numéro du médecin'),
             icon: Icons.phone_forwarded_outlined,
             keyboardType: TextInputType.phone,
             isDark: isDark,
@@ -1278,6 +1348,8 @@ class _EditMotherProfileScreenState extends ConsumerState<EditMotherProfileScree
     final remainingDays = days % 7;
     if (lang == 'ar') {
       return 'أنتِ حالياً في الأسبوع $weeks و $remainingDays أيام من الحمل 🌸';
+    } else if (lang == 'en') {
+      return 'You are currently at week $weeks and $remainingDays days of pregnancy 🌸';
     } else {
       return 'Vous êtes actuellement à $weeks semaines et $remainingDays jours de grossesse 🌸';
     }
@@ -1592,7 +1664,11 @@ class _WilayaSelectorSheetState extends State<_WilayaSelectorSheet> {
               Icon(Icons.location_city_rounded, color: widget.accent, size: 22),
               const SizedBox(width: 8),
               Text(
-                isAr ? 'اختيار الولاية (58 ولاية)' : 'Sélectionner la wilaya (58)',
+                isAr
+                    ? 'اختيار الولاية (58 ولاية)'
+                    : (widget.lang == 'en'
+                        ? 'Select Province / Wilaya (58)'
+                        : 'Sélectionner la wilaya (58)'),
                 style: TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.w800,
@@ -1620,7 +1696,11 @@ class _WilayaSelectorSheetState extends State<_WilayaSelectorSheet> {
                     onChanged: _onSearch,
                     style: TextStyle(fontSize: 13.5, color: widget.textColor),
                     decoration: InputDecoration(
-                      hintText: isAr ? 'ابحث باسم الولاية أو رقمها...' : 'Rechercher par nom ou code...',
+                      hintText: isAr
+                          ? 'ابحث باسم الولاية أو رقمها...'
+                          : (widget.lang == 'en'
+                              ? 'Search by name or code...'
+                              : 'Rechercher par nom ou code...'),
                       hintStyle: TextStyle(fontSize: 12.5, color: widget.secondaryText),
                       border: InputBorder.none,
                       isDense: true,

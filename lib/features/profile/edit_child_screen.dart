@@ -17,13 +17,13 @@ import 'models/profile_models.dart';
 import 'providers/profile_providers.dart';
 
 /// Available theme accent colors for child profile personalization.
-const List<({String hex, String nameAr, String nameFr, Color color})> _kChildPalette = [
-  (hex: '#00B0FF', nameAr: 'أزرق سماوي', nameFr: 'Bleu Ciel', color: Color(0xFF00B0FF)),
-  (hex: '#FF5252', nameAr: 'وردي مرجاني', nameFr: 'Corail Rose', color: Color(0xFFFF5252)),
-  (hex: '#00C853', nameAr: 'أخضر زمردي', nameFr: 'Vert Émeraude', color: Color(0xFF00C853)),
-  (hex: '#7C4DFF', nameAr: 'بنفسجي ملكي', nameFr: 'Violet Royal', color: Color(0xFF7C4DFF)),
-  (hex: '#FF9100', nameAr: 'ذهبي كهرماني', nameFr: 'Ambre Doré', color: Color(0xFFFF9100)),
-  (hex: '#EC407A', nameAr: 'زهري دافئ', nameFr: 'Rose Framboise', color: Color(0xFFEC407A)),
+const List<({String hex, String nameAr, String nameFr, String nameEn, Color color})> _kChildPalette = [
+  (hex: '#00B0FF', nameAr: 'أزرق سماوي', nameFr: 'Bleu Ciel', nameEn: 'Sky Blue', color: Color(0xFF00B0FF)),
+  (hex: '#FF5252', nameAr: 'وردي مرجاني', nameFr: 'Corail Rose', nameEn: 'Coral Pink', color: Color(0xFFFF5252)),
+  (hex: '#00C853', nameAr: 'أخضر زمردي', nameFr: 'Vert Émeraude', nameEn: 'Emerald Green', color: Color(0xFF00C853)),
+  (hex: '#7C4DFF', nameAr: 'بنفسجي ملكي', nameFr: 'Violet Royal', nameEn: 'Royal Violet', color: Color(0xFF7C4DFF)),
+  (hex: '#FF9100', nameAr: 'ذهبي كهرماني', nameFr: 'Ambre Doré', nameEn: 'Amber Gold', color: Color(0xFFFF9100)),
+  (hex: '#EC407A', nameAr: 'زهري دافئ', nameFr: 'Rose Framboise', nameEn: 'Warm Pink', color: Color(0xFFEC407A)),
 ];
 
 const List<String> _kBloodTypes = ['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-'];
@@ -124,7 +124,11 @@ class _EditChildScreenState extends ConsumerState<EditChildScreen> {
     if (name.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text(lang == 'ar' ? 'يرجى إدخال اسم الطفل' : 'Veuillez saisir le nom de l\'enfant'),
+          content: Text(
+            lang == 'ar'
+                ? 'يرجى إدخال اسم الطفل'
+                : (lang == 'en' ? 'Please enter the child\'s name' : 'Veuillez saisir le nom de l\'enfant'),
+          ),
           behavior: SnackBarBehavior.floating,
         ),
       );
@@ -170,8 +174,12 @@ class _EditChildScreenState extends ConsumerState<EditChildScreen> {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(_isEditing
-                ? (lang == 'ar' ? 'تم حفظ بيانات الطفل بنجاح' : 'Profil mis à jour')
-                : (lang == 'ar' ? 'تمت إضافة الطفل بنجاح' : 'Enfant ajouté avec succès')),
+                ? (lang == 'ar'
+                    ? 'تم حفظ بيانات الطفل بنجاح'
+                    : (lang == 'en' ? 'Child profile updated successfully' : 'Profil mis à jour'))
+                : (lang == 'ar'
+                    ? 'تمت إضافة الطفل بنجاح'
+                    : (lang == 'en' ? 'Child added successfully' : 'Enfant ajouté avec succès'))),
             behavior: SnackBarBehavior.floating,
             backgroundColor: const Color(0xFF00C853),
           ),
@@ -182,7 +190,11 @@ class _EditChildScreenState extends ConsumerState<EditChildScreen> {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('تعذر الحفظ: $e'),
+            content: Text(
+              lang == 'ar'
+                  ? 'تعذر الحفظ: $e'
+                  : (lang == 'en' ? 'Failed to save: $e' : 'Échec de l\'enregistrement : $e'),
+            ),
             behavior: SnackBarBehavior.floating,
             backgroundColor: AppColors.error,
           ),
@@ -217,7 +229,9 @@ class _EditChildScreenState extends ConsumerState<EditChildScreen> {
             const SizedBox(width: 12),
             Expanded(
               child: Text(
-                lang == 'ar' ? 'حذف ملف الطفل نهائياً؟' : 'Supprimer le profil ?',
+                lang == 'ar'
+                    ? 'حذف ملف الطفل نهائياً؟'
+                    : (lang == 'en' ? 'Delete child profile permanently?' : 'Supprimer le profil ?'),
                 style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w800),
               ),
             ),
@@ -226,7 +240,9 @@ class _EditChildScreenState extends ConsumerState<EditChildScreen> {
         content: Text(
           lang == 'ar'
               ? 'هل أنتِ متأكدة من حذف ملف ${widget.child!.name}؟ هذا الإجراء لا يمكن التراجع عنه وسيحذف كافة القياسات والبيانات المسجلة.'
-              : 'Êtes-vous sûre de vouloir supprimer le profil de ${widget.child!.name} ? Cette action est irréversible.',
+              : (lang == 'en'
+                  ? 'Are you sure you want to delete ${widget.child!.name}\'s profile? This action is irreversible and will delete all recorded measurements and data.'
+                  : 'Êtes-vous sûre de vouloir supprimer le profil de ${widget.child!.name} ? Cette action est irréversible.'),
           style: TextStyle(
             fontSize: 13,
             color: isDark ? AppColors.textSecondaryDark : AppColors.textSecondaryLight,
@@ -237,7 +253,7 @@ class _EditChildScreenState extends ConsumerState<EditChildScreen> {
           TextButton(
             onPressed: () => Navigator.of(ctx).pop(false),
             child: Text(
-              lang == 'ar' ? 'إلغاء' : 'Annuler',
+              lang == 'ar' ? 'إلغاء' : (lang == 'en' ? 'Cancel' : 'Annuler'),
               style: TextStyle(color: isDark ? Colors.white70 : Colors.black87),
             ),
           ),
@@ -248,7 +264,7 @@ class _EditChildScreenState extends ConsumerState<EditChildScreen> {
               foregroundColor: Colors.white,
               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
             ),
-            child: Text(lang == 'ar' ? 'نعم، حذف' : 'Supprimer'),
+            child: Text(lang == 'ar' ? 'نعم، حذف' : (lang == 'en' ? 'Yes, Delete' : 'Supprimer')),
           ),
         ],
       ),
@@ -264,7 +280,13 @@ class _EditChildScreenState extends ConsumerState<EditChildScreen> {
       } catch (e) {
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('فشل الحذف: $e')),
+            SnackBar(
+              content: Text(
+                lang == 'ar'
+                    ? 'فشل الحذف: $e'
+                    : (lang == 'en' ? 'Failed to delete: $e' : 'Échec de la suppression : $e'),
+              ),
+            ),
           );
           setState(() => _isDeleting = false);
         }
@@ -344,8 +366,12 @@ class _EditChildScreenState extends ConsumerState<EditChildScreen> {
                           children: [
                             Text(
                               _isEditing
-                                  ? (lang == 'ar' ? 'تعديل ملف الطفل' : 'Modifier le profil')
-                                  : (lang == 'ar' ? 'إضافة طفل جديد' : 'Ajouter un enfant'),
+                                  ? (lang == 'ar'
+                                      ? 'تعديل ملف الطفل'
+                                      : (lang == 'en' ? 'Edit Child Profile' : 'Modifier le profil'))
+                                  : (lang == 'ar'
+                                      ? 'إضافة طفل جديد'
+                                      : (lang == 'en' ? 'Add New Child' : 'Ajouter un enfant')),
                               style: AppTypography.fromContext(
                                 context,
                                 fontSize: 18,
@@ -357,7 +383,9 @@ class _EditChildScreenState extends ConsumerState<EditChildScreen> {
                             Text(
                               _isEditing
                                   ? widget.child!.name
-                                  : (lang == 'ar' ? 'أهلاً بكِ في عائلة LuckyMam' : 'Nouveau membre de la famille'),
+                                  : (lang == 'ar'
+                                      ? 'أهلاً بكِ في عائلة LuckyMam'
+                                      : (lang == 'en' ? 'Welcome to LuckyMam family' : 'Nouveau membre de la famille')),
                               style: TextStyle(
                                 fontSize: 11.5,
                                 fontWeight: FontWeight.w600,
@@ -397,7 +425,7 @@ class _EditChildScreenState extends ConsumerState<EditChildScreen> {
                                 const Icon(Icons.check_rounded, size: 16, color: Colors.white),
                               const SizedBox(width: 6),
                               Text(
-                                lang == 'ar' ? 'حفظ' : 'Enregistrer',
+                                lang == 'ar' ? 'حفظ' : (lang == 'en' ? 'Save' : 'Enregistrer'),
                                 style: const TextStyle(
                                   fontSize: 12.5,
                                   fontWeight: FontWeight.w800,
@@ -504,8 +532,12 @@ class _EditChildScreenState extends ConsumerState<EditChildScreen> {
                   const SizedBox(width: 8),
                   Text(
                     _isEditing
-                        ? (lang == 'ar' ? 'حفظ بيانات الطفل' : 'Enregistrer les modifications')
-                        : (lang == 'ar' ? 'إضافة الطفل' : 'Ajouter l\'enfant'),
+                        ? (lang == 'ar'
+                            ? 'حفظ بيانات الطفل'
+                            : (lang == 'en' ? 'Save Child Profile' : 'Enregistrer les modifications'))
+                        : (lang == 'ar'
+                            ? 'إضافة الطفل'
+                            : (lang == 'en' ? 'Add Child' : 'Ajouter l\'enfant')),
                     style: const TextStyle(
                       fontSize: 15,
                       fontWeight: FontWeight.w800,
@@ -604,7 +636,7 @@ class _EditChildScreenState extends ConsumerState<EditChildScreen> {
             children: [
               _PhotoOptionChip(
                 icon: Icons.photo_camera_rounded,
-                label: lang == 'ar' ? 'كاميرا' : 'Caméra',
+                label: lang == 'ar' ? 'كاميرا' : (lang == 'en' ? 'Camera' : 'Caméra'),
                 textColor: textColor,
                 isDark: isDark,
                 onTap: () => _pickImage(ImageSource.camera),
@@ -612,7 +644,7 @@ class _EditChildScreenState extends ConsumerState<EditChildScreen> {
               const SizedBox(width: 10),
               _PhotoOptionChip(
                 icon: Icons.photo_library_rounded,
-                label: lang == 'ar' ? 'المعرض' : 'Galerie',
+                label: lang == 'ar' ? 'المعرض' : (lang == 'en' ? 'Gallery' : 'Galerie'),
                 textColor: textColor,
                 isDark: isDark,
                 onTap: () => _pickImage(ImageSource.gallery),
@@ -694,7 +726,9 @@ class _EditChildScreenState extends ConsumerState<EditChildScreen> {
               ),
               const SizedBox(width: 10),
               Text(
-                lang == 'ar' ? 'البيانات الشخصية' : 'Informations personnelles',
+                lang == 'ar'
+                    ? 'البيانات الشخصية'
+                    : (lang == 'en' ? 'Personal Details' : 'Informations personnelles'),
                 style: TextStyle(
                   fontSize: 15,
                   fontWeight: FontWeight.w800,
@@ -708,7 +742,9 @@ class _EditChildScreenState extends ConsumerState<EditChildScreen> {
 
           // Child Name Input
           Text(
-            lang == 'ar' ? 'اسم الطفل *' : 'Nom de l\'enfant *',
+            lang == 'ar'
+                ? 'اسم الطفل *'
+                : (lang == 'en' ? 'Child Name *' : 'Nom de l\'enfant *'),
             style: TextStyle(fontSize: 12, fontWeight: FontWeight.w700, color: secondaryText),
           ),
           const SizedBox(height: 6),
@@ -716,7 +752,9 @@ class _EditChildScreenState extends ConsumerState<EditChildScreen> {
             controller: _nameController,
             style: TextStyle(fontSize: 15, fontWeight: FontWeight.w700, color: textColor),
             decoration: InputDecoration(
-              hintText: lang == 'ar' ? 'مثال: آدم، مريم...' : 'Ex: Adam, Maryam...',
+              hintText: lang == 'ar'
+                  ? 'مثال: آدم، مريم...'
+                  : (lang == 'en' ? 'e.g. Adam, Maryam...' : 'Ex: Adam, Maryam...'),
               prefixIcon: Icon(Icons.person_rounded, color: accent, size: 20),
               filled: true,
               fillColor: isDark ? Colors.white.withValues(alpha: 0.04) : const Color(0xFFFBF8FA),
@@ -740,7 +778,7 @@ class _EditChildScreenState extends ConsumerState<EditChildScreen> {
 
           // Gender Selection (Prince / Princess)
           Text(
-            lang == 'ar' ? 'الجنس *' : 'Genre *',
+            lang == 'ar' ? 'الجنس *' : (lang == 'en' ? 'Gender *' : 'Genre *'),
             style: TextStyle(fontSize: 12, fontWeight: FontWeight.w700, color: secondaryText),
           ),
           const SizedBox(height: 8),
@@ -748,7 +786,7 @@ class _EditChildScreenState extends ConsumerState<EditChildScreen> {
             children: [
               Expanded(
                 child: _GenderOptionCard(
-                  title: lang == 'ar' ? 'أمير (ولد)' : 'Garçon',
+                  title: lang == 'ar' ? 'أمير (ولد)' : (lang == 'en' ? 'Prince (Boy)' : 'Garçon'),
                   icon: Icons.male_rounded,
                   badgeText: '🌟',
                   isSelected: _gender == ChildGender.boy,
@@ -763,7 +801,7 @@ class _EditChildScreenState extends ConsumerState<EditChildScreen> {
               const SizedBox(width: 12),
               Expanded(
                 child: _GenderOptionCard(
-                  title: lang == 'ar' ? 'أميرة (بنت)' : 'Fille',
+                  title: lang == 'ar' ? 'أميرة (بنت)' : (lang == 'en' ? 'Princess (Girl)' : 'Fille'),
                   icon: Icons.female_rounded,
                   badgeText: '👑',
                   isSelected: _gender == ChildGender.girl,
@@ -782,7 +820,9 @@ class _EditChildScreenState extends ConsumerState<EditChildScreen> {
 
           // Date of Birth Selector
           Text(
-            lang == 'ar' ? 'تاريخ الميلاد *' : 'Date de naissance *',
+            lang == 'ar'
+                ? 'تاريخ الميلاد *'
+                : (lang == 'en' ? 'Date of Birth *' : 'Date de naissance *'),
             style: TextStyle(fontSize: 12, fontWeight: FontWeight.w700, color: secondaryText),
           ),
           const SizedBox(height: 6),
@@ -801,7 +841,7 @@ class _EditChildScreenState extends ConsumerState<EditChildScreen> {
                   const SizedBox(width: 12),
                   Expanded(
                     child: Text(
-                      DateFormat('d MMMM yyyy', lang == 'ar' ? 'ar' : 'fr_FR').format(_birthDate),
+                      DateFormat('d MMMM yyyy', lang == 'ar' ? 'ar' : (lang == 'en' ? 'en' : 'fr_FR')).format(_birthDate),
                       style: TextStyle(
                         fontSize: 14,
                         fontWeight: FontWeight.w700,
@@ -834,7 +874,7 @@ class _EditChildScreenState extends ConsumerState<EditChildScreen> {
                 Icon(Icons.cake_rounded, size: 14, color: accent),
                 const SizedBox(width: 6),
                 Text(
-                  '${lang == 'ar' ? 'العمر المحسوب:' : 'Âge actuel :'} $ageText',
+                  '${lang == 'ar' ? 'العمر المحسوب:' : (lang == 'en' ? 'Current Age:' : 'Âge actuel :')} $ageText',
                   style: TextStyle(
                     fontSize: 11.5,
                     fontWeight: FontWeight.w700,
@@ -897,7 +937,9 @@ class _EditChildScreenState extends ConsumerState<EditChildScreen> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      lang == 'ar' ? 'لون الهوية المميز' : 'Couleur du profil',
+                      lang == 'ar'
+                          ? 'لون الهوية المميز'
+                          : (lang == 'en' ? 'Profile Accent Color' : 'Couleur du profil'),
                       style: TextStyle(
                         fontSize: 15,
                         fontWeight: FontWeight.w800,
@@ -907,7 +949,9 @@ class _EditChildScreenState extends ConsumerState<EditChildScreen> {
                     Text(
                       lang == 'ar'
                           ? 'يُحدد لون الإضاءة المحيطية وشارات الطفل في التطبيق'
-                          : 'Personnalise l\'ambiance visuelle du profil',
+                          : (lang == 'en'
+                              ? 'Sets ambient glow and child badges across the app'
+                              : 'Personnalise l\'ambiance visuelle du profil'),
                       style: TextStyle(fontSize: 11, color: secondaryText),
                     ),
                   ],
@@ -956,7 +1000,7 @@ class _EditChildScreenState extends ConsumerState<EditChildScreen> {
                       ),
                       const SizedBox(width: 8),
                       Text(
-                        lang == 'ar' ? p.nameAr : p.nameFr,
+                        lang == 'ar' ? p.nameAr : (lang == 'en' ? p.nameEn : p.nameFr),
                         style: TextStyle(
                           fontSize: 12,
                           fontWeight: isSelected ? FontWeight.w800 : FontWeight.w600,
@@ -1018,7 +1062,9 @@ class _EditChildScreenState extends ConsumerState<EditChildScreen> {
               ),
               const SizedBox(width: 10),
               Text(
-                lang == 'ar' ? 'السجل الصحي والملاحظات' : 'Santé & Notes médicales',
+                lang == 'ar'
+                    ? 'السجل الصحي والملاحظات'
+                    : (lang == 'en' ? 'Health & Medical Notes' : 'Santé & Notes médicales'),
                 style: TextStyle(
                   fontSize: 15,
                   fontWeight: FontWeight.w800,
@@ -1032,7 +1078,9 @@ class _EditChildScreenState extends ConsumerState<EditChildScreen> {
 
           // Blood Type Selector
           Text(
-            lang == 'ar' ? 'فصيلة الدم' : 'Groupe sanguin',
+            lang == 'ar'
+                ? 'فصيلة الدم'
+                : (lang == 'en' ? 'Blood Group' : 'Groupe sanguin'),
             style: TextStyle(fontSize: 12, fontWeight: FontWeight.w700, color: secondaryText),
           ),
           const SizedBox(height: 8),
@@ -1084,7 +1132,9 @@ class _EditChildScreenState extends ConsumerState<EditChildScreen> {
           Text(
             lang == 'ar'
                 ? 'ملاحظات طبية خاصة أو حساسية (اختياري)'
-                : 'Allergies ou remarques médicales (facultatif)',
+                : (lang == 'en'
+                    ? 'Special medical notes or allergies (optional)'
+                    : 'Allergies ou remarques médicales (facultatif)'),
             style: TextStyle(fontSize: 12, fontWeight: FontWeight.w700, color: secondaryText),
           ),
           const SizedBox(height: 6),
@@ -1095,7 +1145,9 @@ class _EditChildScreenState extends ConsumerState<EditChildScreen> {
             decoration: InputDecoration(
               hintText: lang == 'ar'
                   ? 'مثال: حساسية من حليب البقر، ربو خفيف، تطعيمات خاصة...'
-                  : 'Ex: Allergie au lactose, asthme léger...',
+                  : (lang == 'en'
+                      ? 'e.g. Cow milk allergy, mild asthma, special vaccines...'
+                      : 'Ex: Allergie au lactose, asthme léger...'),
               filled: true,
               fillColor: isDark ? Colors.white.withValues(alpha: 0.04) : const Color(0xFFFBF8FA),
               contentPadding: const EdgeInsets.all(14),
@@ -1148,7 +1200,9 @@ class _EditChildScreenState extends ConsumerState<EditChildScreen> {
               ),
               const SizedBox(width: 10),
               Text(
-                lang == 'ar' ? 'حذف ملف الطفل' : 'Supprimer le profil',
+                lang == 'ar'
+                    ? 'حذف ملف الطفل'
+                    : (lang == 'en' ? 'Delete Child Profile' : 'Supprimer le profil'),
                 style: const TextStyle(
                   fontSize: 15,
                   fontWeight: FontWeight.w800,
@@ -1161,7 +1215,9 @@ class _EditChildScreenState extends ConsumerState<EditChildScreen> {
           Text(
             lang == 'ar'
                 ? 'سيتم حذف ملف الطفل نهائياً مع كافة السجلات والقياسات والذكريات المرتبطة به.'
-                : 'La suppression effacera définitivement toutes les données associées.',
+                : (lang == 'en'
+                    ? 'The child profile and all associated logs, measurements, and memories will be permanently deleted.'
+                    : 'La suppression effacera définitivement toutes les données associées.'),
             style: TextStyle(
               fontSize: 12,
               color: isDark ? AppColors.textSecondaryDark : AppColors.textSecondaryLight,
@@ -1192,7 +1248,9 @@ class _EditChildScreenState extends ConsumerState<EditChildScreen> {
                           const Icon(Icons.delete_outline_rounded, size: 16, color: AppColors.error),
                           const SizedBox(width: 8),
                           Text(
-                            lang == 'ar' ? 'حذف ملف الطفل نهائياً' : 'Supprimer définitivement',
+                            lang == 'ar'
+                                ? 'حذف ملف الطفل نهائياً'
+                                : (lang == 'en' ? 'Permanently Delete' : 'Supprimer définitivement'),
                             style: const TextStyle(
                               fontSize: 13,
                               fontWeight: FontWeight.w800,
@@ -1219,11 +1277,21 @@ class _EditChildScreenState extends ConsumerState<EditChildScreen> {
       months += 12;
     }
     if (years > 0) {
-      return lang == 'ar'
-          ? '$years سنة و $months شهر'
-          : '$years an${years > 1 ? 's' : ''} et $months mois';
+      if (lang == 'ar') {
+        return '$years سنة و $months شهر';
+      } else if (lang == 'en') {
+        return '$years yr${years > 1 ? 's' : ''} and $months mo';
+      } else {
+        return '$years an${years > 1 ? 's' : ''} et $months mois';
+      }
     }
-    return lang == 'ar' ? '$months شهر' : '$months mois';
+    if (lang == 'ar') {
+      return '$months شهر';
+    } else if (lang == 'en') {
+      return '$months month${months > 1 ? 's' : ''}';
+    } else {
+      return '$months mois';
+    }
   }
 }
 

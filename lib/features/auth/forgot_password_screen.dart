@@ -85,17 +85,27 @@ class _ForgotPasswordScreenState extends ConsumerState<ForgotPasswordScreen> {
           _startCooldown(60);
         } else {
           HapticFeedback.heavyImpact();
-          final isAr = Localizations.localeOf(context).languageCode == 'ar';
+          final lang = Localizations.localeOf(context).languageCode;
           String msg = result.errorMessage ?? 'Erreur';
-          if (isAr) {
-            if (msg.contains('Aucun compte trouvé')) {
+          if (lang == 'ar') {
+            if (msg.contains('Aucun compte trouvé') || msg.contains('user-not-found')) {
               msg = 'لم نجد أي حساب مسجل بهذا البريد الإلكتروني';
-            } else if (msg.contains('E-mail invalide')) {
+            } else if (msg.contains('E-mail invalide') || msg.contains('invalid-email')) {
               msg = 'صيغة البريد الإلكتروني غير صحيحة';
-            } else if (msg.contains('Trop de tentatives')) {
+            } else if (msg.contains('Trop de tentatives') || msg.contains('too-many-requests')) {
               msg = 'محاولات كثيرة جداً، يرجى الانتظار قليلاً';
-            } else if (msg.contains('connexion réseau')) {
+            } else if (msg.contains('connexion réseau') || msg.contains('network')) {
               msg = 'تعذر الاتصال بالإنترنت، تفقدِ اتصالكِ';
+            }
+          } else if (lang == 'en') {
+            if (msg.contains('Aucun compte trouvé') || msg.contains('user-not-found')) {
+              msg = 'No account found with this email address';
+            } else if (msg.contains('E-mail invalide') || msg.contains('invalid-email')) {
+              msg = 'Invalid email address format';
+            } else if (msg.contains('Trop de tentatives') || msg.contains('too-many-requests')) {
+              msg = 'Too many attempts. Please try again later';
+            } else if (msg.contains('connexion réseau') || msg.contains('network')) {
+              msg = 'Network error. Please check your connection';
             }
           }
 
@@ -129,7 +139,9 @@ class _ForgotPasswordScreenState extends ConsumerState<ForgotPasswordScreen> {
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final locale = Localizations.localeOf(context);
-    final isAr = locale.languageCode == 'ar';
+    final lang = locale.languageCode;
+    final isAr = lang == 'ar';
+    final isEn = lang == 'en';
     final isRtl = isAr;
 
     final bgColor = isDark ? AppColors.backgroundDark : AppColors.backgroundLight;
@@ -197,7 +209,7 @@ class _ForgotPasswordScreenState extends ConsumerState<ForgotPasswordScreen> {
                         ),
                         const SizedBox(width: 14),
                         Text(
-                          isAr ? 'العودة' : 'Retour',
+                          isAr ? 'العودة' : (isEn ? 'Back' : 'Retour'),
                           style: TextStyle(
                             fontSize: 14,
                             fontWeight: FontWeight.w700,
@@ -238,6 +250,7 @@ class _ForgotPasswordScreenState extends ConsumerState<ForgotPasswordScreen> {
                                 secondaryText: secondaryText,
                                 accent: accent,
                                 isAr: isAr,
+                                isEn: isEn,
                               )
                             : _buildFormView(
                                 isDark: isDark,
@@ -246,6 +259,7 @@ class _ForgotPasswordScreenState extends ConsumerState<ForgotPasswordScreen> {
                                 secondaryText: secondaryText,
                                 accent: accent,
                                 isAr: isAr,
+                                isEn: isEn,
                               ),
                       ),
                     ),
@@ -270,6 +284,7 @@ class _ForgotPasswordScreenState extends ConsumerState<ForgotPasswordScreen> {
     required Color secondaryText,
     required Color accent,
     required bool isAr,
+    required bool isEn,
   }) {
     return Form(
       key: _formKey,
@@ -314,7 +329,9 @@ class _ForgotPasswordScreenState extends ConsumerState<ForgotPasswordScreen> {
 
           // Title
           Text(
-            isAr ? 'نسيتِ كلمة المرور؟' : 'Mot de passe oublié ?',
+            isAr
+                ? 'نسيتِ كلمة المرور؟'
+                : (isEn ? 'Forgot Password?' : 'Mot de passe oublié ?'),
             textAlign: TextAlign.center,
             style: AppTypography.fromContext(
               context,
@@ -332,7 +349,9 @@ class _ForgotPasswordScreenState extends ConsumerState<ForgotPasswordScreen> {
             child: Text(
               isAr
                   ? 'لا تقلقي! أدخلي بريدكِ الإلكتروني وسنرسل لكِ رابطاً آمناً لإعادة تعيين كلمة مرور جديدة لحسابكِ.'
-                  : 'Ne vous inquiétez pas ! Entrez l\'adresse e-mail de votre compte pour recevoir un lien sécurisé.',
+                  : (isEn
+                      ? 'Don\'t worry! Enter your account email to receive a secure link to reset your password.'
+                      : 'Ne vous inquiétez pas ! Entrez l\'adresse e-mail de votre compte pour recevoir un lien sécurisé.'),
               textAlign: TextAlign.center,
               style: TextStyle(
                 fontSize: 13.5,
@@ -366,7 +385,9 @@ class _ForgotPasswordScreenState extends ConsumerState<ForgotPasswordScreen> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  isAr ? 'البريد الإلكتروني' : 'Adresse e-mail',
+                  isAr
+                      ? 'البريد الإلكتروني'
+                      : (isEn ? 'Email address' : 'Adresse e-mail'),
                   style: TextStyle(
                     fontSize: 13,
                     fontWeight: FontWeight.w700,
@@ -377,18 +398,26 @@ class _ForgotPasswordScreenState extends ConsumerState<ForgotPasswordScreen> {
                 AppTextField(
                   controller: _emailController,
                   label: '',
-                  hint: isAr ? 'example@gmail.com' : 'exemple@gmail.com',
+                  hint: isAr ? 'example@gmail.com' : 'example@gmail.com',
                   prefixIcon: Icons.alternate_email_rounded,
                   keyboardType: TextInputType.emailAddress,
                   textInputAction: TextInputAction.done,
                   onSubmitted: _handleSendResetLink,
                   validator: (value) {
                     if (value == null || value.trim().isEmpty) {
-                      return isAr ? 'يرجى إدخال البريد الإلكتروني' : 'Veuillez saisir votre e-mail';
+                      return isAr
+                          ? 'يرجى إدخال البريد الإلكتروني'
+                          : (isEn
+                              ? 'Please enter your email'
+                              : 'Veuillez saisir votre e-mail');
                     }
                     final emailRegex = RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$');
                     if (!emailRegex.hasMatch(value.trim())) {
-                      return isAr ? 'صيغة البريد الإلكتروني غير صحيحة' : 'Format d\'e-mail invalide';
+                      return isAr
+                          ? 'صيغة البريد الإلكتروني غير صحيحة'
+                          : (isEn
+                              ? 'Invalid email format'
+                              : 'Format d\'e-mail invalide');
                     }
                     return null;
                   },
@@ -434,7 +463,9 @@ class _ForgotPasswordScreenState extends ConsumerState<ForgotPasswordScreen> {
                       const Icon(Icons.send_rounded, size: 18, color: Colors.white),
                       const SizedBox(width: 8),
                       Text(
-                        isAr ? 'إرسال رابط الاستعادة' : 'Envoyer le lien',
+                        isAr
+                            ? 'إرسال رابط الاستعادة'
+                            : (isEn ? 'Send Reset Link' : 'Envoyer le lien'),
                         style: const TextStyle(
                           fontSize: 15,
                           fontWeight: FontWeight.w800,
@@ -465,7 +496,9 @@ class _ForgotPasswordScreenState extends ConsumerState<ForgotPasswordScreen> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Text(
-                    isAr ? 'تذكرتِ كلمة المرور؟ ' : 'Vous vous en souvenez ? ',
+                    isAr
+                        ? 'تذكرتِ كلمة المرور؟ '
+                        : (isEn ? 'Remember your password? ' : 'Vous vous en souvenez ? '),
                     style: TextStyle(
                       fontSize: 13,
                       fontWeight: FontWeight.w500,
@@ -473,7 +506,9 @@ class _ForgotPasswordScreenState extends ConsumerState<ForgotPasswordScreen> {
                     ),
                   ),
                   Text(
-                    isAr ? 'تسجيل الدخول' : 'Se connecter',
+                    isAr
+                        ? 'تسجيل الدخول'
+                        : (isEn ? 'Sign In' : 'Se connecter'),
                     style: TextStyle(
                       fontSize: 13.5,
                       fontWeight: FontWeight.w800,
@@ -500,6 +535,7 @@ class _ForgotPasswordScreenState extends ConsumerState<ForgotPasswordScreen> {
     required Color secondaryText,
     required Color accent,
     required bool isAr,
+    required bool isEn,
   }) {
     final email = _emailController.text.trim();
 
@@ -540,7 +576,9 @@ class _ForgotPasswordScreenState extends ConsumerState<ForgotPasswordScreen> {
 
         // Success Title
         Text(
-          isAr ? 'تم إرسال الرابط بنجاح! 💌' : 'E-mail envoyé avec succès ! 💌',
+          isAr
+              ? 'تم إرسال الرابط بنجاح! 💌'
+              : (isEn ? 'Email Sent Successfully! 💌' : 'E-mail envoyé avec succès ! 💌'),
           textAlign: TextAlign.center,
           style: AppTypography.fromContext(
             context,
@@ -578,7 +616,9 @@ class _ForgotPasswordScreenState extends ConsumerState<ForgotPasswordScreen> {
           child: Text(
             isAr
                 ? 'يرجى فتح بريدكِ الإلكتروني والضغط على الرابط المرسل لإعادة تعيين كلمة المرور الجديدة.'
-                : 'Veuillez consulter votre boîte de réception et cliquer sur le lien sécurisé pour définir un nouveau mot de passe.',
+                : (isEn
+                    ? 'Please check your inbox and tap the secure link to set your new password.'
+                    : 'Veuillez consulter votre boîte de réception et cliquer sur le lien sécurisé pour définir un nouveau mot de passe.'),
             textAlign: TextAlign.center,
             style: TextStyle(
               fontSize: 13.5,
@@ -610,7 +650,9 @@ class _ForgotPasswordScreenState extends ConsumerState<ForgotPasswordScreen> {
                 child: Text(
                   isAr
                       ? 'ملاحظة: إذا لم تجدي الرسالة في صندوق الوارد، تفقدِ مجلد الرسائل غير المرغوب فيها (Spam / Courrier indésirable).'
-                      : 'Remarque : Si vous ne trouvez pas l\'e-mail, pensez à vérifier votre dossier Spam ou Courrier indésirable.',
+                      : (isEn
+                          ? 'Note: If you do not see the email, please check your Spam or Junk folder.'
+                          : 'Remarque : Si vous ne trouvez pas l\'e-mail, pensez à vérifier votre dossier Spam ou Courrier indésirable.'),
                   style: TextStyle(
                     fontSize: 12,
                     fontWeight: FontWeight.w500,
@@ -653,7 +695,9 @@ class _ForgotPasswordScreenState extends ConsumerState<ForgotPasswordScreen> {
                   const Icon(Icons.login_rounded, size: 18, color: Colors.white),
                   const SizedBox(width: 8),
                   Text(
-                    isAr ? 'العودة لتسجيل الدخول' : 'Retour à la connexion',
+                    isAr
+                        ? 'العودة لتسجيل الدخول'
+                        : (isEn ? 'Back to Sign In' : 'Retour à la connexion'),
                     style: const TextStyle(
                       fontSize: 15,
                       fontWeight: FontWeight.w800,
@@ -675,8 +719,14 @@ class _ForgotPasswordScreenState extends ConsumerState<ForgotPasswordScreen> {
             _cooldownSeconds > 0
                 ? (isAr
                     ? 'إعادة الإرسال بعد $_cooldownSeconds ثانية'
-                    : 'Renvoyer dans ${_cooldownSeconds}s')
-                : (isAr ? 'لم تستلمي الرابط؟ إعادة الإرسال' : 'Vous n\'avez rien reçu ? Renvoyer'),
+                    : (isEn
+                        ? 'Resend in ${_cooldownSeconds}s'
+                        : 'Renvoyer dans ${_cooldownSeconds}s'))
+                : (isAr
+                    ? 'لم تستلمي الرابط؟ إعادة الإرسال'
+                    : (isEn
+                        ? 'Didn\'t receive the link? Resend'
+                        : 'Vous n\'avez rien reçu ? Renvoyer')),
             style: TextStyle(
               fontSize: 13,
               fontWeight: FontWeight.w700,
