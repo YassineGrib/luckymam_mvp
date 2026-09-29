@@ -1,8 +1,6 @@
-import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import '../../l10n/app_localizations.dart';
 import '../../core/services/auth_service.dart';
@@ -15,6 +13,7 @@ import 'models/profile_models.dart';
 import 'privacy_screen.dart';
 import 'help_screen.dart';
 import 'edit_child_screen.dart';
+import 'edit_mother_profile_screen.dart';
 import 'providers/profile_providers.dart';
 import 'widgets/edit_dialogs.dart';
 import '../subscription/models/subscription_models.dart';
@@ -97,7 +96,8 @@ class ProfileScreen extends ConsumerWidget {
                 primaryColor: primaryColor,
                 textColor: textColor,
                 secondaryColor: secondaryColor,
-                onCameraTap: () => _pickProfileImage(context, ref),
+                onEditTap: () => _openMotherProfileScreen(context, profile),
+                onCameraTap: () => _openMotherProfileScreen(context, profile),
               ),
               loading: () => _ProfileHeader(
                 name: user?.displayName ?? l10n.profileLoading,
@@ -139,7 +139,7 @@ class ProfileScreen extends ConsumerWidget {
                   data: (profile) => _PersonalInfoSection(
                     profile: profile,
                     fallbackUser: user,
-                    onEdit: () => _showEditPersonalInfo(context, ref, profile),
+                    onEdit: () => _openMotherProfileScreen(context, profile),
                   ),
                   loading: () => _LoadingSectionCard(
                     title: l10n.profilePersonalInfo,
@@ -192,10 +192,9 @@ class ProfileScreen extends ConsumerWidget {
                 profileAsync.when(
                   data: (profile) => _MedicalInfoSection(
                     medicalInfo: profile?.medicalInfo ?? const MedicalInfo(),
-                    onEdit: () => _showEditMedicalInfo(
+                    onEdit: () => _openMotherProfileScreen(
                       context,
-                      ref,
-                      profile?.medicalInfo,
+                      profile,
                     ),
                   ),
                   loading: () => _LoadingSectionCard(
@@ -254,46 +253,7 @@ class ProfileScreen extends ConsumerWidget {
 );
   }
 
-  void _showEditPersonalInfo(
-    BuildContext context,
-    WidgetRef ref,
-    UserProfile? profile,
-  ) {
-    showDialog(
-      context: context,
-      builder: (context) => EditPersonalInfoDialog(
-        profile: profile,
-        onSave: ({displayName, phone, birthDate, wilaya}) async {
-          await ref
-              .read(profileActionsProvider.notifier)
-              .updatePersonalInfo(
-                displayName: displayName,
-                phone: phone,
-                birthDate: birthDate,
-                wilaya: wilaya,
-              );
-        },
-      ),
-    );
-  }
 
-  void _showEditMedicalInfo(
-    BuildContext context,
-    WidgetRef ref,
-    MedicalInfo? info,
-  ) {
-    showDialog(
-      context: context,
-      builder: (context) => EditMedicalInfoDialog(
-        medicalInfo: info ?? const MedicalInfo(),
-        onSave: (updatedInfo) async {
-          await ref
-              .read(profileActionsProvider.notifier)
-              .updateMedicalInfo(updatedInfo);
-        },
-      ),
-    );
-  }
 
   void _openChildScreen(
     BuildContext context, [
@@ -302,6 +262,17 @@ class ProfileScreen extends ConsumerWidget {
     Navigator.of(context).push(
       MaterialPageRoute(
         builder: (_) => EditChildScreen(child: existingChild),
+      ),
+    );
+  }
+
+  void _openMotherProfileScreen(
+    BuildContext context, [
+    UserProfile? profile,
+  ]) {
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (_) => EditMotherProfileScreen(profile: profile),
       ),
     );
   }
@@ -363,21 +334,6 @@ class ProfileScreen extends ConsumerWidget {
       ref.read(profileActionsProvider.notifier).logPeriodStart(date);
     }
   }
-
-  Future<void> _pickProfileImage(BuildContext context, WidgetRef ref) async {
-    final picker = ImagePicker();
-    final pickedFile = await picker.pickImage(
-      source: ImageSource.gallery,
-      imageQuality: 70,
-      maxWidth: 800,
-    );
-
-    if (pickedFile != null) {
-      await ref
-          .read(profileActionsProvider.notifier)
-          .updateProfilePhoto(File(pickedFile.path));
-    }
-  }
 }
 
 // ============ SECTION WIDGETS ============
@@ -392,6 +348,7 @@ class _ProfileHeader extends StatelessWidget {
     required this.status,
     this.photoUrl,
     this.onCameraTap,
+    this.onEditTap,
   });
 
   final String name;
@@ -402,10 +359,12 @@ class _ProfileHeader extends StatelessWidget {
   final Color textColor;
   final Color secondaryColor;
   final VoidCallback? onCameraTap;
+  final VoidCallback? onEditTap;
 
   @override
   Widget build(BuildContext context) {
     final l10n = context.l10n;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     final statusLabel = status == UserStatus.pregnant
         ? l10n.statusPregnant
         : status == UserStatus.hope
@@ -536,6 +495,37 @@ class _ProfileHeader extends StatelessWidget {
               ],
             ),
           ),
+          if (onEditTap != null) ...[
+            const SizedBox(width: 10),
+            GestureDetector(
+              onTap: onEditTap,
+              child: Container(
+                width: 40,
+                height: 40,
+                decoration: BoxDecoration(
+                  color: isDark
+                      ? Colors.white.withValues(alpha: 0.08)
+                      : Colors.white.withValues(alpha: 0.92),
+                  borderRadius: BorderRadius.circular(12),
+                  border: Border.all(
+                    color: isDark ? Colors.white12 : const Color(0xFFE8E0E4),
+                  ),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withValues(alpha: isDark ? 0.25 : 0.04),
+                      blurRadius: 6,
+                      offset: const Offset(0, 2),
+                    ),
+                  ],
+                ),
+                child: Icon(
+                  Icons.edit_outlined,
+                  size: 18,
+                  color: textColor,
+                ),
+              ),
+            ),
+          ],
         ],
       ),
     );

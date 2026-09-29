@@ -258,4 +258,37 @@ class ProfileService {
       await updateProfileFields(fields);
     }
   }
+
+  /// Comprehensive atomic update for mother's profile.
+  Future<void> updateFullProfile({
+    String? displayName,
+    String? phone,
+    DateTime? birthDate,
+    String? wilaya,
+    String? photoUrl,
+    bool removePhoto = false,
+    UserStatus? status,
+    DateTime? pregnancyDate,
+    MedicalInfo? medicalInfo,
+  }) async {
+    final fields = <String, dynamic>{};
+
+    if (displayName != null) fields['displayName'] = displayName;
+    if (phone != null) fields['phone'] = phone;
+    if (birthDate != null) fields['birthDate'] = Timestamp.fromDate(birthDate);
+    if (wilaya != null) fields['wilaya'] = wilaya;
+    if (photoUrl != null) fields['photoUrl'] = photoUrl;
+    if (removePhoto) fields['photoUrl'] = FieldValue.delete();
+    if (status != null) fields['status'] = status.name;
+    if (pregnancyDate != null) {
+      fields['lastPregnancyDate'] = Timestamp.fromDate(pregnancyDate);
+    }
+    if (medicalInfo != null) {
+      fields['medicalInfo'] = medicalInfo.toFirestore();
+    }
+
+    if (fields.isNotEmpty) {
+      await updateProfileFields(fields);
+    }
+  }
 }

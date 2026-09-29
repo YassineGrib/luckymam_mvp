@@ -169,6 +169,50 @@ class ProfileActionsNotifier extends StateNotifier<ProfileActionsState> {
     }
   }
 
+  /// Update full profile in a single atomic operation.
+  Future<void> updateFullProfile({
+    String? displayName,
+    String? phone,
+    DateTime? birthDate,
+    String? wilaya,
+    File? newPhotoFile,
+    bool removePhoto = false,
+    UserStatus? status,
+    DateTime? pregnancyDate,
+    MedicalInfo? medicalInfo,
+  }) async {
+    state = state.copyWith(isLoading: true);
+    try {
+      String? photoUrl;
+      if (newPhotoFile != null) {
+        photoUrl = await _service.uploadUserProfilePhoto(newPhotoFile);
+      }
+
+      await _service.updateFullProfile(
+        displayName: displayName,
+        phone: phone,
+        birthDate: birthDate,
+        wilaya: wilaya,
+        photoUrl: photoUrl,
+        removePhoto: removePhoto,
+        status: status,
+        pregnancyDate: pregnancyDate,
+        medicalInfo: medicalInfo,
+      );
+
+      state = state.copyWith(
+        isLoading: false,
+        successMessage: ProfileSnackMessage.personalInfoUpdated,
+      );
+    } catch (e) {
+      state = state.copyWith(
+        isLoading: false,
+        errorDetails: e.toString(),
+      );
+      rethrow;
+    }
+  }
+
   /// Update profile photo.
   Future<void> updateProfilePhoto(File file) async {
     state = state.copyWith(isLoading: true);
