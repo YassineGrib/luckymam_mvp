@@ -294,9 +294,11 @@ class _EditChildScreenState extends ConsumerState<EditChildScreen> {
           const AuthLogoBackground(lightOpacity: 0.05, darkOpacity: 0.03),
 
           // ── 3. Main Screen Flow ──
-          SafeArea(
-            child: Column(
-              children: [
+          Positioned.fill(
+            child: SafeArea(
+              bottom: false,
+              child: Column(
+                children: [
                 // Top Action Header Bar
                 Padding(
                   padding: const EdgeInsets.symmetric(
@@ -457,66 +459,67 @@ class _EditChildScreenState extends ConsumerState<EditChildScreen> {
               ],
             ),
           ),
-        ],
+        ),
+      ],
+    ),
+    bottomNavigationBar: Container(
+      color: bgColor,
+      padding: EdgeInsets.fromLTRB(
+        AppSpacing.screenPaddingH,
+        8,
+        AppSpacing.screenPaddingH,
+        MediaQuery.of(context).padding.bottom + 12,
       ),
-      bottomNavigationBar: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.fromLTRB(
-            AppSpacing.screenPaddingH,
-            6,
-            AppSpacing.screenPaddingH,
-            12,
-          ),
-          child: GestureDetector(
-            onTap: _isSaving ? null : _saveChild,
-            child: Container(
-              width: double.infinity,
-              padding: const EdgeInsets.symmetric(vertical: 14),
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  colors: [accent, accent.withValues(alpha: 0.88)],
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
+      child: SizedBox(
+        height: 52,
+        child: GestureDetector(
+          onTap: _isSaving ? null : _saveChild,
+          child: Container(
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                colors: [accent, accent.withValues(alpha: 0.88)],
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+              ),
+              borderRadius: BorderRadius.circular(16),
+              boxShadow: [
+                BoxShadow(
+                  color: accent.withValues(alpha: 0.35),
+                  blurRadius: 12,
+                  offset: const Offset(0, 4),
                 ),
-                borderRadius: BorderRadius.circular(16),
-                boxShadow: [
-                  BoxShadow(
-                    color: accent.withValues(alpha: 0.35),
-                    blurRadius: 12,
-                    offset: const Offset(0, 4),
+              ],
+            ),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                if (_isSaving)
+                  const SizedBox(
+                    width: 20,
+                    height: 20,
+                    child: CircularProgressIndicator(strokeWidth: 2.5, color: Colors.white),
+                  )
+                else ...[
+                  const Icon(Icons.check_circle_rounded, size: 20, color: Colors.white),
+                  const SizedBox(width: 8),
+                  Text(
+                    _isEditing
+                        ? (lang == 'ar' ? 'حفظ بيانات الطفل' : 'Enregistrer les modifications')
+                        : (lang == 'ar' ? 'إضافة الطفل' : 'Ajouter l\'enfant'),
+                    style: const TextStyle(
+                      fontSize: 15,
+                      fontWeight: FontWeight.w800,
+                      color: Colors.white,
+                    ),
                   ),
                 ],
-              ),
-              child: Center(
-                child: _isSaving
-                    ? const SizedBox(
-                        width: 20,
-                        height: 20,
-                        child: CircularProgressIndicator(strokeWidth: 2.5, color: Colors.white),
-                      )
-                    : Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          const Icon(Icons.check_circle_rounded, size: 18, color: Colors.white),
-                          const SizedBox(width: 8),
-                          Text(
-                            _isEditing
-                                ? (lang == 'ar' ? 'حفظ بيانات الطفل' : 'Enregistrer les modifications')
-                                : (lang == 'ar' ? 'إضافة الطفل' : 'Ajouter l\'enfant'),
-                            style: const TextStyle(
-                              fontSize: 14.5,
-                              fontWeight: FontWeight.w800,
-                              color: Colors.white,
-                            ),
-                          ),
-                        ],
-                      ),
-              ),
+              ],
             ),
           ),
         ),
       ),
-    );
+    ),
+  );
   }
 
   // ═════════════════════════════════════════════════════════════════════════
