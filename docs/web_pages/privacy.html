@@ -1,0 +1,589 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>سياسة الخصوصية | LuckyMam - لاكي مام</title>
+    <meta name="description" content="سياسة الخصوصية والشروط لتطبيق لاكي مام LuckyMam - حماية بيانات الأمهات والأطفال وفق القانون الجزائري 18-07 والمعايير الدولية.">
+    <link rel="icon" type="image/png" href="/assets/logo-BwX63nvl.png">
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;800&family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Tailwind CSS v3/v4 Play CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#A7316E',
+                        'primary-dark': '#861F55',
+                        'primary-light': '#FCE7F0',
+                        accent: '#E85A71',
+                        surface: '#0D0D0D',
+                        cardDark: '#161616',
+                        borderDark: '#262626'
+                    },
+                    fontFamily: {
+                        cairo: ['Cairo', 'sans-serif'],
+                        outfit: ['Outfit', 'sans-serif']
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            font-family: 'Cairo', 'Outfit', sans-serif;
+            background-color: #0B0B0E;
+            color: #E2E8F0;
+        }
+        .glass-card {
+            background: rgba(22, 22, 26, 0.75);
+            backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+        .glass-header {
+            background: rgba(11, 11, 14, 0.85);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+        }
+        .glow-circle {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(100px);
+            z-index: 0;
+            pointer-events: none;
+        }
+    </style>
+</head>
+<body class="min-h-screen relative antialiased selection:bg-primary selection:text-white">
+
+    <!-- Ambient Lighting Glows -->
+    <div class="glow-circle w-96 h-96 bg-primary/20 top-0 right-0"></div>
+    <div class="glow-circle w-96 h-96 bg-accent/15 top-1/3 left-0"></div>
+    <div class="glow-circle w-80 h-80 bg-emerald-500/10 bottom-20 right-10"></div>
+
+    <!-- Header Navigation -->
+    <header class="sticky top-0 z-50 glass-header px-4 sm:px-8 py-3.5 transition-all">
+        <div class="max-w-6xl mx-auto flex items-center justify-between">
+            <a href="/" class="flex items-center gap-3 group">
+                <img src="/assets/logo-BwX63nvl.png" alt="LuckyMam Logo" class="h-10 w-auto object-contain transition-transform group-hover:scale-105" onerror="this.src='/landing_page/assets/logo.png'">
+                <span class="text-xl font-bold tracking-tight text-white flex items-center gap-1 font-outfit">
+                    Lucky<span class="text-primary">Mam</span>
+                </span>
+            </a>
+
+            <!-- Language Switcher & Fast Links -->
+            <div class="flex items-center gap-2 sm:gap-3">
+                <div class="inline-flex rounded-xl p-1 bg-white/5 border border-white/10 text-xs font-semibold">
+                    <button onclick="setLanguage('ar')" id="btn-ar" class="px-3 py-1.5 rounded-lg bg-primary text-white shadow-sm transition">العربية</button>
+                    <button onclick="setLanguage('fr')" id="btn-fr" class="px-3 py-1.5 rounded-lg text-slate-300 hover:text-white transition">Français</button>
+                    <button onclick="setLanguage('en')" id="btn-en" class="px-3 py-1.5 rounded-lg text-slate-300 hover:text-white transition">English</button>
+                </div>
+                <a href="/delete-account" class="hidden sm:inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl text-xs font-medium text-rose-300 bg-rose-500/10 border border-rose-500/20 hover:bg-rose-500/20 transition">
+                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
+                    <span id="nav-delete-btn">حذف الحساب</span>
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Container -->
+    <main class="relative z-10 max-w-4xl mx-auto px-4 sm:px-6 py-10 sm:py-16">
+
+        <!-- Hero Section -->
+        <div class="text-center mb-12 sm:mb-16">
+            <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-emerald-500/10 border border-emerald-500/25 text-emerald-400 text-xs font-semibold mb-5">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" /></svg>
+                <span id="hero-badge">معتمد وفق القانون الجزائري 18-07 ومعايير حماية البيانات RGPD</span>
+            </div>
+            <h1 id="hero-title" class="text-3xl sm:text-4xl md:text-5xl font-extrabold text-white tracking-tight mb-4">
+                سياسة الخصوصية وحماية البيانات
+            </h1>
+            <p id="hero-subtitle" class="text-base sm:text-lg text-slate-400 max-w-2xl mx-auto leading-relaxed">
+                في لاكي مام (LuckyMam)، نضع خصوصية وأمان ذكريات عائلتك وبيانات طفلك على رأس أولوياتنا المطلقة.
+            </p>
+            <div class="mt-4 flex items-center justify-center gap-4 text-xs text-slate-500">
+                <span id="hero-date">آخر تحديث: 1 مارس 2026</span>
+                <span>•</span>
+                <span id="hero-version">الإصدار: v1.0.0 (MVP)</span>
+            </div>
+        </div>
+
+        <!-- Content Sections Container -->
+        <div id="content-container" class="space-y-8">
+            <!-- Dynamic Content injected by JavaScript -->
+        </div>
+
+        <!-- Quick Action Box: Delete Account -->
+        <div class="mt-14 p-6 sm:p-8 rounded-3xl bg-gradient-to-br from-rose-950/40 via-surface to-slate-900/60 border border-rose-500/20 text-center sm:text-right relative overflow-hidden">
+            <div class="relative z-10 flex flex-col sm:flex-row items-center justify-between gap-6">
+                <div>
+                    <h3 id="delete-cta-title" class="text-lg sm:text-xl font-bold text-white mb-2">ترغبين في حذف حسابك أو تصدير بياناتك؟</h3>
+                    <p id="delete-cta-desc" class="text-sm text-slate-400 max-w-xl">
+                        تطبيقاً لحقك في النسيان وفق اللوائح العالمية، يمكنك تقديم طلب حذف حسابك وبياناتك نهائياً بضغطة زر دون أي تعقيد.
+                    </p>
+                </div>
+                <a href="/delete-account" id="delete-cta-btn" class="shrink-0 px-6 py-3 rounded-2xl bg-rose-600 hover:bg-rose-500 text-white font-semibold text-sm shadow-lg shadow-rose-900/40 transition">
+                    صفحة حذف الحساب
+                </a>
+            </div>
+        </div>
+
+        <!-- Contact & Legal Footer -->
+        <footer class="mt-16 pt-8 border-t border-white/10 text-center text-xs text-slate-500 space-y-3">
+            <p id="footer-text">لاكي مام © 2026 • جميع الحقوق محفوظة لشركة LuckyMam الجزائر</p>
+            <div class="flex items-center justify-center gap-4">
+                <a href="mailto:privacy@luckymam.com.dz" class="text-primary hover:underline">privacy@luckymam.com.dz</a>
+                <span>•</span>
+                <a href="mailto:contact@luckymam.com.dz" class="text-slate-400 hover:underline">contact@luckymam.com.dz</a>
+            </div>
+        </footer>
+
+    </main>
+
+    <!-- Language Content Data & Logic -->
+    <script>
+        const contentData = {
+            ar: {
+                dir: 'rtl',
+                lang: 'ar',
+                heroBadge: 'معتمد وفق القانون الجزائري 18-07 ومعايير حماية البيانات RGPD',
+                heroTitle: 'سياسة الخصوصية وحماية البيانات',
+                heroSubtitle: 'في لاكي مام (LuckyMam)، نضع خصوصية وأمان ذكريات عائلتك وبيانات طفلك على رأس أولوياتنا المطلقة.',
+                heroDate: 'آخر تحديث: 1 مارس 2026',
+                heroVersion: 'الإصدار: v1.0.0 (MVP)',
+                navDeleteBtn: 'حذف الحساب',
+                deleteCtaTitle: 'ترغبين في حذف حسابك أو تصدير بياناتك؟',
+                deleteCtaDesc: 'تطبيقاً لحقك في النسيان وفق القانون 18-07 ولوائح Google Play، يمكنك تقديم طلب حذف الحساب أو مسح البيانات في أي وقت.',
+                deleteCtaBtn: 'صفحة طلب حذف الحساب',
+                footerText: 'لاكي مام © 2026 • جميع الحقوق محفوظة لشركة LuckyMam الجزائر',
+                sections: [
+                    {
+                        number: '01',
+                        title: 'البيانات التي نجمعها',
+                        color: 'from-blue-500/20 to-blue-500/5',
+                        border: 'border-blue-500/30',
+                        badge: 'الشفافية الكاملة',
+                        badgeColor: 'text-blue-400 bg-blue-500/10',
+                        body: `عند إنشاء حساب واستخدام تطبيق LuckyMam، نقوم بجمع البيانات التالية بغرض تقديم الخدمة فقط:<br><br>
+                        <ul class="list-disc list-inside space-y-1.5 text-slate-300">
+                            <li><strong class="text-white">معلومات الحساب:</strong> الاسم، عنوان البريد الإلكتروني، والصورة الشخصية (في حال تسجيل الدخول بحساب Google أو بالبريد).</li>
+                            <li><strong class="text-white">بيانات الحمل والطفل:</strong> تاريخ الولادة المتوقع (خلال فترة الحمل)، تواريخ ميلاد الأطفال، الأسماء، والجنس لتخصيص محتوى الأمومة.</li>
+                            <li><strong class="text-white">كبسولات الذكريات والوسائط:</strong> الصور والتسجيلات الصوتية والتعليقات التي تختارين رفعها وتوثيقها طوعاً في كبسولة الحياة.</li>
+                            <li><strong class="text-white">سجلات الصحة والنمو:</strong> متابعة جدول اللقاحات الوطني الجزائري، قياسات الوزن والطول التي تُدخل يدوياً للمتابعة الشخصية.</li>
+                            <li><strong class="text-white">المعلومات التقنية:</strong> معرّف الجهاز (FCM Token) لإرسال تذكيرات التطعيمات وإشعارات المقالات، وسجلات أخطاء التطبيق (Crashlytics) لإصلاح الأعطال.</li>
+                        </ul>`
+                    },
+                    {
+                        number: '02',
+                        title: 'كيف نستخدم بياناتك',
+                        color: 'from-purple-500/20 to-purple-500/5',
+                        border: 'border-purple-500/30',
+                        badge: 'الاستخدام الحصري',
+                        badgeColor: 'text-pink-400 bg-pink-500/10',
+                        body: `تُستخدم البيانات المجمعة حصرياً لتحقيق الأهداف التالية:<br><br>
+                        <ul class="list-disc list-inside space-y-1.5 text-slate-300">
+                            <li>تشغيل ميزات التطبيق الأساسية: الخط الزمني، كبسولات الذكريات، وتنبيهات جدول التطعيمات.</li>
+                            <li>تخصيص تجربة الأمومة حسب عمر طفلك أو أسبوع حملك.</li>
+                            <li>إرسال إشعارات التذكير بمواعيد اللقاحات والأحداث الهامة.</li>
+                            <li>معالجة طلبات طباعة وشحن ألبوم الصور المادي لمن تطلبه عبر خدمة التوصيل.</li>
+                        </ul>
+                        <div class="mt-4 p-3.5 rounded-xl bg-primary/10 border border-primary/20 text-pink-200 text-sm font-medium">
+                            🔒 <strong>ضمانة قاطعة:</strong> لا نبيع أو نؤجر أو نشارك بياناتك أو صور أطفالك مع أي طرف ثالث لأغراض إعلانية أو تجارية مطلقاً.
+                        </div>`
+                    },
+                    {
+                        number: '03',
+                        title: 'التخزين، التشفير والأمان',
+                        color: 'from-amber-500/20 to-amber-500/5',
+                        border: 'border-amber-500/30',
+                        badge: 'أعلى معايير الحماية',
+                        badgeColor: 'text-amber-400 bg-amber-500/10',
+                        body: `يتم تخزين بياناتك على بنية تحتية سحابية تابعة لـ <strong>Google Cloud Platform (Firebase)</strong> الحاصلة على شهادة الأمان العالمية <strong>ISO 27001</strong> والمتوافقة مع أعلى معايير الخصوصية.<br><br>
+                        <ul class="list-disc list-inside space-y-1.5 text-slate-300">
+                            <li><strong>التشفير أثناء النقل:</strong> جميع الاتصالات بين التطبيق والخوادم مشفرة ببروتوكول HTTPS المشدد (TLS 1.3).</li>
+                            <li><strong>التشفير في حالة السكون:</strong> كافة قواعد البيانات والصور مشفرة بواسطة خوارزميات AES-256 المعتمدة.</li>
+                            <li><strong>عزل الحسابات:</strong> قواعد الأمان في Firestore تمنع وصول أي مستخدم إلى بيانات أو صور مستخدم آخر.</li>
+                        </ul>`
+                    },
+                    {
+                        number: '04',
+                        title: 'الخدمات السحابية والـ SDKs الخارجية',
+                        color: 'from-emerald-500/20 to-emerald-500/5',
+                        border: 'border-emerald-500/30',
+                        badge: 'المكتبات المعتمدة',
+                        badgeColor: 'text-emerald-400 bg-emerald-500/10',
+                        body: `يستخدم التطبيق خدمات موثوقة عالمياً ومحلياً لضمان الجودة:<br><br>
+                        <ul class="list-disc list-inside space-y-1.5 text-slate-300">
+                            <li><strong>Google Firebase:</strong> للتحقق من الهوية (Auth)، قاعدة البيانات (Firestore)، تخزين الملفات (Storage)، وإرسال التنبيهات (Cloud Messaging).</li>
+                            <li><strong>Firebase Crashlytics:</strong> لرصد وإصلاح الانهيارات التقنية مجهولة المصدر دون تتبع شخصي.</li>
+                            <li><strong>Chargily Pay:</strong> بوابة الدفع الإلكتروني الجزائرية المعتمدة (البطاقة الذهبية / CIB) تُستخدم فقط لطلب خدمة طباعة وتوصيل ألبوم الذكريات المادي. نحن لا نخزن أي أرقام بطاقات بنكية.</li>
+                        </ul>`
+                    },
+                    {
+                        number: '05',
+                        title: 'حقوقك وفق القانون الجزائري 18-07 و RGPD',
+                        color: 'from-teal-500/20 to-teal-500/5',
+                        border: 'border-teal-500/30',
+                        badge: 'حقوقك القانونية',
+                        badgeColor: 'text-teal-400 bg-teal-500/10',
+                        body: `بموجب القانون الجزائري رقم 18-07 المتعلق بحماية الأشخاص الطبيعيين في مجال معالجة المعطيات ذات الطابع الشخصي، يحق لك:<br><br>
+                        <ul class="list-disc list-inside space-y-1.5 text-slate-300">
+                            <li><strong>حق الوصول:</strong> الاطلاع على كافة البيانات الشخصية المخزنة حولك وحول أطفالك.</li>
+                            <li><strong>حق التصحيح:</strong> تعديل وتحديث أي معلومة خاطئة أو غير دقيقة مباشرة من ملفك الشخصي.</li>
+                            <li><strong>حق المحو (الحق في النسيان):</strong> طلب حذف حسابك وجميع بياناتك وصورك نهائياً دون قيد أو شرط.</li>
+                            <li><strong>حق سحب الموافقة:</strong> إيقاف الإشعارات أو إلغاء الحساب في أي وقت.</li>
+                        </ul>`
+                    },
+                    {
+                        number: '06',
+                        title: 'الاحتفاظ بالبيانات وحذف الحساب',
+                        color: 'from-rose-500/20 to-rose-500/5',
+                        border: 'border-rose-500/30',
+                        badge: 'سياسة الحذف',
+                        badgeColor: 'text-rose-400 bg-rose-500/10',
+                        body: `نحتفظ ببياناتك طالما أن حسابك نشط وتستخدمين التطبيق.<br><br>
+                        في حال رغبتك في حذف الحساب، يمكنك ذلك بطريقتين:<br>
+                        1. <strong>من داخل التطبيق مباشرة:</strong> افتحي التطبيق &larr; الملف الشخصي &larr; اضغطي على زر "حذف الحساب نهائياً" وأكدي العملية.<br>
+                        2. <strong>من صفحة الويب العامة:</strong> زيارة صفحة <a href="/delete-account" class="text-primary underline font-medium">طلب حذف الحساب</a> وكتابة بريدك الإلكتروني.<br><br>
+                        عند تقديم طلب الحذف، تُمحى كافة سجلات الأطفال والذكريات والصور وتفاصيل الحساب نهائياً من خوادمنا خلال مدة أقصاها 30 يوماً.`
+                    },
+                    {
+                        number: '07',
+                        title: 'إخلاء المسؤولية الطبية',
+                        color: 'from-indigo-500/20 to-indigo-500/5',
+                        border: 'border-indigo-500/30',
+                        badge: 'إشعار صحي هام',
+                        badgeColor: 'text-indigo-400 bg-indigo-500/10',
+                        body: `المعلومات الصحية وجدول التطعيمات والنصائح الأسبوعية المتوفرة في تطبيق LuckyMam مخصصة للإرشاد والمتابعة الشخصية فقط، <strong>ولا تُعتبر بأي حال من الأحوال بديلاً عن الاستشارة الطبية المتخصصة أو تشخيص الطبيب</strong>. استشيري دائماً طبيب الأطفال أو الطبيب المتابع لأي قرار صحي.`
+                    },
+                    {
+                        number: '08',
+                        title: 'التواصل ومسؤول حماية البيانات',
+                        color: 'from-slate-500/20 to-slate-500/5',
+                        border: 'border-slate-500/30',
+                        badge: 'الدعم المباشر',
+                        badgeColor: 'text-slate-300 bg-slate-500/10',
+                        body: `لأي استفسارات أو لممارسة حقوقك المتعلقة بحماية بياناتك، يمكنك التواصل معنا مباشرة عبر:<br><br>
+                        📧 <strong>البريد الإلكتروني للخصوصية:</strong> <a href="mailto:privacy@luckymam.com.dz" class="text-primary hover:underline">privacy@luckymam.com.dz</a><br>
+                        🏢 <strong>فريق الدعم الفني:</strong> <a href="mailto:contact@luckymam.com.dz" class="text-slate-300 hover:underline">contact@luckymam.com.dz</a><br>
+                        📍 الجزائر العاصمة، الجمهورية الجزائرية الديمقراطية الشعبية.`
+                    }
+                ]
+            },
+            fr: {
+                dir: 'ltr',
+                lang: 'fr',
+                heroBadge: 'Conforme à la Loi Algérienne 18-07 & aux Normes RGPD',
+                heroTitle: 'Politique de Confidentialité',
+                heroSubtitle: 'Chez LuckyMam, la confidentialité et la sécurité des souvenirs de votre famille et des données de votre bébé sont notre priorité absolue.',
+                heroDate: 'Dernière mise à jour : 1 mars 2026',
+                heroVersion: 'Version : v1.0.0 (MVP)',
+                navDeleteBtn: 'Supprimer mon compte',
+                deleteCtaTitle: 'Vous souhaitez supprimer votre compte ou exporter vos données ?',
+                deleteCtaDesc: 'Conformément au droit à l\'oubli et aux exigences de Google Play, vous pouvez demander la suppression définitive de votre compte et de toutes vos données.',
+                deleteCtaBtn: 'Page de suppression de compte',
+                footerText: 'LuckyMam © 2026 • Tous droits réservés - LuckyMam Algérie',
+                sections: [
+                    {
+                        number: '01',
+                        title: 'Données collectées',
+                        color: 'from-blue-500/20 to-blue-500/5',
+                        border: 'border-blue-500/30',
+                        badge: 'Transparence totale',
+                        badgeColor: 'text-blue-400 bg-blue-500/10',
+                        body: `Lors de la création d'un compte et de l'utilisation de LuckyMam, nous collectons les données suivantes :<br><br>
+                        <ul class="list-disc list-inside space-y-1.5 text-slate-300">
+                            <li><strong class="text-white">Informations de profil :</strong> Nom, adresse e-mail et photo de profil (via authentification e-mail ou Google Sign-In).</li>
+                            <li><strong class="text-white">Données de grossesse et de l'enfant :</strong> Date prévue d'accouchement, date de naissance de votre bébé, prénoms et sexe pour personnaliser votre accompagnement.</li>
+                            <li><strong class="text-white">Capsules souvenirs et médias :</strong> Photos, enregistrements audio et notes que vous décidez de téléverser dans votre capsule de vie.</li>
+                            <li><strong class="text-white">Suivi de santé :</strong> Calendrier vaccinal national algérien et mesures de croissance (poids/taille) renseignées manuellement.</li>
+                            <li><strong class="text-white">Données techniques :</strong> Jeton FCM (Firebase Cloud Messaging) pour les rappels de vaccins et journaux d'erreurs anonymisés (Crashlytics).</li>
+                        </ul>`
+                    },
+                    {
+                        number: '02',
+                        title: 'Utilisation de vos données',
+                        color: 'from-purple-500/20 to-purple-500/5',
+                        border: 'border-purple-500/30',
+                        badge: 'Usage exclusif',
+                        badgeColor: 'text-pink-400 bg-pink-500/10',
+                        body: `Vos données sont utilisées exclusivement pour :<br><br>
+                        <ul class="list-disc list-inside space-y-1.5 text-slate-300">
+                            <li>Fournir les fonctionnalités de l'application (Timeline, Capsules de souvenirs, Rappels vaccinaux).</li>
+                            <li>Personnaliser votre expérience selon l'âge de votre enfant ou votre semaine de grossesse.</li>
+                            <li>Traiter les commandes d'impression et d'expédition physique du livre album photo pour les utilisatrices qui le souhaitent.</li>
+                        </ul>
+                        <div class="mt-4 p-3.5 rounded-xl bg-primary/10 border border-primary/20 text-pink-200 text-sm font-medium">
+                            🔒 <strong>Engagement formel :</strong> Nous ne vendons, ne louons et ne partageons jamais vos données personnelles ou les photos de vos enfants avec des tiers à des fins publicitaires ou commerciales.
+                        </div>`
+                    },
+                    {
+                        number: '03',
+                        title: 'Stockage & Sécurité',
+                        color: 'from-amber-500/20 to-amber-500/5',
+                        border: 'border-amber-500/30',
+                        badge: 'Protection maximale',
+                        badgeColor: 'text-amber-400 bg-amber-500/10',
+                        body: `Vos données sont hébergées sur l'infrastructure Google Cloud Platform (Firebase), certifiée <strong>ISO 27001</strong> et conforme au RGPD.<br><br>
+                        <ul class="list-disc list-inside space-y-1.5 text-slate-300">
+                            <li><strong>Chiffrement en transit :</strong> Toutes les communications sont sécurisées par TLS 1.3 (HTTPS strict).</li>
+                            <li><strong>Chiffrement au repos :</strong> Toutes les bases de données et médias stockés sont chiffrés avec l'algorithme AES-256.</li>
+                            <li><strong>Ségrégation stricte :</strong> Règles de sécurité Firestore garantissant que seul votre compte a accès à vos données.</li>
+                        </ul>`
+                    },
+                    {
+                        number: '04',
+                        title: 'Services tiers et SDKs',
+                        color: 'from-emerald-500/20 to-emerald-500/5',
+                        border: 'border-emerald-500/30',
+                        badge: 'Partenaires sécurisés',
+                        badgeColor: 'text-emerald-400 bg-emerald-500/10',
+                        body: `LuckyMam intègre des services de premier ordre :<br><br>
+                        <ul class="list-disc list-inside space-y-1.5 text-slate-300">
+                            <li><strong>Google Firebase :</strong> Authentification, base de données Firestore, stockage Cloud Storage et notifications FCM.</li>
+                            <li><strong>Firebase Crashlytics :</strong> Détection et correction des anomalies techniques sans traçage personnel.</li>
+                            <li><strong>Chargily Pay :</strong> Passerelle certifiée de paiement en ligne (Edahabia / CIB) pour l'impression de l'album photo physique. Aucun numéro de carte n'est stocké sur nos serveurs.</li>
+                        </ul>`
+                    },
+                    {
+                        number: '05',
+                        title: 'Vos droits (Loi 18-07 & RGPD)',
+                        color: 'from-teal-500/20 to-teal-500/5',
+                        border: 'border-teal-500/30',
+                        badge: 'Droits garantis',
+                        badgeColor: 'text-teal-400 bg-teal-500/10',
+                        body: `Conformément à la Loi Algérienne n° 18-07 relative à la protection des données personnelles et aux standards RGPD, vous disposez des droits suivants :<br><br>
+                        <ul class="list-disc list-inside space-y-1.5 text-slate-300">
+                            <li><strong>Droit d'accès :</strong> Consulter toutes les données enregistrées à votre sujet.</li>
+                            <li><strong>Droit de rectification :</strong> Modifier toute information inexacte depuis votre profil.</li>
+                            <li><strong>Droit à l'effacement (« Droit à l'oubli ») :</strong> Demander la suppression totale et irréversible de votre compte et de vos médias.</li>
+                            <li><strong>Droit de retrait :</strong> Désactiver les notifications ou retirer votre consentement à tout moment.</li>
+                        </ul>`
+                    },
+                    {
+                        number: '06',
+                        title: 'Conservation et suppression des données',
+                        color: 'from-rose-500/20 to-rose-500/5',
+                        border: 'border-rose-500/30',
+                        badge: 'Effacement définitif',
+                        badgeColor: 'text-rose-400 bg-rose-500/10',
+                        body: `Vos données sont conservées tant que votre compte est actif.<br><br>
+                        Vous pouvez supprimer votre compte à tout moment :<br>
+                        1. <strong>Dans l'application :</strong> Profil &larr; Paramètres &larr; « Supprimer mon compte ».<br>
+                        2. <strong>En ligne :</strong> Via notre page publique de <a href="/delete-account" class="text-primary underline font-medium">demande de suppression de compte</a>.<br><br>
+                        Toutes les données associées (profils d'enfants, souvenirs, photos) sont détruites sous un délai maximal de 30 jours.`
+                    },
+                    {
+                        number: '07',
+                        title: 'Avertissement Médical',
+                        color: 'from-indigo-500/20 to-indigo-500/5',
+                        border: 'border-indigo-500/30',
+                        badge: 'Important',
+                        badgeColor: 'text-indigo-400 bg-indigo-500/10',
+                        body: `Les informations fournies dans l'application (calendrier des vaccins, suivi de grossesse, articles d'éveil) sont fournies à titre informatif et <strong>ne constituent en aucun cas un avis médical professionnel, un diagnostic ou un traitement</strong>. Consultez toujours un pédiatre ou professionnel de santé qualifié.`
+                    },
+                    {
+                        number: '08',
+                        title: 'Contact et Réclamations',
+                        color: 'from-slate-500/20 to-slate-500/5',
+                        border: 'border-slate-500/30',
+                        badge: 'Assistance',
+                        badgeColor: 'text-slate-300 bg-slate-500/10',
+                        body: `Pour toute question relative à vos données personnelles :<br><br>
+                        📧 <strong>Responsable Données :</strong> <a href="mailto:privacy@luckymam.com.dz" class="text-primary hover:underline">privacy@luckymam.com.dz</a><br>
+                        🏢 <strong>Support Utilisatrices :</strong> <a href="mailto:contact@luckymam.com.dz" class="text-slate-300 hover:underline">contact@luckymam.com.dz</a><br>
+                        📍 Alger, République Algérienne Démocratique et Populaire.`
+                    }
+                ]
+            },
+            en: {
+                dir: 'ltr',
+                lang: 'en',
+                heroBadge: 'Compliant with Algerian Law 18-07 & GDPR Standards',
+                heroTitle: 'Privacy & Data Protection Policy',
+                heroSubtitle: 'At LuckyMam, the privacy and security of your family memories and your baby’s data are our top priority.',
+                heroDate: 'Last updated: March 1, 2026',
+                heroVersion: 'Version: v1.0.0 (MVP)',
+                navDeleteBtn: 'Delete Account',
+                deleteCtaTitle: 'Want to delete your account or export your data?',
+                deleteCtaDesc: 'In accordance with GDPR and Google Play requirements, you can request the permanent deletion of your account and associated data anytime.',
+                deleteCtaBtn: 'Account Deletion Page',
+                footerText: 'LuckyMam © 2026 • All rights reserved - LuckyMam Algeria',
+                sections: [
+                    {
+                        number: '01',
+                        title: 'Data We Collect',
+                        color: 'from-blue-500/20 to-blue-500/5',
+                        border: 'border-blue-500/30',
+                        badge: 'Full Transparency',
+                        badgeColor: 'text-blue-400 bg-blue-500/10',
+                        body: `When creating an account and using LuckyMam, we collect:<br><br>
+                        <ul class="list-disc list-inside space-y-1.5 text-slate-300">
+                            <li><strong class="text-white">Account Information:</strong> Name, email address, and profile picture (via email registration or Google Sign-In).</li>
+                            <li><strong class="text-white">Pregnancy & Child Data:</strong> Due date (during pregnancy), baby birth dates, names, and gender to personalize maternal content.</li>
+                            <li><strong class="text-white">Memory Capsules & Media:</strong> Photos, voice notes, and milestone entries voluntarily shared in your life capsules.</li>
+                            <li><strong class="text-white">Health & Growth Records:</strong> National Algerian immunization schedule tracking, height and weight records entered for personal tracking.</li>
+                            <li><strong class="text-white">Technical Data:</strong> Device FCM tokens for push notification reminders and anonymized crash logs (Firebase Crashlytics).</li>
+                        </ul>`
+                    },
+                    {
+                        number: '02',
+                        title: 'How We Use Your Data',
+                        color: 'from-purple-500/20 to-purple-500/5',
+                        border: 'border-purple-500/30',
+                        badge: 'Exclusive Purpose',
+                        badgeColor: 'text-pink-400 bg-pink-500/10',
+                        body: `Your data is used strictly to:<br><br>
+                        <ul class="list-disc list-inside space-y-1.5 text-slate-300">
+                            <li>Provide core app features: timeline, photo capsules, vaccine reminders.</li>
+                            <li>Personalize your parenting experience based on your baby's age.</li>
+                            <li>Fulfill printed memory album and doorstep delivery orders requested by the user.</li>
+                        </ul>
+                        <div class="mt-4 p-3.5 rounded-xl bg-primary/10 border border-primary/20 text-pink-200 text-sm font-medium">
+                            🔒 <strong>Strict Guarantee:</strong> We never sell, rent, or share personal data or photos of your children with third parties for marketing or advertising purposes.
+                        </div>`
+                    },
+                    {
+                        number: '03',
+                        title: 'Storage & Security',
+                        color: 'from-amber-500/20 to-amber-500/5',
+                        border: 'border-amber-500/30',
+                        badge: 'Top Protection',
+                        badgeColor: 'text-amber-400 bg-amber-500/10',
+                        body: `Your data is hosted on Google Cloud Platform (Firebase) servers, certified <strong>ISO 27001</strong> and fully GDPR compliant.<br><br>
+                        <ul class="list-disc list-inside space-y-1.5 text-slate-300">
+                            <li><strong>Encryption in Transit:</strong> All traffic is encrypted using TLS 1.3 (HTTPS).</li>
+                            <li><strong>Encryption at Rest:</strong> All stored databases and media files are encrypted with AES-256.</li>
+                            <li><strong>Account Isolation:</strong> Cloud Firestore security rules strictly prevent unauthorized access between accounts.</li>
+                        </ul>`
+                    },
+                    {
+                        number: '04',
+                        title: 'Third-Party Services & SDKs',
+                        color: 'from-emerald-500/20 to-emerald-500/5',
+                        border: 'border-emerald-500/30',
+                        badge: 'Verified Services',
+                        badgeColor: 'text-emerald-400 bg-emerald-500/10',
+                        body: `LuckyMam utilizes leading industry providers:<br><br>
+                        <ul class="list-disc list-inside space-y-1.5 text-slate-300">
+                            <li><strong>Google Firebase:</strong> Authentication, Firestore Database, Cloud Storage, and FCM Push Notifications.</li>
+                            <li><strong>Firebase Crashlytics:</strong> Automated app stability and bug reporting.</li>
+                            <li><strong>Chargily Pay:</strong> Algerian accredited electronic payment gateway (CIB / Edahabia) for physical album printing orders. Card details are never stored on our servers.</li>
+                        </ul>`
+                    },
+                    {
+                        number: '05',
+                        title: 'Your Rights (Algerian Law 18-07 & GDPR)',
+                        color: 'from-teal-500/20 to-teal-500/5',
+                        border: 'border-teal-500/30',
+                        badge: 'Protected Rights',
+                        badgeColor: 'text-teal-400 bg-teal-500/10',
+                        body: `Under Algerian Law 18-07 and GDPR standards, you have the right to:<br><br>
+                        <ul class="list-disc list-inside space-y-1.5 text-slate-300">
+                            <li><strong>Access:</strong> View all personal data held about you and your children.</li>
+                            <li><strong>Rectification:</strong> Correct inaccurate information in your profile.</li>
+                            <li><strong>Erasure (Right to be Forgotten):</strong> Request the full deletion of your account and data.</li>
+                            <li><strong>Consent Withdrawal:</strong> Disable notifications or close your account at any time.</li>
+                        </ul>`
+                    },
+                    {
+                        number: '06',
+                        title: 'Data Retention & Account Deletion',
+                        color: 'from-rose-500/20 to-rose-500/5',
+                        border: 'border-rose-500/30',
+                        badge: 'Deletion Policy',
+                        badgeColor: 'text-rose-400 bg-rose-500/10',
+                        body: `Data is stored as long as your account remains active.<br><br>
+                        You can delete your account easily:<br>
+                        1. <strong>Directly in-app:</strong> Go to Profile &larr; Settings &larr; Tap "Delete My Account".<br>
+                        2. <strong>Public Web Form:</strong> Access our <a href="/delete-account" class="text-primary underline font-medium">Account Deletion Request Page</a>.<br><br>
+                        Upon confirmation, all children records, memory capsules, photos, and personal details are permanently deleted within 30 days.`
+                    },
+                    {
+                        number: '07',
+                        title: 'Medical Disclaimer',
+                        color: 'from-indigo-500/20 to-indigo-500/5',
+                        badge: 'Important Notice',
+                        badgeColor: 'text-indigo-400 bg-indigo-500/10',
+                        body: `Health and vaccination schedules provided in LuckyMam are intended for organizational guidance only and <strong>do not replace professional medical advice, diagnosis, or pediatric care</strong>. Always consult a certified physician for medical decisions.`
+                    },
+                    {
+                        number: '08',
+                        title: 'Contact Information',
+                        color: 'from-slate-500/20 to-slate-500/5',
+                        badge: 'Direct Support',
+                        badgeColor: 'text-slate-300 bg-slate-500/10',
+                        body: `For questions or privacy requests, please reach us at:<br><br>
+                        📧 <strong>Data Protection Email:</strong> <a href="mailto:privacy@luckymam.com.dz" class="text-primary hover:underline">privacy@luckymam.com.dz</a><br>
+                        🏢 <strong>Support Team:</strong> <a href="mailto:contact@luckymam.com.dz" class="text-slate-300 hover:underline">contact@luckymam.com.dz</a><br>
+                        📍 Algiers, People's Democratic Republic of Algeria.`
+                    }
+                ]
+            }
+        };
+
+        function setLanguage(lang) {
+            const data = contentData[lang] || contentData.ar;
+            
+            document.documentElement.lang = data.lang;
+            document.documentElement.dir = data.dir;
+
+            // Buttons state
+            ['ar', 'fr', 'en'].forEach(l => {
+                const btn = document.getElementById('btn-' + l);
+                if (l === lang) {
+                    btn.className = 'px-3 py-1.5 rounded-lg bg-primary text-white shadow-sm transition';
+                } else {
+                    btn.className = 'px-3 py-1.5 rounded-lg text-slate-300 hover:text-white transition';
+                }
+            });
+
+            // Update Header & Hero
+            document.getElementById('hero-badge').innerText = data.heroBadge;
+            document.getElementById('hero-title').innerText = data.heroTitle;
+            document.getElementById('hero-subtitle').innerText = data.heroSubtitle;
+            document.getElementById('hero-date').innerText = data.heroDate;
+            document.getElementById('hero-version').innerText = data.heroVersion;
+            document.getElementById('nav-delete-btn').innerText = data.navDeleteBtn;
+
+            // Update CTA Box
+            document.getElementById('delete-cta-title').innerText = data.deleteCtaTitle;
+            document.getElementById('delete-cta-desc').innerText = data.deleteCtaDesc;
+            document.getElementById('delete-cta-btn').innerText = data.deleteCtaBtn;
+            document.getElementById('footer-text').innerText = data.footerText;
+
+            // Render Sections
+            const container = document.getElementById('content-container');
+            container.innerHTML = '';
+
+            data.sections.forEach(sec => {
+                const card = document.createElement('div');
+                card.className = 'p-6 sm:p-8 rounded-3xl glass-card relative overflow-hidden transition hover:border-white/20';
+                card.innerHTML = `
+                    <div class="flex items-center justify-between gap-4 mb-4">
+                        <div class="flex items-center gap-3">
+                            <span class="text-xs font-mono font-bold px-2.5 py-1 rounded-lg bg-white/10 text-slate-300">${sec.number}</span>
+                            <h2 class="text-xl sm:text-2xl font-bold text-white tracking-tight">${sec.title}</h2>
+                        </div>
+                        <span class="text-xs font-medium px-3 py-1 rounded-full ${sec.badgeColor} border border-white/5">${sec.badge}</span>
+                    </div>
+                    <div class="text-slate-300 text-sm sm:text-base leading-relaxed">
+                        ${sec.body}
+                    </div>
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        // Initialize with Arabic by default
+        setLanguage('ar');
+    </script>
+</body>
+</html>

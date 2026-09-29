@@ -1285,9 +1285,9 @@ class _SettingsSection extends ConsumerWidget {
           secondaryColor: secondaryColor,
           title: l10n.privacy,
           onTap: () {
-            Navigator.of(
-              context,
-            ).push(MaterialPageRoute(builder: (_) => const PrivacyScreen()));
+            Navigator.of(context).push(
+              MaterialPageRoute(builder: (_) => const PrivacyScreen()),
+            );
           },
         ),
         _SettingsTile(
@@ -1296,9 +1296,9 @@ class _SettingsSection extends ConsumerWidget {
           secondaryColor: secondaryColor,
           title: l10n.helpAndSupport,
           onTap: () {
-            Navigator.of(
-              context,
-            ).push(MaterialPageRoute(builder: (_) => const HelpScreen()));
+            Navigator.of(context).push(
+              MaterialPageRoute(builder: (_) => const HelpScreen()),
+            );
           },
         ),
         const SizedBox(height: AppSpacing.sm),
@@ -1318,7 +1318,28 @@ class _SettingsSection extends ConsumerWidget {
             ),
           ),
         ),
+        const SizedBox(height: AppSpacing.xs),
+        // ─── Delete Account (Google Play mandatory requirement) ───
+        SizedBox(
+          width: double.infinity,
+          child: TextButton.icon(
+            onPressed: () => _showDeleteAccountDialog(context),
+            icon: const Icon(Icons.delete_forever_rounded, size: 18),
+            label: const Text('حذف الحساب نهائياً'),
+            style: TextButton.styleFrom(
+              foregroundColor: Colors.red.shade400,
+              padding: const EdgeInsets.symmetric(vertical: 12),
+            ),
+          ),
+        ),
       ],
+    );
+  }
+
+  void _showDeleteAccountDialog(BuildContext context) {
+    showDialog<void>(
+      context: context,
+      builder: (dialogCtx) => _DeleteAccountDialog(),
     );
   }
 }
@@ -1579,6 +1600,125 @@ class _ErrorSectionCard extends StatelessWidget {
         ),
         const SizedBox(height: AppSpacing.md),
       ],
+    );
+  }
+}
+
+// ─── Delete Account Confirmation Dialog ───────────────────────────────────────
+
+class _DeleteAccountDialog extends StatefulWidget {
+  @override
+  State<_DeleteAccountDialog> createState() => _DeleteAccountDialogState();
+}
+
+class _DeleteAccountDialogState extends State<_DeleteAccountDialog> {
+  bool _confirmed = false;
+  bool _isLoading = false;
+
+  Future<void> _handleDelete() async {
+    if (!_confirmed) return;
+    setState(() => _isLoading = true);
+
+    final authService = AuthService();
+    final result = await authService.deleteAccount();
+
+    if (!mounted) return;
+    setState(() => _isLoading = false);
+
+    if (result.isSuccess) {
+      Navigator.of(context).pop();
+      context.go('/login');
+    } else {
+      Navigator.of(context).pop();
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(result.errorMessage ?? 'حدث خطأ غير متوقع'),
+          backgroundColor: Colors.red,
+          duration: const Duration(seconds: 5),
+        ),
+      );
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return AlertDialog(
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+      title: Row(
+        children: [
+          Container(
+            padding: const EdgeInsets.all(8),
+            decoration: BoxDecoration(
+              color: Colors.red.shade50,
+              shape: BoxShape.circle,
+            ),
+            child: Icon(Icons.warning_rounded, color: Colors.red.shade600, size: 22),
+          ),
+          const SizedBox(width: 12),
+          const Expanded(
+            child: Text(
+              'حذف الحساب نهائياً',
+              style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+            ),
+          ),
+        ],
+      ),
+      content: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Text(
+            'سيتم حذف حسابك وجميع بياناتك بشكل نهائي وغير قابل للتراجع، بما في ذلك:',
+            style: TextStyle(fontSize: 13.5, height: 1.5),
+          ),
+          const SizedBox(height: 12),
+          _bulletPoint('✦ صور وكبسولات الذكريات'),
+          _bulletPoint('✦ معلومات الأطفال والصحة'),
+          _bulletPoint('✦ سجل الاشتراكات والطلبات'),
+          const SizedBox(height: 16),
+          CheckboxListTile(
+            value: _confirmed,
+            onChanged: (v) => setState(() => _confirmed = v ?? false),
+            activeColor: Colors.red,
+            controlAffinity: ListTileControlAffinity.leading,
+            contentPadding: EdgeInsets.zero,
+            title: const Text(
+              'أفهم أن هذا الإجراء لا يمكن التراجع عنه',
+              style: TextStyle(fontSize: 13, fontWeight: FontWeight.w600),
+            ),
+          ),
+        ],
+      ),
+      actions: [
+        TextButton(
+          onPressed: _isLoading ? null : () => Navigator.of(context).pop(),
+          child: const Text('إلغاء'),
+        ),
+        FilledButton(
+          onPressed: _confirmed && !_isLoading ? _handleDelete : null,
+          style: FilledButton.styleFrom(
+            backgroundColor: Colors.red,
+            disabledBackgroundColor: Colors.red.shade200,
+          ),
+          child: _isLoading
+              ? const SizedBox(
+                  width: 16,
+                  height: 16,
+                  child: CircularProgressIndicator(
+                    strokeWidth: 2,
+                    color: Colors.white,
+                  ),
+                )
+              : const Text('حذف الحساب'),
+        ),
+      ],
+    );
+  }
+
+  Widget _bulletPoint(String text) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 2),
+      child: Text(text, style: const TextStyle(fontSize: 13, color: Colors.red)),
     );
   }
 }

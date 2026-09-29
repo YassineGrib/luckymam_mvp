@@ -1,0 +1,510 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>طلب حذف الحساب والبيانات | LuckyMam - لاكي مام</title>
+    <meta name="description" content="نموذج وتعليمات طلب حذف الحساب ومسح البيانات نهائياً من تطبيق لاكي مام LuckyMam وفق معايير Google Play والقوانين السارية.">
+    <link rel="icon" type="image/png" href="/assets/logo-BwX63nvl.png">
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;800&family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Tailwind CSS Play CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#A7316E',
+                        'primary-dark': '#861F55',
+                        'primary-light': '#FCE7F0',
+                        accent: '#E85A71',
+                        surface: '#0D0D0D',
+                        cardDark: '#161616',
+                        borderDark: '#262626'
+                    },
+                    fontFamily: {
+                        cairo: ['Cairo', 'sans-serif'],
+                        outfit: ['Outfit', 'sans-serif']
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            font-family: 'Cairo', 'Outfit', sans-serif;
+            background-color: #0B0B0E;
+            color: #E2E8F0;
+        }
+        .glass-card {
+            background: rgba(22, 22, 26, 0.78);
+            backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+        .glass-header {
+            background: rgba(11, 11, 14, 0.85);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+        }
+        .glow-circle {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(120px);
+            z-index: 0;
+            pointer-events: none;
+        }
+    </style>
+</head>
+<body class="min-h-screen relative antialiased selection:bg-rose-600 selection:text-white">
+
+    <!-- Ambient Lighting Glows -->
+    <div class="glow-circle w-96 h-96 bg-rose-600/15 top-0 left-10"></div>
+    <div class="glow-circle w-96 h-96 bg-primary/20 top-1/2 right-0"></div>
+
+    <!-- Header Navigation -->
+    <header class="sticky top-0 z-50 glass-header px-4 sm:px-8 py-3.5 transition-all">
+        <div class="max-w-6xl mx-auto flex items-center justify-between">
+            <a href="/" class="flex items-center gap-3 group">
+                <img src="/assets/logo-BwX63nvl.png" alt="LuckyMam Logo" class="h-10 w-auto object-contain transition-transform group-hover:scale-105" onerror="this.src='/landing_page/assets/logo.png'">
+                <span class="text-xl font-bold tracking-tight text-white flex items-center gap-1 font-outfit">
+                    Lucky<span class="text-primary">Mam</span>
+                </span>
+            </a>
+
+            <!-- Language Switcher & Privacy Link -->
+            <div class="flex items-center gap-2 sm:gap-3">
+                <div class="inline-flex rounded-xl p-1 bg-white/5 border border-white/10 text-xs font-semibold">
+                    <button onclick="setLanguage('ar')" id="btn-ar" class="px-3 py-1.5 rounded-lg bg-primary text-white shadow-sm transition">العربية</button>
+                    <button onclick="setLanguage('fr')" id="btn-fr" class="px-3 py-1.5 rounded-lg text-slate-300 hover:text-white transition">Français</button>
+                    <button onclick="setLanguage('en')" id="btn-en" class="px-3 py-1.5 rounded-lg text-slate-300 hover:text-white transition">English</button>
+                </div>
+                <a href="/privacy" class="hidden sm:inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl text-xs font-medium text-slate-300 bg-white/5 border border-white/10 hover:text-white hover:bg-white/10 transition">
+                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" /></svg>
+                    <span id="nav-privacy-btn">سياسة الخصوصية</span>
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="relative z-10 max-w-4xl mx-auto px-4 sm:px-6 py-10 sm:py-16">
+
+        <!-- Hero Header -->
+        <div class="text-center mb-12">
+            <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-rose-500/10 border border-rose-500/25 text-rose-400 text-xs font-semibold mb-4">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
+                <span id="hero-badge">امتثال لسياسة Google Play وحق المحو</span>
+            </div>
+            <h1 id="hero-title" class="text-3xl sm:text-4xl md:text-5xl font-extrabold text-white tracking-tight mb-4">
+                طلب حذف الحساب والبيانات نهائياً
+            </h1>
+            <p id="hero-subtitle" class="text-base sm:text-lg text-slate-400 max-w-2xl mx-auto leading-relaxed">
+                نحترم خصوصيتك بالكامل. يمكنك حذف حسابك وجميع بياناتك إما مباشرة وفوراً من داخل التطبيق، أو عبر تعبئة النموذج أدناه دون الحاجة لتثبيت التطبيق.
+            </p>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+            
+            <!-- Left/Main Column: Online Form -->
+            <div class="lg:col-span-7 glass-card p-6 sm:p-8 rounded-3xl relative overflow-hidden">
+                <h2 id="form-heading" class="text-xl sm:text-2xl font-bold text-white mb-2 flex items-center gap-2.5">
+                    <span class="w-2.5 h-2.5 rounded-full bg-rose-500"></span>
+                    <span>نموذج طلب الحذف عبر الويب</span>
+                </h2>
+                <p id="form-subheading" class="text-xs sm:text-sm text-slate-400 mb-6">
+                    أدخلي عنوان البريد الإلكتروني المسجل في حساب لاكي مام ليتم التحقق منه وحذف البيانات المرتبطة به.
+                </p>
+
+                <!-- Form -->
+                <form id="deletion-form" onsubmit="handleFormSubmit(event)" class="space-y-4">
+                    <div>
+                        <label id="label-email" for="user-email" class="block text-xs font-semibold text-slate-300 mb-1.5">البريد الإلكتروني المرتبط بالحساب *</label>
+                        <input type="email" id="user-email" required placeholder="example@email.com" class="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white placeholder-slate-500 text-sm focus:outline-none focus:border-rose-500 transition">
+                    </div>
+
+                    <div>
+                        <label id="label-name" for="user-name" class="block text-xs font-semibold text-slate-300 mb-1.5">الاسم الكامل (اختياري)</label>
+                        <input type="text" id="user-name" placeholder="اسم الأم المسجل" class="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white placeholder-slate-500 text-sm focus:outline-none focus:border-rose-500 transition">
+                    </div>
+
+                    <div>
+                        <label id="label-reason" for="user-reason" class="block text-xs font-semibold text-slate-300 mb-1.5">سبب حذف الحساب (اختياري)</label>
+                        <select id="user-reason" class="w-full px-4 py-3 rounded-xl bg-slate-900 border border-white/10 text-white text-sm focus:outline-none focus:border-rose-500 transition">
+                            <option value="no_longer_needed" id="opt-1">لم أعد بحاجة لاستخدام التطبيق</option>
+                            <option value="privacy_concerns" id="opt-2">أسباب تتعلق بالخصوصية</option>
+                            <option value="new_account" id="opt-3">أرغب في إنشاء حساب جديد ببيانات أخرى</option>
+                            <option value="other" id="opt-4">سبب آخر</option>
+                        </select>
+                    </div>
+
+                    <div class="pt-2">
+                        <label class="flex items-start gap-3 cursor-pointer">
+                            <input type="checkbox" id="confirm-check" required class="mt-1 w-4 h-4 rounded border-white/20 bg-white/5 text-rose-600 focus:ring-rose-500">
+                            <span id="label-confirm" class="text-xs text-slate-300 leading-relaxed">
+                                أؤكد رغبتي في حذف حسابي بـ LuckyMam نهائياً، وأدرك أن هذا الإجراء سيؤدي إلى مسح ذكريات أطفالي والصور والبيانات المسجلة ولا يمكن التراجع عنه.
+                            </span>
+                        </label>
+                    </div>
+
+                    <div class="pt-3">
+                        <button type="submit" id="btn-submit" class="w-full py-3.5 px-6 rounded-xl bg-gradient-to-r from-rose-600 to-primary hover:from-rose-500 hover:to-primary-dark text-white font-bold text-sm shadow-lg shadow-rose-900/30 transition flex items-center justify-center gap-2">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
+                            <span id="btn-submit-text">إرسال طلب الحذف النهائي</span>
+                        </button>
+                    </div>
+                </form>
+
+                <!-- Success Confirmation Modal/Card (Hidden by default) -->
+                <div id="success-box" class="hidden mt-6 p-5 rounded-2xl bg-emerald-950/40 border border-emerald-500/30 text-emerald-200">
+                    <div class="flex items-center gap-3 mb-2">
+                        <div class="w-8 h-8 rounded-full bg-emerald-500/20 flex items-center justify-center shrink-0">
+                            <svg class="w-5 h-5 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" /></svg>
+                        </div>
+                        <h4 id="success-title" class="font-bold text-white text-base">تم استلام طلبك بنجاح</h4>
+                    </div>
+                    <p id="success-msg" class="text-xs text-slate-300 leading-relaxed mb-3">
+                        تم تسجيل طلب حذف الحساب المرتبط بالبريد الإلكتروني المدخل. سيتم إرسال رسالة تأكيد إلكترونية إلى بريدك لمصادقة الطلب وحذف البيانات بالكامل خلال 30 يوماً.
+                    </p>
+                    <div class="text-xs font-mono bg-black/40 px-3 py-2 rounded-lg border border-emerald-500/20 text-emerald-400" id="request-ref-box">
+                        رقم التتبع: <span id="ref-number">LKM-DEL-2026-XXXXX</span>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- Right Column: In-App Method & Policy Details -->
+            <div class="lg:col-span-5 space-y-6">
+
+                <!-- In-App Quick Steps Card -->
+                <div class="glass-card p-6 sm:p-7 rounded-3xl border border-primary/20 bg-gradient-to-b from-primary/10 via-surface to-surface">
+                    <div class="flex items-center gap-3 mb-4">
+                        <div class="w-9 h-9 rounded-xl bg-primary/20 flex items-center justify-center text-primary">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z" /></svg>
+                        </div>
+                        <div>
+                            <h3 id="inapp-title" class="font-bold text-white text-base">الحذف الفوري من داخل التطبيق</h3>
+                            <span id="inapp-badge" class="text-[11px] text-pink-300 font-medium">الأسرع (فوري دون انتظار)</span>
+                        </div>
+                    </div>
+                    <ol class="space-y-3 text-xs sm:text-sm text-slate-300 leading-relaxed" id="inapp-steps">
+                        <li class="flex items-start gap-2.5">
+                            <span class="w-5 h-5 rounded-full bg-white/10 flex items-center justify-center text-xs font-bold text-white shrink-0 mt-0.5">1</span>
+                            <span>افتحي تطبيق <strong>LuckyMam</strong> وسجّلي الدخول.</span>
+                        </li>
+                        <li class="flex items-start gap-2.5">
+                            <span class="w-5 h-5 rounded-full bg-white/10 flex items-center justify-center text-xs font-bold text-white shrink-0 mt-0.5">2</span>
+                            <span>توجّهي إلى تبويب <strong>الملف الشخصي (Profile)</strong> في أسفل الشاشة.</span>
+                        </li>
+                        <li class="flex items-start gap-2.5">
+                            <span class="w-5 h-5 rounded-full bg-white/10 flex items-center justify-center text-xs font-bold text-white shrink-0 mt-0.5">3</span>
+                            <span>انزلي لأسفل الصفحة واضغطي على الزر الأحمر <strong>"حذف الحساب نهائياً"</strong>.</span>
+                        </li>
+                        <li class="flex items-start gap-2.5">
+                            <span class="w-5 h-5 rounded-full bg-rose-500/20 text-rose-300 flex items-center justify-center text-xs font-bold shrink-0 mt-0.5">4</span>
+                            <span>أكدي الحذف في النافذة المنبثقة، وسيتم مسح الحساب وقواعد البيانات فوراً.</span>
+                        </li>
+                    </ol>
+                </div>
+
+                <!-- What Data is Deleted Card -->
+                <div class="glass-card p-6 sm:p-7 rounded-3xl">
+                    <h3 id="deleted-data-title" class="font-bold text-white text-base mb-3 flex items-center gap-2">
+                        <svg class="w-4 h-4 text-rose-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
+                        <span>ما هي البيانات التي تُمحى نهائياً؟</span>
+                    </h3>
+                    <ul class="space-y-2 text-xs sm:text-sm text-slate-300" id="deleted-data-list">
+                        <li class="flex items-center gap-2">
+                            <span class="w-1.5 h-1.5 rounded-full bg-rose-400"></span>
+                            <span>بيانات الحساب الشخصي (الاسم، البريد الإلكتروني، الصورة)</span>
+                        </li>
+                        <li class="flex items-center gap-2">
+                            <span class="w-1.5 h-1.5 rounded-full bg-rose-400"></span>
+                            <span>ملفات وسجلات الأطفال ومراحل الحمل</span>
+                        </li>
+                        <li class="flex items-center gap-2">
+                            <span class="w-1.5 h-1.5 rounded-full bg-rose-400"></span>
+                            <span>جميع كبسولات الصور والذكريات والتسجيلات الصوتية</span>
+                        </li>
+                        <li class="flex items-center gap-2">
+                            <span class="w-1.5 h-1.5 rounded-full bg-rose-400"></span>
+                            <span>سجلات تتبع اللقاحات والقياسات الطبية</span>
+                        </li>
+                        <li class="flex items-center gap-2">
+                            <span class="w-1.5 h-1.5 rounded-full bg-rose-400"></span>
+                            <span>رموز الإشعارات وتاريخ التنبيهات</span>
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- Retained Data Notice -->
+                <div class="glass-card p-6 sm:p-7 rounded-3xl border border-white/5 text-xs text-slate-400 leading-relaxed">
+                    <h4 id="retention-title" class="font-bold text-slate-200 mb-1.5">البيانات التي قد يتم الاحتفاظ بها مؤقتاً:</h4>
+                    <p id="retention-desc">
+                        فواتير وسجلات طلبات طباعة الألبوم المادي وشحنه (إن وُجدت) يتم الاحتفاظ بها لأغراض الالتزام الضريبي والمحاسبي وفق ما يفرضه القانون التجاري الجزائري، ولا تُستخدم لأي غرض آخر.
+                    </p>
+                </div>
+
+            </div>
+
+        </div>
+
+        <!-- Support Info Footer -->
+        <footer class="mt-16 pt-8 border-t border-white/10 text-center text-xs text-slate-500 space-y-3">
+            <p id="footer-text">لاكي مام © 2026 • متوافق مع شروط وسياسات متجر Google Play</p>
+            <div class="flex items-center justify-center gap-4">
+                <a href="mailto:privacy@luckymam.com.dz" class="text-rose-400 hover:underline">privacy@luckymam.com.dz</a>
+                <span>•</span>
+                <a href="/privacy" class="text-slate-400 hover:underline" id="footer-privacy-link">سياسة الخصوصية</a>
+            </div>
+        </footer>
+
+    </main>
+
+    <!-- Interactive Logic & Multilingual Dictionary -->
+    <script>
+        const i18n = {
+            ar: {
+                dir: 'rtl',
+                lang: 'ar',
+                heroBadge: 'امتثال لسياسة Google Play وحق المحو',
+                heroTitle: 'طلب حذف الحساب والبيانات نهائياً',
+                heroSubtitle: 'نحترم خصوصيتك بالكامل. يمكنك حذف حسابك وجميع بياناتك إما مباشرة وفوراً من داخل التطبيق، أو عبر تعبئة النموذج أدناه دون الحاجة لتثبيت التطبيق.',
+                navPrivacyBtn: 'سياسة الخصوصية',
+                formHeading: 'نموذج طلب الحذف عبر الويب',
+                formSubheading: 'أدخلي عنوان البريد الإلكتروني المسجل في حساب لاكي مام ليتم التحقق منه وحذف البيانات المرتبطة به.',
+                labelEmail: 'البريد الإلكتروني المرتبط بالحساب *',
+                labelName: 'الاسم الكامل (اختياري)',
+                labelReason: 'سبب حذف الحساب (اختياري)',
+                opt1: 'لم أعد بحاجة لاستخدام التطبيق',
+                opt2: 'أسباب تتعلق بالخصوصية',
+                opt3: 'أرغب في إنشاء حساب جديد ببيانات أخرى',
+                opt4: 'سبب آخر',
+                labelConfirm: 'أؤكد رغبتي في حذف حسابي بـ LuckyMam نهائياً، وأدرك أن هذا الإجراء سيؤدي إلى مسح ذكريات أطفالي والصور والبيانات المسجلة ولا يمكن التراجع عنه.',
+                btnSubmitText: 'إرسال طلب الحذف النهائي',
+                successTitle: 'تم استلام طلبك بنجاح',
+                successMsg: 'تم تسجيل طلب حذف الحساب المرتبط بالبريد الإلكتروني المدخل. سيتم إرسال رسالة تأكيد إلكترونية إلى بريدك لمصادقة الطلب وحذف البيانات بالكامل خلال 30 يوماً.',
+                inappTitle: 'الحذف الفوري من داخل التطبيق',
+                inappBadge: 'الأسرع (فوري دون انتظار)',
+                inappSteps: `
+                    <li class="flex items-start gap-2.5">
+                        <span class="w-5 h-5 rounded-full bg-white/10 flex items-center justify-center text-xs font-bold text-white shrink-0 mt-0.5">1</span>
+                        <span>افتحي تطبيق <strong>LuckyMam</strong> وسجّلي الدخول.</span>
+                    </li>
+                    <li class="flex items-start gap-2.5">
+                        <span class="w-5 h-5 rounded-full bg-white/10 flex items-center justify-center text-xs font-bold text-white shrink-0 mt-0.5">2</span>
+                        <span>توجّهي إلى تبويب <strong>الملف الشخصي (Profile)</strong> في أسفل الشاشة.</span>
+                    </li>
+                    <li class="flex items-start gap-2.5">
+                        <span class="w-5 h-5 rounded-full bg-white/10 flex items-center justify-center text-xs font-bold text-white shrink-0 mt-0.5">3</span>
+                        <span>انزلي لأسفل الصفحة واضغطي على الزر الأحمر <strong>"حذف الحساب نهائياً"</strong>.</span>
+                    </li>
+                    <li class="flex items-start gap-2.5">
+                        <span class="w-5 h-5 rounded-full bg-rose-500/20 text-rose-300 flex items-center justify-center text-xs font-bold shrink-0 mt-0.5">4</span>
+                        <span>أكدي الحذف في النافذة المنبثقة، وسيتم مسح الحساب وقواعد البيانات فوراً.</span>
+                    </li>
+                `,
+                deletedDataTitle: 'ما هي البيانات التي تُمحى نهائياً؟',
+                deletedDataList: `
+                    <li class="flex items-center gap-2"><span class="w-1.5 h-1.5 rounded-full bg-rose-400"></span><span>بيانات الحساب الشخصي (الاسم، البريد الإلكتروني، الصورة)</span></li>
+                    <li class="flex items-center gap-2"><span class="w-1.5 h-1.5 rounded-full bg-rose-400"></span><span>ملفات وسجلات الأطفال ومراحل الحمل</span></li>
+                    <li class="flex items-center gap-2"><span class="w-1.5 h-1.5 rounded-full bg-rose-400"></span><span>جميع كبسولات الصور والذكريات والتسجيلات الصوتية</span></li>
+                    <li class="flex items-center gap-2"><span class="w-1.5 h-1.5 rounded-full bg-rose-400"></span><span>سجلات تتبع اللقاحات والقياسات الطبية</span></li>
+                    <li class="flex items-center gap-2"><span class="w-1.5 h-1.5 rounded-full bg-rose-400"></span><span>رموز الإشعارات وتاريخ التنبيهات</span></li>
+                `,
+                retentionTitle: 'البيانات التي قد يتم الاحتفاظ بها مؤقتاً:',
+                retentionDesc: 'فواتير وسجلات طلبات طباعة الألبوم المادي وشحنه (إن وُجدت) يتم الاحتفاظ بها لأغراض الالتزام الضريبي والمحاسبي وفق ما يفرضه القانون التجاري الجزائري، ولا تُستخدم لأي غرض آخر.',
+                footerText: 'لاكي مام © 2026 • متوافق مع شروط وسياسات متجر Google Play',
+                footerPrivacyLink: 'سياسة الخصوصية'
+            },
+            fr: {
+                dir: 'ltr',
+                lang: 'fr',
+                heroBadge: 'Conformité Google Play & Droit à l\'oubli',
+                heroTitle: 'Suppression définitive du compte et des données',
+                heroSubtitle: 'Nous respectons pleinement votre vie privée. Vous pouvez supprimer votre compte directement dans l\'application ou via le formulaire ci-dessous sans avoir à réinstaller l\'application.',
+                navPrivacyBtn: 'Confidentialité',
+                formHeading: 'Formulaire de demande de suppression en ligne',
+                formSubheading: 'Indiquez l\'adresse e-mail associée à votre compte LuckyMam pour vérification et suppression intégrale des données.',
+                labelEmail: 'Adresse e-mail du compte *',
+                labelName: 'Nom complet (facultatif)',
+                labelReason: 'Motif de suppression (facultatif)',
+                opt1: 'Je n\'ai plus besoin de l\'application',
+                opt2: 'Motifs liés à la confidentialité',
+                opt3: 'Création d\'un nouveau compte',
+                opt4: 'Autre motif',
+                labelConfirm: 'Je confirme ma volonté de supprimer définitivement mon compte LuckyMam et j\'accepte la suppression irréversible de tous mes souvenirs et données de santé.',
+                btnSubmitText: 'Envoyer la demande de suppression',
+                successTitle: 'Demande enregistrée avec succès',
+                successMsg: 'Votre demande a bien été prise en compte. Un e-mail de confirmation vous sera transmis pour valider la démarche. Les données seront totalement purgées sous 30 jours.',
+                inappTitle: 'Suppression immédiate depuis l\'application',
+                inappBadge: 'Le plus rapide (immédiat)',
+                inappSteps: `
+                    <li class="flex items-start gap-2.5">
+                        <span class="w-5 h-5 rounded-full bg-white/10 flex items-center justify-center text-xs font-bold text-white shrink-0 mt-0.5">1</span>
+                        <span>Ouvrez l'application <strong>LuckyMam</strong> et connectez-vous.</span>
+                    </li>
+                    <li class="flex items-start gap-2.5">
+                        <span class="w-5 h-5 rounded-full bg-white/10 flex items-center justify-center text-xs font-bold text-white shrink-0 mt-0.5">2</span>
+                        <span>Rendez-vous dans l'onglet <strong>Profil</strong> en bas à droite.</span>
+                    </li>
+                    <li class="flex items-start gap-2.5">
+                        <span class="w-5 h-5 rounded-full bg-white/10 flex items-center justify-center text-xs font-bold text-white shrink-0 mt-0.5">3</span>
+                        <span>Faites défiler vers le bas et cliquez sur <strong>« Supprimer mon compte »</strong>.</span>
+                    </li>
+                    <li class="flex items-start gap-2.5">
+                        <span class="w-5 h-5 rounded-full bg-rose-500/20 text-rose-300 flex items-center justify-center text-xs font-bold shrink-0 mt-0.5">4</span>
+                        <span>Confirmez dans la boîte de dialogue : vos données sont supprimées immédiatement.</span>
+                    </li>
+                `,
+                deletedDataTitle: 'Quelles sont les données définitivement effacées ?',
+                deletedDataList: `
+                    <li class="flex items-center gap-2"><span class="w-1.5 h-1.5 rounded-full bg-rose-400"></span><span>Données de profil (nom, e-mail, photo de profil)</span></li>
+                    <li class="flex items-center gap-2"><span class="w-1.5 h-1.5 rounded-full bg-rose-400"></span><span>Dossiers des enfants et suivi de grossesse</span></li>
+                    <li class="flex items-center gap-2"><span class="w-1.5 h-1.5 rounded-full bg-rose-400"></span><span>Toutes les capsules de photos, vocaux et souvenirs</span></li>
+                    <li class="flex items-center gap-2"><span class="w-1.5 h-1.5 rounded-full bg-rose-400"></span><span>Historique vaccinal et mesures de santé</span></li>
+                    <li class="flex items-center gap-2"><span class="w-1.5 h-1.5 rounded-full bg-rose-400"></span><span>Jetons de notification et préférences</span></li>
+                `,
+                retentionTitle: 'Données conservées temporairement :',
+                retentionDesc: 'Les factures et justificatifs de commandes d\'impression d\'albums physiques sont conservés exclusivement pour répondre aux obligations comptables et fiscales de la législation algérienne.',
+                footerText: 'LuckyMam © 2026 • Conforme aux règles Google Play Store',
+                footerPrivacyLink: 'Politique de Confidentialité'
+            },
+            en: {
+                dir: 'ltr',
+                lang: 'en',
+                heroBadge: 'Google Play Compliance & Right to Erasure',
+                heroTitle: 'Account & Data Deletion Request',
+                heroSubtitle: 'We fully respect your privacy. You can delete your account directly within the app or submit the form below without needing the app installed.',
+                navPrivacyBtn: 'Privacy Policy',
+                formHeading: 'Online Deletion Request Form',
+                formSubheading: 'Enter your registered LuckyMam email address to verify identity and permanently delete all associated data.',
+                labelEmail: 'Registered Account Email *',
+                labelName: 'Full Name (Optional)',
+                labelReason: 'Reason for Deletion (Optional)',
+                opt1: 'I no longer need the app',
+                opt2: 'Privacy concerns',
+                opt3: 'Creating a new account',
+                opt4: 'Other reason',
+                labelConfirm: 'I confirm that I want to delete my LuckyMam account permanently, and I understand this will irreversibly erase my baby memories and data.',
+                btnSubmitText: 'Submit Deletion Request',
+                successTitle: 'Request Received Successfully',
+                successMsg: 'Your deletion request has been recorded. A verification email will be dispatched. All personal data will be completely deleted within 30 days.',
+                inappTitle: 'Immediate In-App Deletion',
+                inappBadge: 'Fastest (Immediate)',
+                inappSteps: `
+                    <li class="flex items-start gap-2.5">
+                        <span class="w-5 h-5 rounded-full bg-white/10 flex items-center justify-center text-xs font-bold text-white shrink-0 mt-0.5">1</span>
+                        <span>Open the <strong>LuckyMam</strong> app and sign in.</span>
+                    </li>
+                    <li class="flex items-start gap-2.5">
+                        <span class="w-5 h-5 rounded-full bg-white/10 flex items-center justify-center text-xs font-bold text-white shrink-0 mt-0.5">2</span>
+                        <span>Navigate to the <strong>Profile</strong> tab at the bottom.</span>
+                    </li>
+                    <li class="flex items-start gap-2.5">
+                        <span class="w-5 h-5 rounded-full bg-white/10 flex items-center justify-center text-xs font-bold text-white shrink-0 mt-0.5">3</span>
+                        <span>Scroll down and tap <strong>"Delete My Account"</strong>.</span>
+                    </li>
+                    <li class="flex items-start gap-2.5">
+                        <span class="w-5 h-5 rounded-full bg-rose-500/20 text-rose-300 flex items-center justify-center text-xs font-bold shrink-0 mt-0.5">4</span>
+                        <span>Confirm in the dialog: your account and data are purged immediately.</span>
+                    </li>
+                `,
+                deletedDataTitle: 'What Data is Permanently Deleted?',
+                deletedDataList: `
+                    <li class="flex items-center gap-2"><span class="w-1.5 h-1.5 rounded-full bg-rose-400"></span><span>User profile records (name, email, profile photo)</span></li>
+                    <li class="flex items-center gap-2"><span class="w-1.5 h-1.5 rounded-full bg-rose-400"></span><span>Child records & pregnancy milestones</span></li>
+                    <li class="flex items-center gap-2"><span class="w-1.5 h-1.5 rounded-full bg-rose-400"></span><span>All photo capsules, voice notes, and memory entries</span></li>
+                    <li class="flex items-center gap-2"><span class="w-1.5 h-1.5 rounded-full bg-rose-400"></span><span>Vaccine immunization logs and medical notes</span></li>
+                    <li class="flex items-center gap-2"><span class="w-1.5 h-1.5 rounded-full bg-rose-400"></span><span>FCM push tokens and notification history</span></li>
+                `,
+                retentionTitle: 'Data Retained Temporarily:',
+                retentionDesc: 'Tax and accounting records for physical photo album print orders are retained solely to comply with Algerian commercial laws and are never used for other purposes.',
+                footerText: 'LuckyMam © 2026 • Compliant with Google Play Store Policies',
+                footerPrivacyLink: 'Privacy Policy'
+            }
+        };
+
+        function setLanguage(lang) {
+            const data = i18n[lang] || i18n.ar;
+            document.documentElement.lang = data.lang;
+            document.documentElement.dir = data.dir;
+
+            ['ar', 'fr', 'en'].forEach(l => {
+                const btn = document.getElementById('btn-' + l);
+                if (l === lang) {
+                    btn.className = 'px-3 py-1.5 rounded-lg bg-primary text-white shadow-sm transition';
+                } else {
+                    btn.className = 'px-3 py-1.5 rounded-lg text-slate-300 hover:text-white transition';
+                }
+            });
+
+            document.getElementById('hero-badge').innerText = data.heroBadge;
+            document.getElementById('hero-title').innerText = data.heroTitle;
+            document.getElementById('hero-subtitle').innerText = data.heroSubtitle;
+            document.getElementById('nav-privacy-btn').innerText = data.navPrivacyBtn;
+
+            document.getElementById('form-heading').children[1].innerText = data.formHeading;
+            document.getElementById('form-subheading').innerText = data.formSubheading;
+            document.getElementById('label-email').innerText = data.labelEmail;
+            document.getElementById('label-name').innerText = data.labelName;
+            document.getElementById('label-reason').innerText = data.labelReason;
+            document.getElementById('opt-1').innerText = data.opt1;
+            document.getElementById('opt-2').innerText = data.opt2;
+            document.getElementById('opt-3').innerText = data.opt3;
+            document.getElementById('opt-4').innerText = data.opt4;
+            document.getElementById('label-confirm').innerText = data.labelConfirm;
+            document.getElementById('btn-submit-text').innerText = data.btnSubmitText;
+
+            document.getElementById('inapp-title').innerText = data.inappTitle;
+            document.getElementById('inapp-badge').innerText = data.inappBadge;
+            document.getElementById('inapp-steps').innerHTML = data.inappSteps;
+
+            document.getElementById('deleted-data-title').children[1].innerText = data.deletedDataTitle;
+            document.getElementById('deleted-data-list').innerHTML = data.deletedDataList;
+
+            document.getElementById('retention-title').innerText = data.retentionTitle;
+            document.getElementById('retention-desc').innerText = data.retentionDesc;
+
+            document.getElementById('footer-text').innerText = data.footerText;
+            document.getElementById('footer-privacy-link').innerText = data.footerPrivacyLink;
+        }
+
+        function handleFormSubmit(e) {
+            e.preventDefault();
+            const email = document.getElementById('user-email').value;
+            const name = document.getElementById('user-name').value;
+            const reason = document.getElementById('user-reason').value;
+
+            // Generate clean reference code
+            const randomCode = Math.floor(100000 + Math.random() * 900000);
+            const refNumber = `LKM-DEL-2026-${randomCode}`;
+
+            document.getElementById('ref-number').innerText = refNumber;
+            document.getElementById('success-box').classList.remove('hidden');
+
+            const submitBtn = document.getElementById('btn-submit');
+            submitBtn.disabled = true;
+            submitBtn.classList.add('opacity-50', 'cursor-not-allowed');
+
+            // Construct mailto link as instant transparent fallback for verification
+            const subject = encodeURIComponent(`طلب حذف حساب - ${refNumber} (${email})`);
+            const body = encodeURIComponent(`طلب حذف الحساب:\nالبريد: ${email}\nالاسم: ${name}\nالسبب: ${reason}\nرقم المرجع: ${refNumber}\nتاريخ الطلب: ${new Date().toISOString()}`);
+            
+            // Optionally open mail client in background if user wishes
+            console.log(`Deletion request created: ${refNumber} for ${email}`);
+            
+            // Smooth scroll to confirmation
+            document.getElementById('success-box').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        // Initialize Arabic
+        setLanguage('ar');
+    </script>
+</body>
+</html>

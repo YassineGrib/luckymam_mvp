@@ -143,6 +143,83 @@ class AuthService {
     await _auth.signOut();
   }
 
+  /// Permanently delete the user account and all associated data.
+  ///
+  /// Google Play REQUIREMENT: Any app with account creation MUST provide
+  /// in-app account deletion (Google Play Developer Program Policies 2023+).
+  ///
+  /// Deletion cascade:
+  ///   1. Firestore sub-collections (children, capsules, etc.)
+  ///   2. Root user document in /users/{uid}
+  ///   3. Firebase Auth account (reauthentication required if session is old)
+  Future<DeleteAccountResult> deleteAccount() async {
+    final user = _auth.currentUser;
+    if (user == null) {
+      return DeleteAccountResult.failure('لا يوجد حساب مسجل الدخول');
+    }
+
+    try {
+      final uid = user.uid;
+
+      // 1. Delete Firestore sub-collections
+      await _deleteSubCollection(uid, 'children');
+      await _deleteSubCollection(uid, 'capsules');
+      await _deleteSubCollection(uid, 'notifications');
+
+      // 2. Delete main user document
+      await _firestore.collection('users').doc(uid).delete();
+
+      // 3. Sign out from Google provider
+      await _googleSignIn.signOut();
+
+      // 4. Delete Firebase Auth account
+      await user.delete();
+
+      return DeleteAccountResult.success();
+    } on FirebaseAuthException catch (e) {
+      if (e.code == 'requires-recent-login') {
+        return DeleteAccountResult.failure(
+          'لأسباب أمنية، يجب تسجيل الدخول مجدداً قبل حذف الحساب. '
+          'يُرجى الخروج وتسجيل الدخول ثم المحاولة مرة أخرى.',
+          requiresReauth: true,
+        );
+      }
+      return DeleteAccountResult.failure(
+        'حدث خطأ أثناء حذف الحساب: ${e.message}',
+      );
+    } catch (e) {
+      debugPrint('DeleteAccount Error: $e');
+      return DeleteAccountResult.failure('حدث خطأ غير متوقع أثناء حذف الحساب');
+    }
+  }
+
+  /// Helper: deletes all documents in a sub-collection for a given user.
+  Future<void> _deleteSubCollection(String uid, String collection) async {
+    try {
+      final snapshot = await _firestore
+          .collection('users')
+          .doc(uid)
+          .collection(collection)
+          .limit(100)
+          .get();
+
+      if (snapshot.docs.isEmpty) return;
+
+      final batch = _firestore.batch();
+      for (final doc in snapshot.docs) {
+        batch.delete(doc.reference);
+      }
+      await batch.commit();
+
+      // Recurse if there were more documents
+      if (snapshot.docs.length == 100) {
+        await _deleteSubCollection(uid, collection);
+      }
+    } catch (e) {
+      debugPrint('DeleteSubCollection($collection) Error: $e');
+    }
+  }
+
   /// Create user profile in Firestore
   Future<void> _createUserProfile({
     required String uid,
@@ -209,5 +286,34 @@ class AuthResult {
 
   factory AuthResult.failure(String message) {
     return AuthResult._(errorMessage: message, isSuccess: false);
+  }
+}
+
+/// Result wrapper for account deletion.
+class DeleteAccountResult {
+  final bool isSuccess;
+  final String? errorMessage;
+  /// True when Firebase requires the user to re-authenticate before deletion.
+  final bool requiresReauth;
+
+  DeleteAccountResult._({
+    required this.isSuccess,
+    this.errorMessage,
+    this.requiresReauth = false,
+  });
+
+  factory DeleteAccountResult.success() {
+    return DeleteAccountResult._(isSuccess: true);
+  }
+
+  factory DeleteAccountResult.failure(
+    String message, {
+    bool requiresReauth = false,
+  }) {
+    return DeleteAccountResult._(
+      isSuccess: false,
+      errorMessage: message,
+      requiresReauth: requiresReauth,
+    );
   }
 }

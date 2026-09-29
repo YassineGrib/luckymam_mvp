@@ -16,6 +16,7 @@ import '../data/vaccine_education_data.dart';
 import '../models/vaccine.dart';
 import '../models/vaccine_status.dart';
 import '../providers/vaccine_providers.dart';
+import '../../../shared/widgets/medical_disclaimer_banner.dart';
 
 /// Redesigned flagship medical vaccine detail screen for LuckyMam.
 /// Follows the boutique Squircle Bento visual identity:
@@ -208,6 +209,10 @@ class VaccineDetailScreen extends ConsumerWidget {
                   padding: const EdgeInsets.fromLTRB(18, 10, 18, 80),
                   sliver: SliverList(
                     delegate: SliverChildListDelegate([
+                      // ─── Medical Disclaimer (Google Play Health Policy) ──
+                      const MedicalDisclaimerBanner(),
+                      const SizedBox(height: 10),
+
                       // ─── Hero Squircle Card ───────────────────────
                       _buildHeroCard(
                         context: context,

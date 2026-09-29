@@ -13,6 +13,7 @@ import '../screens/appointments_screen.dart';
 import '../../../shared/widgets/page_header_with_filter.dart';
 import '../../../core/theme/app_typography.dart';
 import '../../../shared/widgets/top_ambient_gradient.dart';
+import '../../../shared/widgets/medical_disclaimer_banner.dart';
 
 /// Standalone "Santé enfant" screen — Growth + Appointments with child selector.
 /// Accessed via a shortcut card on the Dashboard, not the bottom nav.
@@ -118,6 +119,9 @@ class _HealthHubScreenState extends ConsumerState<HealthHubScreen>
                         }
                       },
                     ),
+
+                    // ── Medical Disclaimer (Google Play Health Policy) ───────
+                    const MedicalDisclaimerBanner(compact: true),
 
                     // ── Tab bar ─────────────────────────────────────────────
                     _buildTabBar(primary, textColor, isDark, surfaceColor, l10n),

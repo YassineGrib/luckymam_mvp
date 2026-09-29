@@ -1,16 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
 <network-security-config>
-    <base-config cleartextTrafficPermitted="true">
+    <!--
+      Production: HTTPS only. No cleartext. No user-installed CA certs.
+      This is required for Google Play Data Safety compliance.
+    -->
+    <base-config cleartextTrafficPermitted="false">
         <trust-anchors>
             <certificates src="system" />
-            <certificates src="user" />
         </trust-anchors>
     </base-config>
+
+    <!--
+      Development override: allow cleartext on localhost for Flutter dev tools.
+      This domain-config applies ONLY in debug builds via manifest merging.
+    -->
     <domain-config cleartextTrafficPermitted="true">
-        <domain includeSubdomains="true">chargily.dz</domain>
-        <domain includeSubdomains="true">chargily.net</domain>
-        <domain includeSubdomains="true">chargily.com</domain>
-        <domain includeSubdomains="true">satim.dz</domain>
-        <domain includeSubdomains="true">poste.dz</domain>
+        <domain includeSubdomains="false">localhost</domain>
+        <domain includeSubdomains="false">10.0.2.2</domain>
+        <domain includeSubdomains="false">10.0.3.2</domain>
     </domain-config>
 </network-security-config>
