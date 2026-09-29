@@ -1407,21 +1407,72 @@ class _CreateCapsuleScreenState extends ConsumerState<CreateCapsuleScreen> {
     }
   }
 
+  Future<void> _processPickedPhoto(File originalFile) async {
+    // Check if the image is already vertical and close to the 9:16 Story ratio (0.5625)
+    final isCloseToStory =
+        await ImageCropScreen.isCloseToStoryRatio(originalFile);
+
+    if (isCloseToStory) {
+      // Image is already vertical portrait! Auto-crop center to exact 9:16 (zero black bars)
+      // without interrupting the mother with manual crop steps.
+      final autoCropped = await ImageCropScreen.autoCropCenter(originalFile);
+      if (mounted) {
+        setState(() {
+          _selectedPhoto = autoCropped;
+        });
+
+        final lang = Localizations.localeOf(context).languageCode;
+        final message = lang == 'ar'
+            ? 'تم ضبط الصورة تلقائياً كـ ستوري ملء الشاشة'
+            : (lang == 'fr'
+                ? 'Photo ajustée au format Story plein écran'
+                : 'Photo auto-fitted to full-screen story');
+
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Row(
+              children: [
+                const Icon(
+                  Icons.auto_awesome_rounded,
+                  color: Colors.amberAccent,
+                  size: 18,
+                ),
+                const SizedBox(width: 8),
+                Expanded(
+                  child: Text(
+                    message,
+                    style: const TextStyle(color: Colors.white, fontSize: 13),
+                  ),
+                ),
+              ],
+            ),
+            backgroundColor: const Color(0xFF221F28),
+            behavior: SnackBarBehavior.floating,
+            duration: const Duration(seconds: 2),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(12),
+            ),
+          ),
+        );
+      }
+    } else {
+      // Photo is square, 4:3, or landscape! Open interactive cropper so the user can frame it.
+      await _openCropScreen(originalFile);
+    }
+  }
+
   Future<void> _pickPhoto(ImageSource source) async {
     try {
       final XFile? image = await _picker.pickImage(
         source: source,
-        maxWidth: 1920,
-        maxHeight: 1920,
-        imageQuality: 90,
+        maxWidth: 2400,
+        maxHeight: 2400,
+        imageQuality: 92,
       );
 
       if (image != null && mounted) {
         final originalFile = File(image.path);
-        setState(() {
-          _selectedPhoto = originalFile;
-        });
-        _openCropScreen(originalFile);
+        await _processPickedPhoto(originalFile);
       }
     } catch (e) {
       if (mounted) {

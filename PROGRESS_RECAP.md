@@ -74,7 +74,7 @@
 | `AlbumPrintPreviewScreen` | `lib/features/print_album/screens/album_print_preview_screen.dart` | 🟢 جاهز | تقليب وتصفح صفحات الألبوم قبل الطباعة |
 | `PrintOrderScreen` | `lib/features/print_album/screens/print_order_screen.dart` | 🟢 جاهز | نموذج طلب وطباعة الألبوم مع بيانات التوصيل |
 | `AlbumClaimScreen` | `lib/features/subscription/screens/album_claim_screen.dart` | 🟢 جاهز | مطالبة مشتركي باقة VIP بالألبوم المطبوع مجاناً |
-| `ImageCropScreen` | `lib/features/capsules/widgets/image_crop_screen.dart` | 🟡 يحتاج تحسين | شاشة قص وتعديل الصور قبل إضافتها |
+| `ImageCropScreen` | `lib/features/capsules/widgets/image_crop_screen.dart` | 🟢 **مكتمل ومطور** | قص ستوري 9:16 احترافي، تدوير 90°، توسيط، معاينة ستوري كاملة، واقتصاص تلقائي ذكي للصور الطولية لمنع أي فراغات |
 
 ---
 
@@ -128,28 +128,23 @@
 
 ---
 
-## 3. الصفحات والميزات التي تحتاج إلى عمل أو تحسين 🎯
+## 3. الصفحات والميزات المتبقية للتحسين 🎯
 
-بناءً على الفحص الفني للكود، فيما يلي **الصفحات والميزات التي لا تزال تحتاج إلى لمسات إضافية أو تطوير**:
+بناءً على الفحص الفني للكود، تم إنجاز شاشتي استعادة كلمة المرور وقص الصور بنجاح. فيما يلي الصفحات المتبقية:
 
-### 1. شاشة قص وتعديل الصور (`ImageCropScreen`)
-* **المسار:** `lib/features/capsules/widgets/image_crop_screen.dart`
-* **الحالة الحالية:** واجهة بسيطة تحتاج إلى ترقية مرئية.
-* **ما تحتاجه:** تجربة مستخدم أكثر فخامة وسلاسة عند قص الصور للكبسولات أو لطباعة الألبوم، مع نسب أبعاد واضحة (1:1، 4:5 لطباعة الألبوم).
-
-### 3. ترقية الألبوم العادي (`StandardAlbumDetailScreen`)
+### 1. ترقية الألبوم العادي (`StandardAlbumDetailScreen`)
 * **المسار:** `lib/features/memory_book/screens/standard_album_detail_screen.dart`
 * **الحالة الحالية:** شاشة ألبوم كلاسيكية.
 * **ما تحتاجه:** ترقية تصميم الصفحة لتضاهي روعة وفخامة `PredefinedAlbumDetailScreen` (إضافة شبكة بصرية أنيقة، وتنسيق أفضل للصور مع التواريخ).
 
-### 4. بوابة دفع Chargily Pay والتحقق الحي (`ChargilyCheckoutScreen`)
+### 2. بوابة دفع Chargily Pay والتحقق الحي (`ChargilyCheckoutScreen`)
 * **المسار:** `lib/features/subscription/screens/chargily_checkout_screen.dart`
 * **ما تحتاجه:** ربط مفاتيح Chargily الحية (Production Keys) والتأكد من استقبال Webhook أو Callback بنجاح لتفعيل اشتراك الـ VIP تلقائياً عند الدفع بالبطاقة الذهبية أو CIB.
 
-### 5. تصدير الدفتر الصحي الرقمي إلى PDF (Carnet de Santé PDF)
+### 3. تصدير الدفتر الصحي الرقمي إلى PDF (Carnet de Santé PDF)
 * **المقترح:** إضافة ميزة تحميل وطباعة تقرير طبي شامل بصيغة PDF من داخل `ChildProfileScreen` لتقديمه لطبيب الأطفال عند الزيارة.
 
-### 6. تغذية محتوى الريلز (`Reels Content Feed`)
+### 4. تغذية محتوى الريلز (`Reels Content Feed`)
 * **المسار:** `lib/features/reels/screens/reels_screen.dart`
 * **ما تحتاجه:** ربط قائمة الفيديوهات بمجموعة في Firestore أو YouTube Shorts/Cloudinary ليتمكن الأدمن من إضافة نصائح وفيديوهات توعوية جديدة مباشرة دون تحديث التطبيق.
 
@@ -158,17 +153,17 @@
 ## 4. خارطة الأولويات المقترحة للمرحلة القادمة 🚀
 
 ```
-[ المرحلة الأولى (فورية ومهمة لتجربة المستخدم) ]
- ├── 1. إنشاء شاشة استعادة كلمة المرور (ForgotPasswordScreen)
- └── 2. ترقية واجهة قص الصور (ImageCropScreen) بنمط فخم يناسب الألبوم
+[ منجز حديثاً ✅ ]
+ ├── [x] إنشاء شاشة استعادة كلمة المرور مع الربط السحابي (ForgotPasswordScreen)
+ └── [x] ترقية واجهة قص وتعديل الصور ونظام الستوري التلقائي (ImageCropScreen)
 
-[ المرحلة الثانية (تجربة الوسائط والألبومات) ]
- ├── 3. مواءمة وترقية ألبوم الصور القياسي (StandardAlbumDetailScreen)
- └── 4. تغذية فيديوهات الريلز من Firestore ديناميكياً
+[ المرحلة القادمة (تجربة الوسائط والألبومات) ]
+ ├── 1. مواءمة وترقية ألبوم الصور القياسي (StandardAlbumDetailScreen)
+ └── 2. تغذية فيديوهات الريلز من Firestore ديناميكياً
 
-[ المرحلة الثالثة (الإنتاج والإطلاق النهائي) ]
- ├── 5. فحص ومراجعة دورة دفع Chargily Pay الفعلية مع ترقية الحساب
- └── 6. تصدير ملف صحة الطفل إلى PDF (Carnet de Santé)
+[ المرحلة النهائية (الإنتاج والإطلاق) ]
+ ├── 3. فحص ومراجعة دورة دفع Chargily Pay الفعلية مع ترقية الحساب
+ └── 4. توليد دفتر الصحة الرقمي PDF
 ```
 
 ---
