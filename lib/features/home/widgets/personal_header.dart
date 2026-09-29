@@ -6,6 +6,7 @@ import '../../../core/extensions/l10n_extension.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../l10n/app_localizations.dart';
 import '../../notifications/notifications_screen.dart';
+import '../../notifications/providers/notifications_providers.dart';
 import '../../profile/models/profile_models.dart';
 import '../../profile/profile_screen.dart';
 import '../../profile/providers/profile_providers.dart';
@@ -93,6 +94,7 @@ class PersonalHeader extends ConsumerWidget {
     final todayFormatted = DateFormat('d MMM', locale).format(DateTime.now());
 
     final statusLabel = _statusLabel(l10n, profile);
+    final unreadCount = ref.watch(unreadNotificationsCountProvider);
 
     return Row(
       children: [
@@ -245,23 +247,34 @@ class PersonalHeader extends ConsumerWidget {
               alignment: Alignment.center,
               children: [
                 Icon(
-                  Icons.notifications_none_rounded,
+                  unreadCount > 0
+                      ? Icons.notifications_active_rounded
+                      : Icons.notifications_none_rounded,
                   color: isDark ? Colors.white : const Color(0xFF161618),
                   size: 21,
                 ),
                 // Glowing orange/coral unread indicator dot
-                Positioned(
-                  top: 9,
-                  right: 10,
-                  child: Container(
-                    width: 7,
-                    height: 7,
-                    decoration: const BoxDecoration(
-                      color: Color(0xFFFF5252),
-                      shape: BoxShape.circle,
+                if (unreadCount > 0)
+                  Positioned(
+                    top: 9,
+                    right: 9,
+                    child: Container(
+                      width: 8,
+                      height: 8,
+                      decoration: BoxDecoration(
+                        color: const Color(0xFFFF5252),
+                        shape: BoxShape.circle,
+                        boxShadow: [
+                          BoxShadow(
+                            color:
+                                const Color(0xFFFF5252).withValues(alpha: 0.6),
+                            blurRadius: 4,
+                            spreadRadius: 1,
+                          ),
+                        ],
+                      ),
                     ),
                   ),
-                ),
               ],
             ),
           ),

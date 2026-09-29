@@ -1,5 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
+import 'package:flutter/material.dart';
+
 /// User profile status enumeration.
 enum UserStatus {
   pregnant, // Enceinte
@@ -20,6 +22,9 @@ class Child {
   final DateTime birthDate;
   final ChildGender gender;
   final String? photoUrl;
+  final String? bloodType;
+  final String? themeColorHex;
+  final String? notes;
 
   const Child({
     required this.id,
@@ -27,6 +32,9 @@ class Child {
     required this.birthDate,
     required this.gender,
     this.photoUrl,
+    this.bloodType,
+    this.themeColorHex,
+    this.notes,
   });
 
   /// Create from Firestore document.
@@ -40,6 +48,9 @@ class Child {
         orElse: () => ChildGender.boy,
       ),
       photoUrl: data['photoUrl'],
+      bloodType: data['bloodType'] as String?,
+      themeColorHex: data['themeColorHex'] as String?,
+      notes: data['notes'] as String?,
     );
   }
 
@@ -50,6 +61,9 @@ class Child {
       'birthDate': Timestamp.fromDate(birthDate),
       'gender': gender.name,
       'photoUrl': photoUrl,
+      if (bloodType != null) 'bloodType': bloodType,
+      if (themeColorHex != null) 'themeColorHex': themeColorHex,
+      if (notes != null) 'notes': notes,
     };
   }
 
@@ -74,12 +88,32 @@ class Child {
     }
   }
 
+  /// Resolves the child's customized theme color or falls back to gender defaults.
+  Color get themeColor {
+    if (themeColorHex != null && themeColorHex!.isNotEmpty) {
+      try {
+        final clean = themeColorHex!.replaceAll('#', '').trim();
+        if (clean.length == 6) {
+          return Color(int.parse('FF$clean', radix: 16));
+        } else if (clean.length == 8) {
+          return Color(int.parse(clean, radix: 16));
+        }
+      } catch (_) {}
+    }
+    return gender == ChildGender.boy
+        ? const Color(0xFF00B0FF)
+        : const Color(0xFFFF5252);
+  }
+
   Child copyWith({
     String? id,
     String? name,
     DateTime? birthDate,
     ChildGender? gender,
     String? photoUrl,
+    String? bloodType,
+    String? themeColorHex,
+    String? notes,
   }) {
     return Child(
       id: id ?? this.id,
@@ -87,6 +121,9 @@ class Child {
       birthDate: birthDate ?? this.birthDate,
       gender: gender ?? this.gender,
       photoUrl: photoUrl ?? this.photoUrl,
+      bloodType: bloodType ?? this.bloodType,
+      themeColorHex: themeColorHex ?? this.themeColorHex,
+      notes: notes ?? this.notes,
     );
   }
 }

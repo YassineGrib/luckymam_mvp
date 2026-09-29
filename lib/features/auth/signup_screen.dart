@@ -388,60 +388,84 @@ class _ConsentMention extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final linkColor = isDark ? AppColors.primaryDark : AppColors.primaryLight;
+    final lang = Localizations.localeOf(context).languageCode;
+    final linkColor = isDark ? const Color(0xFFFF6E6E) : const Color(0xFFFF5252);
 
-    return Container(
-      padding: const EdgeInsets.all(12),
-      decoration: BoxDecoration(
-        color: isDark
-            ? AppColors.surfaceDark
-            : AppColors.magentaPink.withValues(alpha: 0.05),
-        borderRadius: BorderRadius.circular(10),
-        border: Border.all(
-          color: isDark
-              ? AppColors.dividerDark
-              : AppColors.magentaPink.withValues(alpha: 0.2),
-        ),
-      ),
-      child: RichText(
-        textAlign: TextAlign.center,
-        text: TextSpan(
-          style: TextStyle(fontSize: 11.5, color: secondaryColor, height: 1.6),
-          children: [
-            TextSpan(text: l10n.signupConsentPrefix),
-            WidgetSpan(
-              child: GestureDetector(
-                onTap: () => context.push('/privacy-policy'),
-                child: Text(
-                  l10n.signupConsentPrivacyLink,
-                  style: TextStyle(
-                    fontSize: 11.5,
-                    color: linkColor,
-                    fontWeight: FontWeight.w600,
-                    decoration: TextDecoration.underline,
-                    height: 1.6,
+    final prefix = lang == 'ar'
+        ? 'بالمتابعة، أنتِ توافقين على '
+        : (lang == 'fr'
+            ? 'En continuant, vous acceptez notre '
+            : 'By continuing, you agree to our ');
+
+    final andText = lang == 'ar'
+        ? ' و '
+        : (lang == 'fr'
+            ? ' et nos '
+            : ' and ');
+
+    final privacyText = lang == 'ar'
+        ? 'سياسة الخصوصية'
+        : (lang == 'fr'
+            ? 'Politique de Confidentialité'
+            : 'Privacy Policy');
+
+    final termsText = lang == 'ar'
+        ? 'شروط الاستخدام'
+        : (lang == 'fr'
+            ? 'Conditions d\'Utilisation'
+            : 'Terms of Use');
+
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+      child: Center(
+        child: Text.rich(
+          TextSpan(
+            style: TextStyle(
+              fontSize: 12,
+              color: secondaryColor,
+              height: 1.5,
+            ),
+            children: [
+              TextSpan(text: prefix),
+              WidgetSpan(
+                alignment: PlaceholderAlignment.baseline,
+                baseline: TextBaseline.alphabetic,
+                child: GestureDetector(
+                  onTap: () => context.push('/privacy-policy?tab=privacy'),
+                  child: Text(
+                    privacyText,
+                    style: TextStyle(
+                      fontSize: 12,
+                      color: linkColor,
+                      fontWeight: FontWeight.w700,
+                      decoration: TextDecoration.underline,
+                      decorationColor: linkColor.withValues(alpha: 0.5),
+                    ),
                   ),
                 ),
               ),
-            ),
-            TextSpan(text: l10n.signupConsentAnd),
-            WidgetSpan(
-              child: GestureDetector(
-                onTap: () => context.push('/privacy-policy'),
-                child: Text(
-                  l10n.signupConsentTermsLink,
-                  style: TextStyle(
-                    fontSize: 11.5,
-                    color: linkColor,
-                    fontWeight: FontWeight.w600,
-                    decoration: TextDecoration.underline,
-                    height: 1.6,
+              TextSpan(text: andText),
+              WidgetSpan(
+                alignment: PlaceholderAlignment.baseline,
+                baseline: TextBaseline.alphabetic,
+                child: GestureDetector(
+                  onTap: () => context.push('/privacy-policy?tab=terms'),
+                  child: Text(
+                    termsText,
+                    style: TextStyle(
+                      fontSize: 12,
+                      color: linkColor,
+                      fontWeight: FontWeight.w700,
+                      decoration: TextDecoration.underline,
+                      decorationColor: linkColor.withValues(alpha: 0.5),
+                    ),
                   ),
                 ),
               ),
-            ),
-            const TextSpan(text: '.'),
-          ],
+              const TextSpan(text: '.'),
+            ],
+          ),
+          textAlign: TextAlign.center,
         ),
       ),
     );

@@ -97,9 +97,22 @@ class AppRouter {
       GoRoute(
         path: '/privacy-policy',
         name: 'privacy-policy',
+        pageBuilder: (context, state) {
+          final tabParam = state.uri.queryParameters['tab'];
+          final initialTab =
+              tabParam == 'terms' ? LegalTab.terms : LegalTab.privacy;
+          return _buildPageWithTransition(
+            key: state.pageKey,
+            child: PrivacyPolicyScreen(initialTab: initialTab),
+          );
+        },
+      ),
+      GoRoute(
+        path: '/terms-of-use',
+        name: 'terms-of-use',
         pageBuilder: (context, state) => _buildPageWithTransition(
           key: state.pageKey,
-          child: const PrivacyPolicyScreen(),
+          child: const PrivacyPolicyScreen(initialTab: LegalTab.terms),
         ),
       ),
 

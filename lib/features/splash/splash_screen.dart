@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../shared/widgets/app_logo.dart';
+import '../../shared/widgets/auth_logo_background.dart';
 import '../../shared/widgets/gradient_scaffold.dart';
 import '../../core/services/analytics_service.dart';
 import '../ads/providers/ads_providers.dart';
@@ -134,23 +135,35 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
   @override
   Widget build(BuildContext context) {
     return GradientScaffold(
-      child: Center(
-        child: AnimatedBuilder(
-          animation: _controller,
-          builder: (context, child) {
-            return Opacity(
-              opacity: _fadeAnimation.value,
-              child: Transform.scale(
-                scale: _scaleAnimation.value,
-                child: child,
-              ),
-            );
-          },
-          child: const AppLogo(
-            variant: LogoVariant.vertical,
-            size: LogoSize.large,
+      child: Stack(
+        fit: StackFit.expand,
+        children: [
+          // Big Corner Watermark Logo
+          const AuthLogoBackground(
+            lightOpacity: 0.12,
+            darkOpacity: 0.18,
           ),
-        ),
+
+          // Central Animated Logo
+          Center(
+            child: AnimatedBuilder(
+              animation: _controller,
+              builder: (context, child) {
+                return Opacity(
+                  opacity: _fadeAnimation.value,
+                  child: Transform.scale(
+                    scale: _scaleAnimation.value,
+                    child: child,
+                  ),
+                );
+              },
+              child: const AppLogo(
+                variant: LogoVariant.vertical,
+                size: LogoSize.large,
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }

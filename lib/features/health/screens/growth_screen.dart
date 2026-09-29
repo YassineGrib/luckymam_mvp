@@ -9,6 +9,8 @@ import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_spacing.dart';
 import '../../../core/theme/app_typography.dart';
 import '../../../l10n/app_localizations.dart';
+import '../../../shared/widgets/auth_logo_background.dart';
+import '../../../shared/widgets/top_ambient_gradient.dart';
 import '../../profile/models/profile_models.dart';
 import '../models/growth_entry.dart';
 import '../providers/health_providers.dart';
@@ -41,45 +43,174 @@ class _GrowthScreenState extends ConsumerState<GrowthScreen> {
     final secondary = isDark
         ? AppColors.textSecondaryDark
         : AppColors.textSecondaryLight;
+    final canPop = Navigator.of(context).canPop();
+    final bgColor = isDark ? AppColors.backgroundDark : AppColors.backgroundLight;
 
     final entriesAsync = ref.watch(growthEntriesProvider(widget.child.id));
 
     return Scaffold(
-      backgroundColor: Colors.transparent,
-      body: entriesAsync.when(
-        loading: () => const Center(
-          child: CircularProgressIndicator(
-            valueColor: AlwaysStoppedAnimation<Color>(AppColors.coral),
-          ),
-        ),
-        error: (e, _) => Center(
-          child: Text(
-            l10n.healthErrorWithDetail('$e'),
-            style: Theme.of(context)
-                .textTheme
-                .bodyMedium
-                ?.copyWith(color: AppColors.error),
-          ),
-        ),
-        data: (entries) {
-          if (!_analyticsLogged) {
-            _analyticsLogged = true;
-            AnalyticsService().logEvent('growth_chart_viewed', parameters: {
-              'child_id': widget.child.id,
-              'entry_count': entries.length,
-            });
-          }
+      backgroundColor: bgColor,
+      body: Stack(
+        children: [
+          // Ambient lighting & watermark when standalone
+          if (canPop) ...[
+            const TopAmbientGradient(),
+            const AuthLogoBackground(lightOpacity: 0.05, darkOpacity: 0.03),
+          ],
 
-          // Sort entries from newest to oldest for statistics
-          final sortedEntries = List<GrowthEntry>.from(entries)
-            ..sort((a, b) => b.date.compareTo(a.date));
+          entriesAsync.when(
+            loading: () => const Center(
+              child: CircularProgressIndicator(
+                valueColor: AlwaysStoppedAnimation<Color>(AppColors.coral),
+              ),
+            ),
+            error: (e, _) => Center(
+              child: Text(
+                l10n.healthErrorWithDetail('$e'),
+                style: Theme.of(context)
+                    .textTheme
+                    .bodyMedium
+                    ?.copyWith(color: AppColors.error),
+              ),
+            ),
+            data: (entries) {
+              if (!_analyticsLogged) {
+                _analyticsLogged = true;
+                AnalyticsService().logEvent('growth_chart_viewed', parameters: {
+                  'child_id': widget.child.id,
+                  'entry_count': entries.length,
+                });
+              }
 
-          final latest = sortedEntries.isNotEmpty ? sortedEntries.first : null;
-          final previous = sortedEntries.length > 1 ? sortedEntries[1] : null;
+              // Sort entries from newest to oldest for statistics
+              final sortedEntries = List<GrowthEntry>.from(entries)
+                ..sort((a, b) => b.date.compareTo(a.date));
 
-          return CustomScrollView(
-            physics: const BouncingScrollPhysics(),
-            slivers: [
+              final latest = sortedEntries.isNotEmpty ? sortedEntries.first : null;
+              final previous = sortedEntries.length > 1 ? sortedEntries[1] : null;
+
+              return CustomScrollView(
+                physics: const BouncingScrollPhysics(),
+                slivers: [
+                  // ── Standalone Luxury Top Header ──
+                  if (canPop)
+                    SliverToBoxAdapter(
+                      child: Padding(
+                        padding: EdgeInsets.fromLTRB(
+                          AppSpacing.screenPaddingH,
+                          MediaQuery.of(context).padding.top + 8,
+                          AppSpacing.screenPaddingH,
+                          6,
+                        ),
+                        child: Row(
+                          children: [
+                            // Frosted Squircle Back Button
+                            GestureDetector(
+                              onTap: () {
+                                HapticFeedback.lightImpact();
+                                Navigator.of(context).pop();
+                              },
+                              child: Container(
+                                width: 42,
+                                height: 42,
+                                decoration: BoxDecoration(
+                                  color: isDark
+                                      ? Colors.white.withValues(alpha: 0.08)
+                                      : Colors.white.withValues(alpha: 0.92),
+                                  borderRadius: BorderRadius.circular(14),
+                                  border: Border.all(
+                                    color: isDark
+                                        ? Colors.white12
+                                        : const Color(0xFFE8E0E4),
+                                  ),
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: Colors.black.withValues(
+                                        alpha: isDark ? 0.25 : 0.04,
+                                      ),
+                                      blurRadius: 8,
+                                      offset: const Offset(0, 2),
+                                    ),
+                                  ],
+                                ),
+                                child: Icon(
+                                  context.isRtl
+                                      ? Icons.arrow_forward_ios_rounded
+                                      : Icons.arrow_back_ios_new_rounded,
+                                  size: 16,
+                                  color: textColor,
+                                ),
+                              ),
+                            ),
+                            const SizedBox(width: 14),
+                            // Screen Title & Subtitle
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    lang == 'ar'
+                                        ? 'مخطط النمو والقياسات'
+                                        : (lang == 'fr'
+                                            ? 'Courbe de Croissance'
+                                            : 'Growth Tracker'),
+                                    style: AppTypography.fromContext(
+                                      context,
+                                      fontSize: 18,
+                                      fontWeight: FontWeight.w900,
+                                      color: textColor,
+                                    ),
+                                  ),
+                                  const SizedBox(height: 2),
+                                  Text(
+                                    '${widget.child.name} • ${lang == 'ar' ? 'منحنيات منظمة الصحة العالمية (WHO)' : 'Courbes officielles OMS'}',
+                                    style: TextStyle(
+                                      fontSize: 11,
+                                      fontWeight: FontWeight.w600,
+                                      color: secondary,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            // Quick Add Entry CTA
+                            GestureDetector(
+                              onTap: () => _showAddSheet(context, textColor, isDark, lang),
+                              child: Container(
+                                height: 40,
+                                padding: const EdgeInsets.symmetric(horizontal: 12),
+                                decoration: BoxDecoration(
+                                  color: AppColors.coral,
+                                  borderRadius: BorderRadius.circular(14),
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: AppColors.coral.withValues(alpha: 0.35),
+                                      blurRadius: 8,
+                                      offset: const Offset(0, 2),
+                                    ),
+                                  ],
+                                ),
+                                child: Row(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    const Icon(Icons.add_rounded, size: 18, color: Colors.white),
+                                    const SizedBox(width: 4),
+                                    Text(
+                                      lang == 'ar' ? 'قياس جديد' : 'Mesurer',
+                                      style: const TextStyle(
+                                        fontSize: 11.5,
+                                        fontWeight: FontWeight.w800,
+                                        color: Colors.white,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
               // ── 1. Top Vital Stats Bento Row ──────────────────────
               SliverToBoxAdapter(
                 child: Padding(
@@ -302,6 +433,8 @@ class _GrowthScreenState extends ConsumerState<GrowthScreen> {
           );
         },
       ),
+    ],
+  ),
       floatingActionButton: Container(
         decoration: BoxDecoration(
           gradient: AppColors.primaryGradient,

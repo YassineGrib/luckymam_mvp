@@ -10,6 +10,8 @@ import '../../../core/extensions/l10n_extension.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_spacing.dart';
 import '../../../l10n/app_localizations.dart';
+import '../../../shared/widgets/auth_logo_background.dart';
+import '../../../shared/widgets/top_ambient_gradient.dart';
 import '../../profile/models/profile_models.dart';
 import '../models/appointment.dart';
 import '../providers/health_providers.dart';
@@ -32,43 +34,135 @@ class _AppointmentsScreenState extends ConsumerState<AppointmentsScreen> {
   @override
   Widget build(BuildContext context) {
     final l10n = context.l10n;
+    final lang = Localizations.localeOf(context).languageCode;
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final primary = isDark ? AppColors.primaryDark : AppColors.primaryLight;
     final textColor = isDark ? Colors.white : AppColors.onSurfaceLight;
     final secondary = isDark
         ? AppColors.textSecondaryDark
         : AppColors.textSecondaryLight;
+    final canPop = Navigator.of(context).canPop();
+    final bgColor = isDark ? AppColors.backgroundDark : AppColors.backgroundLight;
 
     final apptAsync = ref.watch(appointmentsProvider(widget.child.id));
 
     return Scaffold(
-      backgroundColor: Colors.transparent,
-      body: apptAsync.when(
-        loading: () => const Center(child: CircularProgressIndicator()),
-        error: (e, _) => Center(
-          child: Text(
-            l10n.healthErrorWithDetail('$e'),
-            style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: AppColors.error),
+      backgroundColor: bgColor,
+      body: Stack(
+        children: [
+          if (canPop) ...[
+            const TopAmbientGradient(),
+            const AuthLogoBackground(lightOpacity: 0.05, darkOpacity: 0.03),
+          ],
+          Column(
+            children: [
+              if (canPop)
+                Padding(
+                  padding: EdgeInsets.fromLTRB(
+                    AppSpacing.screenPaddingH,
+                    MediaQuery.of(context).padding.top + 8,
+                    AppSpacing.screenPaddingH,
+                    8,
+                  ),
+                  child: Row(
+                    children: [
+                      GestureDetector(
+                        onTap: () => Navigator.of(context).pop(),
+                        child: Container(
+                          width: 42,
+                          height: 42,
+                          decoration: BoxDecoration(
+                            color: isDark
+                                ? Colors.white.withValues(alpha: 0.08)
+                                : Colors.white.withValues(alpha: 0.92),
+                            borderRadius: BorderRadius.circular(14),
+                            border: Border.all(
+                              color: isDark
+                                  ? Colors.white12
+                                  : const Color(0xFFE8E0E4),
+                            ),
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.black.withValues(
+                                  alpha: isDark ? 0.25 : 0.04,
+                                ),
+                                blurRadius: 8,
+                                offset: const Offset(0, 2),
+                              ),
+                            ],
+                          ),
+                          child: Icon(
+                            context.isRtl
+                                ? Icons.arrow_forward_ios_rounded
+                                : Icons.arrow_back_ios_new_rounded,
+                            size: 16,
+                            color: textColor,
+                          ),
+                        ),
+                      ),
+                      const SizedBox(width: 14),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              lang == 'ar'
+                                  ? 'مواعيد وزيارات الطبيب'
+                                  : 'Rendez-vous médicaux',
+                              style: AppTypography.fromContext(
+                                context,
+                                fontSize: 18,
+                                fontWeight: FontWeight.w900,
+                                color: textColor,
+                              ),
+                            ),
+                            const SizedBox(height: 2),
+                            Text(
+                              '${widget.child.name} • ${lang == 'ar' ? 'السجل الطبي والفحوصات' : 'Dossier de santé'}',
+                              style: TextStyle(
+                                fontSize: 11,
+                                fontWeight: FontWeight.w600,
+                                color: secondary,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              Expanded(
+                child: apptAsync.when(
+                  loading: () => const Center(child: CircularProgressIndicator()),
+                  error: (e, _) => Center(
+                    child: Text(
+                      l10n.healthErrorWithDetail('$e'),
+                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: AppColors.error),
+                    ),
+                  ),
+                  data: (appointments) {
+                    if (appointments.isEmpty) {
+                      return _buildEmpty(primary, secondary, l10n);
+                    }
+                    return ListView.builder(
+                      padding: const EdgeInsets.fromLTRB(
+                        AppSpacing.screenPaddingH,
+                        AppSpacing.md,
+                        AppSpacing.screenPaddingH,
+                        100,
+                      ),
+                      itemCount: appointments.length,
+                      itemBuilder: (_, i) => AppointmentCard(
+                        appointment: appointments[i],
+                        onDelete: () => _confirmDelete(appointments[i]),
+                      ),
+                    );
+                  },
+                ),
+              ),
+            ],
           ),
-        ),
-        data: (appointments) {
-          if (appointments.isEmpty) {
-            return _buildEmpty(primary, secondary, l10n);
-          }
-          return ListView.builder(
-            padding: const EdgeInsets.fromLTRB(
-              AppSpacing.screenPaddingH,
-              AppSpacing.md,
-              AppSpacing.screenPaddingH,
-              100,
-            ),
-            itemCount: appointments.length,
-            itemBuilder: (_, i) => AppointmentCard(
-              appointment: appointments[i],
-              onDelete: () => _confirmDelete(appointments[i]),
-            ),
-          );
-        },
+        ],
       ),
       floatingActionButton: FloatingActionButton.extended(
         backgroundColor: primary,

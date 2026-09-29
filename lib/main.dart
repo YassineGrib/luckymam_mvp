@@ -9,6 +9,7 @@ import 'core/providers/theme_provider.dart';
 import 'core/providers/locale_provider.dart';
 import 'core/router/app_router.dart';
 import 'core/services/analytics_service.dart';
+import 'core/services/fcm_service.dart';
 import 'core/services/notification_service.dart';
 import 'core/theme/app_theme.dart';
 import 'features/profile/providers/profile_providers.dart';
@@ -27,11 +28,12 @@ Future<void> main() async {
     options: DefaultFirebaseOptions.currentPlatform,
   );
 
-  // Initialize Timezone (mobile only)
+  // Initialize Timezone & Notification Services (mobile only)
   if (!kIsWeb) {
     tz.initializeTimeZones();
     final notificationService = NotificationService();
     await notificationService.requestPermissions();
+    await FcmService.instance.init();
   }
 
   runApp(const ProviderScope(child: LuckymamApp()));
@@ -53,6 +55,8 @@ class _LuckymamAppState extends ConsumerState<LuckymamApp> {
       NotificationService.onNotificationTapped.addListener(
         _onNotificationTapped,
       );
+      FcmService.onPushTapped.addListener(_onFcmPushTapped);
+
       // Handle the case where a notification launched the app from terminated.
       WidgetsBinding.instance.addPostFrameCallback((_) async {
         final launchPayload = await NotificationService().getLaunchPayload();
@@ -67,12 +71,20 @@ class _LuckymamAppState extends ConsumerState<LuckymamApp> {
       NotificationService.onNotificationTapped.removeListener(
         _onNotificationTapped,
       );
+      FcmService.onPushTapped.removeListener(_onFcmPushTapped);
     }
     super.dispose();
   }
 
   void _onNotificationTapped() {
     _handleDeepLink(NotificationService.onNotificationTapped.value);
+  }
+
+  void _onFcmPushTapped() {
+    final data = FcmService.onPushTapped.value;
+    if (data != null) {
+      _handleDeepLink(jsonEncode(data));
+    }
   }
 
   /// Parses and validates a milestone-reminder notification payload, then
