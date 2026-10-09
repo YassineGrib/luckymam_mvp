@@ -1,13 +1,14 @@
 import crypto from "crypto";
-import admin from "firebase-admin";
+import { getApps, initializeApp } from "firebase-admin/app";
+import { getFirestore, FieldValue, Timestamp } from "firebase-admin/firestore";
 import { onRequest } from "firebase-functions/v2/https";
 
 // Initialize Firebase Admin if not already initialized
-if (!admin.apps.length) {
-  admin.initializeApp();
+if (!getApps().length) {
+  initializeApp();
 }
 
-const db = admin.firestore();
+const db = getFirestore();
 
 // Chargily Pay V2 API URLs & Secret Key
 const CHARGILY_SECRET_KEY =
@@ -107,7 +108,7 @@ export const createChargilyCheckout = onRequest(
         status: "pending",
         checkoutUrl: data.checkout_url,
         metadata,
-        createdAt: admin.firestore.FieldValue.serverTimestamp(),
+        createdAt: FieldValue.serverTimestamp(),
       });
 
       res.status(200).json({
@@ -182,7 +183,7 @@ export const chargilyWebhook = onRequest(
             status: "paid",
             amount: checkoutData.amount,
             fees: checkoutData.fees || 0,
-            paidAt: admin.firestore.FieldValue.serverTimestamp(),
+            paidAt: FieldValue.serverTimestamp(),
             chargilyEventId: event.id,
             rawEvent: checkoutData,
           },
@@ -204,8 +205,8 @@ export const chargilyWebhook = onRequest(
           await db.collection("users").doc(userId).set(
             {
               subscriptionTier: tier,
-              subscriptionUpdatedAt: admin.firestore.FieldValue.serverTimestamp(),
-              subscriptionEndDate: admin.firestore.Timestamp.fromDate(endDate),
+              subscriptionUpdatedAt: FieldValue.serverTimestamp(),
+              subscriptionEndDate: Timestamp.fromDate(endDate),
               lastPaymentCheckoutId: checkoutId,
             },
             { merge: true },
@@ -224,7 +225,7 @@ export const chargilyWebhook = onRequest(
               "payment.status": "paid",
               "payment.checkoutId": checkoutId,
               status: "confirmed",
-              history: admin.firestore.FieldValue.arrayUnion({
+              history: FieldValue.arrayUnion({
                 status: "confirmed",
                 at: historyAt,
                 by: "Chargily Pay (الذهبية/CIB)",
@@ -244,7 +245,7 @@ export const chargilyWebhook = onRequest(
           await db.collection("payment_transactions").doc(checkoutId).set(
             {
               status: "failed",
-              failedAt: admin.firestore.FieldValue.serverTimestamp(),
+              failedAt: FieldValue.serverTimestamp(),
             },
             { merge: true },
           );

@@ -110,4 +110,94 @@ registerTranslations({
     fr: "Êtes-vous sûre de vouloir archiver ce produit ? Il ne sera plus visible pour les acheteurs mais restera dans les archives pour protéger l'historique des commandes.",
     en: "Are you sure you want to archive this product? It will no longer be visible to buyers but will remain in records to protect order history."
   },
+
+  // Categories (matching CATEGORY_META)
+  "رعاية الرضع / العتاد": { fr: "Puériculture / Matériel", en: "Baby Care & Gear" },
+  "تغذية الرضع": { fr: "Alimentation bébé", en: "Baby Nutrition" },
+  "النظافة والعناية": { fr: "Hygiène & Soins", en: "Hygiene & Care" },
+  "ألعاب التنمية واليقظة": { fr: "Éveil & Jeux", en: "Early Learning & Toys" },
+  "عناية الأم": { fr: "Soins de la maman", en: "Mom Care" },
+
+  // Product Add / Edit Modal
+  "إضافة منتج جديد للمتجر": { fr: "Ajouter un nouveau produit à la boutique", en: "Add new product to store" },
+  "تعديل بيانات منتج": { fr: "Modifier les informations du produit", en: "Edit product details" },
+  "اسم المنتج": { fr: "Nom du produit", en: "Product name" },
+  "مثال: حفاضات قطنية": { fr: "Ex : Couches lavables en coton", en: "Ex: Cotton baby diapers" },
+  "رقم SKU المنتج": { fr: "Code SKU du produit", en: "Product SKU" },
+  "وصف المنتج": { fr: "Description du produit", en: "Product description" },
+  "تفاصيل ومواصفات المنتج...": { fr: "Détails et spécifications du produit...", en: "Product details and specifications..." },
+  "السعر (دينار جزائري)": { fr: "Prix (DZD)", en: "Price (DZD)" },
+  "السعر السابق / المقارنة": { fr: "Prix initial / Comparatif", en: "Original / Compare price" },
+  "مثال: 3200": { fr: "Ex : 3200", en: "Ex: 3200" },
+  "المورد / الشريك": { fr: "Fournisseur / Partenaire", en: "Vendor / Partner" },
+  "اختر المورد": { fr: "Sélectionner un fournisseur", en: "Select vendor" },
+  "فئة المنتج": { fr: "Catégorie du produit", en: "Product category" },
+  "اختر الفئة": { fr: "Sélectionner une catégorie", en: "Select category" },
+  "الحالة": { fr: "Statut", en: "Status" },
+  "الكمية": { fr: "Quantité en stock", en: "Stock quantity" },
+
+  // Image Upload
+  "صورة المنتج": { fr: "Image du produit", en: "Product image" },
+  "انقر لرفع صورة من جهازك أو اسحبها هنا": {
+    fr: "Cliquez pour choisir une photo depuis votre ordinateur ou glissez-la ici",
+    en: "Click to upload a photo from your PC or drag and drop here"
+  },
+  "اسحب صورة المنتج هنا أو انقر للتصفح": {
+    fr: "Glissez une photo ici ou cliquez pour parcourir",
+    en: "Drag a photo here or click to browse"
+  },
+  "تصفح من جهازك (JPG, PNG, WEBP)": {
+    fr: "Formats acceptés : JPG, PNG, WEBP (Max 5 Mo)",
+    en: "Accepted formats: JPG, PNG, WEBP (Max 5MB)"
+  },
+  "سيتم تصغير وضغط الصورة تلقائياً لتوفير مساحة التخزين": {
+    fr: "L'image sera automatiquement optimisée et compressée pour un affichage rapide.",
+    en: "The image will be automatically optimized and compressed for fast display."
+  },
+  "جاري ضغط ورفع الصورة...": {
+    fr: "Optimisation et téléversement de l'image en cours...",
+    en: "Optimizing and uploading image..."
+  },
+  "أو أدخل رابط الصورة مباشرة": { fr: "Ou saisir un lien d'image direct", en: "Or enter direct image URL" },
+  "أو استخدام رابط صورة خارجي (اختياري)": {
+    fr: "Ou utiliser un lien d'image externe (optionnel)",
+    en: "Or use an external image link (optional)"
+  },
+  "إخفاء إدخال الرابط اليدوي": {
+    fr: "Masquer le champ de lien manuel",
+    en: "Hide manual URL input"
+  },
+  "تغيير الصورة": { fr: "Changer l'image", en: "Change image" },
+  "حذف الصورة": { fr: "Supprimer l'image", en: "Remove image" },
+  "تم تجهيز الصورة": { fr: "Image prête pour publication", en: "Image ready for publication" },
+  "تم تحديد الصورة": { fr: "Image sélectionnée", en: "Image selected" },
+
+  // Upload & Save Errors / Messages
+  "نوع الملف غير مدعوم": { fr: "Format de fichier non pris en charge (veuillez choisir une image)", en: "Unsupported file format (please choose an image)" },
+  "خطأ أثناء الرفع": { fr: "Erreur lors du téléversement", en: "Upload error" },
+  "خطأ في ضغط الصورة": { fr: "Erreur lors de la compression de l'image", en: "Image compression error" },
+  "خطأ أثناء الحفظ": { fr: "Erreur lors de l'enregistrement", en: "Error saving" },
+  "خطأ الحصول على رابط الصورة": {
+    fr: "Erreur lors de la récupération du lien de l'image",
+    en: "Error retrieving image download URL"
+  },
+
+  // Additional form fields & buttons
+  "الرمز البديل": { fr: "Émoji de secours", en: "Fallback emoji" },
+  "المميزات ( highlights )": {
+    fr: "Points forts (séparés par des virgules)",
+    en: "Highlights (comma-separated)"
+  },
+  "ميزة 1, ميزة 2, ميزة 3": {
+    fr: "Avantage 1, Avantage 2, Avantage 3",
+    en: "Feature 1, Feature 2, Feature 3"
+  },
+  "تثبيت المنتج كـ مميز": { fr: "Épingler comme produit vedette", en: "Pin as featured product" },
+  "المنتجات المضافة يتم ربطها لحظياً مع التطبيق وسيتم توجيهها للشركاء المقابلين.": {
+    fr: "Les produits ajoutés sont synchronisés en direct avec l'application mobile et les partenaires correspondants.",
+    en: "Added products sync live with the mobile app and are routed to the corresponding partners."
+  },
+  "إلغاء": { fr: "Annuler", en: "Cancel" },
+  "حفظ ونشر المنتج": { fr: "Enregistrer et publier le produit", en: "Save and publish product" },
+  "حفظ التغييرات": { fr: "Enregistrer les modifications", en: "Save changes" },
 });

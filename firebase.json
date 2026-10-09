@@ -14,8 +14,7 @@
       "codebase": "admin",
       "ignore": ["node_modules", ".git", "firebase-debug.log", "firebase-debug.*.log"],
       "predeploy": [
-        "npm --prefix \"$RESOURCE_DIR/../luckymam_admin\" run build",
-        "node \"$RESOURCE_DIR/prepare.mjs\""
+        "node functions/prepare.mjs"
       ]
     }
   ],

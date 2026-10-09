@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useMemo, useState, useEffect } from "react";
+import { useMemo, useState, useEffect, useRef } from "react";
 import {
   Search,
   Plus,
@@ -15,6 +15,7 @@ import {
   Pencil,
   Archive,
   Upload,
+  Trash2,
   Film,
   Camera,
   Image as ImageIcon,
@@ -195,6 +196,11 @@ function CatalogPage() {
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [editingProduct, setEditingProduct] = useState<Product | null>(null);
 
+  // PC File Upload & URL state
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const [isDragging, setIsDragging] = useState(false);
+  const [showUrlInput, setShowUrlInput] = useState(false);
+
   // Form fields
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
@@ -269,6 +275,11 @@ function CatalogPage() {
     setUploadError(null);
     setUploadProgress(0);
     setUploading(false);
+    setIsDragging(false);
+    setShowUrlInput(false);
+    if (fileInputRef.current) {
+      fileInputRef.current.value = "";
+    }
 
     if (prod) {
       setEditingProduct(prod);
@@ -304,10 +315,14 @@ function CatalogPage() {
     setIsFormOpen(true);
   };
 
-  // Image Compression & Resizing before Upload
-  async function handleImageUpload(e: React.ChangeEvent<HTMLInputElement>) {
-    const file = e.target.files?.[0];
+  // Process & Upload Image from PC (with compression and resizing)
+  async function processAndUploadFile(file: File) {
     if (!file) return;
+
+    if (!file.type.startsWith("image/")) {
+      setUploadError(tr("نوع الملف غير مدعوم"));
+      return;
+    }
 
     setUploadError(null);
     setUploadProgress(0);
@@ -315,9 +330,7 @@ function CatalogPage() {
 
     try {
       // 1. Compress & resize client side (Max 800x800, JPEG 75% quality)
-      console.log(`Original file size: ${(file.size / 1024).toFixed(1)} KB`);
       const compressedBlob = await compressAndResizeImage(file, 800, 800, 0.75);
-      console.log(`Compressed size: ${(compressedBlob.size / 1024).toFixed(1)} KB`);
 
       // 2. Upload to Storage
       const fileName = `prod_${Date.now()}_image.jpg`;
@@ -332,7 +345,7 @@ function CatalogPage() {
         },
         (err) => {
           console.error("Storage image upload error:", err);
-          setUploadError(`خطأ أثناء الرفع: ${err.message}`);
+          setUploadError(`${tr("خطأ أثناء الرفع")}: ${err.message}`);
           setUploading(false);
         },
         async () => {
@@ -342,14 +355,21 @@ function CatalogPage() {
             setUploading(false);
             setUploadProgress(100);
           } catch (err: any) {
-            setUploadError(`خطأ الحصول على رابط الصورة: ${err.message}`);
+            setUploadError(`${tr("خطأ الحصول على رابط الصورة")}: ${err.message}`);
             setUploading(false);
           }
         }
       );
     } catch (compressErr: any) {
-      setUploadError(`خطأ في ضغط الصورة: ${compressErr.message}`);
+      setUploadError(`${tr("خطأ في ضغط الصورة")}: ${compressErr.message}`);
       setUploading(false);
+    }
+  }
+
+  function handleImageUpload(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0];
+    if (file) {
+      processAndUploadFile(file);
     }
   }
 
@@ -366,7 +386,7 @@ function CatalogPage() {
       price: Number(price),
       compareAt: compareAt ? Number(compareAt) : null,
       partnerId,
-      vendor: PARTNER_META[partnerId]?.name || "مورد معروف",
+      vendor: PARTNER_META[partnerId]?.name || tr("مورد غير معروف"),
       category,
       emoji,
       imageUrl,
@@ -397,7 +417,7 @@ function CatalogPage() {
       setEditingProduct(null);
     } catch (err: any) {
       console.error("Error saving product:", err);
-      alert(`خطأ أثناء الحفظ: ${err.message}`);
+      alert(`${tr("خطأ أثناء الحفظ")}: ${err.message}`);
     }
   }
 
@@ -862,7 +882,7 @@ function CatalogPage() {
                   <Input
                     id="prod-compare"
                     type="number"
-                    placeholder="مثال: 3200"
+                    placeholder={tr("مثال: 3200")}
                     value={compareAt || ""}
                     onChange={(e) => setCompareAt(e.target.value ? Number(e.target.value) : undefined)}
                     className="rounded-xl border-border/80 focus-visible:ring-cherry-200"
@@ -902,7 +922,7 @@ function CatalogPage() {
                           <SelectItem key={k} value={k} className="text-start flex">
                             <div className="flex items-center gap-2">
                               <ItemIcon className="size-3.5 shrink-0 me-1.5" />
-                              <span>{CATEGORY_META[k].label}</span>
+                              <span>{tr(CATEGORY_META[k].label)}</span>
                             </div>
                           </SelectItem>
                         );
@@ -953,20 +973,101 @@ function CatalogPage() {
               <div className="space-y-4">
                 <div className="space-y-2">
                   <Label className="text-xs font-semibold text-ink">{tr("صورة المنتج")}</Label>
-                  <div className="border-2 border-dashed border-border/90 rounded-2xl p-4 bg-muted/20 flex flex-col items-center justify-center text-center relative hover:border-cherry-300 transition-colors">
-                    <input
-                      type="file"
-                      accept="image/*"
-                      onChange={handleImageUpload}
-                      disabled={uploading}
-                      className="absolute inset-0 opacity-0 cursor-pointer disabled:cursor-not-allowed"
-                    />
-                    <Upload className="size-6 text-cherry-600 mb-2" />
-                    <span className="text-xs font-bold text-ink">{tr("اسحب صورة المنتج هنا أو انقر للتصفح")}</span>
-                    <span className="text-[10px] text-ink-muted mt-1 leading-normal">
-                      {tr("سيتم تصغير وضغط الصورة تلقائياً لتوفير مساحة التخزين")}
-                    </span>
-                  </div>
+                  
+                  {/* Hidden file input for PC upload */}
+                  <input
+                    ref={fileInputRef}
+                    type="file"
+                    accept="image/*"
+                    onChange={handleImageUpload}
+                    disabled={uploading}
+                    className="hidden"
+                  />
+
+                  {imageUrl ? (
+                    /* Image preview card when uploaded or link is set */
+                    <div className="relative rounded-2xl border border-border/80 bg-muted/10 p-3.5 flex items-center gap-3.5">
+                      <div className="relative size-20 shrink-0 rounded-xl overflow-hidden bg-muted border border-border/60 shadow-inner">
+                        <img
+                          src={imageUrl}
+                          alt="Product preview"
+                          className="w-full h-full object-cover"
+                        />
+                      </div>
+                      <div className="flex-1 min-w-0 space-y-1.5">
+                        <div className="flex items-center gap-1.5 text-xs font-semibold text-emerald-600">
+                          <CheckCircle className="size-4 shrink-0" />
+                          <span>{tr("تم تجهيز الصورة")}</span>
+                        </div>
+                        <p className="text-[11px] text-ink-muted truncate font-mono">
+                          {imageUrl}
+                        </p>
+                        <div className="flex items-center gap-2 pt-0.5">
+                          <Button
+                            type="button"
+                            variant="outline"
+                            size="sm"
+                            disabled={uploading}
+                            onClick={() => fileInputRef.current?.click()}
+                            className="h-7 text-xs rounded-lg px-2.5 cursor-pointer"
+                          >
+                            <Pencil className="size-3 me-1" />
+                            {tr("تغيير الصورة")}
+                          </Button>
+                          <Button
+                            type="button"
+                            variant="ghost"
+                            size="sm"
+                            disabled={uploading}
+                            onClick={() => {
+                              setImageUrl("");
+                              if (fileInputRef.current) fileInputRef.current.value = "";
+                            }}
+                            className="h-7 text-xs text-rose-600 hover:text-rose-700 hover:bg-rose-50 rounded-lg px-2 cursor-pointer"
+                          >
+                            <Trash2 className="size-3 me-1" />
+                            {tr("حذف الصورة")}
+                          </Button>
+                        </div>
+                      </div>
+                    </div>
+                  ) : (
+                    /* Dropzone & PC upload button when no image is selected */
+                    <div
+                      onDragOver={(e) => {
+                        e.preventDefault();
+                        setIsDragging(true);
+                      }}
+                      onDragLeave={() => setIsDragging(false)}
+                      onDrop={(e) => {
+                        e.preventDefault();
+                        setIsDragging(false);
+                        const file = e.dataTransfer.files?.[0];
+                        if (file) processAndUploadFile(file);
+                      }}
+                      onClick={() => fileInputRef.current?.click()}
+                      className={cn(
+                        "border-2 border-dashed rounded-2xl p-6 flex flex-col items-center justify-center text-center cursor-pointer transition-all",
+                        isDragging
+                          ? "border-cherry-500 bg-cherry-50/60 ring-2 ring-cherry-200"
+                          : "border-border/90 bg-muted/20 hover:border-cherry-300 hover:bg-muted/40",
+                        uploading && "pointer-events-none opacity-60"
+                      )}
+                    >
+                      <div className="size-11 rounded-2xl bg-cherry-50 grid place-items-center mb-2.5 text-cherry-600 shadow-sm shadow-cherry-100">
+                        <Upload className="size-5" />
+                      </div>
+                      <span className="text-xs font-bold text-ink">
+                        {tr("انقر لرفع صورة من جهازك أو اسحبها هنا")}
+                      </span>
+                      <span className="text-[11px] font-medium text-cherry-600 mt-1">
+                        {tr("تصفح من جهازك (JPG, PNG, WEBP)")}
+                      </span>
+                      <span className="text-[10px] text-ink-muted mt-1 leading-normal">
+                        {tr("سيتم تصغير وضغط الصورة تلقائياً لتوفير مساحة التخزين")}
+                      </span>
+                    </div>
+                  )}
 
                   {/* Upload progress indicator */}
                   {uploading && (
@@ -987,11 +1088,18 @@ function CatalogPage() {
                   )}
                 </div>
 
-                <div className="grid grid-cols-3 gap-2">
-                  <div className="space-y-2 col-span-2">
-                    <Label htmlFor="prod-url" className="text-xs font-semibold text-ink">
-                      {tr("أو أدخل رابط الصورة مباشرة")}
-                    </Label>
+                {/* Secondary toggle for manual image URL */}
+                <div className="space-y-2 pt-1">
+                  <button
+                    type="button"
+                    onClick={() => setShowUrlInput(!showUrlInput)}
+                    className="text-[11px] font-medium text-ink-muted hover:text-cherry-600 flex items-center gap-1 cursor-pointer transition-colors"
+                  >
+                    <span>{showUrlInput ? "▾" : "▸"}</span>
+                    <span>{showUrlInput ? tr("إخفاء إدخال الرابط اليدوي") : tr("أو استخدام رابط صورة خارجي (اختياري)")}</span>
+                  </button>
+
+                  {showUrlInput && (
                     <Input
                       id="prod-url"
                       type="url"
@@ -1001,8 +1109,11 @@ function CatalogPage() {
                       className="rounded-xl border-border/80 focus-visible:ring-cherry-200 text-left text-xs"
                       dir="ltr"
                     />
-                  </div>
-                  <div className="space-y-2">
+                  )}
+                </div>
+
+                <div className="grid grid-cols-3 gap-2">
+                  <div className="space-y-2 col-span-1">
                     <Label htmlFor="prod-emoji" className="text-xs font-semibold text-ink">
                       {tr("الرمز البديل")}
                     </Label>
@@ -1014,19 +1125,18 @@ function CatalogPage() {
                       className="rounded-xl border-border/80 focus-visible:ring-cherry-200 text-center text-lg"
                     />
                   </div>
-                </div>
-
-                <div className="space-y-2">
-                  <Label htmlFor="prod-highlights" className="text-xs font-semibold text-ink">
-                    {tr("المميزات ( highlights )")}
-                  </Label>
-                  <Input
-                    id="prod-highlights"
-                    placeholder={tr("ميزة 1, ميزة 2, ميزة 3")}
-                    value={highlightsStr}
-                    onChange={(e) => setHighlightsStr(e.target.value)}
-                    className="rounded-xl border-border/80 focus-visible:ring-cherry-200 text-xs"
-                  />
+                  <div className="space-y-2 col-span-2">
+                    <Label htmlFor="prod-highlights" className="text-xs font-semibold text-ink">
+                      {tr("المميزات ( highlights )")}
+                    </Label>
+                    <Input
+                      id="prod-highlights"
+                      placeholder={tr("ميزة 1, ميزة 2, ميزة 3")}
+                      value={highlightsStr}
+                      onChange={(e) => setHighlightsStr(e.target.value)}
+                      className="rounded-xl border-border/80 focus-visible:ring-cherry-200 text-xs"
+                    />
+                  </div>
                 </div>
               </div>
 
@@ -1056,16 +1166,16 @@ function CatalogPage() {
                 type="button"
                 variant="outline"
                 onClick={() => setIsFormOpen(false)}
-                className="rounded-full"
+                className="rounded-full cursor-pointer"
               >
                 {tr("إلغاء")}
               </Button>
               <Button
                 type="submit"
                 disabled={uploading}
-                className="rounded-full bg-cherry-600 hover:bg-cherry-700 text-white font-semibold px-6 shadow-md"
+                className="rounded-full bg-cherry-600 hover:bg-cherry-700 text-white font-semibold px-6 shadow-md cursor-pointer"
               >
-                {tr("حفظ ونشر المنتج")}
+                {editingProduct ? tr("حفظ التغييرات") : tr("حفظ ونشر المنتج")}
               </Button>
             </div>
           </form>
