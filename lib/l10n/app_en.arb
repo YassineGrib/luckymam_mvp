@@ -1121,5 +1121,16 @@
   "signupConsentPrefix": "By creating an account, you give us permission to securely store your due date, your baby's date of birth, and any other data you enter. By continuing, you accept the ",
   "signupConsentPrivacyLink": "privacy policy",
   "signupConsentAnd": " and the ",
-  "signupConsentTermsLink": "terms of use"
+  "signupConsentTermsLink": "terms of use",
+  "profileDeleteAccountAction": "Delete account permanently",
+  "profileDeleteAccountTitle": "Delete account permanently",
+  "profileDeleteAccountWarning": "Your account and all associated data will be permanently and irreversibly deleted, including:",
+  "profileDeleteAccountBulletMemories": "✦ Memory capsules and photos",
+  "profileDeleteAccountBulletHealth": "✦ Child profiles and health records",
+  "profileDeleteAccountBulletOrders": "✦ Subscription and order history",
+  "profileDeleteAccountUnderstand": "I understand that this action cannot be undone",
+  "profileDeleteAccountCancel": "Cancel",
+  "profileDeleteAccountConfirm": "Delete account",
+  "profileDeleteAccountReauthRequired": "For security reasons, please log in again before deleting your account.",
+  "profileDeleteAccountError": "An error occurred while deleting the account."
 }

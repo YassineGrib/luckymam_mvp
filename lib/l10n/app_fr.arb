@@ -1166,5 +1166,16 @@
   "signupConsentPrefix": "En créant un compte, vous nous donnez la permission de stocker en toute sécurité votre date du terme, la date de naissance de votre bébé et toute autre donnée saisie. En continuant, vous acceptez la ",
   "signupConsentPrivacyLink": "politique de confidentialité",
   "signupConsentAnd": " et les ",
-  "signupConsentTermsLink": "conditions d'utilisation"
+  "signupConsentTermsLink": "conditions d'utilisation",
+  "profileDeleteAccountAction": "Supprimer le compte définitivement",
+  "profileDeleteAccountTitle": "Supprimer le compte définitivement",
+  "profileDeleteAccountWarning": "Votre compte et l'ensemble de vos données seront supprimés définitivement et de manière irréversible, notamment :",
+  "profileDeleteAccountBulletMemories": "✦ Souvenirs et photos des capsules",
+  "profileDeleteAccountBulletHealth": "✦ Suivi de santé et profils des enfants",
+  "profileDeleteAccountBulletOrders": "✦ Historique des abonnements et commandes",
+  "profileDeleteAccountUnderstand": "J'ai compris que cette action est irréversible",
+  "profileDeleteAccountCancel": "Annuler",
+  "profileDeleteAccountConfirm": "Supprimer le compte",
+  "profileDeleteAccountReauthRequired": "Pour des raisons de sécurité, veuillez vous reconnecter avant de supprimer votre compte.",
+  "profileDeleteAccountError": "Une erreur est survenue lors de la suppression du compte."
 }

@@ -1325,7 +1325,7 @@ class _SettingsSection extends ConsumerWidget {
           child: TextButton.icon(
             onPressed: () => _showDeleteAccountDialog(context),
             icon: const Icon(Icons.delete_forever_rounded, size: 18),
-            label: const Text('حذف الحساب نهائياً'),
+            label: Text(l10n.profileDeleteAccountAction),
             style: TextButton.styleFrom(
               foregroundColor: Colors.red.shade400,
               padding: const EdgeInsets.symmetric(vertical: 12),
@@ -1629,10 +1629,15 @@ class _DeleteAccountDialogState extends State<_DeleteAccountDialog> {
       Navigator.of(context).pop();
       context.go('/login');
     } else {
+      final messenger = ScaffoldMessenger.of(context);
+      final l10n = context.l10n;
       Navigator.of(context).pop();
-      ScaffoldMessenger.of(context).showSnackBar(
+      final errorMsg = result.requiresReauth
+          ? l10n.profileDeleteAccountReauthRequired
+          : (result.errorMessage ?? l10n.profileDeleteAccountError);
+      messenger.showSnackBar(
         SnackBar(
-          content: Text(result.errorMessage ?? 'حدث خطأ غير متوقع'),
+          content: Text(errorMsg),
           backgroundColor: Colors.red,
           duration: const Duration(seconds: 5),
         ),
@@ -1642,6 +1647,7 @@ class _DeleteAccountDialogState extends State<_DeleteAccountDialog> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = context.l10n;
     return AlertDialog(
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
       title: Row(
@@ -1655,10 +1661,10 @@ class _DeleteAccountDialogState extends State<_DeleteAccountDialog> {
             child: Icon(Icons.warning_rounded, color: Colors.red.shade600, size: 22),
           ),
           const SizedBox(width: 12),
-          const Expanded(
+          Expanded(
             child: Text(
-              'حذف الحساب نهائياً',
-              style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+              l10n.profileDeleteAccountTitle,
+              style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
             ),
           ),
         ],
@@ -1667,14 +1673,14 @@ class _DeleteAccountDialogState extends State<_DeleteAccountDialog> {
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text(
-            'سيتم حذف حسابك وجميع بياناتك بشكل نهائي وغير قابل للتراجع، بما في ذلك:',
-            style: TextStyle(fontSize: 13.5, height: 1.5),
+          Text(
+            l10n.profileDeleteAccountWarning,
+            style: const TextStyle(fontSize: 13.5, height: 1.5),
           ),
           const SizedBox(height: 12),
-          _bulletPoint('✦ صور وكبسولات الذكريات'),
-          _bulletPoint('✦ معلومات الأطفال والصحة'),
-          _bulletPoint('✦ سجل الاشتراكات والطلبات'),
+          _bulletPoint(l10n.profileDeleteAccountBulletMemories),
+          _bulletPoint(l10n.profileDeleteAccountBulletHealth),
+          _bulletPoint(l10n.profileDeleteAccountBulletOrders),
           const SizedBox(height: 16),
           CheckboxListTile(
             value: _confirmed,
@@ -1682,9 +1688,9 @@ class _DeleteAccountDialogState extends State<_DeleteAccountDialog> {
             activeColor: Colors.red,
             controlAffinity: ListTileControlAffinity.leading,
             contentPadding: EdgeInsets.zero,
-            title: const Text(
-              'أفهم أن هذا الإجراء لا يمكن التراجع عنه',
-              style: TextStyle(fontSize: 13, fontWeight: FontWeight.w600),
+            title: Text(
+              l10n.profileDeleteAccountUnderstand,
+              style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w600),
             ),
           ),
         ],
@@ -1692,7 +1698,7 @@ class _DeleteAccountDialogState extends State<_DeleteAccountDialog> {
       actions: [
         TextButton(
           onPressed: _isLoading ? null : () => Navigator.of(context).pop(),
-          child: const Text('إلغاء'),
+          child: Text(l10n.profileDeleteAccountCancel),
         ),
         FilledButton(
           onPressed: _confirmed && !_isLoading ? _handleDelete : null,
@@ -1709,7 +1715,7 @@ class _DeleteAccountDialogState extends State<_DeleteAccountDialog> {
                     color: Colors.white,
                   ),
                 )
-              : const Text('حذف الحساب'),
+              : Text(l10n.profileDeleteAccountConfirm),
         ),
       ],
     );

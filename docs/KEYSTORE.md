@@ -16,38 +16,32 @@
 
 ---
 
-## Release Keystore
+## Release Keystore (Local Upload Key)
 
-No release keystore has been created yet. To generate one:
+**Path:** `android/luckymam-release.keystore`  
+**Alias:** `luckymam`  
+**Config:** `android/key.properties`
 
-```bash
-keytool -genkey -v \
-  -keystore ~/luckymam_release.keystore \
-  -alias luckymam \
-  -keyalg RSA \
-  -keysize 2048 \
-  -validity 10000
-```
+| Hash | Value |
+|------|-------|
+| SHA-1 | `A3:3B:F0:F9:43:51:D2:9E:5B:9E:B3:BD:29:E6:AE:3D:E3:E4:FB:CC` |
+| SHA-256 | `8B:4D:28:B9:D8:37:A8:0B:6C:A8:04:4E:EC:B2:69:7A:27:DC:25:27:84:27:21:D9:43:5C:72:E7:E5:69:B9:01` |
 
-Then create `android/key.properties`:
+---
 
-```
-storeFile=/Users/<you>/luckymam_release.keystore
-storePassword=YOUR_STORE_PASSWORD
-keyAlias=luckymam
-keyPassword=YOUR_KEY_PASSWORD
-```
+## Google Play App Signing (Production Key for Play Store)
 
-Get the release SHA-1 after creating the keystore:
+When uploaded to Google Play, Google re-signs the APK using Play App Signing.
+To make Google Sign-In work in production:
 
-```bash
-"/Applications/Android Studio.app/Contents/jbr/Contents/Home/bin/keytool" \
-  -list -v \
-  -keystore ~/luckymam_release.keystore \
-  -alias luckymam
-```
-
-> Add the release SHA-1 to Firebase Console as well, under the same Android app entry.
+1. Open **Google Play Console** → Your App (**LuckyMam**).
+2. Go to **Release** → **Setup** → **App integrity** → **App signing** tab.
+3. Under **App signing key certificate**, copy the **SHA-1** (and SHA-256).
+4. Go to **Firebase Console** → Project Settings → Android App (`com.luckmam.luckmam_mvp`) → **SHA certificate fingerprints**.
+5. Add BOTH:
+   - The **App signing key certificate SHA-1** (from Play Console).
+   - The **Upload key certificate SHA-1** (`A3:3B:F0:F9:43:51:D2:9E:5B:9E:B3:BD:29:E6:AE:3D:E3:E4:FB:CC`).
+6. Download the updated `google-services.json` and place it in `android/app/google-services.json`.
 
 ---
 

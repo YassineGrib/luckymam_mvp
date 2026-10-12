@@ -2626,4 +2626,40 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get signupConsentTermsLink => 'شروط الاستخدام';
+
+  @override
+  String get profileDeleteAccountAction => 'حذف الحساب نهائياً';
+
+  @override
+  String get profileDeleteAccountTitle => 'حذف الحساب نهائياً';
+
+  @override
+  String get profileDeleteAccountWarning =>
+      'سيتم حذف حسابك وجميع بياناتك بشكل نهائي وغير قابل للتراجع، بما في ذلك:';
+
+  @override
+  String get profileDeleteAccountBulletMemories => '✦ صور وكبسولات الذكريات';
+
+  @override
+  String get profileDeleteAccountBulletHealth => '✦ معلومات الأطفال والصحة';
+
+  @override
+  String get profileDeleteAccountBulletOrders => '✦ سجل الاشتراكات والطلبات';
+
+  @override
+  String get profileDeleteAccountUnderstand =>
+      'أفهم أن هذا الإجراء لا يمكن التراجع عنه';
+
+  @override
+  String get profileDeleteAccountCancel => 'إلغاء';
+
+  @override
+  String get profileDeleteAccountConfirm => 'حذف الحساب';
+
+  @override
+  String get profileDeleteAccountReauthRequired =>
+      'لأسباب أمنية، يجب تسجيل الدخول مجدداً قبل حذف الحساب. يُرجى الخروج وتسجيل الدخول ثم المحاولة مرة أخرى.';
+
+  @override
+  String get profileDeleteAccountError => 'حدث خطأ أثناء حذف الحساب.';
 }

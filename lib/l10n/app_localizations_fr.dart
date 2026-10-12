@@ -2654,4 +2654,44 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get signupConsentTermsLink => 'conditions d\'utilisation';
+
+  @override
+  String get profileDeleteAccountAction => 'Supprimer le compte définitivement';
+
+  @override
+  String get profileDeleteAccountTitle => 'Supprimer le compte définitivement';
+
+  @override
+  String get profileDeleteAccountWarning =>
+      'Votre compte et l\'ensemble de vos données seront supprimés définitivement et de manière irréversible, notamment :';
+
+  @override
+  String get profileDeleteAccountBulletMemories =>
+      '✦ Souvenirs et photos des capsules';
+
+  @override
+  String get profileDeleteAccountBulletHealth =>
+      '✦ Suivi de santé et profils des enfants';
+
+  @override
+  String get profileDeleteAccountBulletOrders =>
+      '✦ Historique des abonnements et commandes';
+
+  @override
+  String get profileDeleteAccountUnderstand =>
+      'J\'ai compris que cette action est irréversible';
+
+  @override
+  String get profileDeleteAccountCancel => 'Annuler';
+
+  @override
+  String get profileDeleteAccountConfirm => 'Supprimer le compte';
+
+  @override
+  String get profileDeleteAccountReauthRequired =>
+      'Pour des raisons de sécurité, veuillez vous reconnecter avant de supprimer votre compte.';
+
+  @override
+  String get profileDeleteAccountError =>
+      'Une erreur est survenue lors de la suppression du compte.';
 }

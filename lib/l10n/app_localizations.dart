@@ -4773,6 +4773,72 @@ abstract class AppLocalizations {
   /// In fr, this message translates to:
   /// **'conditions d\'utilisation'**
   String get signupConsentTermsLink;
+
+  /// No description provided for @profileDeleteAccountAction.
+  ///
+  /// In fr, this message translates to:
+  /// **'Supprimer le compte définitivement'**
+  String get profileDeleteAccountAction;
+
+  /// No description provided for @profileDeleteAccountTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Supprimer le compte définitivement'**
+  String get profileDeleteAccountTitle;
+
+  /// No description provided for @profileDeleteAccountWarning.
+  ///
+  /// In fr, this message translates to:
+  /// **'Votre compte et l\'ensemble de vos données seront supprimés définitivement et de manière irréversible, notamment :'**
+  String get profileDeleteAccountWarning;
+
+  /// No description provided for @profileDeleteAccountBulletMemories.
+  ///
+  /// In fr, this message translates to:
+  /// **'✦ Souvenirs et photos des capsules'**
+  String get profileDeleteAccountBulletMemories;
+
+  /// No description provided for @profileDeleteAccountBulletHealth.
+  ///
+  /// In fr, this message translates to:
+  /// **'✦ Suivi de santé et profils des enfants'**
+  String get profileDeleteAccountBulletHealth;
+
+  /// No description provided for @profileDeleteAccountBulletOrders.
+  ///
+  /// In fr, this message translates to:
+  /// **'✦ Historique des abonnements et commandes'**
+  String get profileDeleteAccountBulletOrders;
+
+  /// No description provided for @profileDeleteAccountUnderstand.
+  ///
+  /// In fr, this message translates to:
+  /// **'J\'ai compris que cette action est irréversible'**
+  String get profileDeleteAccountUnderstand;
+
+  /// No description provided for @profileDeleteAccountCancel.
+  ///
+  /// In fr, this message translates to:
+  /// **'Annuler'**
+  String get profileDeleteAccountCancel;
+
+  /// No description provided for @profileDeleteAccountConfirm.
+  ///
+  /// In fr, this message translates to:
+  /// **'Supprimer le compte'**
+  String get profileDeleteAccountConfirm;
+
+  /// No description provided for @profileDeleteAccountReauthRequired.
+  ///
+  /// In fr, this message translates to:
+  /// **'Pour des raisons de sécurité, veuillez vous reconnecter avant de supprimer votre compte.'**
+  String get profileDeleteAccountReauthRequired;
+
+  /// No description provided for @profileDeleteAccountError.
+  ///
+  /// In fr, this message translates to:
+  /// **'Une erreur est survenue lors de la suppression du compte.'**
+  String get profileDeleteAccountError;
 }
 
 class _AppLocalizationsDelegate

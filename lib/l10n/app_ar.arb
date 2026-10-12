@@ -1121,5 +1121,16 @@
   "signupConsentPrefix": "بإنشاء حساب، تمنحيننا الإذن بتخزين موعد الولادة وتاريخ ميلاد طفلك وأي بيانات أخرى تدخلينها بشكل آمن. بالمتابعة، تقبلين ",
   "signupConsentPrivacyLink": "سياسة الخصوصية",
   "signupConsentAnd": " و",
-  "signupConsentTermsLink": "شروط الاستخدام"
+  "signupConsentTermsLink": "شروط الاستخدام",
+  "profileDeleteAccountAction": "حذف الحساب نهائياً",
+  "profileDeleteAccountTitle": "حذف الحساب نهائياً",
+  "profileDeleteAccountWarning": "سيتم حذف حسابك وجميع بياناتك بشكل نهائي وغير قابل للتراجع، بما في ذلك:",
+  "profileDeleteAccountBulletMemories": "✦ صور وكبسولات الذكريات",
+  "profileDeleteAccountBulletHealth": "✦ معلومات الأطفال والصحة",
+  "profileDeleteAccountBulletOrders": "✦ سجل الاشتراكات والطلبات",
+  "profileDeleteAccountUnderstand": "أفهم أن هذا الإجراء لا يمكن التراجع عنه",
+  "profileDeleteAccountCancel": "إلغاء",
+  "profileDeleteAccountConfirm": "حذف الحساب",
+  "profileDeleteAccountReauthRequired": "لأسباب أمنية، يجب تسجيل الدخول مجدداً قبل حذف الحساب. يُرجى الخروج وتسجيل الدخول ثم المحاولة مرة أخرى.",
+  "profileDeleteAccountError": "حدث خطأ أثناء حذف الحساب."
 }

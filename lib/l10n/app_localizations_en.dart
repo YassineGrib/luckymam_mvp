@@ -2630,4 +2630,44 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get signupConsentTermsLink => 'terms of use';
+
+  @override
+  String get profileDeleteAccountAction => 'Delete account permanently';
+
+  @override
+  String get profileDeleteAccountTitle => 'Delete account permanently';
+
+  @override
+  String get profileDeleteAccountWarning =>
+      'Your account and all associated data will be permanently and irreversibly deleted, including:';
+
+  @override
+  String get profileDeleteAccountBulletMemories =>
+      '✦ Memory capsules and photos';
+
+  @override
+  String get profileDeleteAccountBulletHealth =>
+      '✦ Child profiles and health records';
+
+  @override
+  String get profileDeleteAccountBulletOrders =>
+      '✦ Subscription and order history';
+
+  @override
+  String get profileDeleteAccountUnderstand =>
+      'I understand that this action cannot be undone';
+
+  @override
+  String get profileDeleteAccountCancel => 'Cancel';
+
+  @override
+  String get profileDeleteAccountConfirm => 'Delete account';
+
+  @override
+  String get profileDeleteAccountReauthRequired =>
+      'For security reasons, please log in again before deleting your account.';
+
+  @override
+  String get profileDeleteAccountError =>
+      'An error occurred while deleting the account.';
 }
