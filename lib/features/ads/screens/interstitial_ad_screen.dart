@@ -219,11 +219,17 @@ class _InterstitialAdScreenState extends ConsumerState<InterstitialAdScreen> {
                   child: ElevatedButton(
                     onPressed: _onCta,
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.white,
-                      foregroundColor: Colors.black87,
-                      padding: const EdgeInsets.symmetric(vertical: 15),
+                      backgroundColor: (ad.assetPath != null || imageUrl != null)
+                          ? const Color(0xFF1E161C)
+                          : Colors.white,
+                      foregroundColor: (ad.assetPath != null || imageUrl != null)
+                          ? Colors.white
+                          : Colors.black87,
+                      padding: const EdgeInsets.symmetric(vertical: 16),
+                      elevation: 4,
+                      shadowColor: Colors.black26,
                       shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(16),
+                        borderRadius: BorderRadius.circular(18),
                       ),
                     ),
                     child: Text(

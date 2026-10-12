@@ -492,25 +492,41 @@ class _VerticalNode extends StatelessWidget {
     const activeDotSize = 30.0;
     final currentDotSize = (isCurrent || isOverdue) ? activeDotSize : dotSize;
 
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 4),
+    // Aligns the center of the node with the category icon in the milestone card
+    // Card has top margin of 5, padding 13, and category icon height of 30 -> center is at y = 33
+    const nodeCenterY = 33.0;
+    final topGap = (nodeCenterY - (currentDotSize / 2)).clamp(0.0, 50.0);
+
+    return IntrinsicHeight(
       child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          // ── Left rail: line + logo/dot ─────────────────────────
+          // ── Left rail: continuous line + logo/dot ───────────────
           SizedBox(
             width: railWidth,
             child: Column(
-              mainAxisSize: MainAxisSize.min,
               children: [
-                if (!isFirst)
-                  Container(
-                    width: 2.5,
-                    height: 16,
-                    color: color.withValues(alpha: 0.5),
-                  )
-                else
-                  const SizedBox(height: 16),
+                // Top line (from item top edge down to the node)
+                SizedBox(
+                  height: topGap,
+                  child: isFirst
+                      ? const SizedBox()
+                      : Center(
+                          child: Container(
+                            width: 2.5,
+                            decoration: BoxDecoration(
+                              gradient: LinearGradient(
+                                begin: Alignment.topCenter,
+                                end: Alignment.bottomCenter,
+                                colors: [
+                                  color.withValues(alpha: 0.25),
+                                  color.withValues(alpha: 0.7),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ),
+                ),
 
                 // Node icon
                 isCompleted
@@ -521,14 +537,17 @@ class _VerticalNode extends StatelessWidget {
                     ? _luckymamLogo(currentDotSize, phase.color)
                     : _plainDot(dotSize, color, isDark),
 
-                if (!isLast)
-                  Container(
-                    width: 2.5,
-                    height: 16,
-                    color: color.withValues(alpha: 0.25),
-                  )
-                else
-                  const SizedBox(height: 16),
+                // Bottom line (from node down to item bottom edge)
+                Expanded(
+                  child: isLast
+                      ? const SizedBox()
+                      : Center(
+                          child: Container(
+                            width: 2.5,
+                            color: color.withValues(alpha: 0.25),
+                          ),
+                        ),
+                ),
               ],
             ),
           ),
@@ -634,7 +653,7 @@ class _MilestoneCardState extends State<_MilestoneCard> {
           margin: EdgeInsetsDirectional.only(
             end: isHorizontal ? 12 : 0,
             top: isHorizontal ? 0 : 5,
-            bottom: isHorizontal ? 0 : 7,
+            bottom: isHorizontal ? 0 : 11,
           ),
           clipBehavior: Clip.antiAlias,
           padding: const EdgeInsets.all(13),

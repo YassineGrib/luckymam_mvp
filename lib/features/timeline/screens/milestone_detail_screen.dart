@@ -8,13 +8,13 @@ import 'package:firebase_auth/firebase_auth.dart';
 import '../../../core/extensions/l10n_extension.dart';
 import '../../../core/services/analytics_service.dart';
 import '../../../core/theme/app_colors.dart';
-import '../../../core/theme/app_spacing.dart';
 import '../../capsules/screens/capsule_detail_screen.dart';
 import '../../capsules/screens/create_capsule_screen.dart';
 import '../../capsules/providers/capsule_providers.dart';
 import '../../notifications/notifications_screen.dart' show notificationPrefsProvider;
 import '../../profile/providers/profile_providers.dart';
 import '../data/milestone_advice_data.dart';
+import '../models/milestone.dart';
 import '../models/phase.dart';
 import '../services/milestone_notification_service.dart';
 import '../services/timeline_service.dart';
@@ -40,6 +40,8 @@ String _formatPresetDateAtNine(BuildContext context, DateTime date) {
   ).format(date);
 }
 
+enum _MilestoneStatus { completed, overdue, current, upcoming }
+
 /// Detail screen for a single milestone
 class MilestoneDetailScreen extends ConsumerWidget {
   final MilestoneWithDueDate milestone;
@@ -51,10 +53,25 @@ class MilestoneDetailScreen extends ConsumerWidget {
     required this.childId,
   });
 
+  _MilestoneStatus _resolveStatus(MilestoneWithDueDate m) {
+    if (m.isCompleted) return _MilestoneStatus.completed;
+    if (m.dueDate == null) return _MilestoneStatus.upcoming;
+    final now = DateTime.now();
+    final today = DateTime(now.year, now.month, now.day);
+    final due = DateTime(m.dueDate!.year, m.dueDate!.month, m.dueDate!.day);
+    if (due.isBefore(today.subtract(const Duration(days: 7)))) {
+      return _MilestoneStatus.overdue;
+    }
+    if (due.isBefore(today.add(const Duration(days: 1)))) {
+      return _MilestoneStatus.current;
+    }
+    return _MilestoneStatus.upcoming;
+  }
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final lang = Localizations.localeOf(context).languageCode;
-    final l10n = context.l10n;
+    final isRtl = context.isRtl;
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final textColor = isDark
         ? AppColors.onBackgroundDark
@@ -63,268 +80,236 @@ class MilestoneDetailScreen extends ConsumerWidget {
         ? AppColors.textSecondaryDark
         : AppColors.textSecondaryLight;
     final bgColor = isDark
-        ? AppColors.backgroundDark
-        : AppColors.backgroundLight;
+        ? const Color(0xFF131114)
+        : const Color(0xFFFAF7F8);
     final m = milestone.milestone;
     final category = m.category;
     final phase = m.phase;
+    final status = _resolveStatus(milestone);
 
     return Scaffold(
       backgroundColor: bgColor,
-      body: CustomScrollView(
-        slivers: [
-          // Hero header with gradient
-          SliverAppBar(
-            expandedHeight: 200,
-            pinned: true,
-            backgroundColor: category.color,
-            leading: IconButton(
-              icon: const Icon(Icons.arrow_back_rounded, color: Colors.white),
-              onPressed: () => Navigator.pop(context),
-            ),
-            flexibleSpace: FlexibleSpaceBar(
-              background: Container(
+      body: Stack(
+        children: [
+          // ─── Atmospheric Ambient Glow Tinted by Category Color ───
+          Positioned(
+            top: 0,
+            left: 0,
+            right: 0,
+            height: 380,
+            child: IgnorePointer(
+              child: Container(
                 decoration: BoxDecoration(
                   gradient: LinearGradient(
-                    colors: [category.color, category.color.withValues(alpha: 0.7)],
+                    colors: [
+                      category.color.withValues(alpha: isDark ? 0.22 : 0.16),
+                      category.color.withValues(alpha: isDark ? 0.06 : 0.03),
+                      Colors.transparent,
+                    ],
                     begin: Alignment.topCenter,
                     end: Alignment.bottomCenter,
-                  ),
-                ),
-                child: SafeArea(
-                  child: Center(
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        const SizedBox(height: 40),
-                        Icon(category.icon, size: 60, color: Colors.white),
-                        const SizedBox(height: AppSpacing.sm),
-                        Container(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 12,
-                            vertical: 4,
-                          ),
-                          decoration: BoxDecoration(
-                            color: Colors.white.withValues(alpha: 0.2),
-                            borderRadius: BorderRadius.circular(20),
-                          ),
-                          child: Text(
-                            category.getLabel(lang),
-                            style: AppTypography.fromContext(context, 
-                              fontSize: 14,
-                              fontWeight: FontWeight.w600,
-                              color: Colors.white,
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
                   ),
                 ),
               ),
             ),
           ),
 
-          // Content
-          SliverToBoxAdapter(
-            child: Padding(
-              padding: const EdgeInsets.all(AppSpacing.screenPaddingH),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  // Title
-                  Text(
-                    m.getTitle(lang),
-                    style: AppTypography.fromContext(context, 
-                      fontSize: 24,
-                      fontWeight: FontWeight.bold,
-                      color: textColor,
+          // ─── Main Bento Scroll Content ───
+          SafeArea(
+            bottom: false,
+            child: CustomScrollView(
+              physics: const BouncingScrollPhysics(
+                parent: AlwaysScrollableScrollPhysics(),
+              ),
+              slivers: [
+                // 1. Floating Top Navigation Bar
+                SliverToBoxAdapter(
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 18,
+                      vertical: 10,
                     ),
-                  ),
-                  const SizedBox(height: AppSpacing.sm),
-
-                  // Description
-                  Text(
-                    m.getDescription(lang),
-                    style: AppTypography.fromContext(context, 
-                      fontSize: 16,
-                      color: secondaryText,
-                      height: 1.5,
-                    ),
-                  ),
-                  const SizedBox(height: AppSpacing.lg),
-
-                  // Info cards
-                  Row(
-                    children: [
-                      Expanded(
-                        child: _buildInfoCard(
-                          context: context,
-                          icon: phase.icon,
-                          label: l10n.milestone_phase,
-                          value: phase.getLabel(lang),
-                          color: phase.color,
-                          isDark: isDark,
-                        ),
-                      ),
-                      const SizedBox(width: AppSpacing.sm),
-                      Expanded(
-                        child: _buildInfoCard(
-                          context: context,
-                          icon: Icons.calendar_today_rounded,
-                          label: l10n.milestone_suggested,
-                          value: m.ageRange,
-                          color: AppColors.info,
-                          isDark: isDark,
-                        ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: AppSpacing.xl),
-
-                  // Capsule liée — bouton pour lire
-                  if (milestone.capsuleId != null) ...[
-                    Row(
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        const Icon(
-                          Icons.photo_camera_rounded,
-                          size: 16,
-                          color: AppColors.success,
-                        ),
-                        const SizedBox(width: 6),
-                        Text(
-                          l10n.milestone_capsule_ready,
-                          style: AppTypography.fromContext(context, 
-                            fontSize: 16,
-                            fontWeight: FontWeight.w600,
-                            color: textColor,
-                          ),
-                        ),
-                        if (milestone.completedAt != null) ...[
-                          const Spacer(),
-                          Text(
-                            DateFormat(
-                              'd MMM yyyy',
-                              lang,
-                            ).format(milestone.completedAt!),
-                            style: AppTypography.fromContext(context, 
-                              fontSize: 12,
-                              color: AppColors.success,
-                              fontWeight: FontWeight.w600,
-                            ),
-                          ),
-                        ],
-                      ],
-                    ),
-                    const SizedBox(height: AppSpacing.sm),
-                    GestureDetector(
-                      onTap: () => _openLinkedCapsule(context, ref),
-                      child: Container(
-                        padding: const EdgeInsets.all(AppSpacing.md),
-                        decoration: BoxDecoration(
-                          color: AppColors.success.withValues(alpha: 0.08),
-                          borderRadius: BorderRadius.circular(12),
-                          border: Border.all(
-                            color: AppColors.success.withValues(alpha: 0.4),
-                          ),
-                        ),
-                        child: Row(
-                          children: [
-                            Container(
-                              width: 40,
-                              height: 40,
+                        // Frosted Squircle Back Button
+                        Material(
+                          color: Colors.transparent,
+                          child: InkWell(
+                            onTap: () => Navigator.of(context).maybePop(),
+                            borderRadius: BorderRadius.circular(14),
+                            child: Container(
+                              width: 42,
+                              height: 42,
                               decoration: BoxDecoration(
-                                shape: BoxShape.circle,
-                                color: AppColors.success.withValues(
-                                  alpha: 0.15,
+                                color: isDark
+                                    ? Colors.white.withValues(alpha: 0.08)
+                                    : Colors.white.withValues(alpha: 0.9),
+                                borderRadius: BorderRadius.circular(14),
+                                border: Border.all(
+                                  color: isDark
+                                      ? Colors.white.withValues(alpha: 0.12)
+                                      : const Color(0xFFE8E0E4),
+                                  width: 1,
                                 ),
-                              ),
-                              child: const Icon(
-                                Icons.play_circle_rounded,
-                                color: AppColors.success,
-                                size: 22,
-                              ),
-                            ),
-                            const SizedBox(width: AppSpacing.sm),
-                            Expanded(
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    l10n.milestone_view_capsule,
-                                    style: AppTypography.fromContext(context, 
-                                      color: AppColors.success,
-                                      fontWeight: FontWeight.w700,
-                                      fontSize: 14,
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Colors.black.withValues(
+                                      alpha: isDark ? 0.25 : 0.04,
                                     ),
-                                  ),
-                                  Text(
-                                    l10n.milestone_tap_to_open_memory,
-                                    style: AppTypography.fromContext(context, 
-                                      color: AppColors.success.withValues(
-                                        alpha: 0.7,
-                                      ),
-                                      fontSize: 11,
-                                    ),
+                                    blurRadius: 8,
+                                    offset: const Offset(0, 2),
                                   ),
                                 ],
                               ),
+                              child: Icon(
+                                isRtl
+                                    ? Icons.arrow_forward_ios_rounded
+                                    : Icons.arrow_back_ios_new_rounded,
+                                size: 16,
+                                color: textColor,
+                              ),
                             ),
-                            const Icon(
-                              Icons.chevron_right_rounded,
-                              color: AppColors.success,
-                            ),
-                          ],
+                          ),
                         ),
-                      ),
+
+                        // Center: Category Badge
+                        Container(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 14,
+                            vertical: 7,
+                          ),
+                          decoration: BoxDecoration(
+                            color: isDark
+                                ? Colors.white.withValues(alpha: 0.08)
+                                : Colors.white.withValues(alpha: 0.9),
+                            borderRadius: BorderRadius.circular(14),
+                            border: Border.all(
+                              color: category.color.withValues(alpha: 0.25),
+                              width: 0.9,
+                            ),
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.black.withValues(
+                                  alpha: isDark ? 0.2 : 0.03,
+                                ),
+                                blurRadius: 6,
+                                offset: const Offset(0, 2),
+                              ),
+                            ],
+                          ),
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Icon(
+                                category.icon,
+                                size: 14,
+                                color: category.color,
+                              ),
+                              const SizedBox(width: 7),
+                              Text(
+                                category.getLabel(lang),
+                                style: AppTypography.fromContext(
+                                  context,
+                                  fontSize: 12.5,
+                                  fontWeight: FontWeight.w700,
+                                  color: textColor,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+
+                        // Trailing placeholder to balance width with 42px back button
+                        const SizedBox(width: 42),
+                      ],
                     ),
-                    const SizedBox(height: AppSpacing.xl),
-                  ],
-
-                  // Action buttons
-                  if (m.canHaveCapsule && milestone.capsuleId == null)
-                    _buildCaptureButton(context),
-
-                  const SizedBox(height: AppSpacing.md),
-
-                  // Conseil button
-                  _buildConseilButton(context, m),
-
-                  const SizedBox(height: AppSpacing.md),
-
-                  // Reminder button
-                  _buildReminderButton(context, ref),
-
-                  const SizedBox(height: AppSpacing.md),
-
-                  // Secondary actions
-                  Row(
-                    children: [
-                      Expanded(
-                        child: _buildSecondaryButton(
-                          context,
-                          ref,
-                          icon: Icons.check_rounded,
-                          label: l10n.milestone_mark_complete,
-                          onTap: () => _markComplete(context, ref),
-                        ),
-                      ),
-                      const SizedBox(width: AppSpacing.sm),
-                      Expanded(
-                        child: _buildSecondaryButton(
-                          context,
-                          ref,
-                          icon: Icons.close_rounded,
-                          label: l10n.milestone_close,
-                          onTap: () => Navigator.pop(context),
-                        ),
-                      ),
-                    ],
                   ),
+                ),
 
-                  const SizedBox(height: 100),
-                ],
-              ),
+                // 2. Bento Scroll List
+                SliverPadding(
+                  padding: const EdgeInsets.fromLTRB(18, 8, 18, 90),
+                  sliver: SliverList(
+                    delegate: SliverChildListDelegate([
+                      // Hero Milestone Card
+                      _buildHeroCard(
+                        context: context,
+                        isDark: isDark,
+                        lang: lang,
+                        textColor: textColor,
+                        secondaryText: secondaryText,
+                        m: m,
+                        category: category,
+                        phase: phase,
+                        status: status,
+                      ),
+
+                      const SizedBox(height: 14),
+
+                      // Phase & Suggested Timing Bento Row
+                      _buildInfoCardsRow(
+                        context: context,
+                        isDark: isDark,
+                        lang: lang,
+                        phase: phase,
+                        m: m,
+                      ),
+
+                      const SizedBox(height: 14),
+
+                      // Linked Capsule Card or Capture Action CTA
+                      if (milestone.capsuleId != null)
+                        _buildLinkedCapsuleCard(
+                          context: context,
+                          ref: ref,
+                          isDark: isDark,
+                          lang: lang,
+                          textColor: textColor,
+                          secondaryText: secondaryText,
+                        )
+                      else if (m.canHaveCapsule)
+                        _buildCaptureButton(context),
+
+                      if (milestone.capsuleId != null || m.canHaveCapsule)
+                        const SizedBox(height: 14),
+
+                      // Conseils & Astuces Photo Bento Card
+                      _buildConseilBentoCard(
+                        context: context,
+                        isDark: isDark,
+                        textColor: textColor,
+                        secondaryText: secondaryText,
+                        m: m,
+                        category: category,
+                      ),
+
+                      const SizedBox(height: 14),
+
+                      // Programmer un Rappel Bento Card
+                      _buildReminderBentoCard(
+                        context: context,
+                        ref: ref,
+                        isDark: isDark,
+                        textColor: textColor,
+                        secondaryText: secondaryText,
+                        category: category,
+                      ),
+
+                      const SizedBox(height: 18),
+
+                      // Completion Status / Mark Complete Button
+                      _buildCompletionSection(
+                        context: context,
+                        ref: ref,
+                        isDark: isDark,
+                        textColor: textColor,
+                        secondaryText: secondaryText,
+                      ),
+                    ]),
+                  ),
+                ),
+              ],
             ),
           ),
         ],
@@ -332,89 +317,597 @@ class MilestoneDetailScreen extends ConsumerWidget {
     );
   }
 
-  Widget _buildInfoCard({
+  Widget _buildHeroCard({
     required BuildContext context,
-    required IconData icon,
-    required String label,
-    required String value,
-    required Color color,
     required bool isDark,
+    required String lang,
+    required Color textColor,
+    required Color secondaryText,
+    required Milestone m,
+    required MilestoneCategory category,
+    required Phase phase,
+    required _MilestoneStatus status,
   }) {
+    final surfaceColor = isDark ? const Color(0xFF1E1A1E) : Colors.white;
+    final borderColor = isDark ? AppColors.dividerDark : const Color(0xFFEBEBF0);
+
     return Container(
-      padding: const EdgeInsets.all(AppSpacing.md),
       decoration: BoxDecoration(
-        color: color.withValues(alpha: isDark ? 0.2 : 0.1),
-        borderRadius: BorderRadius.circular(12),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              Icon(icon, size: 18, color: color),
-              const SizedBox(width: 6),
-              Text(
-                label,
-                style: AppTypography.fromContext(context, 
-                  fontSize: 12,
-                  color: color,
-                  fontWeight: FontWeight.w500,
-                ),
-              ),
-            ],
+        color: surfaceColor,
+        borderRadius: BorderRadius.circular(24),
+        border: Border.all(color: borderColor, width: 1.0),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: isDark ? 0.22 : 0.035),
+            blurRadius: 12,
+            offset: const Offset(0, 3),
           ),
-          const SizedBox(height: 4),
-          Text(
-            value,
-            style: AppTypography.fromContext(context, 
-              fontSize: 14,
-              fontWeight: FontWeight.w600,
-              color: isDark
-                  ? AppColors.onSurfaceDark
-                  : AppColors.onSurfaceLight,
+        ],
+      ),
+      clipBehavior: Clip.antiAlias,
+      child: Stack(
+        children: [
+          // Corner bleeding watermark icon
+          PositionedDirectional(
+            bottom: -16,
+            end: -12,
+            child: IgnorePointer(
+              child: Icon(
+                category.icon,
+                size: 110,
+                color: category.color.withValues(alpha: isDark ? 0.08 : 0.045),
+              ),
+            ),
+          ),
+
+          Padding(
+            padding: const EdgeInsets.all(20),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // Top row: Icon badge + Phase tag + Status badge
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Container(
+                      width: 52,
+                      height: 52,
+                      decoration: BoxDecoration(
+                        color: category.color.withValues(alpha: 0.12),
+                        borderRadius: BorderRadius.circular(16),
+                        border: Border.all(
+                          color: category.color.withValues(alpha: 0.25),
+                          width: 1.0,
+                        ),
+                      ),
+                      child: Center(
+                        child: Icon(
+                          category.icon,
+                          size: 26,
+                          color: category.color,
+                        ),
+                      ),
+                    ),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Row(
+                            children: [
+                              Container(
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 8,
+                                  vertical: 3,
+                                ),
+                                decoration: BoxDecoration(
+                                  color: phase.color.withValues(alpha: 0.12),
+                                  borderRadius: BorderRadius.circular(8),
+                                ),
+                                child: Row(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    Icon(
+                                      phase.icon,
+                                      size: 11,
+                                      color: phase.color,
+                                    ),
+                                    const SizedBox(width: 4),
+                                    Text(
+                                      phase.getLabel(lang),
+                                      style: AppTypography.fromContext(
+                                        context,
+                                        fontSize: 11,
+                                        fontWeight: FontWeight.w700,
+                                        color: phase.color,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              const SizedBox(width: 6),
+                              Container(
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 8,
+                                  vertical: 3,
+                                ),
+                                decoration: BoxDecoration(
+                                  color: isDark
+                                      ? Colors.white.withValues(alpha: 0.06)
+                                      : const Color(0xFFF2EFF5),
+                                  borderRadius: BorderRadius.circular(8),
+                                ),
+                                child: Text(
+                                  m.ageRange,
+                                  style: AppTypography.fromContext(
+                                    context,
+                                    fontSize: 11,
+                                    fontWeight: FontWeight.w600,
+                                    color: secondaryText,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 5),
+                          Text(
+                            category.getLabel(lang),
+                            style: AppTypography.fromContext(
+                              context,
+                              fontSize: 12,
+                              fontWeight: FontWeight.w600,
+                              color: category.color,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    _buildStatusPill(context, status, phase),
+                  ],
+                ),
+
+                const SizedBox(height: 16),
+
+                // Milestone Title
+                Text(
+                  m.getTitle(lang),
+                  style: AppTypography.fromContext(
+                    context,
+                    fontSize: 22,
+                    fontWeight: FontWeight.w800,
+                    color: textColor,
+                    letterSpacing: -0.3,
+                  ),
+                ),
+
+                const SizedBox(height: 8),
+
+                // Milestone Description
+                Text(
+                  m.getDescription(lang),
+                  style: AppTypography.fromContext(
+                    context,
+                    fontSize: 14.5,
+                    height: 1.55,
+                    color: secondaryText,
+                  ),
+                ),
+              ],
             ),
           ),
         ],
+      ),
+    );
+  }
+
+  Widget _buildStatusPill(BuildContext context, _MilestoneStatus status, Phase phase) {
+    if (status == _MilestoneStatus.upcoming) {
+      return const SizedBox.shrink();
+    }
+
+    final l10n = context.l10n;
+    final String label;
+    final Color bgColor;
+    final Color color;
+    final IconData icon;
+
+    switch (status) {
+      case _MilestoneStatus.completed:
+        label = l10n.timelineStatusCompleted;
+        bgColor = AppColors.success.withValues(alpha: 0.15);
+        color = AppColors.success;
+        icon = Icons.check_rounded;
+        break;
+      case _MilestoneStatus.overdue:
+        label = l10n.timelineStatusOverdue;
+        bgColor = AppColors.error.withValues(alpha: 0.12);
+        color = AppColors.error;
+        icon = Icons.priority_high_rounded;
+        break;
+      case _MilestoneStatus.current:
+        label = l10n.timelineStatusNow;
+        bgColor = phase.color.withValues(alpha: 0.12);
+        color = phase.color;
+        icon = Icons.star_rounded;
+        break;
+      case _MilestoneStatus.upcoming:
+        return const SizedBox.shrink();
+    }
+
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+      decoration: BoxDecoration(
+        color: bgColor,
+        borderRadius: BorderRadius.circular(10),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(icon, size: 12, color: color),
+          const SizedBox(width: 4),
+          Text(
+            label,
+            style: AppTypography.fromContext(
+              context,
+              fontSize: 11,
+              fontWeight: FontWeight.w700,
+              color: color,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildInfoCardsRow({
+    required BuildContext context,
+    required bool isDark,
+    required String lang,
+    required Phase phase,
+    required Milestone m,
+  }) {
+    final l10n = context.l10n;
+    final surfaceColor = isDark ? const Color(0xFF1E1A1E) : Colors.white;
+    final borderColor = isDark ? AppColors.dividerDark : const Color(0xFFEBEBF0);
+
+    return Row(
+      children: [
+        // Phase Card
+        Expanded(
+          child: Container(
+            padding: const EdgeInsets.all(14),
+            decoration: BoxDecoration(
+              color: surfaceColor,
+              borderRadius: BorderRadius.circular(18),
+              border: Border.all(color: borderColor, width: 1.0),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withValues(alpha: isDark ? 0.18 : 0.025),
+                  blurRadius: 8,
+                  offset: const Offset(0, 2),
+                ),
+              ],
+            ),
+            child: Row(
+              children: [
+                Container(
+                  width: 36,
+                  height: 36,
+                  decoration: BoxDecoration(
+                    color: phase.color.withValues(alpha: 0.12),
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: Center(
+                    child: Icon(phase.icon, size: 18, color: phase.color),
+                  ),
+                ),
+                const SizedBox(width: 10),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        l10n.milestone_phase,
+                        style: AppTypography.fromContext(
+                          context,
+                          fontSize: 11,
+                          fontWeight: FontWeight.w600,
+                          color: isDark
+                              ? AppColors.textSecondaryDark
+                              : AppColors.textSecondaryLight,
+                        ),
+                      ),
+                      const SizedBox(height: 2),
+                      Text(
+                        phase.getLabel(lang),
+                        style: AppTypography.fromContext(
+                          context,
+                          fontSize: 13.5,
+                          fontWeight: FontWeight.w700,
+                          color: isDark
+                              ? AppColors.onSurfaceDark
+                              : AppColors.onSurfaceLight,
+                        ),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+
+        const SizedBox(width: 12),
+
+        // Suggested Age Card
+        Expanded(
+          child: Container(
+            padding: const EdgeInsets.all(14),
+            decoration: BoxDecoration(
+              color: surfaceColor,
+              borderRadius: BorderRadius.circular(18),
+              border: Border.all(color: borderColor, width: 1.0),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withValues(alpha: isDark ? 0.18 : 0.025),
+                  blurRadius: 8,
+                  offset: const Offset(0, 2),
+                ),
+              ],
+            ),
+            child: Row(
+              children: [
+                Container(
+                  width: 36,
+                  height: 36,
+                  decoration: BoxDecoration(
+                    color: AppColors.info.withValues(alpha: 0.12),
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: const Center(
+                    child: Icon(
+                      Icons.calendar_today_rounded,
+                      size: 16,
+                      color: AppColors.info,
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 10),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        l10n.milestone_suggested,
+                        style: AppTypography.fromContext(
+                          context,
+                          fontSize: 11,
+                          fontWeight: FontWeight.w600,
+                          color: isDark
+                              ? AppColors.textSecondaryDark
+                              : AppColors.textSecondaryLight,
+                        ),
+                      ),
+                      const SizedBox(height: 2),
+                      Text(
+                        m.ageRange,
+                        style: AppTypography.fromContext(
+                          context,
+                          fontSize: 13.5,
+                          fontWeight: FontWeight.w700,
+                          color: isDark
+                              ? AppColors.onSurfaceDark
+                              : AppColors.onSurfaceLight,
+                        ),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildLinkedCapsuleCard({
+    required BuildContext context,
+    required WidgetRef ref,
+    required bool isDark,
+    required String lang,
+    required Color textColor,
+    required Color secondaryText,
+  }) {
+    final l10n = context.l10n;
+    final formattedDate = milestone.completedAt != null
+        ? DateFormat('d MMMM yyyy', lang).format(milestone.completedAt!)
+        : null;
+
+    return Container(
+      decoration: BoxDecoration(
+        color: isDark ? const Color(0xFF152219) : const Color(0xFFF0FAF3),
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(
+          color: AppColors.success.withValues(alpha: 0.35),
+          width: 1.0,
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: AppColors.success.withValues(alpha: 0.08),
+            blurRadius: 10,
+            offset: const Offset(0, 3),
+          ),
+        ],
+      ),
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          onTap: () => _openLinkedCapsule(context, ref),
+          borderRadius: BorderRadius.circular(20),
+          child: Padding(
+            padding: const EdgeInsets.all(16),
+            child: Row(
+              children: [
+                Container(
+                  width: 48,
+                  height: 48,
+                  decoration: BoxDecoration(
+                    color: AppColors.success.withValues(alpha: 0.16),
+                    borderRadius: BorderRadius.circular(16),
+                    border: Border.all(
+                      color: AppColors.success.withValues(alpha: 0.3),
+                      width: 1,
+                    ),
+                  ),
+                  child: const Center(
+                    child: Icon(
+                      Icons.play_circle_fill_rounded,
+                      color: AppColors.success,
+                      size: 26,
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 14),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        children: [
+                          Text(
+                            l10n.milestone_capsule_ready,
+                            style: AppTypography.fromContext(
+                              context,
+                              fontSize: 15,
+                              fontWeight: FontWeight.w700,
+                              color: textColor,
+                            ),
+                          ),
+                          const SizedBox(width: 6),
+                          Container(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 6,
+                              vertical: 2,
+                            ),
+                            decoration: BoxDecoration(
+                              color: AppColors.success.withValues(alpha: 0.15),
+                              borderRadius: BorderRadius.circular(6),
+                            ),
+                            child: Text(
+                              'Actif',
+                              style: AppTypography.fromContext(
+                                context,
+                                fontSize: 10,
+                                fontWeight: FontWeight.w700,
+                                color: AppColors.success,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 3),
+                      Text(
+                        formattedDate != null
+                            ? 'Enregistré le $formattedDate'
+                            : l10n.milestone_tap_to_open_memory,
+                        style: AppTypography.fromContext(
+                          context,
+                          fontSize: 12.5,
+                          color: secondaryText,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                const Icon(
+                  Icons.arrow_forward_ios_rounded,
+                  size: 15,
+                  color: AppColors.success,
+                ),
+              ],
+            ),
+          ),
+        ),
       ),
     );
   }
 
   Widget _buildCaptureButton(BuildContext context) {
-    // Fire once when the CTA is displayed
     WidgetsBinding.instance.addPostFrameCallback((_) {
       AnalyticsService().logEvent('milestone_capsule_cta_shown', parameters: {
         'milestone_id': milestone.milestone.id,
       });
     });
 
-    return GestureDetector(
+    return _AnimatedPressCard(
       onTap: () => _openCreateCapsule(context),
       child: Container(
         width: double.infinity,
-        padding: const EdgeInsets.symmetric(vertical: 16),
+        padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 16),
         decoration: BoxDecoration(
           gradient: AppColors.primaryGradient,
-          borderRadius: BorderRadius.circular(16),
+          borderRadius: BorderRadius.circular(20),
           boxShadow: [
             BoxShadow(
-              color: AppColors.magentaPink.withValues(alpha: 0.4),
-              blurRadius: 12,
-              offset: const Offset(0, 4),
+              color: AppColors.magentaPink.withValues(alpha: 0.35),
+              blurRadius: 16,
+              offset: const Offset(0, 5),
             ),
           ],
         ),
         child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            const Icon(Icons.camera_alt_rounded, color: Colors.white, size: 24),
-            const SizedBox(width: AppSpacing.sm),
-            Text(
-              context.l10n.milestone_capture_this_moment,
-              style: AppTypography.fromContext(context, 
-                fontSize: 16,
-                fontWeight: FontWeight.bold,
-                color: Colors.white,
+            Container(
+              width: 44,
+              height: 44,
+              decoration: BoxDecoration(
+                color: Colors.white.withValues(alpha: 0.22),
+                borderRadius: BorderRadius.circular(14),
               ),
+              child: const Center(
+                child: Icon(
+                  Icons.camera_alt_rounded,
+                  color: Colors.white,
+                  size: 22,
+                ),
+              ),
+            ),
+            const SizedBox(width: 14),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    context.l10n.milestone_capture_this_moment,
+                    style: AppTypography.fromContext(
+                      context,
+                      fontSize: 15.5,
+                      fontWeight: FontWeight.w800,
+                      color: Colors.white,
+                    ),
+                  ),
+                  const SizedBox(height: 2),
+                  Text(
+                    'Photo, audio ou note dans la boîte à souvenirs',
+                    style: AppTypography.fromContext(
+                      context,
+                      fontSize: 12,
+                      fontWeight: FontWeight.w500,
+                      color: Colors.white.withValues(alpha: 0.9),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            const Icon(
+              Icons.arrow_forward_ios_rounded,
+              color: Colors.white,
+              size: 15,
             ),
           ],
         ),
@@ -422,45 +915,315 @@ class MilestoneDetailScreen extends ConsumerWidget {
     );
   }
 
-  Widget _buildSecondaryButton(
-    BuildContext context,
-    WidgetRef ref, {
-    required IconData icon,
-    required String label,
-    required VoidCallback onTap,
+  Widget _buildConseilBentoCard({
+    required BuildContext context,
+    required bool isDark,
+    required Color textColor,
+    required Color secondaryText,
+    required Milestone m,
+    required MilestoneCategory category,
   }) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final l10n = context.l10n;
+    final advice = getMilestoneAdvice(m.id, category);
+    final surfaceColor = isDark ? const Color(0xFF1E1A1E) : Colors.white;
+    final borderColor = isDark ? AppColors.dividerDark : const Color(0xFFEBEBF0);
 
-    return GestureDetector(
-      onTap: onTap,
-      child: Container(
-        padding: const EdgeInsets.symmetric(vertical: 12),
+    return Container(
+      decoration: BoxDecoration(
+        color: surfaceColor,
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(color: borderColor, width: 1.0),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: isDark ? 0.20 : 0.025),
+            blurRadius: 10,
+            offset: const Offset(0, 3),
+          ),
+        ],
+      ),
+      clipBehavior: Clip.antiAlias,
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          onTap: () => _showConseilSheet(context, m),
+          borderRadius: BorderRadius.circular(20),
+          child: Padding(
+            padding: const EdgeInsets.all(16),
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Container(
+                  width: 44,
+                  height: 44,
+                  decoration: BoxDecoration(
+                    color: category.color.withValues(alpha: 0.12),
+                    borderRadius: BorderRadius.circular(14),
+                  ),
+                  child: Center(
+                    child: Icon(
+                      Icons.lightbulb_rounded,
+                      size: 22,
+                      color: category.color,
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 14),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        l10n.milestone_tips_and_photo_ideas,
+                        style: AppTypography.fromContext(
+                          context,
+                          fontSize: 15,
+                          fontWeight: FontWeight.w700,
+                          color: textColor,
+                        ),
+                      ),
+                      const SizedBox(height: 4),
+                      Text(
+                        advice.explanation,
+                        style: AppTypography.fromContext(
+                          context,
+                          fontSize: 12.5,
+                          height: 1.45,
+                          color: secondaryText,
+                        ),
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                      const SizedBox(height: 8),
+                      Row(
+                        children: [
+                          Text(
+                            'Voir tous les conseils & idées photo',
+                            style: AppTypography.fromContext(
+                              context,
+                              fontSize: 12,
+                              fontWeight: FontWeight.w700,
+                              color: category.color,
+                            ),
+                          ),
+                          const SizedBox(width: 4),
+                          Icon(
+                            Icons.arrow_forward_rounded,
+                            size: 13,
+                            color: category.color,
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildReminderBentoCard({
+    required BuildContext context,
+    required WidgetRef ref,
+    required bool isDark,
+    required Color textColor,
+    required Color secondaryText,
+    required MilestoneCategory category,
+  }) {
+    final l10n = context.l10n;
+    final reminderAsync = ref.watch(
+      milestoneReminderProvider((
+        childId: childId,
+        milestoneId: milestone.milestone.id,
+      )),
+    );
+
+    return reminderAsync.when(
+      loading: () => const SizedBox(height: 48),
+      error: (_, _) => const SizedBox.shrink(),
+      data: (reminderDate) {
+        final isSet = reminderDate != null;
+        final accentColor = isSet ? AppColors.success : AppColors.info;
+        final surfaceColor = isDark ? const Color(0xFF1E1A1E) : Colors.white;
+        final borderColor = isDark ? AppColors.dividerDark : const Color(0xFFEBEBF0);
+
+        return Container(
+          decoration: BoxDecoration(
+            color: surfaceColor,
+            borderRadius: BorderRadius.circular(20),
+            border: Border.all(
+              color: isSet
+                  ? AppColors.success.withValues(alpha: 0.35)
+                  : borderColor,
+              width: 1.0,
+            ),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withValues(alpha: isDark ? 0.20 : 0.025),
+                blurRadius: 10,
+                offset: const Offset(0, 3),
+              ),
+            ],
+          ),
+          clipBehavior: Clip.antiAlias,
+          child: Material(
+            color: Colors.transparent,
+            child: InkWell(
+              onTap: () => _showReminderSheet(context, ref, reminderDate),
+              borderRadius: BorderRadius.circular(20),
+              child: Padding(
+                padding: const EdgeInsets.all(16),
+                child: Row(
+                  children: [
+                    Container(
+                      width: 44,
+                      height: 44,
+                      decoration: BoxDecoration(
+                        color: accentColor.withValues(alpha: 0.12),
+                        borderRadius: BorderRadius.circular(14),
+                      ),
+                      child: Center(
+                        child: Icon(
+                          isSet
+                              ? Icons.notifications_active_rounded
+                              : Icons.notifications_none_rounded,
+                          size: 22,
+                          color: accentColor,
+                        ),
+                      ),
+                    ),
+                    const SizedBox(width: 14),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            isSet
+                                ? l10n.milestone_reminder_on(
+                                    _formatReminderDateTime(context, reminderDate),
+                                  )
+                                : l10n.milestone_schedule_reminder,
+                            style: AppTypography.fromContext(
+                              context,
+                              fontSize: 14.5,
+                              fontWeight: FontWeight.w700,
+                              color: isSet ? AppColors.success : textColor,
+                            ),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                          const SizedBox(height: 3),
+                          Text(
+                            isSet
+                                ? 'Appuyez pour modifier ou annuler le rappel'
+                                : 'Recevoir une alerte au moment opportun',
+                            style: AppTypography.fromContext(
+                              context,
+                              fontSize: 12.5,
+                              color: secondaryText,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    Icon(
+                      Icons.arrow_forward_ios_rounded,
+                      size: 14,
+                      color: secondaryText.withValues(alpha: 0.7),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _buildCompletionSection({
+    required BuildContext context,
+    required WidgetRef ref,
+    required bool isDark,
+    required Color textColor,
+    required Color secondaryText,
+  }) {
+    final l10n = context.l10n;
+
+    if (milestone.isCompleted) {
+      return Container(
+        width: double.infinity,
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
         decoration: BoxDecoration(
-          color: isDark ? AppColors.surfaceDark : AppColors.surfaceLight,
-          borderRadius: BorderRadius.circular(12),
+          color: AppColors.success.withValues(alpha: isDark ? 0.15 : 0.08),
+          borderRadius: BorderRadius.circular(18),
           border: Border.all(
-            color: isDark ? AppColors.dividerDark : AppColors.dividerLight,
+            color: AppColors.success.withValues(alpha: 0.3),
+            width: 1,
           ),
         ),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(
-              icon,
-              size: 18,
-              color: isDark
-                  ? AppColors.textSecondaryDark
-                  : AppColors.textSecondaryLight,
+            const Icon(
+              Icons.verified_rounded,
+              size: 20,
+              color: AppColors.success,
             ),
-            const SizedBox(width: 6),
+            const SizedBox(width: 8),
             Text(
-              label,
-              style: AppTypography.fromContext(context, 
-                fontSize: 13,
-                fontWeight: FontWeight.w500,
-                color: isDark
-                    ? AppColors.textSecondaryDark
-                    : AppColors.textSecondaryLight,
+              'Ce jalon a été complété avec succès 🎉',
+              style: AppTypography.fromContext(
+                context,
+                fontSize: 14,
+                fontWeight: FontWeight.w700,
+                color: AppColors.success,
+              ),
+            ),
+          ],
+        ),
+      );
+    }
+
+    // When not completed yet, show Mark as Complete button
+    return _AnimatedPressCard(
+      onTap: () => _markComplete(context, ref),
+      child: Container(
+        width: double.infinity,
+        padding: const EdgeInsets.symmetric(vertical: 14),
+        decoration: BoxDecoration(
+          color: isDark ? AppColors.surfaceDark : Colors.white,
+          borderRadius: BorderRadius.circular(18),
+          border: Border.all(
+            color: AppColors.success.withValues(alpha: 0.45),
+            width: 1.2,
+          ),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withValues(alpha: isDark ? 0.18 : 0.03),
+              blurRadius: 8,
+              offset: const Offset(0, 2),
+            ),
+          ],
+        ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            const Icon(
+              Icons.check_circle_outline_rounded,
+              size: 20,
+              color: AppColors.success,
+            ),
+            const SizedBox(width: 8),
+            Text(
+              l10n.milestone_mark_complete,
+              style: AppTypography.fromContext(
+                context,
+                fontSize: 14.5,
+                fontWeight: FontWeight.w700,
+                color: AppColors.success,
               ),
             ),
           ],
@@ -498,43 +1261,6 @@ class MilestoneDetailScreen extends ConsumerWidget {
     );
   }
 
-  Widget _buildConseilButton(BuildContext context, dynamic m) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-    return GestureDetector(
-      onTap: () => _showConseilSheet(context, m),
-      child: Container(
-        width: double.infinity,
-        padding: const EdgeInsets.symmetric(vertical: 14),
-        decoration: BoxDecoration(
-          color: isDark ? AppColors.surfaceDark : AppColors.surfaceLight,
-          borderRadius: BorderRadius.circular(16),
-          border: Border.all(
-            color: milestone.milestone.category.color.withValues(alpha: 0.4),
-          ),
-        ),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(
-              Icons.lightbulb_rounded,
-              size: 20,
-              color: milestone.milestone.category.color,
-            ),
-            const SizedBox(width: AppSpacing.sm),
-            Text(
-              context.l10n.milestone_tips_and_photo_ideas,
-              style: AppTypography.fromContext(context, 
-                fontSize: 15,
-                fontWeight: FontWeight.w600,
-                color: milestone.milestone.category.color,
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
   void _showConseilSheet(BuildContext context, dynamic m) {
     final advice = getMilestoneAdvice(
       milestone.milestone.id,
@@ -554,69 +1280,6 @@ class MilestoneDetailScreen extends ConsumerWidget {
         milestone: milestone,
         advice: advice,
       ),
-    );
-  }
-
-  Widget _buildReminderButton(BuildContext context, WidgetRef ref) {
-    final l10n = context.l10n;
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-    final reminderAsync = ref.watch(
-      milestoneReminderProvider((
-        childId: childId,
-        milestoneId: milestone.milestone.id,
-      )),
-    );
-
-    return reminderAsync.when(
-      loading: () => const SizedBox(height: 48),
-      error: (_, _) => const SizedBox.shrink(),
-      data: (reminderDate) {
-        final isSet = reminderDate != null;
-        final color = isSet ? AppColors.success : AppColors.info;
-
-        return GestureDetector(
-          onTap: () => _showReminderSheet(context, ref, reminderDate),
-          child: Container(
-            width: double.infinity,
-            padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 16),
-            decoration: BoxDecoration(
-              color: isSet
-                  ? AppColors.success.withValues(alpha: 0.08)
-                  : (isDark ? AppColors.surfaceDark : AppColors.surfaceLight),
-              borderRadius: BorderRadius.circular(16),
-              border: Border.all(color: color.withValues(alpha: 0.4)),
-            ),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Icon(
-                  isSet
-                      ? Icons.notifications_active_rounded
-                      : Icons.notifications_none_rounded,
-                  size: 20,
-                  color: color,
-                ),
-                const SizedBox(width: AppSpacing.sm),
-                Flexible(
-                  child: Text(
-                    isSet
-                        ? l10n.milestone_reminder_on(
-                            _formatReminderDateTime(context, reminderDate),
-                          )
-                        : l10n.milestone_schedule_reminder,
-                    style: AppTypography.fromContext(context, 
-                      fontSize: 15,
-                      fontWeight: FontWeight.w600,
-                      color: color,
-                    ),
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                ),
-              ],
-            ),
-          ),
-        );
-      },
     );
   }
 
@@ -669,6 +1332,37 @@ class MilestoneDetailScreen extends ConsumerWidget {
         );
       }
     }
+  }
+}
+
+/// Lightweight micro-interaction press wrapper
+class _AnimatedPressCard extends StatefulWidget {
+  final Widget child;
+  final VoidCallback onTap;
+
+  const _AnimatedPressCard({required this.child, required this.onTap});
+
+  @override
+  State<_AnimatedPressCard> createState() => _AnimatedPressCardState();
+}
+
+class _AnimatedPressCardState extends State<_AnimatedPressCard> {
+  bool _pressed = false;
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTapDown: (_) => setState(() => _pressed = true),
+      onTapUp: (_) => setState(() => _pressed = false),
+      onTapCancel: () => setState(() => _pressed = false),
+      onTap: widget.onTap,
+      child: AnimatedScale(
+        scale: _pressed ? 0.975 : 1.0,
+        duration: const Duration(milliseconds: 140),
+        curve: Curves.easeOutCubic,
+        child: widget.child,
+      ),
+    );
   }
 }
 

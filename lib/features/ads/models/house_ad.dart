@@ -63,16 +63,24 @@ class HouseAd {
 
   IconData get icon {
     switch (id) {
+      case 'house_splash_ad_space':
+        return Icons.campaign_rounded;
+      case 'house_splash_premium':
       case 'vip_pass':
         return Icons.workspace_premium_rounded;
+      case 'house_inter_marketplace':
       case 'marketplace_promo':
         return Icons.shopping_bag_rounded;
+      case 'house_inter_vip':
       case 'predefined_album':
-        return Icons.menu_book_rounded;
+        return Icons.auto_awesome_rounded;
+      case 'house_reel_sponsors':
       case 'diamond_sponsor':
         return Icons.diamond_rounded;
+      case 'house_reel_marketplace':
+        return Icons.storefront_rounded;
       default:
-        return Icons.smart_toy_rounded;
+        return Icons.stars_rounded;
     }
   }
 

@@ -16,7 +16,6 @@ import '../data/vaccine_education_data.dart';
 import '../models/vaccine.dart';
 import '../models/vaccine_status.dart';
 import '../providers/vaccine_providers.dart';
-import '../../../shared/widgets/medical_disclaimer_banner.dart';
 
 /// Redesigned flagship medical vaccine detail screen for LuckyMam.
 /// Follows the boutique Squircle Bento visual identity:
@@ -209,29 +208,13 @@ class VaccineDetailScreen extends ConsumerWidget {
                   padding: const EdgeInsets.fromLTRB(18, 10, 18, 80),
                   sliver: SliverList(
                     delegate: SliverChildListDelegate([
-                      // ─── Medical Disclaimer (Google Play Health Policy) ──
-                      const MedicalDisclaimerBanner(),
-                      const SizedBox(height: 10),
-
-                      // ─── Hero Squircle Card ───────────────────────
+                      // ─── Hero Squircle Card (Unified with Protection Info) ─
                       _buildHeroCard(
                         context: context,
                         isDark: isDark,
                         lang: lang,
                         accentColor: accentColor,
                         headerIcon: headerIcon,
-                        textColor: textColor,
-                        secondaryText: secondaryText,
-                      ),
-
-                      const SizedBox(height: 14),
-
-                      // ─── Bento 1: Protection Shield Card ─────────
-                      _buildProtectionShieldCard(
-                        context: context,
-                        isDark: isDark,
-                        lang: lang,
-                        accentColor: accentColor,
                         textColor: textColor,
                         secondaryText: secondaryText,
                       ),
@@ -319,7 +302,7 @@ class VaccineDetailScreen extends ConsumerWidget {
   }
 
   // ───────────────────────────────────────────────────────────────────────────
-  // HERO SQUIRCLE CARD
+  // HERO SQUIRCLE CARD (UNIFIED IDENTITY & PROTECTION SHIELD)
   // ───────────────────────────────────────────────────────────────────────────
   Widget _buildHeroCard({
     required BuildContext context,
@@ -330,6 +313,7 @@ class VaccineDetailScreen extends ConsumerWidget {
     required Color textColor,
     required Color secondaryText,
   }) {
+    final l10n = context.l10n;
     final cardBg = isDark
         ? Color.alphaBlend(
             accentColor.withValues(alpha: 0.12),
@@ -450,125 +434,79 @@ class VaccineDetailScreen extends ConsumerWidget {
                       ),
                     ],
                   ),
-                ],
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
 
-  // ───────────────────────────────────────────────────────────────────────────
-  // BENTO 1: PROTECTION SHIELD CARD
-  // ───────────────────────────────────────────────────────────────────────────
-  Widget _buildProtectionShieldCard({
-    required BuildContext context,
-    required bool isDark,
-    required String lang,
-    required Color accentColor,
-    required Color textColor,
-    required Color secondaryText,
-  }) {
-    final l10n = context.l10n;
-    const shieldColor = Color(0xFF0284C7); // Rich protective oceanic cyan
-    final cardBg = isDark
-        ? const Color(0xFF14202B)
-        : const Color(0xFFF0F9FF);
-    final borderColor = isDark
-        ? Colors.white.withValues(alpha: 0.08)
-        : const Color(0xFFBAE6FD);
-
-    return Container(
-      width: double.infinity,
-      decoration: BoxDecoration(
-        color: cardBg,
-        borderRadius: BorderRadius.circular(24),
-        border: Border.all(color: borderColor, width: 1.2),
-        boxShadow: [
-          BoxShadow(
-            color: isDark
-                ? Colors.black.withValues(alpha: 0.25)
-                : shieldColor.withValues(alpha: 0.08),
-            blurRadius: 14,
-            offset: const Offset(0, 5),
-          ),
-        ],
-      ),
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(24),
-        child: Stack(
-          children: [
-            PositionedDirectional(
-              bottom: -20,
-              end: -14,
-              child: IgnorePointer(
-                child: Icon(
-                  Icons.shield_rounded,
-                  size: 92,
-                  color: isDark
-                      ? Colors.white.withValues(alpha: 0.04)
-                      : shieldColor.withValues(alpha: 0.09),
-                ),
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.all(18),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  // Micro-Pill Tag
-                  Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 10,
-                      vertical: 4.5,
-                    ),
-                    decoration: BoxDecoration(
-                      color: isDark
-                          ? Colors.white.withValues(alpha: 0.09)
-                          : Colors.white.withValues(alpha: 0.95),
-                      borderRadius: BorderRadius.circular(12),
-                      border: Border.all(
-                        color: shieldColor.withValues(alpha: 0.25),
-                        width: 0.8,
+                  // Integrated Protection Shield Section
+                  if (vaccine.getProtects(lang).isNotEmpty) ...[
+                    const SizedBox(height: 16),
+                    Container(
+                      width: double.infinity,
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 14,
+                        vertical: 12,
+                      ),
+                      decoration: BoxDecoration(
+                        color: isDark
+                            ? Colors.white.withValues(alpha: 0.06)
+                            : Colors.white.withValues(alpha: 0.82),
+                        borderRadius: BorderRadius.circular(16),
+                        border: Border.all(
+                          color: isDark
+                              ? Colors.white.withValues(alpha: 0.08)
+                              : accentColor.withValues(alpha: 0.16),
+                          width: 1,
+                        ),
+                      ),
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Container(
+                            padding: const EdgeInsets.all(7),
+                            decoration: BoxDecoration(
+                              color: accentColor.withValues(
+                                alpha: isDark ? 0.22 : 0.12,
+                              ),
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                            child: Icon(
+                              Icons.verified_user_rounded,
+                              size: 16,
+                              color: accentColor,
+                            ),
+                          ),
+                          const SizedBox(width: 12),
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  l10n.vaccineShieldTitle,
+                                  style: TextStyle(
+                                    fontSize: 11,
+                                    fontWeight: FontWeight.w800,
+                                    color: accentColor,
+                                    letterSpacing: 0.2,
+                                  ),
+                                ),
+                                const SizedBox(height: 3),
+                                Text(
+                                  l10n.vaccineDetailProtectsAgainst(
+                                    vaccine.getProtects(lang),
+                                  ),
+                                  style: TextStyle(
+                                    fontSize: 13.5,
+                                    fontWeight: FontWeight.w700,
+                                    color: textColor,
+                                    height: 1.4,
+                                    letterSpacing: -0.1,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
                       ),
                     ),
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        const Icon(
-                          Icons.verified_user_rounded,
-                          size: 13,
-                          color: shieldColor,
-                        ),
-                        const SizedBox(width: 5),
-                        Text(
-                          l10n.vaccineShieldTitle,
-                          style: const TextStyle(
-                            fontSize: 10.5,
-                            fontWeight: FontWeight.w800,
-                            color: shieldColor,
-                            letterSpacing: 0.2,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-
-                  const SizedBox(height: 12),
-
-                  Text(
-                    l10n.vaccineDetailProtectsAgainst(
-                      vaccine.getProtects(lang),
-                    ),
-                    style: TextStyle(
-                      fontSize: 15,
-                      fontWeight: FontWeight.w800,
-                      color: textColor,
-                      height: 1.4,
-                      letterSpacing: -0.2,
-                    ),
-                  ),
+                  ],
                 ],
               ),
             ),
