@@ -2,7 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:go_router/go_router.dart';
+import '../../../core/router/app_router.dart';
 import '../../../core/theme/app_typography.dart';
 
 import '../../../core/extensions/l10n_extension.dart';
@@ -97,15 +97,28 @@ class _InterstitialAdScreenState extends ConsumerState<InterstitialAdScreen> {
   }
 
   void _onCta() {
-    final route = widget.ad.ctaRoute;
+    // If no route specified or invalid, default to sponsors & partnership contact page
+    final rawRoute = widget.ad.ctaRoute;
+    final targetRoute =
+        (rawRoute != null && rawRoute.isNotEmpty && rawRoute != '/home')
+            ? rawRoute
+            : '/sponsors-diamant';
+
     AnalyticsService().logEvent(
       'ad_clicked',
-      parameters: {'ad_id': widget.ad.id},
+      parameters: {
+        'ad_id': widget.ad.id,
+        'target_route': targetRoute,
+      },
     );
+
     Navigator.of(context).pop();
     widget.onDone?.call();
-    // push (not go) so the destination keeps a back stack.
-    if (route != null && route != '/home') context.push(route);
+
+    // Use AppRouter.router to ensure clean navigation on top of destination stack
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      AppRouter.router.push(targetRoute);
+    });
   }
 
   @override

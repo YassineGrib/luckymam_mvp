@@ -11,6 +11,7 @@ import '../../features/home/home_screen.dart';
 import '../../features/marketplace/screens/marketplace_screen.dart';
 import '../../features/reels/screens/reels_screen.dart';
 import '../../features/subscription/screens/diamond_sponsors_screen.dart';
+import '../../features/subscription/screens/subscription_plans_screen.dart';
 import '../../features/health/screens/health_hub_screen.dart';
 import '../../features/memory_book/screens/memory_book_screen.dart';
 import '../../features/memory_book/screens/album_template_picker_screen.dart';
@@ -147,6 +148,20 @@ class AppRouter {
         pageBuilder: (context, state) => _buildPageWithTransition(
           key: state.pageKey,
           child: const DiamondSponsorsScreen(),
+        ),
+      ),
+      GoRoute(
+        path: '/diamond-sponsors',
+        redirect: (context, state) => '/sponsors-diamant',
+      ),
+
+      // Subscription Plans (Paywall)
+      GoRoute(
+        path: '/subscription',
+        name: 'subscription',
+        pageBuilder: (context, state) => _buildPageWithTransition(
+          key: state.pageKey,
+          child: const SubscriptionPlansScreen(),
         ),
       ),
 
