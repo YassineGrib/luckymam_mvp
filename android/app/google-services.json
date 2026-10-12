@@ -14,6 +14,22 @@
       },
       "oauth_client": [
         {
+          "client_id": "834179717761-6irs7pbu9ua6nupd4all3966k2tnfg0n.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.luckmam.luckmam_mvp",
+            "certificate_hash": "a33bf0f94351d29e5b9eb3bd29e6ae3de3e4fbcc"
+          }
+        },
+        {
+          "client_id": "834179717761-jsdmtdl4rl91estdild1vchp8ku6147o.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.luckmam.luckmam_mvp",
+            "certificate_hash": "e2ccbdd4e0e294eb333ace2821e736f64b2dbe0b"
+          }
+        },
+        {
           "client_id": "834179717761-rsufhsha4b83pc43mggd8r8a78k88rkn.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
