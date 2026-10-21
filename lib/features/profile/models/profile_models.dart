@@ -78,7 +78,9 @@ class Child {
 
     final DateTime? expectedDate = data['expectedDate'] != null
         ? (data['expectedDate'] as Timestamp).toDate()
-        : null;
+        : (lifecycle == ChildLifecycle.expected && data['birthDate'] != null
+            ? birthDate
+            : null);
 
     return Child(
       id: id,
@@ -106,8 +108,8 @@ class Child {
       'birthDate': isExpected ? null : Timestamp.fromDate(birthDate),
       'gender': gender.name,
       'lifecycle': lifecycle.name,
-      if (expectedDate != null)
-        'expectedDate': Timestamp.fromDate(expectedDate!),
+      if (expectedDate != null || isExpected)
+        'expectedDate': Timestamp.fromDate(expectedDate ?? birthDate),
       if (pregnancyId != null) 'pregnancyId': pregnancyId,
       'archived': archived,
       'photoUrl': photoUrl,

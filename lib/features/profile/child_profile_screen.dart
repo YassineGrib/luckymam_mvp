@@ -6,9 +6,11 @@ import 'package:intl/intl.dart';
 import 'package:shimmer/shimmer.dart';
 
 import '../../../core/extensions/l10n_extension.dart';
+import '../../../core/extensions/profile_l10n_extension.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_spacing.dart';
 import '../../../core/theme/app_typography.dart';
+import '../../../l10n/app_localizations.dart';
 import '../../../shared/widgets/auth_logo_background.dart';
 import '../capsules/models/capsule.dart';
 import '../capsules/providers/capsule_providers.dart';
@@ -847,7 +849,7 @@ class _BabyPassportHeroCard extends StatelessWidget {
   final bool isDark;
   final bool isRtl;
   final String lang;
-  final dynamic l10n;
+  final AppLocalizations l10n;
   final VoidCallback onEditAvatar;
 
   @override
@@ -1021,7 +1023,7 @@ class _BabyPassportHeroCard extends StatelessWidget {
                                   const SizedBox(width: 4),
                                   Text(
                                     isUnknown
-                                        ? (lang == 'ar' ? 'مفاجأة' : 'Surprise')
+                                        ? child.localizedGenderLabel(l10n)
                                         : (isBoy
                                             ? (lang == 'ar' ? 'أمير' : 'Garçon')
                                             : (lang == 'ar' ? 'أميرة' : 'Fille')),

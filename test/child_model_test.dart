@@ -112,9 +112,8 @@ void main() {
       );
       final after = DateTime.now();
       expect(
-        c.birthDate.isAtSameMomentAs(before) ||
-            c.birthDate.isAfter(before) ||
-            c.birthDate.isBefore(after.add(const Duration(seconds: 1))),
+        !c.birthDate.isBefore(before.subtract(const Duration(seconds: 1))) &&
+            !c.birthDate.isAfter(after.add(const Duration(seconds: 1))),
         isTrue,
       );
     });
@@ -231,6 +230,44 @@ void main() {
       final c = _child(birthDate: DateTime(2024, 5, 5));
       final map = c.toFirestore();
       expect(map['birthDate'], isA<Timestamp>());
+    });
+
+    test('expected child built with only birthDate round-trips keeping same EDD and isExpected', () {
+      final edd = DateTime(2027, 4, 15);
+      final c = Child(
+        id: 'c_expected',
+        name: 'Bébé',
+        birthDate: edd,
+        gender: ChildGender.unknown,
+        lifecycle: ChildLifecycle.expected,
+      );
+      expect(c.expectedDate, isNull);
+      expect(c.isExpected, isTrue);
+
+      final map = c.toFirestore();
+      expect(map['birthDate'], isNull);
+      expect(map['expectedDate'], Timestamp.fromDate(edd));
+      expect(map['lifecycle'], 'expected');
+
+      final roundTripped = Child.fromFirestore(map, 'c_expected');
+      expect(roundTripped.isExpected, isTrue);
+      expect(roundTripped.birthDate, edd);
+      expect(roundTripped.expectedDate, edd);
+    });
+
+    test('fromFirestore restores expectedDate when lifecycle is expected and expectedDate missing but birthDate present', () {
+      final edd = DateTime(2027, 8, 20);
+      final c = Child.fromFirestore(
+        {
+          'name': 'Bébé',
+          'lifecycle': 'expected',
+          'birthDate': Timestamp.fromDate(edd),
+        },
+        'c_restored',
+      );
+      expect(c.isExpected, isTrue);
+      expect(c.birthDate, edd);
+      expect(c.expectedDate, edd);
     });
   });
 
