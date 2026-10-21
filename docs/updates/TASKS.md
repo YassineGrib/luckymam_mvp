@@ -1,7 +1,7 @@
 # Luckymam — Backlog Addendum 27-04-2026 · Suivi des tâches
 
 > **26 tickets** · Mis à jour le : 2026-10-21  
-> Rapports : [LM2-118](../reports/rapport_client_2026_06_20_LM2-118.md) · [LM2-119](../reports/rapport_client_2026_06_20_LM2-119.md) · [LM2-120](../reports/rapport_client_2026_06_20_LM2-120.md) · [LM2-121](../reports/rapport_client_2026_06_20_LM2-121.md) · [LM2-123](../reports/rapport_client_2026_06_20_LM2-123.md) · [LM2-123-v2](../reports/rapport_client_2026_06_20_LM2-123-v2.md) · [LM2-124](../reports/rapport_client_2026_06_20_LM2-124.md) · [LM2-125](../reports/rapport_client_2026_06_21_LM2-125.md) · [LM2-126](../reports/rapport_client_2026_06_21_LM2-126.md) · [LM2-127](../reports/rapport_client_2026_06_21_LM2-127.md) · [LM2-128](../reports/rapport_client_2026_06_21_LM2-128.md) · [LM2-129](../reports/rapport_client_2026_06_21_LM2-129.md) · [LM2-130](../reports/rapport_client_2026_06_21_LM2-130.md) · [LM2-131](../reports/rapport_client_2026_06_21_LM2-131.md) · [LM2-132](../reports/rapport_client_2026_06_21_LM2-132.md) · [LM2-133](../reports/rapport_client_2026_06_21_LM2-133.md) · [LM2-134](../reports/rapport_client_2026_06_21_LM2-134.md) · [LM2-135](../reports/rapport_client_2026_06_21_LM2-135.md) · [LM2-137](../reports/rapport_client_2026_06_21_LM2-137.md) · [LM2-138](../reports/rapport_client_2026_06_21_LM2-138.md) · [LM2-139](../reports/rapport_client_2026_06_21_LM2-139.md) · [LM2-122](../reports/rapport_client_2026_06_21_LM2-122.md)  
+> Rapports : [LM2-118](../reports/rapport_client_2026_06_20_LM2-118.md) · [LM2-119](../reports/rapport_client_2026_06_20_LM2-119.md) · [LM2-120](../reports/rapport_client_2026_06_20_LM2-120.md) · [LM2-121](../reports/rapport_client_2026_06_20_LM2-121.md) · [LM2-123](../reports/rapport_client_2026_06_20_LM2-123.md) · [LM2-123-v2](../reports/rapport_client_2026_06_20_LM2-123-v2.md) · [LM2-124](../reports/rapport_client_2026_06_20_LM2-124.md) · [LM2-125](../reports/rapport_client_2026_06_21_LM2-125.md) · [LM2-126](../reports/rapport_client_2026_06_21_LM2-126.md) · [LM2-127](../reports/rapport_client_2026_06_21_LM2-127.md) · [LM2-128](../reports/rapport_client_2026_06_21_LM2-128.md) · [LM2-129](../reports/rapport_client_2026_06_21_LM2-129.md) · [LM2-130](../reports/rapport_client_2026_06_21_LM2-130.md) · [LM2-131](../reports/rapport_client_2026_06_21_LM2-131.md) · [LM2-132](../reports/rapport_client_2026_06_21_LM2-132.md) · [LM2-133](../reports/rapport_client_2026_06_21_LM2-133.md) · [LM2-134](../reports/rapport_client_2026_06_21_LM2-134.md) · [LM2-135](../reports/rapport_client_2026_06_21_LM2-135.md) · [LM2-137](../reports/rapport_client_2026_06_21_LM2-137.md) · [LM2-138](../reports/rapport_client_2026_06_21_LM2-138.md) · [LM2-139](../reports/rapport_client_2026_06_21_LM2-139.md) · [LM2-122](../reports/rapport_client_2026_06_21_LM2-122.md) · [LM2-140](../reports/rapport_client_2026-10-21_LM2-140.md) · [LM2-141](../reports/rapport_client_2026-10-21_LM2-141.md) · [LM2-143](../reports/rapport_client_2026-10-21_LM2-143.md) · [LM2-146](../reports/rapport_client_2026-10-21_LM2-146.md)  
 > Légende : ⬜ À faire · 🔄 En cours · ✅ Terminé · 🚫 Bloqué
 
 ---
@@ -53,10 +53,10 @@
 
 | ID | Feature | SP | Phase | Statut | Fichier |
 |----|---------|-----|-------|--------|---------|
-| LM2-140 | Modèle MotherStage & collection grossesses | 8 | M1-M3 | 🔄 | [LM2-140.md](issues/LM2-140.md) |
-| LM2-141 | Refactor consommateurs statut vers capacités | 8 | M1-M3 | 🔄 | [LM2-141.md](issues/LM2-141.md) |
-| LM2-143 | Enfant attendu & genre surprise | 8 | M1-M3 | 🔄 | [LM2-143.md](issues/LM2-143.md) |
-| LM2-146 | Sujets multiples capsule & parcours maman | 8 | M1-M3 | 🔄 | [LM2-146.md](issues/LM2-146.md) |
+| LM2-140 | Modèle MotherStage & collection grossesses | 8 | M1-M3 | ✅ | [LM2-140.md](issues/LM2-140.md) |
+| LM2-141 | Refactor consommateurs statut vers capacités | 8 | M1-M3 | ✅ | [LM2-141.md](issues/LM2-141.md) |
+| LM2-143 | Enfant attendu & genre surprise | 8 | M1-M3 | ✅ | [LM2-143.md](issues/LM2-143.md) |
+| LM2-146 | Sujets multiples capsule & parcours maman | 8 | M1-M3 | ✅ | [LM2-146.md](issues/LM2-146.md) |
 
 ---
 
@@ -75,8 +75,8 @@
 
 ```
 ⬜ À faire   :  0 / 26
-🔄 En cours  :  4 / 26  (LM2-140, LM2-141, LM2-143, LM2-146)
-✅ Terminé   : 21 / 26  (LM2-118, LM2-119, LM2-120, LM2-121, LM2-122, LM2-123, LM2-124, LM2-125, LM2-126, LM2-127, LM2-128, LM2-129, LM2-130, LM2-131, LM2-132, LM2-133, LM2-134, LM2-135, LM2-137, LM2-138, LM2-139)
+🔄 En cours  :  0 / 26
+✅ Terminé   : 25 / 26  (LM2-118, LM2-119, LM2-120, LM2-121, LM2-122, LM2-123, LM2-124, LM2-125, LM2-126, LM2-127, LM2-128, LM2-129, LM2-130, LM2-131, LM2-132, LM2-133, LM2-134, LM2-135, LM2-137, LM2-138, LM2-139, LM2-140, LM2-141, LM2-143, LM2-146)
 🚫 Bloqué    :  1 / 26  (LM2-136 — nécessite Firebase Hosting + Cloud Functions + facturation Blaze, en attente de validation client)
 ```
 
