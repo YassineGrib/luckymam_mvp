@@ -358,6 +358,8 @@ class UserProfile {
   final String? consent1807TextVersion;
   final DateTime createdAt;
   final DateTime updatedAt;
+  final bool tryingToConceive;
+  final int schemaVersion;
 
   const UserProfile({
     required this.uid,
@@ -376,13 +378,20 @@ class UserProfile {
     this.consent1807TextVersion,
     required this.createdAt,
     required this.updatedAt,
+    this.tryingToConceive = false,
+    this.schemaVersion = 1,
   });
 
   /// Create from Firestore document.
   factory UserProfile.fromFirestore(DocumentSnapshot doc) {
     final data = doc.data() as Map<String, dynamic>? ?? {};
+    return fromMap(data, doc.id);
+  }
+
+  /// Create from raw data map and uid.
+  static UserProfile fromMap(Map<String, dynamic> data, String uid) {
     return UserProfile(
-      uid: doc.id,
+      uid: uid,
       displayName: data['displayName'],
       email: data['email'],
       phone: data['phone'],
@@ -411,6 +420,8 @@ class UserProfile {
       updatedAt: data['updatedAt'] != null
           ? (data['updatedAt'] as Timestamp).toDate()
           : DateTime.now(),
+      tryingToConceive: (data['tryingToConceive'] as bool?) ?? false,
+      schemaVersion: (data['schemaVersion'] as int?) ?? 1,
     );
   }
 
@@ -436,6 +447,8 @@ class UserProfile {
       'consent1807TextVersion': consent1807TextVersion,
       'createdAt': Timestamp.fromDate(createdAt),
       'updatedAt': Timestamp.fromDate(DateTime.now()),
+      'tryingToConceive': tryingToConceive,
+      'schemaVersion': schemaVersion,
     };
   }
 
@@ -468,6 +481,8 @@ class UserProfile {
     String? consent1807TextVersion,
     DateTime? createdAt,
     DateTime? updatedAt,
+    bool? tryingToConceive,
+    int? schemaVersion,
   }) {
     return UserProfile(
       uid: uid ?? this.uid,
@@ -486,6 +501,8 @@ class UserProfile {
       consent1807TextVersion: consent1807TextVersion ?? this.consent1807TextVersion,
       createdAt: createdAt ?? this.createdAt,
       updatedAt: updatedAt ?? DateTime.now(),
+      tryingToConceive: tryingToConceive ?? this.tryingToConceive,
+      schemaVersion: schemaVersion ?? this.schemaVersion,
     );
   }
 }
