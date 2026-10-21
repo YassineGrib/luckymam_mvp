@@ -135,7 +135,9 @@ class Child {
   String get ageString {
     if (isExpected) {
       final now = DateTime.now();
-      final days = birthDate.difference(now).inDays;
+      final today = DateTime(now.year, now.month, now.day);
+      final due = DateTime(birthDate.year, birthDate.month, birthDate.day);
+      final days = due.difference(today).inDays;
       final weeks = (days / 7).ceil().clamp(0, 999);
       if (weeks == 0) {
         return "Naissance prévue aujourd'hui";

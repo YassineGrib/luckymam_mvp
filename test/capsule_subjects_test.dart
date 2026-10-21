@@ -371,6 +371,10 @@ void main() {
       expect(resolveEffectiveCapsuleChildIds(), isEmpty);
     });
 
+    test('resolveEffectiveCapsuleChildIds treats empty childId as empty list', () {
+      expect(resolveEffectiveCapsuleChildIds(childId: ''), isEmpty);
+    });
+
     test('validateCapsuleSubjects allows at least one child', () {
       expect(
         () => validateCapsuleSubjects(childIds: ['c1'], withMother: false),

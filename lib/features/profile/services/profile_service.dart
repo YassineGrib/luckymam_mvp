@@ -376,6 +376,14 @@ class ProfileService {
       throw Exception('User not authenticated');
     }
 
+    final activeSnapshot = await pregCol
+        .where('status', isEqualTo: PregnancyStatus.active.name)
+        .limit(1)
+        .get();
+    if (activeSnapshot.docs.isNotEmpty) {
+      return activeSnapshot.docs.first.id;
+    }
+
     final edd = eddDate ?? Pregnancy.eddFromLmp(lmpDate);
     final now = DateTime.now();
 
@@ -555,36 +563,47 @@ class ProfileService {
     };
 
     if (plan.createPregnancy) {
-      final lmp = plan.lmp!;
-      final edd = Pregnancy.eddFromLmp(lmp);
-      final now = DateTime.now();
-      final pregnancyRef = pregCol.doc();
-      final childRef = childCol.doc();
+      final activeSnapshot = await pregCol
+          .where('status', isEqualTo: PregnancyStatus.active.name)
+          .limit(1)
+          .get();
+      final hasActivePregnancy = activeSnapshot.docs.isNotEmpty;
 
-      final pregnancy = Pregnancy(
-        id: pregnancyRef.id,
-        lmpDate: lmp,
-        eddDate: edd,
-        eddSource: EddSource.lmp,
-        babyCount: 1,
-        childIds: [childRef.id],
-        status: PregnancyStatus.active,
-        createdAt: now,
-        updatedAt: now,
-      );
-      batch.set(pregnancyRef, pregnancy.toFirestore());
+      if (shouldCreatePregnancyInMigration(
+        planSaysCreate: plan.createPregnancy,
+        hasActivePregnancy: hasActivePregnancy,
+      )) {
+        final lmp = plan.lmp!;
+        final edd = Pregnancy.eddFromLmp(lmp);
+        final now = DateTime.now();
+        final pregnancyRef = pregCol.doc();
+        final childRef = childCol.doc();
 
-      final child = Child(
-        id: childRef.id,
-        name: placeholderName,
-        birthDate: edd,
-        gender: ChildGender.unknown,
-        lifecycle: ChildLifecycle.expected,
-        expectedDate: edd,
-        pregnancyId: pregnancyRef.id,
-        archived: false,
-      );
-      batch.set(childRef, child.toFirestore());
+        final pregnancy = Pregnancy(
+          id: pregnancyRef.id,
+          lmpDate: lmp,
+          eddDate: edd,
+          eddSource: EddSource.lmp,
+          babyCount: 1,
+          childIds: [childRef.id],
+          status: PregnancyStatus.active,
+          createdAt: now,
+          updatedAt: now,
+        );
+        batch.set(pregnancyRef, pregnancy.toFirestore());
+
+        final child = Child(
+          id: childRef.id,
+          name: placeholderName,
+          birthDate: edd,
+          gender: ChildGender.unknown,
+          lifecycle: ChildLifecycle.expected,
+          expectedDate: edd,
+          pregnancyId: pregnancyRef.id,
+          archived: false,
+        );
+        batch.set(childRef, child.toFirestore());
+      }
 
       userUpdates['status'] = UserStatus.pregnant.name;
     } else if (plan.setTryingToConceive) {

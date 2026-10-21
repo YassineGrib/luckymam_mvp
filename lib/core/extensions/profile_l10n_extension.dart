@@ -34,10 +34,14 @@ String childAgeString(
   AppLocalizations l10n,
   DateTime birthDate, {
   bool isExpected = false,
+  DateTime? now,
 }) {
+  final effectiveNow = now ?? DateTime.now();
   if (isExpected) {
-    final now = DateTime.now();
-    final days = birthDate.difference(now).inDays;
+    final today =
+        DateTime(effectiveNow.year, effectiveNow.month, effectiveNow.day);
+    final due = DateTime(birthDate.year, birthDate.month, birthDate.day);
+    final days = due.difference(today).inDays;
     final weeks = (days / 7).ceil().clamp(0, 999);
     if (weeks == 0) {
       return l10n.childDueToday;
@@ -45,9 +49,8 @@ String childAgeString(
     return l10n.childExpectedInWeeks(weeks);
   }
 
-  final now = DateTime.now();
   final months =
-      (now.year - birthDate.year) * 12 + now.month - birthDate.month;
+      (effectiveNow.year - birthDate.year) * 12 + effectiveNow.month - birthDate.month;
 
   if (months < 12) {
     return l10n.profileAgeMonthsOnly(months);
@@ -83,8 +86,8 @@ extension ChildL10n on Child {
   String localizedGenderLabel(AppLocalizations l10n) =>
       childGenderLabel(l10n, gender);
 
-  String localizedAgeString(AppLocalizations l10n) =>
-      childAgeString(l10n, birthDate, isExpected: isExpected);
+  String localizedAgeString(AppLocalizations l10n, {DateTime? now}) =>
+      childAgeString(l10n, birthDate, isExpected: isExpected, now: now);
 }
 
 extension UserProfileL10n on UserProfile {

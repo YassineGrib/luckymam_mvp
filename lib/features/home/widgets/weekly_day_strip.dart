@@ -380,7 +380,9 @@ class _WeeklyDayStripState extends ConsumerState<WeeklyDayStrip> {
         dayInWeek = activePregnancy.gestationalDay(day);
       } else if (profile?.lastPregnancyDate != null) {
         final lmp = profile!.lastPregnancyDate!;
-        final diffDays = day.difference(lmp).inDays;
+        final dayDate = DateTime(day.year, day.month, day.day);
+        final lmpDate = DateTime(lmp.year, lmp.month, lmp.day);
+        final diffDays = dayDate.difference(lmpDate).inDays;
         if (diffDays >= 0) {
           week = diffDays ~/ 7;
           dayInWeek = diffDays % 7;

@@ -18,7 +18,8 @@ List<String> resolveEffectiveCapsuleChildIds({
   String? childId,
   List<String>? childIds,
 }) {
-  return childIds ?? (childId != null ? [childId] : <String>[]);
+  return childIds ??
+      (childId != null && childId.isNotEmpty ? [childId] : <String>[]);
 }
 
 /// Validates that a capsule has at least one child or features the mother.

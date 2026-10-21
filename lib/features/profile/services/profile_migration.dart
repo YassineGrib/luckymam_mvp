@@ -58,3 +58,13 @@ ProfileMigrationPlan buildProfileMigration(UserProfile profile) {
     setTryingToConceive: setTtc,
   );
 }
+
+/// Pure decision helper: whether migration should create pregnancy documents,
+/// given that the migration plan requested pregnancy creation and whether
+/// an active pregnancy already exists.
+bool shouldCreatePregnancyInMigration({
+  required bool planSaysCreate,
+  required bool hasActivePregnancy,
+}) {
+  return planSaysCreate && !hasActivePregnancy;
+}

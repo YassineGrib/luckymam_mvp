@@ -337,6 +337,29 @@ void main() {
       expect(c.localizedAgeString(en), "Due today");
     });
 
+    test(
+        'expected child due tomorrow evaluated at 23:59 today is not due today',
+        () {
+      final evaluatedAt = DateTime(2026, 10, 21, 23, 59);
+      final dueTomorrow = DateTime(2026, 10, 22, 0, 0);
+      final c = _child(
+        lifecycle: ChildLifecycle.expected,
+        birthDate: dueTomorrow,
+        gender: ChildGender.unknown,
+      );
+
+      expect(c.localizedAgeString(en, now: evaluatedAt), isNot('Due today'));
+      expect(c.localizedAgeString(en, now: evaluatedAt), contains('1 week'));
+      expect(
+        c.localizedAgeString(fr, now: evaluatedAt),
+        isNot("Naissance prévue aujourd'hui"),
+      );
+      expect(
+        c.localizedAgeString(ar, now: evaluatedAt),
+        isNot('الولادة متوقعة اليوم'),
+      );
+    });
+
     test('born child localizedAgeString formats normally', () {
       final born = DateTime.now().subtract(const Duration(days: 60));
       final c = _child(

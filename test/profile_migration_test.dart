@@ -147,6 +147,37 @@ void main() {
       expect(plan1.hashCode, equals(plan2.hashCode));
       expect(plan1, isNot(equals(plan3)));
     });
+
+    test('shouldCreatePregnancyInMigration decision logic', () {
+      expect(
+        shouldCreatePregnancyInMigration(
+          planSaysCreate: true,
+          hasActivePregnancy: false,
+        ),
+        isTrue,
+      );
+      expect(
+        shouldCreatePregnancyInMigration(
+          planSaysCreate: true,
+          hasActivePregnancy: true,
+        ),
+        isFalse,
+      );
+      expect(
+        shouldCreatePregnancyInMigration(
+          planSaysCreate: false,
+          hasActivePregnancy: false,
+        ),
+        isFalse,
+      );
+      expect(
+        shouldCreatePregnancyInMigration(
+          planSaysCreate: false,
+          hasActivePregnancy: true,
+        ),
+        isFalse,
+      );
+    });
   });
 
   group('Profile providers (LM2-140 / LM2-143)', () {
