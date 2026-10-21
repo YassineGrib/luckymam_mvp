@@ -127,9 +127,12 @@ class _EditMotherProfileScreenState extends ConsumerState<EditMotherProfileScree
   void initState() {
     super.initState();
     final p = widget.profile;
-    final fbUser = AuthService().currentUser;
+    String? fbName;
+    try {
+      fbName = AuthService().currentUser?.displayName;
+    } catch (_) {}
 
-    _nameController = TextEditingController(text: p?.displayName ?? fbUser?.displayName ?? '');
+    _nameController = TextEditingController(text: p?.displayName ?? fbName ?? '');
     _phoneController = TextEditingController(text: p?.phone ?? '');
     _allergyInputController = TextEditingController();
     _conditionsController = TextEditingController(text: p?.medicalInfo.conditions.join(', ') ?? '');
@@ -207,6 +210,7 @@ class _EditMotherProfileScreenState extends ConsumerState<EditMotherProfileScree
 
   Future<void> _saveProfile() async {
     final name = _nameController.text.trim();
+    final childExpectedDefaultName = context.l10n.childExpectedDefaultName;
     if (name.isEmpty) {
       HapticFeedback.heavyImpact();
       final lang = Localizations.localeOf(context).languageCode;
@@ -250,6 +254,20 @@ class _EditMotherProfileScreenState extends ConsumerState<EditMotherProfileScree
             pregnancyDate: _pregnancyDate,
             medicalInfo: medicalInfo,
           );
+
+      final profileService = ref.read(profileServiceProvider);
+      if (_status == UserStatus.pregnant) {
+        if (ref.read(activePregnancyProvider) == null && _pregnancyDate != null) {
+          await profileService.declarePregnancy(
+            lmpDate: _pregnancyDate!,
+            placeholderName: childExpectedDefaultName,
+          );
+        }
+      } else if (_status == UserStatus.hope) {
+        await profileService.setTryingToConceive(true);
+      } else if (_status == UserStatus.mom) {
+        await profileService.setTryingToConceive(false);
+      }
 
       if (mounted) {
         HapticFeedback.lightImpact();
@@ -500,8 +518,11 @@ class _EditMotherProfileScreenState extends ConsumerState<EditMotherProfileScree
     Color accent,
     String lang,
   ) {
-    final fbUser = AuthService().currentUser;
-    final currentPhotoUrl = widget.profile?.photoUrl ?? fbUser?.photoURL;
+    String? fbPhotoUrl;
+    try {
+      fbPhotoUrl = AuthService().currentUser?.photoURL;
+    } catch (_) {}
+    final currentPhotoUrl = widget.profile?.photoUrl ?? fbPhotoUrl;
 
     ImageProvider? imageProvider;
     if (_newImageFile != null) {

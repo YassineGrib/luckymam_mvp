@@ -2708,4 +2708,7 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get childExpectedDefaultName => 'Bébé';
+
+  @override
+  String get scheduleStartsAtBirth => 'Le calendrier démarre à la naissance';
 }

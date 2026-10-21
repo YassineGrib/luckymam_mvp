@@ -34,6 +34,7 @@ final childrenSummaryProvider = FutureProvider<List<ChildSummary>>((ref) async {
     final summaries = <ChildSummary>[];
 
     for (final child in children) {
+      if (child.isExpected) continue;
       VaccineGroupWithStatus? nextVaccine;
       try {
         final vaccines = await ref.read(

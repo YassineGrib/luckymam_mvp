@@ -75,6 +75,39 @@ class _TimelineScreenState extends ConsumerState<TimelineScreen> {
                   );
                 }
 
+                if (selectedChild.isExpected) {
+                  return Column(
+                    children: [
+                      PageHeaderWithFilter(
+                        title: context.l10n.timelineLifeBook,
+                        subtitle: context.l10n
+                            .timelineLifeBookOf(selectedChild.name),
+                        icon: Icons.auto_stories_rounded,
+                        iconColor: primary,
+                        iconGradient: null,
+                        showBackButton: false,
+                        childrenList: children,
+                        selectedChildId: selectedChild.id,
+                        allowAll: false,
+                        onChildSelected: (id) {
+                          if (id != null) {
+                            ref.read(selectedChildIdProvider.notifier).state =
+                                id;
+                          }
+                        },
+                      ),
+                      Expanded(
+                        child: _buildEmptyExpected(
+                          context,
+                          textColor,
+                          secondaryText,
+                          primary,
+                        ),
+                      ),
+                    ],
+                  );
+                }
+
                 // Determine current phase based on child
                 final currentPhase = ref.watch(
                   currentPhaseProvider(selectedChild),
@@ -353,6 +386,41 @@ class _TimelineScreenState extends ConsumerState<TimelineScreen> {
               ),
             ],
           ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildEmptyExpected(
+    BuildContext context,
+    Color textColor,
+    Color secondaryText,
+    Color primary,
+  ) {
+    final l10n = context.l10n;
+    return Center(
+      child: Padding(
+        padding: const EdgeInsets.all(AppSpacing.xl),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(
+              Icons.child_care_rounded,
+              size: 60,
+              color: primary,
+            ),
+            const SizedBox(height: AppSpacing.md),
+            Text(
+              l10n.scheduleStartsAtBirth,
+              style: AppTypography.fromContext(
+                context,
+                fontSize: 16,
+                fontWeight: FontWeight.w600,
+                color: secondaryText,
+              ),
+              textAlign: TextAlign.center,
+            ),
+          ],
         ),
       ),
     );

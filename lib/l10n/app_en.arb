@@ -1141,5 +1141,6 @@
     }
   },
   "childDueToday": "Due today",
-  "childExpectedDefaultName": "Baby"
+  "childExpectedDefaultName": "Baby",
+  "scheduleStartsAtBirth": "The schedule starts at birth"
 }

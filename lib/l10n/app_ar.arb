@@ -1141,5 +1141,6 @@
     }
   },
   "childDueToday": "الولادة متوقعة اليوم",
-  "childExpectedDefaultName": "بيبي"
+  "childExpectedDefaultName": "بيبي",
+  "scheduleStartsAtBirth": "يبدأ الجدول عند الولادة"
 }

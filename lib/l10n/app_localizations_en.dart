@@ -2684,4 +2684,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get childExpectedDefaultName => 'Baby';
+
+  @override
+  String get scheduleStartsAtBirth => 'The schedule starts at birth';
 }

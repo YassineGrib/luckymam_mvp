@@ -44,8 +44,11 @@ class ProfileScreen extends ConsumerWidget {
     final secondaryColor = isDark
         ? AppColors.textSecondaryDark
         : AppColors.textSecondaryLight;
-    final authService = AuthService();
-    final user = authService.currentUser;
+    AuthService? authService;
+    try {
+      authService = AuthService();
+    } catch (_) {}
+    final user = authService?.currentUser;
 
     // Watch profile from Firestore
     final profileAsync = ref.watch(profileProvider);
@@ -237,7 +240,7 @@ class ProfileScreen extends ConsumerWidget {
                   isDark: isDark,
                   primaryColor: primaryColor,
                   onLogout: () async {
-                    await authService.signOut();
+                    await authService?.signOut();
                     if (context.mounted) {
                       context.go('/login');
                     }

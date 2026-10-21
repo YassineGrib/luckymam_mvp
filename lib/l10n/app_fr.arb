@@ -1186,5 +1186,6 @@
     }
   },
   "childDueToday": "Naissance prévue aujourd'hui",
-  "childExpectedDefaultName": "Bébé"
+  "childExpectedDefaultName": "Bébé",
+  "scheduleStartsAtBirth": "Le calendrier démarre à la naissance"
 }

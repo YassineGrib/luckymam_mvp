@@ -21,7 +21,7 @@ final milestoneRemindersProvider = FutureProvider.autoDispose
     .family<void, String>((ref, childId) async {
       final childrenAsync = await ref.watch(childrenProvider.future);
       final child = childrenAsync.where((c) => c.id == childId).firstOrNull;
-      if (child == null) return;
+      if (child == null || child.isExpected) return;
 
       final milestones = await ref.watch(
         childMilestonesProvider(childId).future,
@@ -50,15 +50,17 @@ final childMilestonesProvider =
       ref,
       childId,
     ) async {
-      final service = ref.watch(timelineServiceProvider);
       final children = await ref.watch(childrenProvider.future);
-      final progressList = await ref.watch(
-        milestoneProgressStreamProvider(childId).future,
-      );
-
       final child = children.firstWhere(
         (c) => c.id == childId,
         orElse: () => throw Exception('Child not found'),
+      );
+
+      if (child.isExpected) return const [];
+
+      final service = ref.watch(timelineServiceProvider);
+      final progressList = await ref.watch(
+        milestoneProgressStreamProvider(childId).future,
       );
 
       final milestones = service.getMilestonesForChild(child);
@@ -236,6 +238,7 @@ class TimelineService {
 
   /// Get all milestones for a child with calculated due dates
   List<MilestoneWithDueDate> getMilestonesForChild(Child child) {
+    if (child.isExpected) return const [];
     final referenceDate = _getReferenceDate(child);
 
     return allMilestones.map((milestone) {

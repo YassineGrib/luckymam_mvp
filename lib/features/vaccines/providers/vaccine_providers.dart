@@ -19,6 +19,7 @@ final vaccineSchedulerProvider = FutureProvider<void>((ref) async {
   final service = ref.watch(vaccineServiceProvider);
 
   for (final child in childrenAsync) {
+    if (child.isExpected) continue;
     await service.scheduleReminders(
       childId: child.id,
       dob: child.birthDate,
@@ -68,6 +69,12 @@ final vaccineGroupsWithStatusProvider =
       List<VaccineGroupWithStatus>,
       ({String childId, DateTime birthDate})
     >((ref, params) async {
+      final children = ref.watch(childrenProvider).valueOrNull ?? [];
+      final child = children.where((c) => c.id == params.childId).firstOrNull;
+      if (child != null && child.isExpected) {
+        return const <VaccineGroupWithStatus>[];
+      }
+
       final calendar = await ref.watch(vaccineCalendarProvider.future);
       final statuses = await ref.watch(
         childVaccinationStatusesProvider(params.childId).future,

@@ -107,6 +107,43 @@ class _VaccinationsTabState extends ConsumerState<VaccinationsTab> {
     bool isDark,
     Color textColor,
   ) {
+    if (child.isExpected) {
+      final primary = isDark ? AppColors.primaryDark : AppColors.primaryLight;
+      final secondaryText = isDark
+          ? AppColors.textSecondaryDark
+          : AppColors.textSecondaryLight;
+      return Center(
+        child: Padding(
+          padding: const EdgeInsets.all(AppSpacing.screenPaddingH),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Container(
+                width: 100,
+                height: 100,
+                decoration: BoxDecoration(
+                  color: primary.withValues(alpha: 0.1),
+                  shape: BoxShape.circle,
+                ),
+                child: Icon(Icons.child_care_rounded, size: 50, color: primary),
+              ),
+              const SizedBox(height: AppSpacing.lg),
+              Text(
+                l10n.scheduleStartsAtBirth,
+                style: AppTypography.fromContext(
+                  context,
+                  fontSize: 16,
+                  fontWeight: FontWeight.w600,
+                  color: secondaryText,
+                ),
+                textAlign: TextAlign.center,
+              ),
+            ],
+          ),
+        ),
+      );
+    }
+
     final vaccinesAsync = ref.watch(
       vaccineGroupsWithStatusProvider((
         childId: child.id,

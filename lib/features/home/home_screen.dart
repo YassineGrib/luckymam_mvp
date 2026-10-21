@@ -1,7 +1,11 @@
+import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../core/extensions/l10n_extension.dart';
+import '../../l10n/app_localizations.dart';
+import '../capsules/providers/capsule_providers.dart';
+import '../profile/providers/profile_providers.dart';
 import '../../shared/widgets/navigation/app_bottom_nav.dart';
 import '../ads/providers/ads_providers.dart';
 import '../ads/screens/interstitial_ad_screen.dart';
@@ -21,6 +25,28 @@ class HomeScreen extends ConsumerStatefulWidget {
 
 class _HomeScreenState extends ConsumerState<HomeScreen> {
   int _currentIndex = 0;
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      if (!mounted) return;
+      final l10n = AppLocalizations.of(context);
+      if (l10n == null) return;
+      try {
+        final profileService = ref.read(profileServiceProvider);
+        final capsuleService = ref.read(capsuleServiceProvider);
+        await profileService.runProfileMigrationIfNeeded(
+          placeholderName: l10n.childExpectedDefaultName,
+        );
+        await capsuleService.migrateCapsuleSubjects();
+      } catch (e, st) {
+        try {
+          FirebaseCrashlytics.instance.recordError(e, st);
+        } catch (_) {}
+      }
+    });
+  }
 
   /// Interstitial ad slot on tab transitions — every Nth switch, with a
   /// global cooldown, plan-gated (VIP: never). Fire-and-forget so the tab

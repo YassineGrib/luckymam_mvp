@@ -4863,6 +4863,12 @@ abstract class AppLocalizations {
   /// In fr, this message translates to:
   /// **'Bébé'**
   String get childExpectedDefaultName;
+
+  /// No description provided for @scheduleStartsAtBirth.
+  ///
+  /// In fr, this message translates to:
+  /// **'Le calendrier démarre à la naissance'**
+  String get scheduleStartsAtBirth;
 }
 
 class _AppLocalizationsDelegate
