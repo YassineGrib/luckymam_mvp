@@ -332,5 +332,15 @@ void main() {
       // Without pregnancyId, mother with 1 child derives family
       expect(cleared.space, CapsuleSpace.family);
     });
+
+    test('copyWith(childIds: [], withMother: true) clears children', () {
+      final initial = _capsule(childId: 'c1', childIds: ['c1']);
+      final updated = initial.copyWith(childIds: [], withMother: true);
+
+      expect(updated.childIds, isEmpty);
+      expect(updated.childId, '');
+      expect(updated.space, CapsuleSpace.mother);
+      expect(updated.toFirestore()['childIds'], isEmpty);
+    });
   });
 }

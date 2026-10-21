@@ -343,7 +343,9 @@ class Capsule {
             ? (childId.isNotEmpty ? [childId] : const <String>[])
             : _childIds);
     final resolvedChildId = childId ??
-        (childIds != null && childIds.isNotEmpty ? childIds.first : this.childId);
+        (childIds != null
+            ? (childIds.isNotEmpty ? childIds.first : '')
+            : this.childId);
 
     return Capsule(
       id: id ?? this.id,
