@@ -93,7 +93,8 @@ class PersonalHeader extends ConsumerWidget {
     final locale = Localizations.localeOf(context).toString();
     final todayFormatted = DateFormat('d MMM', locale).format(DateTime.now());
 
-    final statusLabel = _statusLabel(l10n, profile);
+    final legacyStatus = ref.watch(motherStageProvider).legacyStatus;
+    final statusLabel = _statusLabel(l10n, profile, legacyStatus);
     final unreadCount = ref.watch(unreadNotificationsCountProvider);
 
     return Row(
@@ -298,9 +299,13 @@ class PersonalHeader extends ConsumerWidget {
     );
   }
 
-  String _statusLabel(AppLocalizations l10n, UserProfile? profile) {
+  String _statusLabel(
+    AppLocalizations l10n,
+    UserProfile? profile,
+    UserStatus status,
+  ) {
     if (profile == null) return l10n.statusWelcome;
-    switch (profile.status) {
+    switch (status) {
       case UserStatus.pregnant:
         return l10n.statusPregnant;
       case UserStatus.hope:

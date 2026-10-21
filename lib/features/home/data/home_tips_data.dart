@@ -1,3 +1,4 @@
+import '../../profile/models/mother_stage.dart';
 import '../../profile/models/profile_models.dart';
 
 /// Localized daily tips by user status — FR / AR / EN.
@@ -8,6 +9,14 @@ abstract final class HomeTipsData {
         .difference(DateTime(DateTime.now().year, 1, 1))
         .inDays;
     return tips[dayOfYear % tips.length];
+  }
+
+  /// Localized daily tip mapped from [MotherStage] into existing tip pools:
+  /// - `pregnant*` => pregnant pool
+  /// - `exploring` / `hope` => hope pool
+  /// - `mom` / `momHope` => mom pool
+  static String tipForStage(String locale, MotherStage stage) {
+    return tipFor(locale, stage.legacyStatus);
   }
 
   static const Map<String, Map<UserStatus, List<String>>> _tips = {

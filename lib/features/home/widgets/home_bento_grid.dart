@@ -19,8 +19,8 @@ class HomeBentoGrid extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final profileAsync = ref.watch(profileProvider);
-    final status = profileAsync.valueOrNull?.status ?? UserStatus.mom;
+    final status = ref.watch(motherStageProvider).legacyStatus;
+
 
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),

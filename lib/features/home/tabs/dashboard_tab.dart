@@ -4,7 +4,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../core/extensions/l10n_extension.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../shared/widgets/top_ambient_gradient.dart';
-import '../../profile/models/profile_models.dart';
 import '../../profile/providers/profile_providers.dart';
 import '../widgets/children_overview.dart';
 import '../widgets/daily_tip_card.dart';
@@ -33,8 +32,7 @@ class DashboardTab extends ConsumerWidget {
         ? AppColors.backgroundDark
         : AppColors.backgroundLight;
 
-    final profileAsync = ref.watch(profileProvider);
-    final status = profileAsync.valueOrNull?.status;
+    final hasBornChildren = ref.watch(hasBornChildrenProvider);
     final isPremium = ref.watch(isPremiumProvider);
     final isVip = ref.watch(isVipProvider);
 
@@ -85,7 +83,7 @@ class DashboardTab extends ConsumerWidget {
                 const SliverToBoxAdapter(child: HomeBentoGrid()),
 
                 // 6. Mes Enfants (For Mothers)
-                if (status == UserStatus.mom) ...[
+                if (hasBornChildren) ...[
                   SliverToBoxAdapter(
                     child: SectionHeader(
                       title: l10n.dashboardMyChildren,

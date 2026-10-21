@@ -99,9 +99,11 @@ final recentCapsulesProvider = Provider<List<Capsule>>((ref) {
 /// Provider for daily tip adapted to user status and locale
 final dailyTipProvider = Provider<String>((ref) {
   final locale = ref.watch(localeProvider).languageCode;
-  final profile = ref.watch(profileProvider).valueOrNull;
-  final status = profile?.status ?? UserStatus.mom;
-  return HomeTipsData.tipFor(locale, status);
+  final legacyStatus = ref.watch(motherStageProvider).legacyStatus;
+  return HomeTipsData.tipFor(locale, legacyStatus);
+
+
+
 });
 
 /// Greeting based on time of day and locale

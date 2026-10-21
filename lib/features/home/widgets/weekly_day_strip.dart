@@ -6,6 +6,8 @@ import '../../../core/theme/app_colors.dart';
 import '../../health/models/appointment.dart';
 import '../../health/providers/health_providers.dart';
 import '../../health/screens/health_hub_screen.dart';
+import '../../profile/models/mother_stage.dart';
+import '../../profile/models/pregnancy.dart';
 import '../../profile/models/profile_models.dart';
 import '../../profile/providers/profile_providers.dart';
 import '../../vaccines/models/vaccine.dart';
@@ -81,17 +83,22 @@ class _WeeklyDayStripState extends ConsumerState<WeeklyDayStrip> {
 
     final profileAsync = ref.watch(profileProvider);
     final profile = profileAsync.valueOrNull;
-    final status = profile?.status ?? UserStatus.mom;
+    final motherStage = ref.watch(motherStageProvider);
+    final legacyStatus = motherStage.legacyStatus;
+    final hasBornChildren = ref.watch(hasBornChildrenProvider);
+    final isPregnant = ref.watch(isPregnantProvider);
+    final activePregnancy = ref.watch(activePregnancyProvider);
+    final bornChildren = ref.watch(bornChildrenProvider);
 
-    final childrenAsync = ref.watch(childrenProvider);
-    final children = childrenAsync.valueOrNull ?? const [];
+
+
 
     final vaccineCalendarAsync = ref.watch(vaccineCalendarProvider);
     final vaccineCalendar = vaccineCalendarAsync.valueOrNull;
 
     // Collect child appointments if child available
-    final appointmentsAsync = children.isNotEmpty
-        ? ref.watch(appointmentsProvider(children.first.id)).valueOrNull ?? []
+    final appointmentsAsync = bornChildren.isNotEmpty
+        ? ref.watch(appointmentsProvider(bornChildren.first.id)).valueOrNull ?? []
         : <Appointment>[];
 
     return Padding(
@@ -122,7 +129,7 @@ class _WeeklyDayStripState extends ConsumerState<WeeklyDayStrip> {
                 ],
               ),
               GestureDetector(
-                onTap: () => _openFullCalendar(context, status),
+                onTap: () => _openFullCalendar(context, legacyStatus),
                 child: Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
@@ -156,9 +163,12 @@ class _WeeklyDayStripState extends ConsumerState<WeeklyDayStrip> {
 
               final events = _resolveEventsForDay(
                 day: day,
-                status: status,
+                motherStage: motherStage,
+                hasBornChildren: hasBornChildren,
+                isPregnant: isPregnant,
+                activePregnancy: activePregnancy,
                 profile: profile,
-                children: children,
+                bornChildren: bornChildren,
                 vaccineCalendar: vaccineCalendar,
                 appointments: appointmentsAsync,
                 locale: locale,
@@ -175,7 +185,7 @@ class _WeeklyDayStripState extends ConsumerState<WeeklyDayStrip> {
                         context: context,
                         day: day,
                         events: events,
-                        status: status,
+                        status: legacyStatus,
                         locale: locale,
                         isDark: isDark,
                       );
@@ -306,9 +316,12 @@ class _WeeklyDayStripState extends ConsumerState<WeeklyDayStrip> {
 
   List<DayEvent> _resolveEventsForDay({
     required DateTime day,
-    required UserStatus status,
+    required MotherStage motherStage,
+    required bool hasBornChildren,
+    required bool isPregnant,
+    required Pregnancy? activePregnancy,
     required UserProfile? profile,
-    required List<Child> children,
+    required List<Child> bornChildren,
     required VaccineCalendar? vaccineCalendar,
     required List<Appointment> appointments,
     required String locale,
@@ -324,7 +337,8 @@ class _WeeklyDayStripState extends ConsumerState<WeeklyDayStrip> {
             title: appt.doctorName.trim().isNotEmpty
                 ? appt.doctorName
                 : appt.type.getLabel(locale),
-            subtitle: '${appt.type.getLabel(locale)} • ${children.first.name}',
+            subtitle:
+                '${appt.type.getLabel(locale)}${bornChildren.isNotEmpty ? ' • ${bornChildren.first.name}' : ''}',
             color: const Color(0xFF6366F1),
             icon: Icons.medical_services_rounded,
           ),
@@ -333,10 +347,11 @@ class _WeeklyDayStripState extends ConsumerState<WeeklyDayStrip> {
     }
 
     // 2. Child Vaccines (Mother state)
-    if (status == UserStatus.mom &&
-        children.isNotEmpty &&
+    if (hasBornChildren &&
+        bornChildren.isNotEmpty &&
         vaccineCalendar != null) {
-      for (final child in children) {
+      for (final child in bornChildren) {
+        if (child.isExpected) continue;
         for (final group in vaccineCalendar.groups) {
           final expectedDate = group.getExpectedDate(child.birthDate);
           if (_isSameDay(expectedDate, day)) {
@@ -357,32 +372,40 @@ class _WeeklyDayStripState extends ConsumerState<WeeklyDayStrip> {
     }
 
     // 3. Pregnancy Milestones (Pregnant state)
-    if (status == UserStatus.pregnant && profile?.lastPregnancyDate != null) {
-      final lmp = profile!.lastPregnancyDate!;
-      final diffDays = day.difference(lmp).inDays;
-      if (diffDays >= 0) {
-        final week = diffDays ~/ 7;
-        final dayInWeek = diffDays % 7;
-        if (dayInWeek == 0 && week > 0 && week <= 42) {
-          events.add(
-            DayEvent(
-              type: DayEventType.pregnancy,
-              title: locale.startsWith('ar')
-                  ? 'الأسبوع $week من الحمل'
-                  : 'Semaine $week de grossesse',
-              subtitle: locale.startsWith('ar')
-                  ? 'محطة أسبوعية لتطور الجنين'
-                  : 'Étape clé du développement fœtal',
-              color: const Color(0xFFD97706),
-              icon: Icons.pregnant_woman_rounded,
-            ),
-          );
+    if (isPregnant) {
+      int? week;
+      int? dayInWeek;
+      if (activePregnancy != null) {
+        week = activePregnancy.gestationalWeek(day);
+        dayInWeek = activePregnancy.gestationalDay(day);
+      } else if (profile?.lastPregnancyDate != null) {
+        final lmp = profile!.lastPregnancyDate!;
+        final diffDays = day.difference(lmp).inDays;
+        if (diffDays >= 0) {
+          week = diffDays ~/ 7;
+          dayInWeek = diffDays % 7;
         }
+      }
+
+      if (week != null && dayInWeek == 0 && week > 0 && week <= 42) {
+        events.add(
+          DayEvent(
+            type: DayEventType.pregnancy,
+            title: locale.startsWith('ar')
+                ? 'الأسبوع $week من الحمل'
+                : 'Semaine $week de grossesse',
+            subtitle: locale.startsWith('ar')
+                ? 'محطة أسبوعية لتطور الجنين'
+                : 'Étape clé du développement fœtal',
+            color: const Color(0xFFD97706),
+            icon: Icons.pregnant_woman_rounded,
+          ),
+        );
       }
     }
 
     // 4. Menstrual Cycle & Ovulation (Hope state)
-    if (status == UserStatus.hope && profile?.cycleInfo.lastPeriodDate != null) {
+    if (motherStage.tracksCycle && profile?.cycleInfo.lastPeriodDate != null) {
       final lpd = profile!.cycleInfo.lastPeriodDate!;
       final cycleLen = profile.cycleInfo.cycleLength > 0
           ? profile.cycleInfo.cycleLength

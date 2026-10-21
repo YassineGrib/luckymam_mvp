@@ -56,11 +56,12 @@ class _HomeHeroCompanionCardState extends ConsumerState<HomeHeroCompanionCard>
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final profileAsync = ref.watch(profileProvider);
     final profile = profileAsync.valueOrNull;
-    final status = profile?.status ?? UserStatus.mom;
+    final status = ref.watch(motherStageProvider).legacyStatus;
 
     final childrenAsync = ref.watch(childrenProvider);
     final children = childrenAsync.valueOrNull ?? const [];
-    final completionPercentage = _calculateProfileCompletion(profile, children);
+    final completionPercentage =
+        _calculateProfileCompletion(profile, children, status);
 
     final l10n = context.l10n;
 
@@ -477,7 +478,11 @@ class _HomeHeroCompanionCardState extends ConsumerState<HomeHeroCompanionCard>
     );
   }
 
-  int _calculateProfileCompletion(UserProfile? profile, List<Child> children) {
+  int _calculateProfileCompletion(
+    UserProfile? profile,
+    List<Child> children,
+    UserStatus status,
+  ) {
     if (profile == null) return 20;
     int score = 0;
 
@@ -509,7 +514,7 @@ class _HomeHeroCompanionCardState extends ConsumerState<HomeHeroCompanionCard>
     }
 
     // 6. Contextual Status Data
-    switch (profile.status) {
+    switch (status) {
       case UserStatus.mom:
         if (children.isNotEmpty) {
           score += 25;

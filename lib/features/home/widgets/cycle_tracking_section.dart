@@ -32,7 +32,31 @@ class _CycleTrackingSectionState extends ConsumerState<CycleTrackingSection> {
         if (profile == null) return const SizedBox.shrink();
 
         final cycleInfo = profile.cycleInfo;
-        final isPregnant = profile.status == UserStatus.pregnant;
+        final isPregnant = ref.watch(isPregnantProvider);
+        final activePregnancy = ref.watch(activePregnancyProvider);
+
+        DateTime? lmp;
+        DateTime? edd;
+        int? week;
+        int? daysUntilDpa;
+
+        if (isPregnant) {
+          if (activePregnancy != null) {
+            lmp = activePregnancy.lmpDate;
+            edd = activePregnancy.eddDate;
+            week = activePregnancy.gestationalWeek(DateTime.now());
+            daysUntilDpa = activePregnancy.daysUntilDue(DateTime.now());
+          } else {
+            final fallbackLmp =
+                profile.lastPregnancyDate ?? cycleInfo.lastPeriodDate;
+            if (fallbackLmp != null) {
+              lmp = fallbackLmp;
+              edd = _dpa(fallbackLmp);
+              week = _pregnancyWeek(fallbackLmp);
+              daysUntilDpa = _daysUntilDpa(fallbackLmp);
+            }
+          }
+        }
 
         return Padding(
           padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 4),
@@ -63,7 +87,13 @@ class _CycleTrackingSectionState extends ConsumerState<CycleTrackingSection> {
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    _buildHeader(context, isPregnant, cycleInfo),
+                    _buildHeader(
+                      context,
+                      isPregnant,
+                      cycleInfo,
+                      week: week,
+                      daysUntilDpa: daysUntilDpa,
+                    ),
                     AnimatedSize(
                       duration: const Duration(milliseconds: 300),
                       curve: Curves.easeInOut,
@@ -73,6 +103,10 @@ class _CycleTrackingSectionState extends ConsumerState<CycleTrackingSection> {
                               profile,
                               isPregnant,
                               cycleInfo,
+                              lmp: lmp,
+                              edd: edd,
+                              week: week,
+                              daysUntilDpa: daysUntilDpa,
                             )
                           : const SizedBox(width: double.infinity, height: 0),
                     ),
@@ -97,8 +131,10 @@ class _CycleTrackingSectionState extends ConsumerState<CycleTrackingSection> {
   Widget _buildHeader(
     BuildContext context,
     bool isPregnant,
-    CycleInfo cycleInfo,
-  ) {
+    CycleInfo cycleInfo, {
+    int? week,
+    int? daysUntilDpa,
+  }) {
     final l10n = context.l10n;
     var icon = Icons.water_drop_rounded;
     var title = l10n.cycleTrackingTitle;
@@ -107,11 +143,11 @@ class _CycleTrackingSectionState extends ConsumerState<CycleTrackingSection> {
     if (isPregnant) {
       icon = Icons.pregnant_woman_rounded;
       title = l10n.dashboardHealthPregnancy;
-      final lmp = cycleInfo.lastPeriodDate;
-      if (lmp != null) {
+
+      if (week != null && daysUntilDpa != null) {
         subtitle = l10n.cyclePregnancySubtitleWeekDays(
-          _pregnancyWeek(lmp),
-          _daysUntilDpa(lmp),
+          week,
+          daysUntilDpa,
         );
       } else {
         subtitle = l10n.cycleEnterPregnancyStart;
@@ -181,10 +217,21 @@ class _CycleTrackingSectionState extends ConsumerState<CycleTrackingSection> {
     BuildContext context,
     UserProfile profile,
     bool isPregnant,
-    CycleInfo cycleInfo,
-  ) {
+    CycleInfo cycleInfo, {
+    DateTime? lmp,
+    DateTime? edd,
+    int? week,
+    int? daysUntilDpa,
+  }) {
     if (isPregnant) {
-      return _buildPregnancyContent(context, cycleInfo);
+      return _buildPregnancyContent(
+        context,
+        cycleInfo,
+        lmp: lmp,
+        edd: edd,
+        pregnancyWeek: week,
+        daysUntilDpa: daysUntilDpa,
+      );
     }
 
     final l10n = context.l10n;
@@ -318,9 +365,16 @@ class _CycleTrackingSectionState extends ConsumerState<CycleTrackingSection> {
     );
   }
 
-  Widget _buildPregnancyContent(BuildContext context, CycleInfo cycleInfo) {
+  Widget _buildPregnancyContent(
+    BuildContext context,
+    CycleInfo cycleInfo, {
+    DateTime? lmp,
+    DateTime? edd,
+    int? pregnancyWeek,
+    int? daysUntilDpa,
+  }) {
     final l10n = context.l10n;
-    final lmp = cycleInfo.lastPeriodDate;
+
 
     if (lmp == null) {
       return Padding(
@@ -357,9 +411,9 @@ class _CycleTrackingSectionState extends ConsumerState<CycleTrackingSection> {
       );
     }
 
-    final week = _pregnancyWeek(lmp);
-    final dpa = _dpa(lmp);
-    final daysLeft = _daysUntilDpa(lmp);
+    final week = pregnancyWeek ?? _pregnancyWeek(lmp);
+    final dpa = edd ?? _dpa(lmp);
+    final daysLeft = daysUntilDpa ?? _daysUntilDpa(lmp);
     final dpaLabel =
         '${dpa.day.toString().padLeft(2, '0')}/${dpa.month.toString().padLeft(2, '0')}/${dpa.year}';
     final progress = (week / 40).clamp(0.0, 1.0);

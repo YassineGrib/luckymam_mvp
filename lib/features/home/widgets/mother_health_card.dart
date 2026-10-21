@@ -4,7 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../core/extensions/l10n_extension.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../l10n/app_localizations.dart';
-import '../../profile/models/profile_models.dart';
+
 import '../../profile/providers/profile_providers.dart';
 import '../../profile/profile_screen.dart';
 import '../../../core/theme/app_typography.dart';
@@ -77,7 +77,7 @@ class MotherHealthCard extends ConsumerWidget {
               if (profile == null) return const SizedBox.shrink();
 
               final cycleInfo = profile.cycleInfo;
-              final isPregnant = profile.status == UserStatus.pregnant;
+              final isPregnant = ref.watch(isPregnantProvider);
 
               return Row(
                 children: [
