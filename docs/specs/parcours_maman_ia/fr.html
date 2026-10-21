@@ -1,0 +1,469 @@
+<!doctype html>
+<html lang="fr" dir="ltr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Parcours maman & assistant IA — Luckymam</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@300;400;500;600&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<div class="ambient" aria-hidden="true"></div>
+
+<header class="topbar">
+  <div class="inner">
+    <div class="brand">Luckymam <span>spécification · v1</span></div>
+    <a class="lang" href="ar.html" hreflang="ar">العربية</a>
+  </div>
+</header>
+
+<div class="layout">
+  <nav class="toc" aria-label="Sommaire">
+    <p>Sommaire</p>
+    <ol>
+      <li><a href="#constat">Constat</a></li>
+      <li><a href="#situations">Situations de la mère</a></li>
+      <li><a href="#capsule-maman">Capsule maman</a></li>
+      <li><a href="#bebe-attendu">Bébé attendu</a></li>
+      <li><a href="#assistant">Assistant IA</a></li>
+      <li><a href="#avatar">Avatar animé</a></li>
+      <li><a href="#tickets">Tickets proposés</a></li>
+      <li><a href="#decisions">Décisions à prendre</a></li>
+    </ol>
+  </nav>
+
+  <main>
+    <div class="hero reveal">
+      <p class="eyebrow">Spécification fonctionnelle · 21 octobre 2026</p>
+      <h1>Parcours de la mère, capsule maman et assistant IA</h1>
+      <p class="lead">Comment l'application doit gérer chaque situation de la mère, garder ses propres souvenirs, suivre un bébé dont le sexe n'est pas encore connu, et accompagner la famille avec un assistant intelligent.</p>
+      <div class="meta">
+        <span class="tag t-yellow">Proposition</span>
+        <span class="tag t-gray">À valider avant tickets</span>
+        <span class="tag t-gray">FR · AR · EN</span>
+      </div>
+    </div>
+
+    <div class="bento">
+      <div class="card span-4 reveal" style="--i:0">
+        <div class="icon" style="background:var(--red-bg);color:var(--red)"><svg viewBox="0 0 256 256" fill="currentColor"><path d="M128 220c-4 0-8-1-11-4C66 168 28 135 28 92a52 52 0 0 1 100-20 52 52 0 0 1 100 20c0 43-38 76-89 124-3 3-7 4-11 4Z"/></svg></div>
+        <h4>Six situations, un seul modèle</h4>
+        <p>Enfants nés, grossesse en cours et désir d'enfant deviennent trois faits indépendants. La situation de la mère en est déduite.</p>
+      </div>
+      <div class="card span-2 reveal" style="--i:1">
+        <div class="icon" style="background:var(--green-bg);color:var(--green)"><svg viewBox="0 0 256 256" fill="currentColor"><path d="M216 56H40a16 16 0 0 0-16 16v112a16 16 0 0 0 16 16h176a16 16 0 0 0 16-16V72a16 16 0 0 0-16-16Zm-60 40a16 16 0 1 1-16 16 16 16 0 0 1 16-16ZM40 184l52-56 40 44 28-28 56 40Z"/></svg></div>
+        <h4>Capsule maman</h4>
+        <p>Grossesse, parcours de maman, photos de famille.</p>
+      </div>
+      <div class="card span-2 reveal" style="--i:2">
+        <div class="icon" style="background:var(--yellow-bg);color:var(--yellow)"><svg viewBox="0 0 256 256" fill="currentColor"><circle cx="128" cy="128" r="96"/></svg></div>
+        <h4>Bébé attendu</h4>
+        <p>Un dossier dès la grossesse, sexe « inconnu », couleurs neutres.</p>
+      </div>
+      <div class="card span-4 reveal" style="--i:3">
+        <div class="icon" style="background:var(--blue-bg);color:var(--blue)"><svg viewBox="0 0 256 256" fill="currentColor"><path d="M216 48H40a16 16 0 0 0-16 16v160l40-32h152a16 16 0 0 0 16-16V64a16 16 0 0 0-16-16Z"/></svg></div>
+        <h4>Assistant IA avec un oiseau animé</h4>
+        <p>Une page de discussion dédiée, des recommandations utiles (rendez-vous, albums, sorties, boutique, abonnement) et un avatar qui réagit à la conversation.</p>
+      </div>
+    </div>
+
+    <!-- 1 -->
+    <section id="constat" class="reveal">
+      <span class="num">01</span>
+      <h2>Constat : ce que fait l'application aujourd'hui</h2>
+      <p>Points du code actuel dont dépendent les demandes de ce document.</p>
+      <div class="table-wrap"><table>
+        <tr><th>Domaine</th><th>Comportement actuel</th><th>Problème</th></tr>
+        <tr><td>Statut de la mère</td><td>Un seul choix <code>UserStatus { pregnant, mom, hope }</code>. La grossesse tient dans un champ : <code>lastPregnancyDate</code>.</td><td>Une maman <strong>déjà mère et de nouveau enceinte</strong> doit choisir. Si elle choisit « enceinte », la section « Mes enfants » disparaît (<code>dashboard_tab.dart:88</code>). Si elle choisit « maman », elle perd le suivi DPA / semaines.</td></tr>
+        <tr><td>Écrans dépendants</td><td>Une dizaine de widgets testent le statut chacun à sa façon.</td><td>Aucune notion partagée d'« étape de vie ».</td></tr>
+        <tr><td>Enfant</td><td><code>birthDate</code> et <code>gender</code> (garçon / fille) sont <strong>obligatoires</strong>. Un sexe manquant est lu comme « garçon ».</td><td>Impossible de créer le dossier d'un bébé pas encore né ou dont le sexe est inconnu sans saisir de fausses données.</td></tr>
+        <tr><td>Capsule</td><td><code>childId</code> obligatoire : un souvenir appartient à un seul enfant.</td><td>Aucun espace pour la mère ni pour la famille. Une utilisatrice sans enfant ne peut créer aucune capsule.</td></tr>
+        <tr><td>Rendez-vous</td><td>Uniquement sous chaque enfant.</td><td>Les visites prénatales et post-natales de la mère ne sont pas suivies.</td></tr>
+        <tr><td>Produit boutique</td><td>Catégorie, points forts, mise en avant.</td><td>Pas de <strong>tranche d'âge</strong>, de <strong>compétences développées</strong> ni de <strong>trimestre</strong> : l'IA n'a rien de fiable pour recommander.</td></tr>
+        <tr><td>Abonnement</td><td><code>childLimit: 1</code> en gratuit.</td><td>La limite n'est vérifiée nulle part. Décision à prendre (section 03).</td></tr>
+        <tr><td>Localisation</td><td>La wilaya est déjà dans le profil.</td><td>La météo peut l'utiliser sans demander l'accès GPS.</td></tr>
+        <tr><td>Serveur</td><td><code>functions/</code> héberge déjà le paiement Chargily.</td><td>Bon emplacement pour le service IA. Aucune dépendance IA ou météo aujourd'hui.</td></tr>
+      </table></div>
+    </section>
+
+    <!-- 2 -->
+    <section id="situations" class="reveal">
+      <span class="num">02</span>
+      <h2>Les situations de la mère</h2>
+      <h3>Principe : stocker des faits, déduire la situation</h3>
+      <p>Au lieu d'ajouter des valeurs au statut, on enregistre trois <strong>faits indépendants</strong>, et la situation est calculée à partir d'eux.</p>
+      <div class="table-wrap"><table>
+        <tr><th>Fait</th><th>Source</th><th>Exemple</th></tr>
+        <tr><td>Enfants nés</td><td>Enfants avec <code>lifecycle == born</code></td><td>0, 1, 3…</td></tr>
+        <tr><td>Grossesse en cours</td><td>Nouvelle collection <code>pregnancies</code>, statut <code>active</code></td><td>DDR, DPA, nombre de bébés</td></tr>
+        <tr><td>Désir d'enfant</td><td><code>tryingToConceive</code></td><td>oui / non</td></tr>
+      </table></div>
+
+      <div class="table-wrap"><table>
+        <tr><th></th><th>Situation</th><th>Enfants nés</th><th>Enceinte</th><th>Désir</th><th>Étape</th></tr>
+        <tr><td>A</td><td>Jeune mariée, n'essaie pas encore</td><td>0</td><td>non</td><td>non</td><td><code>exploring</code></td></tr>
+        <tr><td>B</td><td>Souhaite être enceinte (HOPE actuel)</td><td>0</td><td>non</td><td>oui</td><td><code>hope</code></td></tr>
+        <tr><td>C</td><td>Première grossesse</td><td>0</td><td>oui</td><td>–</td><td><code>pregnantFirst</code></td></tr>
+        <tr><td>D</td><td>Enceinte, a déjà des enfants</td><td>1 ou +</td><td>oui</td><td>–</td><td><code>pregnantWithChildren</code></td></tr>
+        <tr><td>E</td><td>Maman</td><td>1 ou +</td><td>non</td><td>non</td><td><code>mom</code></td></tr>
+        <tr><td>F</td><td>Maman qui souhaite un autre enfant</td><td>1 ou +</td><td>non</td><td>oui</td><td><code>momHope</code></td></tr>
+      </table></div>
+
+      <div class="note"><p>La situation A n'existait pas. Aujourd'hui une jeune mariée doit choisir « HOPE », ce qui ne correspond pas toujours à sa réalité et déclenche un suivi de fertilité qu'elle n'a peut-être pas demandé.</p></div>
+
+      <p>Les écrans posent ensuite des <strong>questions simples</strong> (« est-elle enceinte ? », « a-t-elle des enfants ? ») au lieu de tester un statut unique. La situation D est ainsi corrigée sans effort : le bloc grossesse et « Mes enfants » s'affichent en même temps.</p>
+
+<pre><code><span class="c">// lib/features/profile/models/mother_stage.dart (nouveau)</span>
+enum MotherStage { exploring, hope, pregnantFirst, pregnantWithChildren, mom, momHope }
+
+<span class="c">// profile_providers.dart (nouveau)</span>
+final motherStageProvider = Provider&lt;MotherStage&gt;((ref) { ... });
+<span class="c">// isPregnantProvider, hasBornChildrenProvider, activePregnancyProvider</span></code></pre>
+
+      <h3>Changements Firestore</h3>
+<pre><code>/users/{uid}
+  status             <span class="c"># conservé, écrit comme valeur déduite (compatibilité)</span>
+  tryingToConceive   <span class="c"># nouveau</span>
+  lastPregnancyDate  <span class="c"># obsolète, migré vers pregnancies/</span>
+
+/users/{uid}/pregnancies/{pregnancyId}   <span class="c"># nouveau</span>
+  lmpDate     <span class="c"># DDR</span>
+  eddDate     <span class="c"># DPA = DDR + 280 j, ou corrigée par l'échographie / le médecin</span>
+  eddSource   <span class="c"># 'lmp' | 'ultrasound' | 'doctor'</span>
+  babyCount   <span class="c"># 1, 2 (jumeaux), 3</span>
+  childIds    <span class="c"># dossiers des bébés attendus (section 04)</span>
+  status      <span class="c"># 'active' | 'delivered' | 'ended'</span></code></pre>
+      <p>Une collection plutôt qu'un champ : une mère vit plusieurs grossesses au fil des années. Chacune est conservée dans son parcours et reliée au bébé qu'elle a donné.</p>
+
+      <h3>Passages d'une situation à l'autre</h3>
+      <div class="table-wrap"><table>
+        <tr><th>Passage</th><th>Déclencheur</th><th>Ce que fait l'application</th></tr>
+        <tr><td>vers enceinte</td><td>« Je suis enceinte » (profil, carte cycle, assistant)</td><td>Demande la DDR (ou la DPA) et le nombre de bébés. Crée la grossesse et les dossiers des bébés attendus. Arrête les rappels de cycle. Les enfants existants restent visibles.</td></tr>
+        <tr><td>enceinte vers maman</td><td>Carte « Bébé est né(e) », affichée à partir de DPA − 3 semaines</td><td>Assistant de naissance : date, prénom, sexe, poids et taille. Le bébé passe à « né ». Le calendrier vaccinal démarre sur la vraie date. Propose une capsule « Naissance ».</td></tr>
+        <tr><td>grossesse interrompue</td><td>Option discrète « Ma grossesse s'est arrêtée », jamais mise en avant</td><td><strong>À traiter avec délicatesse.</strong> Annule immédiatement les rappels, suggestions IA et offres boutique. Demande une seule fois s'il faut <strong>garder</strong> les souvenirs (archivés dans son parcours) ou les <strong>supprimer</strong>. N'affiche plus jamais « J-XX ». L'assistant reçoit un indicateur qui bloque tout contenu commercial ou de grossesse pendant 90 jours (réglable).</td></tr>
+        <tr><td>exploring ↔ hope</td><td>Interrupteur « Nous essayons d'avoir un enfant »</td><td>Active ou désactive le suivi du cycle et les conseils fertilité.</td></tr>
+        <tr><td>maman vers momHope</td><td>Même interrupteur, avec enfants</td><td>Suivi du cycle activé, contenu enfants conservé.</td></tr>
+      </table></div>
+
+      <h3>Inscription</h3>
+      <p>La question unique de statut est remplacée par deux questions courtes :</p>
+      <ol class="list">
+        <li><strong>« Avez-vous déjà des enfants ? »</strong> Non / Oui, puis ajout rapide (prénom et date de naissance, sexe facultatif).</li>
+        <li><strong>« Êtes-vous enceinte actuellement ? »</strong> Oui : DDR ou DPA et nombre de bébés. Non : « Souhaitez-vous suivre votre cycle pour concevoir ? »</li>
+      </ol>
+      <p>Les six situations sont couvertes en trois gestes au maximum, sans question inutile.</p>
+
+      <h3>Ce que voit chaque étape</h3>
+      <div class="table-wrap"><table>
+        <tr><th>Bloc</th><th>exploring</th><th>hope</th><th>pregnantFirst</th><th>pregnantWith­Children</th><th>mom</th><th>momHope</th></tr>
+        <tr><td>Grossesse (semaine, DPA, J-XX)</td><td class="no">–</td><td class="no">–</td><td class="yes">oui</td><td class="yes">oui</td><td class="no">–</td><td class="no">–</td></tr>
+        <tr><td>Cycle / ovulation</td><td>option</td><td class="yes">oui</td><td class="no">–</td><td class="no">–</td><td>option</td><td class="yes">oui</td></tr>
+        <tr><td>Mes enfants</td><td class="no">–</td><td class="no">–</td><td class="no">–</td><td class="yes">oui</td><td class="yes">oui</td><td class="yes">oui</td></tr>
+        <tr><td>Carte bébé attendu</td><td class="no">–</td><td class="no">–</td><td class="yes">oui</td><td class="yes">oui</td><td class="no">–</td><td class="no">–</td></tr>
+        <tr><td>Vaccins / jalons</td><td>vide + invitation</td><td>vide</td><td>« dès la naissance »</td><td>enfants nés</td><td class="yes">oui</td><td class="yes">oui</td></tr>
+        <tr><td>Capsule maman</td><td class="yes">oui</td><td class="yes">oui</td><td class="yes">oui</td><td class="yes">oui</td><td class="yes">oui</td><td class="yes">oui</td></tr>
+        <tr><td>Conseils du jour</td><td>couple / santé</td><td>fertilité</td><td>semaine de grossesse</td><td>grossesse + âge enfant</td><td>âge enfant</td><td>âge enfant + fertilité</td></tr>
+      </table></div>
+
+      <h3>Migration des comptes existants</h3>
+      <p>Exécutée une seule fois au premier lancement après la mise à jour, protégée par un numéro de version sur le profil :</p>
+      <ul class="list">
+        <li><code>pregnant</code> avec une date : création d'une grossesse active et d'un bébé attendu.</li>
+        <li><code>hope</code> : <code>tryingToConceive = true</code>.</li>
+        <li><code>mom</code> : rien à faire.</li>
+        <li>Le champ <code>status</code> continue d'être écrit pour l'admin et les anciennes versions.</li>
+      </ul>
+    </section>
+
+    <!-- 3 -->
+    <section id="capsule-maman" class="reveal">
+      <span class="num">03</span>
+      <h2>La capsule maman : « Mon parcours de maman »</h2>
+      <p>Un espace de souvenirs centré sur la mère, à côté des dossiers de chaque enfant.</p>
+      <ul class="list">
+        <li><strong>Journal de grossesse</strong> : photos du ventre semaine après semaine, échographies, notes de consultation, envies, l'audio du premier coup de pied.</li>
+        <li><strong>Mon parcours de maman</strong> : post-partum, retour au travail, étapes personnelles, lettres à elle-même.</li>
+        <li><strong>Famille</strong> : photos de groupe, maman avec ses enfants, frères et sœurs, fêtes (Aïd, anniversaires).</li>
+        <li><strong>Moments à moi</strong> : ce qui ne concerne qu'elle.</li>
+      </ul>
+
+      <h3>Modèle de données : des « sujets » au lieu d'un seul enfant</h3>
+<pre><code>/users/{uid}/capsules/{capsuleId}
+  childId        <span class="c"># conservé (facultatif), = premier de childIds</span>
+  childIds       <span class="c"># nouveau : enfants présents sur le souvenir (0 à n)</span>
+  withMother     <span class="c"># nouveau : la mère est un sujet du souvenir</span>
+  pregnancyId    <span class="c"># nouveau : relie au journal d'une grossesse</span>
+  pregnancyWeek  <span class="c"># nouveau : calculée depuis la DDR</span>
+  space          <span class="c"># 'child' | 'mother' | 'family'</span></code></pre>
+
+      <div class="table-wrap"><table>
+        <tr><th>Souvenir</th><th>childIds</th><th>withMother</th><th>Apparaît dans</th></tr>
+        <tr><td>Premiers pas d'Amine</td><td>[amine]</td><td>non</td><td>Dossier d'Amine</td></tr>
+        <tr><td>La mère seule, post-partum</td><td>[]</td><td>oui</td><td>Parcours maman</td></tr>
+        <tr><td>Ventre, semaine 24</td><td>[bébé]</td><td>oui</td><td>Parcours maman <strong>et</strong> dossier du bébé attendu</td></tr>
+        <tr><td>La mère avec deux enfants</td><td>[amine, sara]</td><td>oui</td><td>Famille, dossier d'Amine, dossier de Sara</td></tr>
+        <tr><td>Frère et sœur ensemble</td><td>[amine, sara]</td><td>non</td><td>Famille, les deux dossiers</td></tr>
+      </table></div>
+      <p>Requêtes : dossier enfant via <code>childIds arrayContains</code>, parcours maman via <code>withMother == true</code>, famille via <code>space == 'family'</code>. Index composites à ajouter. Migration : <code>childIds = [childId]</code> pour les capsules existantes.</p>
+
+      <h3>Interface</h3>
+      <ul class="list">
+        <li><strong>Onglet Capsules</strong> : une rangée de choix en haut, dans le style Bento actuel : Moi, Famille, un choix par enfant, et le bébé attendu en couleur neutre.</li>
+        <li><strong>Création</strong> : le sélecteur d'enfant devient <strong>« Qui est sur ce souvenir ? »</strong>, choix multiple (Moi + enfants).</li>
+        <li><strong>Écran parcours maman</strong> : frise verticale par chapitre de vie (chaque grossesse, chaque naissance, chaque année), avec un badge « Semaine 24 » sur les souvenirs de grossesse.</li>
+        <li><strong>Évolution du ventre</strong> : grille automatique des photos hebdomadaires, idéale pour un album imprimé.</li>
+      </ul>
+
+      <h3>Quota et rendez-vous</h3>
+      <p>Les capsules maman et famille comptent dans le même quota que les autres. Les mamans sans enfant peuvent enfin créer des souvenirs. On ajoute aussi des <strong>rendez-vous propres à la mère</strong> (<code>/users/{uid}/appointments</code>) : visites prénatales, échographies, contrôles post-partum.</p>
+
+      <div class="note blue"><p><strong>Décision : limite d'enfants en gratuit.</strong> Recommandation : un bébé attendu ne compte pas. La limite s'applique à la naissance, où le passage du deuxième enfant à « né » propose l'abonnement. C'est un moment naturel, sans bloquer le suivi de grossesse.</p></div>
+    </section>
+
+    <!-- 4 -->
+    <section id="bebe-attendu" class="reveal">
+      <span class="num">04</span>
+      <h2>Dossier enfant avant la naissance, sexe inconnu</h2>
+      <p>Le dossier de l'enfant est créé <strong>dès la déclaration de grossesse</strong> et marqué comme attendu.</p>
+<pre><code>/users/{uid}/children/{childId}
+  lifecycle     <span class="c"># 'expected' | 'born'          (absent = 'born')</span>
+  gender        <span class="c"># 'boy' | 'girl' | 'unknown'   (absent = 'unknown', plus 'boy')</span>
+  birthDate     <span class="c"># facultatif, vide tant que le bébé est attendu</span>
+  expectedDate  <span class="c"># = DPA de la grossesse</span>
+  pregnancyId
+  name          <span class="c"># surnom provisoire choisi par la mère, modifiable</span></code></pre>
+
+      <div class="table-wrap"><table>
+        <tr><th>Sujet</th><th>Attendu, sexe inconnu</th><th>Sexe connu (échographie)</th><th>À la naissance</th></tr>
+        <tr><td>Nom affiché</td><td>Surnom choisi : « Bébé », « Notre petit trésor »…</td><td>Inchangé sauf si elle le modifie</td><td>Vrai prénom</td></tr>
+        <tr><td>Couleur</td><td><strong>Palette neutre</strong>, jamais bleu ou rose par défaut</td><td>Couleur proposée, pas imposée</td><td>Inchangée</td></tr>
+        <tr><td>Âge</td><td>« Naissance prévue dans 12 semaines »</td><td>Idem</td><td>Âge normal</td></tr>
+        <tr><td>Capsules</td><td>Photos de grossesse et visites médicales rattachées à ce dossier</td><td><strong>Rien ne bouge.</strong> L'identifiant ne change jamais.</td><td>Idem</td></tr>
+        <tr><td>Révélation du sexe</td><td>–</td><td>Capsule spéciale « C'est un garçon / une fille ! » (facultative)</td><td>–</td></tr>
+        <tr><td>Vaccins / jalons</td><td>Masqués : « Le calendrier démarre à la naissance »</td><td>Idem</td><td>Générés depuis la vraie date</td></tr>
+        <tr><td>Sexe jamais révélé</td><td>Possible jusqu'à la naissance</td><td>–</td><td>Demandé à l'assistant de naissance</td></tr>
+      </table></div>
+      <p><strong>Jumeaux</strong> : <code>babyCount = 2</code> crée deux bébés attendus (« Bébé 1 », « Bébé 2 »). Une échographie commune peut être rattachée aux deux.</p>
+
+      <div class="note green"><p><strong>Pourquoi cette solution.</strong> Un album « grossesse » séparé à déplacer à la naissance ajoute une étape, risque de perdre ou dupliquer des souvenirs et casse les liens. Forcer un sexe fausse les données et les couleurs : c'est le défaut actuel.</p></div>
+
+      <h3>Impact sur le code</h3>
+      <ul class="list">
+        <li>Modèle <code>Child</code> : <code>birthDate</code> facultatif, nouveaux champs, <code>ChildGender.unknown</code>, valeur par défaut <code>unknown</code>.</li>
+        <li><code>ageString</code>, <code>themeColor</code>, <code>genderLabel</code> : nouveaux cas. Le libellé passe dans les fichiers de traduction.</li>
+        <li>Tout calcul basé sur <code>birthDate</code> (vaccins, jalons, croissance, frise) doit vérifier <code>lifecycle == born</code>.</li>
+        <li>Nouveaux providers <code>bornChildrenProvider</code> et <code>expectedChildrenProvider</code>.</li>
+      </ul>
+    </section>
+
+    <!-- 5 -->
+    <section id="assistant" class="reveal">
+      <span class="num">05</span>
+      <h2>L'assistant IA</h2>
+      <h3>Forme du produit</h3>
+      <ul class="list">
+        <li><strong>Page dédiée</strong> <code>/assistant</code>, hors de la barre du bas (elle a déjà cinq onglets).</li>
+        <li><strong>Accès</strong> : l'oiseau dans l'en-tête de l'accueil, une carte Bento, les notifications, et des boutons « Demander à l'assistant » sur un vaccin, un produit ou le bloc grossesse.</li>
+        <li><strong>Écran</strong>, de haut en bas : oiseau animé (~140 dp, réduit à 48 dp au défilement), bulles de discussion, cartes riches dans la conversation, suggestions rapides, zone de saisie avec photo facultative.</li>
+        <li><strong>Langue</strong> : celle de l'application. En arabe, l'assistant suit la façon d'écrire de la mère (arabe standard ou darija). Interface traduite dans les trois langues, arabe de droite à gauche.</li>
+      </ul>
+
+      <h3>Architecture</h3>
+      <div class="flow">
+        <div class="step"><b>Application Flutter</b>Envoie le message, l'identifiant de conversation et la langue. Aucune donnée de santé envoyée par l'application.</div>
+        <div class="arrow"></div>
+        <div class="step"><b>Cloud Function aiChat · europe-west1 · authentifiée</b>
+          <ol>
+            <li>Charge un contexte minimal depuis Firestore : étape, semaine de grossesse, âges des enfants (alias), wilaya, abonnement, prochains vaccins et rendez-vous.</li>
+            <li>Appelle le modèle Claude avec des outils, réponse en continu.</li>
+            <li>Enregistre la conversation.</li>
+            <li>Renvoie le texte et des cartes structurées.</li>
+          </ol>
+        </div>
+        <div class="arrow"></div>
+        <div class="step"><b>Application Flutter</b>Affiche le texte et les cartes. Toute action demande un geste de la mère.</div>
+      </div>
+
+      <div class="table-wrap"><table>
+        <tr><th>Outil</th><th>Renvoie</th><th>Remarque</th></tr>
+        <tr><td><code>get_family_context</code></td><td>Étape, âges, semaine de grossesse</td><td>Pseudonymisé : aucun prénom sauf s'il est écrit par la mère</td></tr>
+        <tr><td><code>list_health_schedule</code></td><td>Vaccins dus ou en retard, rendez-vous</td><td>Depuis le calendrier de l'application</td></tr>
+        <tr><td><code>propose_appointment</code></td><td>Carte de rendez-vous</td><td>Créé <strong>seulement après confirmation</strong></td></tr>
+        <tr><td><code>search_products</code></td><td>Produits adaptés à l'âge, au stade, à la compétence</td><td>Nécessite les nouveaux champs produit</td></tr>
+        <tr><td><code>get_weather</code></td><td>Prévisions pour la wilaya (Open-Meteo)</td><td>Sans GPS, gratuit, sans clé</td></tr>
+        <tr><td><code>propose_album</code></td><td>Album suggéré avec capsules présélectionnées</td><td>Ouvre l'éditeur d'album existant</td></tr>
+        <tr><td><code>propose_subscription</code></td><td>Carte d'offre avec le bénéfice concret</td><td>Seulement face à une vraie limite ou sur demande</td></tr>
+      </table></div>
+      <div class="note"><p><strong>Aucun outil n'écrit de données.</strong> Chaque action passe par une carte que la mère valide. L'assistant reste sûr et contrôlable, et les services existants restent les seuls à écrire. Modèles : <code>claude-sonnet-5-5</code> pour la discussion, <code>claude-haiku-5-5</code> pour les textes courts de notification. La clé API reste dans Firebase Secret Manager, jamais dans l'application.</p></div>
+
+      <h3>Recommandations</h3>
+      <div class="table-wrap"><table>
+        <tr><th>Type</th><th>Dans la discussion</th><th>En notification</th><th>Garde-fous</th></tr>
+        <tr><td><span class="tag t-yellow">Abonnement</span></td><td>Fonction bloquée ou quota de capsules atteint</td><td>Quota utilisé à 80 %</td><td>1 fois / 14 jours max. Jamais après une perte. Montre ce qu'elle gagne, sans pression.</td></tr>
+        <tr><td><span class="tag t-green">Album</span></td><td>« Fais-moi un album de ma grossesse » : carte, puis l'éditeur d'album</td><td>Chapitre terminé : naissance, 1<sup>er</sup> anniversaire, 20 photos de ventre</td><td>1 par chapitre</td></tr>
+        <tr><td><span class="tag t-blue">Rendez-vous</span></td><td>« Quand est le prochain vaccin ? », visites liées à la semaine de grossesse</td><td>Vaccin dans 7 jours sans rendez-vous, fenêtre d'échographie du 2<sup>e</sup> trimestre</td><td><strong>L'IA ne décide jamais de déplacer une date médicale.</strong> Elle indique le calendrier officiel et invite à contacter le médecin. Tout symptôme déclenche une orientation vers un médecin ou les urgences. Textes à faire valider par un professionnel de santé.</td></tr>
+        <tr><td><span class="tag t-blue">Météo</span></td><td>« Que faire aujourd'hui ? »</td><td>Beau temps un week-end, dans des seuils adaptés à l'âge</td><td>Alertes chaleur et UV pour les bébés. Prudence au 3<sup>e</sup> trimestre pendant les canicules.</td></tr>
+        <tr><td><span class="tag t-red">Boutique</span></td><td>« Une idée de jouet pour Amine (6 ans) » : 1 à 3 produits, chacun avec <strong>ce qu'il apporte</strong> (communication, motricité fine…)</td><td>Nouvelle tranche d'âge, nouveau trimestre</td><td>Étiquette « Notre boutique ». 2 envois / semaine max. Jamais dans une discussion médicale ou émotionnelle. Bénéfices tirés des fiches produit, jamais inventés.</td></tr>
+      </table></div>
+
+      <h3>Recommandations proactives</h3>
+      <ul class="list">
+        <li>Une tâche planifiée chaque jour à 09:00 (heure d'Alger) applique des <strong>règles fixes</strong>, peu coûteuses et testables, pour choisir au plus une suggestion par jour. L'IA rédige ensuite un message court et chaleureux dans la langue de la mère.</li>
+        <li>Enregistrement dans <code>aiRecommendations</code> et envoi via le système FCM existant, nouveau type <code>NotificationType.ai</code>. Un appui ouvre l'assistant sur la suggestion.</li>
+        <li>Un réglage par type de suggestion, plus un interrupteur général. Les suggestions commerciales sont désactivées par défaut.</li>
+        <li>Suivi « acceptée / ignorée » pour les statistiques et pour ne pas répéter une suggestion refusée.</li>
+      </ul>
+
+      <h3>Données boutique nécessaires (prérequis)</h3>
+<pre><code>audience             <span class="c"># 'child' | 'mother' | 'pregnancy'</span>
+ageMinMonths, ageMaxMonths
+pregnancyTrimesters  <span class="c"># [1, 2, 3]</span>
+skills               <span class="c"># communication, motricite_fine, cognitif, sensoriel, autonomie, sommeil…</span>
+benefitsFr / benefitsAr / benefitsEn   <span class="c"># le « pourquoi » que cite l'assistant</span></code></pre>
+      <p>Sans ces champs, l'IA devinerait à partir du texte libre : peu fiable, avec un risque d'affirmations fausses.</p>
+
+      <h3>Conformité et sécurité</h3>
+      <div class="note red">
+        <p><strong>Loi 18-07.</strong> L'assistant traite des <strong>données de santé</strong> et les transmet à un prestataire <strong>situé hors d'Algérie</strong>. Il faut :</p>
+        <ol class="list">
+          <li>un <strong>consentement explicite séparé</strong> avant la première utilisation, enregistré dans <code>consent_logs</code> ;</li>
+          <li>la minimisation des données (alias au lieu des prénoms, âges au lieu des dates) ;</li>
+          <li><strong>une analyse juridique du transfert hors du territoire</strong> (autorisation de l'ANPDP). C'est un point bloquant à valider avec un juriste.</li>
+        </ol>
+      </div>
+      <ul class="list">
+        <li>Option « Supprimer mes conversations » et suppression automatique après N mois.</li>
+        <li>Mention permanente : « L'assistant ne remplace pas un médecin ». Détection des signes d'alerte (saignement, fièvre du nouveau-né, baisse des mouvements du bébé…) avec un message d'orientation fixe et l'arrêt de toute suggestion.</li>
+        <li>Quota de messages, par exemple 10 par jour en gratuit. L'atteindre est un moment légitime pour proposer l'abonnement.</li>
+      </ul>
+    </section>
+
+    <!-- 6 -->
+    <section id="avatar" class="reveal">
+      <span class="num">06</span>
+      <h2>L'avatar animé : le kit CHARACTER_AI</h2>
+      <h3>Ce que contient réellement le kit</h3>
+      <ul class="list">
+        <li>Un <strong>moteur de personnage 2D procédural</strong> : corps arrondi, yeux projetés en 3D, clignements, particules, 11 états et 6 émotions. Ni Lottie ni Rive, ni images : uniquement des calculs sur un canevas.</li>
+        <li>Code <strong>Swift pour macOS</strong> (1 503 lignes) et un <strong>prototype web</strong> à ouvrir dans un navigateur pour tester chaque état.</li>
+        <li>28 sons WAV (3,1 Mo).</li>
+        <li><strong>Ce n'est ni du Flutter ni un oiseau</strong> : c'est le personnage « Mochi », piloté par la souris.</li>
+      </ul>
+
+      <h3>Licence</h3>
+      <div class="table-wrap"><table>
+        <tr><th>Élément</th><th>Statut</th><th>Conséquence</th></tr>
+        <tr><td>Moteur (calculs, physique, états)</td><td><span class="tag t-green">MIT</span></td><td>Portage autorisé, avec la mention MIT dans la page des licences de l'application.</td></tr>
+        <tr><td>Apparence « Mochi »</td><td><span class="tag t-red">Protégée</span></td><td>Ne doit pas être publiée telle quelle. Un oiseau original règle le problème.</td></tr>
+        <tr><td>Sons</td><td><span class="tag t-yellow">Non précisé</span></td><td>À vérifier sur le dépôt Coucou d'origine, ou à remplacer.</td></tr>
+      </table></div>
+
+      <h3>Plan : porter le moteur en Flutter et en faire un oiseau</h3>
+<pre><code>lib/features/assistant/
+  avatar/
+    bird_engine.dart    <span class="c"># états, transitions, clignement, particules</span>
+    bird_painter.dart   <span class="c"># CustomPainter, nouvelle géométrie d'oiseau</span>
+    bird_avatar.dart    <span class="c"># widget + Ticker, gestes, RepaintBoundary</span>
+    bird_sounds.dart    <span class="c"># audioplayers (déjà installé), fichiers OGG courts</span>
+  screens/  widgets/  providers/  services/  models/</code></pre>
+
+      <div class="table-wrap"><table>
+        <tr><th>Partie du moteur</th><th>Devient</th></tr>
+        <tr><td>Corps « squircle »</td><td>Corps plus rond, légèrement en poire, avec un ventre plus clair</td></tr>
+        <tr><td>Yeux 3D, regard, clignement</td><td><strong>Conservés</strong> : ce sont eux qui donnent le charme</td></tr>
+        <tr><td>Joues rosées</td><td>Conservées</td></tr>
+        <tr><td>« Mains »</td><td><strong>Ailes</strong> : battent pour saluer ou célébrer, cachent les yeux quand il est timide</td></tr>
+        <tr><td>Badges (…, !, ?)</td><td>Conservés, redessinés</td></tr>
+        <tr><td>Particules (cœurs, étoiles, Zzz)</td><td>Conservées, plus des <strong>plumes</strong> pour les célébrations</td></tr>
+        <tr><td><em>nouveau</em></td><td><strong>Bec</strong> qui s'ouvre au rythme de la réponse affichée : le signal principal qu'il « parle »</td></tr>
+        <tr><td><em>nouveau</em></td><td>Houppette qui rebondit avec la respiration, petite queue</td></tr>
+      </table></div>
+      <p>Couleurs de la marque : corps <code>hitPink</code> vers <code>coral</code>, ventre <code>negroni</code>, bec <code>casablanca</code>. Teintes d'état : réflexion <code>smaltBlue</code>, célébration <code>goldenrod</code>, affection <code>magentaPink</code>. Halo plus doux en mode sombre.</p>
+
+      <h3>Réactions de l'oiseau pendant la discussion</h3>
+      <div class="table-wrap"><table>
+        <tr><th>Événement</th><th>Réaction</th></tr>
+        <tr><td>Ouverture de l'écran</td><td>Salut de l'aile et petit saut</td></tr>
+        <tr><td>La mère écrit</td><td>Se penche vers la zone de saisie, regarde le texte</td></tr>
+        <tr><td>Attente de la réponse</td><td>Regard en haut à droite, badge « … »</td></tr>
+        <tr><td>Recherche (produits, météo)</td><td>Les yeux balaient de gauche à droite</td></tr>
+        <tr><td>Réponse en cours</td><td>Le bec bouge</td></tr>
+        <tr><td>L'assistant pose une question</td><td>Tête penchée, badge « ? »</td></tr>
+        <tr><td>Suggestion acceptée</td><td>Yeux en étoiles, envol de plumes</td></tr>
+        <tr><td>Remerciement, photo de bébé partagée</td><td>Yeux en cœur, joues rosées</td></tr>
+        <tr><td>Sujet sensible ou inquiétude de santé</td><td><strong>État « doux »</strong> (nouveau) : calme, clignement lent. Jamais de secousse rouge ni de célébration.</td></tr>
+        <tr><td>Erreur réseau</td><td>Petit mouvement de tête perplexe</td></tr>
+        <tr><td>60 s d'inactivité, ou la nuit (22 h – 6 h)</td><td>Bâille puis s'endort</td></tr>
+        <tr><td>Touché / 5 fois d'affilée</td><td>Petit saut et gazouillis / étourdi (clin d'œil caché)</td></tr>
+        <tr><td>Après une perte de grossesse</td><td>Uniquement des états calmes : ni célébration, ni particules, ni sons</td></tr>
+      </table></div>
+
+      <h3>Adaptations mobiles</h3>
+      <ul class="list">
+        <li>Le regard suit le <strong>doigt</strong> et le dernier message. Effet gyroscope facultatif (nouvelle dépendance <code>sensors_plus</code>).</li>
+        <li><strong>Performance</strong> : animation mise en pause quand l'écran n'est pas visible, 30 images/s sur les petits téléphones.</li>
+        <li><strong>Accessibilité</strong> : pose fixe si les animations sont désactivées dans le système, description pour les lecteurs d'écran.</li>
+        <li><strong>Sons</strong> : désactivés par défaut. Conversion en OGG (3,1 Mo vers ~300 Ko). Respect du mode silencieux.</li>
+      </ul>
+    </section>
+
+    <!-- 7 -->
+    <section id="tickets" class="reveal">
+      <span class="num">07</span>
+      <h2>Tickets proposés</h2>
+      <div class="table-wrap"><table>
+        <tr><th>ID</th><th>Titre</th><th>Priorité</th><th>SP</th><th>Dépend de</th></tr>
+        <tr><td>LM2-140</td><td>Modèle des étapes + collection grossesses + migration</td><td><span class="tag t-red">Must</span></td><td>8</td><td>–</td></tr>
+        <tr><td>LM2-141</td><td>Écrans d'accueil basés sur les étapes (enceinte + enfants)</td><td><span class="tag t-red">Must</span></td><td>8</td><td>140</td></tr>
+        <tr><td>LM2-142</td><td>Nouvelles questions d'inscription</td><td><span class="tag t-red">Must</span></td><td>5</td><td>140</td></tr>
+        <tr><td>LM2-143</td><td>Bébé attendu, sexe inconnu, date facultative</td><td><span class="tag t-red">Must</span></td><td>8</td><td>140</td></tr>
+        <tr><td>LM2-144</td><td>Assistant de naissance + capsule révélation</td><td><span class="tag t-red">Must</span></td><td>5</td><td>143</td></tr>
+        <tr><td>LM2-145</td><td>Grossesse interrompue (parcours sensible)</td><td><span class="tag t-red">Must</span></td><td>5</td><td>140</td></tr>
+        <tr><td>LM2-146</td><td>Sujets des capsules + migration + index + règles</td><td><span class="tag t-red">Must</span></td><td>8</td><td>–</td></tr>
+        <tr><td>LM2-147</td><td>Écran parcours maman + « Qui est sur ce souvenir ? » + famille</td><td><span class="tag t-red">Must</span></td><td>8</td><td>146</td></tr>
+        <tr><td>LM2-148</td><td>Rendez-vous de la mère</td><td><span class="tag t-yellow">Should</span></td><td>3</td><td>–</td></tr>
+        <tr><td>LM2-149</td><td>Champs produit (âge, compétences, bénéfices)</td><td><span class="tag t-red">Must</span></td><td>5</td><td>–</td></tr>
+        <tr><td>LM2-150</td><td>Avatar oiseau : portage du moteur + design + états</td><td><span class="tag t-yellow">Should</span></td><td>13</td><td>–</td></tr>
+        <tr><td>LM2-151</td><td>Écran assistant (discussion, cartes, traductions, RTL, mode sombre)</td><td><span class="tag t-red">Must</span></td><td>8</td><td>150</td></tr>
+        <tr><td>LM2-152</td><td>Cloud Function <code>aiChat</code> + outils + quota</td><td><span class="tag t-red">Must</span></td><td>13</td><td>149</td></tr>
+        <tr><td>LM2-153</td><td>Consentement IA (Loi 18-07) + suppression des conversations</td><td><span class="tag t-red">Must</span></td><td>5</td><td>juriste</td></tr>
+        <tr><td>LM2-154</td><td>Recommandations proactives (planification, règles, notifications)</td><td><span class="tag t-yellow">Should</span></td><td>8</td><td>152</td></tr>
+        <tr><td>LM2-155</td><td>Météo (Open-Meteo, wilayas)</td><td><span class="tag t-blue">Could</span></td><td>3</td><td>152</td></tr>
+      </table></div>
+      <p><strong>Ordre conseillé</strong> : 140, 146, 143, puis 141 et 142, puis 144 et 145, puis 147 pour corriger d'abord le modèle de données. Ensuite 149, 152, 151, 150, 153, puis 154 et 155.</p>
+    </section>
+
+    <!-- 8 -->
+    <section id="decisions" class="reveal">
+      <span class="num">08</span>
+      <h2>Décisions à prendre</h2>
+      <details open><summary>Juridique : bloquant pour l'assistant</summary><div>Les données de santé peuvent-elles être confiées à un prestataire IA hors d'Algérie au titre de la Loi 18-07, et avec quelle autorisation ?</div></details>
+      <details><summary>Abonnement gratuit et bébés attendus</summary><div>Un bébé attendu compte-t-il dans la limite d'enfants ? Recommandation : non, jusqu'à la naissance.</div></details>
+      <details><summary>Nom et dessin de l'oiseau</summary><div>Un designer doit valider la forme avant le portage (13 SP). Le nom doit fonctionner en français, en arabe et en anglais.</div></details>
+      <details><summary>Sons</summary><div>Confirmer la licence des fichiers WAV du kit, ou les faire créer / les remplacer.</div></details>
+      <details><summary>Fréquence commerciale</summary><div>Valider les plafonds : 2 suggestions boutique par semaine au maximum, 1 suggestion d'abonnement tous les 14 jours au maximum.</div></details>
+      <details><summary>Textes médicaux</summary><div>Faire relire par un médecin ou une sage-femme les messages de rendez-vous et d'alerte.</div></details>
+
+      <footer>Luckymam · Spécification parcours maman et assistant IA · version technique détaillée : <code>docs/specs/SPEC_mother_journey_and_ai_assistant.md</code></footer>
+    </section>
+  </main>
+</div>
+
+<script>
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach((e) => { if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); } });
+  }, { threshold: 0, rootMargin: '0px 0px -8% 0px' });
+  document.querySelectorAll('.reveal').forEach((el) => io.observe(el));
+
+  const links = [...document.querySelectorAll('.toc a')];
+  const spy = new IntersectionObserver((entries) => {
+    entries.forEach((e) => {
+      if (e.isIntersecting) links.forEach((a) => a.classList.toggle('active', a.getAttribute('href') === '#' + e.target.id));
+    });
+  }, { rootMargin: '-40% 0px -55% 0px' });
+  document.querySelectorAll('main section[id]').forEach((s) => spy.observe(s));
+</script>
+</body>
+</html>
