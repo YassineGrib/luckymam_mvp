@@ -308,7 +308,7 @@ Executed with subagent-driven development via the agy CLI. Final whole-branch re
 
 ### Open follow-ups for Plan 2
 
-- Deploy the new `pregnancies` Firestore rule: `firebase deploy --only firestore:rules`.
+- ~~Deploy the new `pregnancies` Firestore rule~~ — done 2026-10-21 (`firebase deploy --only firestore:rules`, project luckymam-app-dv).
 - Manual emulator check (LM2-141): mom with a child declares pregnancy → home shows pregnancy week and Mes enfants; Vaccinations tab with the expected baby shows "starts at birth"; existing capsules still in their child folder.
 - (Task 1) `_listEquals` duplicates foundation `listEquals`.
 - (Task 1) `copyWith` cannot clear `endedAt` to null (Task 4 only sets it).

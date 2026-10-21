@@ -44,7 +44,7 @@ Mise à disposition pour toute l'application d'un ensemble de flux et fournisseu
 
 ---
 
-> **À noter :** La nouvelle règle de sécurité ajoutée pour la sous-collection `pregnancies` dans `firestore.rules` doit être déployée sur les serveurs Firebase (`firebase deploy --only firestore:rules`) — ce déploiement reste à effectuer.
+> **À noter :** La nouvelle règle de sécurité ajoutée pour la sous-collection `pregnancies` dans `firestore.rules` a été déployée sur les serveurs Firebase (`firebase deploy --only firestore:rules`) le 2026-10-21.
 
 ---
 
