@@ -96,11 +96,61 @@ enum CapsuleCategory {
   }
 }
 
+/// Target space of a capsule determining where it is surfaced.
+enum CapsuleSpace {
+  child,
+  mother,
+  family;
+}
+
+/// Derives the target space for a capsule based on its subjects and pregnancy context.
+///
+/// Rule order:
+/// 1. Pregnancy bump photo with mother and single expected child => [CapsuleSpace.mother]
+/// 2. Two or more children featured together => [CapsuleSpace.family]
+/// 3. Mother with at least one child => [CapsuleSpace.family]
+/// 4. Mother alone => [CapsuleSpace.mother]
+/// 5. Else => [CapsuleSpace.child]
+CapsuleSpace deriveCapsuleSpace({
+  required List<String> childIds,
+  required bool withMother,
+  String? pregnancyId,
+}) {
+  if (pregnancyId != null && withMother && childIds.length == 1) {
+    return CapsuleSpace.mother;
+  }
+  if (childIds.length >= 2) {
+    return CapsuleSpace.family;
+  }
+  if (withMother && childIds.isNotEmpty) {
+    return CapsuleSpace.family;
+  }
+  if (withMother) {
+    return CapsuleSpace.mother;
+  }
+  return CapsuleSpace.child;
+}
+
 /// Capsule model - a memory capture with photo, audio, and emotion.
 class Capsule {
   final String id;
   final String userId;
+
+  /// Legacy single child ID (kept non-null for backward compatibility).
   final String childId;
+
+  /// Internal backing list for multi-child capsules.
+  final List<String> _childIds;
+
+  /// Whether the mother is featured in this memory.
+  final bool withMother;
+
+  /// Optional link to an active pregnancy journal entry.
+  final String? pregnancyId;
+
+  /// Pregnancy week number at the time this capsule was captured.
+  final int? pregnancyWeek;
+
   final String? milestoneId;
   final String? vaccineGroupId;
   final String? albumId;
@@ -127,6 +177,10 @@ class Capsule {
     required this.id,
     required this.userId,
     required this.childId,
+    List<String> childIds = const [],
+    this.withMother = false,
+    this.pregnancyId,
+    this.pregnancyWeek,
     this.milestoneId,
     this.vaccineGroupId,
     this.albumId,
@@ -142,44 +196,91 @@ class Capsule {
     required this.updatedAt,
     this.capturedAt,
     this.category,
-  });
+  }) : _childIds = childIds;
 
-  /// Create from Firestore document.
-  factory Capsule.fromFirestore(DocumentSnapshot doc) {
-    final data = doc.data() as Map<String, dynamic>? ?? {};
+  /// Effective list of children featured in this memory.
+  ///
+  /// Backfills from [childId] when [childIds] is empty.
+  List<String> get childIds =>
+      _childIds.isNotEmpty ? _childIds : (childId.isNotEmpty ? [childId] : const []);
+
+  /// Target space of this capsule derived from its subjects.
+  CapsuleSpace get space => deriveCapsuleSpace(
+        childIds: childIds,
+        withMother: withMother,
+        pregnancyId: pregnancyId,
+      );
+
+  /// Create from map and document ID.
+  static Capsule fromMap(Map<String, dynamic> data, [String id = '']) {
+    final rawChildIds = data['childIds'];
+    final rawChildId = data['childId'] as String? ?? '';
+    final List<String> childIds;
+    if (rawChildIds is List) {
+      childIds = List<String>.from(rawChildIds.map((e) => e.toString()));
+    } else if (rawChildId.isNotEmpty) {
+      childIds = [rawChildId];
+    } else {
+      childIds = const [];
+    }
+    final effectiveChildId =
+        rawChildId.isNotEmpty ? rawChildId : (childIds.isNotEmpty ? childIds.first : '');
+
+    DateTime parseDate(dynamic value) {
+      if (value is Timestamp) return value.toDate();
+      if (value is DateTime) return value;
+      return DateTime.now();
+    }
+
+    DateTime? parseNullableDate(dynamic value) {
+      if (value is Timestamp) return value.toDate();
+      if (value is DateTime) return value;
+      return null;
+    }
+
     return Capsule(
-      id: doc.id,
-      userId: data['userId'] ?? '',
-      childId: data['childId'] ?? '',
-      milestoneId: data['milestoneId'],
-      vaccineGroupId: data['vaccineGroupId'],
-      albumId: data['albumId'],
-      albumSlotId: data['albumSlotId'],
-      albumType: data['albumType'],
-      photoUrl: data['photoUrl'] ?? '',
-      audioUrl: data['audioUrl'],
-      audioDuration: data['audioDuration'],
-      emotion: Emotion.fromString(data['emotion']),
-      tags: List<String>.from(data['tags'] ?? []),
-      isFavorite: data['isFavorite'] ?? false,
-      createdAt: data['createdAt'] != null
-          ? (data['createdAt'] as Timestamp).toDate()
-          : DateTime.now(),
-      updatedAt: data['updatedAt'] != null
-          ? (data['updatedAt'] as Timestamp).toDate()
-          : DateTime.now(),
-      capturedAt: data['capturedAt'] != null
-          ? (data['capturedAt'] as Timestamp).toDate()
-          : null,
+      id: id.isNotEmpty ? id : (data['id'] as String? ?? ''),
+      userId: data['userId'] as String? ?? '',
+      childId: effectiveChildId,
+      childIds: childIds,
+      withMother: data['withMother'] as bool? ?? false,
+      pregnancyId: data['pregnancyId'] as String?,
+      pregnancyWeek: (data['pregnancyWeek'] as num?)?.toInt(),
+      milestoneId: data['milestoneId'] as String?,
+      vaccineGroupId: data['vaccineGroupId'] as String?,
+      albumId: data['albumId'] as String?,
+      albumSlotId: data['albumSlotId'] as String?,
+      albumType: data['albumType'] as String?,
+      photoUrl: data['photoUrl'] as String? ?? '',
+      audioUrl: data['audioUrl'] as String?,
+      audioDuration: (data['audioDuration'] as num?)?.toInt(),
+      emotion: Emotion.fromString(data['emotion'] as String?),
+      tags: List<String>.from(data['tags'] as List? ?? const []),
+      isFavorite: data['isFavorite'] as bool? ?? false,
+      createdAt: parseDate(data['createdAt']),
+      updatedAt: parseDate(data['updatedAt']),
+      capturedAt: parseNullableDate(data['capturedAt']),
       category: CapsuleCategory.fromString(data['category'] as String?),
     );
   }
 
+  /// Create from Firestore document.
+  factory Capsule.fromFirestore(DocumentSnapshot doc) {
+    final data = doc.data() as Map<String, dynamic>? ?? {};
+    return Capsule.fromMap(data, doc.id);
+  }
+
   /// Convert to Firestore map.
   Map<String, dynamic> toFirestore() {
+    final effectiveChildIds = childIds;
     return {
       'userId': userId,
-      'childId': childId,
+      'childId': effectiveChildIds.isNotEmpty ? effectiveChildIds.first : childId,
+      'childIds': effectiveChildIds,
+      'withMother': withMother,
+      'space': space.name,
+      'pregnancyId': pregnancyId,
+      'pregnancyWeek': pregnancyWeek,
       'milestoneId': milestoneId,
       'vaccineGroupId': vaccineGroupId,
       'albumId': albumId,
@@ -213,6 +314,10 @@ class Capsule {
     String? id,
     String? userId,
     String? childId,
+    List<String>? childIds,
+    bool? withMother,
+    String? pregnancyId,
+    int? pregnancyWeek,
     String? milestoneId,
     String? vaccineGroupId,
     String? albumId,
@@ -230,11 +335,25 @@ class Capsule {
     CapsuleCategory? category,
     bool clearCapturedAt = false,
     bool clearCategory = false,
+    bool clearPregnancyId = false,
+    bool clearPregnancyWeek = false,
   }) {
+    final resolvedChildIds = childIds ??
+        (childId != null
+            ? (childId.isNotEmpty ? [childId] : const <String>[])
+            : _childIds);
+    final resolvedChildId = childId ??
+        (childIds != null && childIds.isNotEmpty ? childIds.first : this.childId);
+
     return Capsule(
       id: id ?? this.id,
       userId: userId ?? this.userId,
-      childId: childId ?? this.childId,
+      childId: resolvedChildId,
+      childIds: resolvedChildIds,
+      withMother: withMother ?? this.withMother,
+      pregnancyId: clearPregnancyId ? null : (pregnancyId ?? this.pregnancyId),
+      pregnancyWeek:
+          clearPregnancyWeek ? null : (pregnancyWeek ?? this.pregnancyWeek),
       milestoneId: milestoneId ?? this.milestoneId,
       vaccineGroupId: vaccineGroupId ?? this.vaccineGroupId,
       albumId: albumId ?? this.albumId,
