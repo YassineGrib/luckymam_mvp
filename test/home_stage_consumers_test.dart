@@ -236,16 +236,18 @@ void main() {
     testWidgets('renders day strip and handles multiple event kinds',
         (tester) async {
       final now = DateTime.now();
-      final monday = now.subtract(Duration(days: now.weekday - 1));
+      final monday = DateTime(now.year, now.month, now.day)
+          .subtract(Duration(days: now.weekday - 1));
       final bornChild = _child(
         id: 'child_1',
         name: 'Amina',
-        birthDate: monday.subtract(const Duration(days: 60)),
+        birthDate: DateTime(monday.year, monday.month - 2, monday.day),
         lifecycle: ChildLifecycle.born,
       );
       final expectedChild = _child(
         id: 'child_exp',
         name: 'Futur Bébé',
+        birthDate: DateTime(monday.year, monday.month - 2, monday.day),
         lifecycle: ChildLifecycle.expected,
       );
 
@@ -260,7 +262,7 @@ void main() {
         ageMonths: 2,
         vaccines: [
           Vaccine(
-            code: 'DTCP',
+            code: 'DTC',
             nameFr: 'DTC',
             nameAr: 'DTC',
             protectsFr: 'DTC',
@@ -286,7 +288,8 @@ void main() {
             hasBornChildrenProvider.overrideWithValue(true),
             isPregnantProvider.overrideWithValue(true),
             activePregnancyProvider.overrideWithValue(pregnancy),
-            bornChildrenProvider.overrideWithValue([bornChild]),
+            bornChildrenProvider
+                .overrideWithValue([bornChild, expectedChild]),
             childrenProvider
                 .overrideWith((ref) => Stream.value([bornChild, expectedChild])),
             vaccineCalendarProvider.overrideWith((ref) async => calendar),
@@ -305,6 +308,14 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(find.byType(WeeklyDayStrip), findsOneWidget);
+
+      await tester.tap(find.text('${monday.day}'));
+      await tester.pumpAndSettle();
+
+      expect(find.textContaining('Vaccin: DTC'), findsOneWidget);
+      expect(find.textContaining('Semaine 4 de grossesse'), findsOneWidget);
+      expect(find.textContaining('Amina'), findsOneWidget);
+      expect(find.textContaining('Futur Bébé'), findsNothing);
     });
   });
 
