@@ -299,3 +299,32 @@ test('toFirestore writes space and first childId', () { ... });
 
 - [ ] For each of LM2-140, 141, 143, 146: issue `**Statut**` → `✅ Terminé`; TASKS.md row ✅ and counters; report `docs/reports/rapport_client_2026-10-21_LM2-XXX.md` in the exact CLAUDE.md structure; link added to the `> Rapports :` line.
 - [ ] Commit `docs(reports): LM2-140/141/143/146 client reports`.
+
+---
+
+## Execution notes (2026-10-21)
+
+Executed with subagent-driven development via the agy CLI. Final whole-branch review: ready to merge; all findings fixed (commit 98c9e65). 147/147 tests, `flutter analyze` clean.
+
+### Open follow-ups for Plan 2
+
+- Deploy the new `pregnancies` Firestore rule: `firebase deploy --only firestore:rules`.
+- Manual emulator check (LM2-141): mom with a child declares pregnancy → home shows pregnancy week and Mes enfants; Vaccinations tab with the expected baby shows "starts at birth"; existing capsules still in their child folder.
+- (Task 1) `_listEquals` duplicates foundation `listEquals`.
+- (Task 1) `copyWith` cannot clear `endedAt` to null (Task 4 only sets it).
+- (Task 1) no month-boundary eddFromLmp test; gestationalDay only tested at day 0.
+- (Task 2) expected countdown uses Duration.inDays without date-normalising now → 'Due today' can show up to a day early.
+- (Task 2) model ageString says 'sem.' vs brief 'semaines' (matches arb).
+- (Task 2) pre-existing hard-coded boy/girl pill labels ('أمير'/'Garçon', 'أميرة'/'Fille') in child_profile_screen.dart:1027 — en falls back to French.
+- (Task 4) declarePregnancy lacks assert(babyCount >= 1).
+- (Task 4) markChildBorn uses device time for pregnancy updatedAt vs serverTimestamp elsewhere.
+- (Task 5) fromMap prefers legacy childId over childIds.first when both present and differ.
+- (Task 5) Capsule constructor still `required this.childId` → mother-only capsules pass childId: ''.
+- (Task 6) resolveEffectiveCapsuleChildIds treats childId '' as a real id.
+- (Task 7a) dailyTipProvider calls tipFor(legacyStatus) instead of the new tipForStage.
+- (Task 7a) stray consecutive blank lines (dart format) in home_providers, home_bento_grid, weekly_day_strip.
+- (Task 7b) vaccineGroupsWithStatusProvider reads childrenProvider.valueOrNull instead of awaiting .future.
+- (Task 7b) no test that declarePregnancy is skipped when a pregnancy is already active.
+- (Final review M-4) Hard-coded pregnancy-week strings in weekly_day_strip.dart (pre-existing) → move to .arb with Plan 2 pregnancy copy.
+- (Final review M-5) try/catch around AuthService().currentUser in profile_screen / edit_mother_profile_screen added for testability → inject auth instead.
+- (Final review) Make `Capsule.childId` optional; `childIds` becomes the source of truth.
