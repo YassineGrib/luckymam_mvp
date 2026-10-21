@@ -39,6 +39,24 @@ final capsulesByChildProvider = StreamProvider.family<List<Capsule>, String?>((
   return service.watchCapsulesForChild(childId);
 });
 
+/// Stream provider for capsules featuring the mother.
+final motherCapsulesProvider = StreamProvider<List<Capsule>>((ref) {
+  final uid = ref.watch(userIdProvider);
+  if (uid == null) return Stream.value([]);
+
+  final service = ref.watch(capsuleServiceProvider);
+  return service.watchMotherCapsules();
+});
+
+/// Stream provider for family space capsules.
+final familyCapsulesProvider = StreamProvider<List<Capsule>>((ref) {
+  final uid = ref.watch(userIdProvider);
+  if (uid == null) return Stream.value([]);
+
+  final service = ref.watch(capsuleServiceProvider);
+  return service.watchFamilyCapsules();
+});
+
 /// Provider for capsule count (quota check).
 final capsuleCountProvider = FutureProvider<int>((ref) async {
   final service = ref.watch(capsuleServiceProvider);
@@ -178,7 +196,11 @@ class CapsuleActionsNotifier extends StateNotifier<CapsuleActionsState> {
 
   /// Create new capsule.
   Future<Capsule?> createCapsule({
-    required String childId,
+    String? childId,
+    List<String>? childIds,
+    bool withMother = false,
+    String? pregnancyId,
+    int? pregnancyWeek,
     required File photoFile,
     File? audioFile,
     int? audioDuration,
@@ -196,6 +218,10 @@ class CapsuleActionsNotifier extends StateNotifier<CapsuleActionsState> {
     try {
       final capsule = await _service.createCapsule(
         childId: childId,
+        childIds: childIds,
+        withMother: withMother,
+        pregnancyId: pregnancyId,
+        pregnancyWeek: pregnancyWeek,
         photoFile: photoFile,
         audioFile: audioFile,
         audioDuration: audioDuration,
@@ -211,12 +237,12 @@ class CapsuleActionsNotifier extends StateNotifier<CapsuleActionsState> {
       );
 
       // If tied to a milestone, mark it as completed
-      if (milestoneId != null) {
+      if (milestoneId != null && capsule.childId.isNotEmpty) {
         try {
           final timelineService = _ref.read(timelineServiceProvider);
           await timelineService.completeMilestone(
             userId: capsule.userId,
-            childId: childId,
+            childId: capsule.childId,
             milestoneId: milestoneId,
             capsuleId: capsule.id,
           );

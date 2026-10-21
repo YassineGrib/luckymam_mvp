@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:lukymam_mvp/features/capsules/models/capsule.dart';
 import 'package:lukymam_mvp/features/capsules/models/emotion.dart';
+import 'package:lukymam_mvp/features/capsules/services/capsule_service.dart';
 
 Capsule _capsule({
   String id = 'test_id',
@@ -341,6 +342,195 @@ void main() {
       expect(updated.childId, '');
       expect(updated.space, CapsuleSpace.mother);
       expect(updated.toFirestore()['childIds'], isEmpty);
+    });
+  });
+
+  group('Task 6: capsule subject resolution and validation', () {
+    test('resolveEffectiveCapsuleChildIds with childId only', () {
+      expect(resolveEffectiveCapsuleChildIds(childId: 'c1'), ['c1']);
+    });
+
+    test('resolveEffectiveCapsuleChildIds with childIds only', () {
+      expect(
+        resolveEffectiveCapsuleChildIds(childIds: ['c1', 'c2']),
+        ['c1', 'c2'],
+      );
+    });
+
+    test('resolveEffectiveCapsuleChildIds prefers childIds over childId', () {
+      expect(
+        resolveEffectiveCapsuleChildIds(
+          childId: 'c1',
+          childIds: ['c2', 'c3'],
+        ),
+        ['c2', 'c3'],
+      );
+    });
+
+    test('resolveEffectiveCapsuleChildIds with neither gives empty list', () {
+      expect(resolveEffectiveCapsuleChildIds(), isEmpty);
+    });
+
+    test('validateCapsuleSubjects allows at least one child', () {
+      expect(
+        () => validateCapsuleSubjects(childIds: ['c1'], withMother: false),
+        returnsNormally,
+      );
+    });
+
+    test('validateCapsuleSubjects allows mother alone', () {
+      expect(
+        () => validateCapsuleSubjects(childIds: [], withMother: true),
+        returnsNormally,
+      );
+    });
+
+    test('validateCapsuleSubjects allows both child and mother', () {
+      expect(
+        () => validateCapsuleSubjects(childIds: ['c1'], withMother: true),
+        returnsNormally,
+      );
+    });
+
+    test(
+        'validateCapsuleSubjects throws ArgumentError if empty children and !withMother',
+        () {
+      expect(
+        () => validateCapsuleSubjects(childIds: [], withMother: false),
+        throwsA(
+          isA<ArgumentError>().having(
+            (e) => e.message,
+            'message',
+            'A capsule needs at least one child or the mother',
+          ),
+        ),
+      );
+    });
+  });
+
+  group('Task 6: capsule schema migration pure logic', () {
+    test('needsCapsuleMigration returns true for null or versions < 2', () {
+      expect(needsCapsuleMigration(null), isTrue);
+      expect(needsCapsuleMigration(0), isTrue);
+      expect(needsCapsuleMigration(1), isTrue);
+      expect(needsCapsuleMigration(2), isFalse);
+      expect(needsCapsuleMigration(3), isFalse);
+    });
+
+    test(
+        'computeCapsuleSubjectMigration returns null if childIds key already exists',
+        () {
+      expect(
+        computeCapsuleSubjectMigration({
+          'childIds': ['c1'],
+          'childId': 'c1',
+        }),
+        isNull,
+      );
+      expect(
+        computeCapsuleSubjectMigration({
+          'childIds': <String>[],
+          'withMother': true,
+        }),
+        isNull,
+      );
+    });
+
+    test(
+        'computeCapsuleSubjectMigration computes update map for legacy doc with childId',
+        () {
+      final update = computeCapsuleSubjectMigration({
+        'childId': 'child_123',
+        'createdAt': Timestamp.now(),
+      });
+      expect(update, {
+        'childIds': ['child_123'],
+        'withMother': false,
+        'space': 'child',
+      });
+    });
+
+    test(
+        'computeCapsuleSubjectMigration handles empty or missing legacy childId',
+        () {
+      final updateEmpty = computeCapsuleSubjectMigration({
+        'childId': '',
+      });
+      expect(updateEmpty, {
+        'childIds': <String>[],
+        'withMother': false,
+        'space': 'child',
+      });
+
+      final updateNull = computeCapsuleSubjectMigration({
+        'childId': null,
+      });
+      expect(updateNull, {
+        'childIds': <String>[],
+        'withMother': false,
+        'space': 'child',
+      });
+
+      final updateMissing = computeCapsuleSubjectMigration({
+        'emotion': 'happy',
+      });
+      expect(updateMissing, {
+        'childIds': <String>[],
+        'withMother': false,
+        'space': 'child',
+      });
+    });
+  });
+
+  group('Task 6: client-side query filter predicates', () {
+    test(
+        'watchCapsulesForChild predicate matches child in childIds (including legacy)',
+        () {
+      final legacy = fromMap({'childId': 'c1'});
+      final multi = fromMap({
+        'childIds': ['c1', 'c2'],
+        'childId': 'c1',
+      });
+      final other = fromMap({
+        'childIds': ['c2'],
+        'childId': 'c2',
+      });
+
+      bool matchesC1(Capsule c) => c.childIds.contains('c1');
+
+      expect(matchesC1(legacy), isTrue);
+      expect(matchesC1(multi), isTrue);
+      expect(matchesC1(other), isFalse);
+    });
+
+    test('watchMotherCapsules predicate matches withMother', () {
+      final motherAlone = fromMap({'withMother': true, 'childIds': []});
+      final bump = fromMap(
+          {'withMother': true, 'childIds': ['c1'], 'pregnancyId': 'p1'});
+      final childAlone = fromMap({'withMother': false, 'childIds': ['c1']});
+
+      bool matchesMother(Capsule c) => c.withMother;
+
+      expect(matchesMother(motherAlone), isTrue);
+      expect(matchesMother(bump), isTrue);
+      expect(matchesMother(childAlone), isFalse);
+    });
+
+    test(
+        'watchFamilyCapsules predicate matches space == CapsuleSpace.family',
+        () {
+      final siblings = fromMap({'childIds': ['c1', 'c2']});
+      final motherAndChild =
+          fromMap({'childIds': ['c1'], 'withMother': true});
+      final singleChild = fromMap({'childIds': ['c1']});
+      final motherAlone = fromMap({'childIds': [], 'withMother': true});
+
+      bool matchesFamily(Capsule c) => c.space == CapsuleSpace.family;
+
+      expect(matchesFamily(siblings), isTrue);
+      expect(matchesFamily(motherAndChild), isTrue);
+      expect(matchesFamily(singleChild), isFalse);
+      expect(matchesFamily(motherAlone), isFalse);
     });
   });
 }

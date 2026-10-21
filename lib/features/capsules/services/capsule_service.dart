@@ -10,6 +10,58 @@ import '../../../core/services/analytics_service.dart';
 import '../models/capsule.dart';
 import '../models/emotion.dart';
 
+/// Default schema version for capsule documents.
+const int kCurrentCapsuleSchemaVersion = 2;
+
+/// Resolves the effective child IDs from optional multi-child and legacy child parameters.
+List<String> resolveEffectiveCapsuleChildIds({
+  String? childId,
+  List<String>? childIds,
+}) {
+  return childIds ?? (childId != null ? [childId] : <String>[]);
+}
+
+/// Validates that a capsule has at least one child or features the mother.
+///
+/// Throws [ArgumentError] if [childIds] is empty and [withMother] is false.
+void validateCapsuleSubjects({
+  required List<String> childIds,
+  required bool withMother,
+}) {
+  if (childIds.isEmpty && !withMother) {
+    throw ArgumentError('A capsule needs at least one child or the mother');
+  }
+}
+
+/// Checks whether capsule schema needs migration.
+bool needsCapsuleMigration(int? schemaVersion) {
+  return (schemaVersion ?? 0) < kCurrentCapsuleSchemaVersion;
+}
+
+/// Computes the migration update payload for a raw capsule document map.
+///
+/// Returns null if the document already contains the `childIds` key.
+/// Otherwise returns a map with `{childIds, withMother: false, space: 'child'}`
+/// derived from the legacy `childId` field.
+Map<String, dynamic>? computeCapsuleSubjectMigration(
+    Map<dynamic, dynamic> rawData) {
+  if (rawData.containsKey('childIds')) {
+    return null;
+  }
+  final legacyChildId = rawData['childId'];
+  final List<String> childIds;
+  if (legacyChildId is String && legacyChildId.isNotEmpty) {
+    childIds = [legacyChildId];
+  } else {
+    childIds = const <String>[];
+  }
+  return <String, dynamic>{
+    'childIds': childIds,
+    'withMother': false,
+    'space': CapsuleSpace.child.name,
+  };
+}
+
 /// Service for capsule CRUD operations and media upload.
 class CapsuleService {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
@@ -31,6 +83,20 @@ class CapsuleService {
   // CRUD OPERATIONS
   // ═══════════════════════════════════════════════════════════════════════════
 
+  /// Private helper that reuses the ordered capsules stream and filters client-side.
+  Stream<List<Capsule>> _watchWhere(bool Function(Capsule) test) {
+    if (_userId == null) return Stream.value([]);
+    return _capsulesRef
+        .orderBy('createdAt', descending: true)
+        .snapshots()
+        .map(
+          (snapshot) => snapshot.docs
+              .map((doc) => Capsule.fromFirestore(doc))
+              .where(test)
+              .toList(),
+        );
+  }
+
   /// Watch all capsules for current user.
   Stream<List<Capsule>> watchCapsules() {
     if (_userId == null) return Stream.value([]);
@@ -45,15 +111,17 @@ class CapsuleService {
 
   /// Watch capsules for a specific child.
   Stream<List<Capsule>> watchCapsulesForChild(String childId) {
-    if (_userId == null) return Stream.value([]);
-    return _capsulesRef
-        .where('childId', isEqualTo: childId)
-        .orderBy('createdAt', descending: true)
-        .snapshots()
-        .map(
-          (snapshot) =>
-              snapshot.docs.map((doc) => Capsule.fromFirestore(doc)).toList(),
-        );
+    return _watchWhere((c) => c.childIds.contains(childId));
+  }
+
+  /// Watch capsules where the mother is featured.
+  Stream<List<Capsule>> watchMotherCapsules() {
+    return _watchWhere((c) => c.withMother);
+  }
+
+  /// Watch capsules in the family space.
+  Stream<List<Capsule>> watchFamilyCapsules() {
+    return _watchWhere((c) => c.space == CapsuleSpace.family);
   }
 
   /// Get capsules count for quota check.
@@ -65,7 +133,11 @@ class CapsuleService {
 
   /// Create a new capsule with media upload.
   Future<Capsule> createCapsule({
-    required String childId,
+    String? childId,
+    List<String>? childIds,
+    bool withMother = false,
+    String? pregnancyId,
+    int? pregnancyWeek,
     required File photoFile,
     File? audioFile,
     int? audioDuration,
@@ -79,6 +151,15 @@ class CapsuleService {
     DateTime? capturedAt,
     CapsuleCategory? category,
   }) async {
+    final effectiveChildIds = resolveEffectiveCapsuleChildIds(
+      childId: childId,
+      childIds: childIds,
+    );
+    validateCapsuleSubjects(
+      childIds: effectiveChildIds,
+      withMother: withMother,
+    );
+
     if (_userId == null) throw Exception('User not authenticated');
 
     final capsuleId = _uuid.v4();
@@ -105,7 +186,11 @@ class CapsuleService {
     final capsule = Capsule(
       id: capsuleId,
       userId: _userId!,
-      childId: childId,
+      childId: effectiveChildIds.isNotEmpty ? effectiveChildIds.first : '',
+      childIds: effectiveChildIds,
+      withMother: withMother,
+      pregnancyId: pregnancyId,
+      pregnancyWeek: pregnancyWeek,
       milestoneId: milestoneId,
       vaccineGroupId: vaccineGroupId,
       albumId: albumId,
@@ -126,13 +211,14 @@ class CapsuleService {
     await _capsulesRef.doc(capsuleId).set(capsule.toFirestore());
 
     // If tied to a vaccine group, update the vaccine status
-    if (vaccineGroupId != null) {
+    if (vaccineGroupId != null && effectiveChildIds.isNotEmpty) {
+      final vaxChildId = effectiveChildIds.first;
       try {
         final vaccineStatusRef = _firestore
             .collection('users')
             .doc(_userId)
             .collection('children')
-            .doc(childId)
+            .doc(vaxChildId)
             .collection('vaccinations')
             .doc(vaccineGroupId);
 
@@ -164,7 +250,7 @@ class CapsuleService {
       await _analytics.logEvent(
         'vax_capsule_created',
         parameters: {
-          'childId': childId,
+          'childId': vaxChildId,
           'vaccineGroupId': vaccineGroupId,
           'capsuleId': capsuleId,
         },
@@ -249,6 +335,68 @@ class CapsuleService {
     await _capsulesRef.doc(capsule.id).delete();
   }
 
+  /// Migrates legacy capsules without `childIds` to the multi-subject schema.
+  ///
+  /// Reads `users/{uid}`. If `capsuleSchemaVersion >= 2`, returns 0 immediately.
+  /// Otherwise, fetches all capsules for the user and for every doc lacking `childIds`,
+  /// updates `{childIds, withMother: false, space: 'child'}` in batches of at most 450.
+  /// After all batches succeed, sets `capsuleSchemaVersion: 2` on the user doc (merge).
+  /// Returns the number of docs updated.
+  Future<int> migrateCapsuleSubjects() async {
+    final uid = _userId;
+    if (uid == null) return 0;
+
+    final userRef = _firestore.collection('users').doc(uid);
+    final userDoc = await userRef.get();
+    final userData = userDoc.data();
+    final schemaVersion =
+        (userData?['capsuleSchemaVersion'] as num?)?.toInt();
+    if (!needsCapsuleMigration(schemaVersion)) {
+      return 0;
+    }
+
+    final querySnapshot = await _capsulesRef.get();
+    final docsToUpdate = <QueryDocumentSnapshot<Map<String, dynamic>>>[];
+
+    for (final doc in querySnapshot.docs) {
+      final data = doc.data();
+      if (!data.containsKey('childIds')) {
+        docsToUpdate.add(doc);
+      }
+    }
+
+    if (docsToUpdate.isEmpty) {
+      await userRef.set(
+        {'capsuleSchemaVersion': kCurrentCapsuleSchemaVersion},
+        SetOptions(merge: true),
+      );
+      return 0;
+    }
+
+    const batchSize = 450;
+    for (var i = 0; i < docsToUpdate.length; i += batchSize) {
+      final end = (i + batchSize < docsToUpdate.length)
+          ? i + batchSize
+          : docsToUpdate.length;
+      final chunk = docsToUpdate.sublist(i, end);
+      final batch = _firestore.batch();
+      for (final doc in chunk) {
+        final update = computeCapsuleSubjectMigration(doc.data());
+        if (update != null) {
+          batch.update(doc.reference, update);
+        }
+      }
+      await batch.commit();
+    }
+
+    await userRef.set(
+      {'capsuleSchemaVersion': kCurrentCapsuleSchemaVersion},
+      SetOptions(merge: true),
+    );
+
+    return docsToUpdate.length;
+  }
+
   // ═══════════════════════════════════════════════════════════════════════════
   // MEDIA OPERATIONS
   // ═══════════════════════════════════════════════════════════════════════════
@@ -317,7 +465,8 @@ class CapsuleService {
 
       // Apply filters
       if (childId != null) {
-        capsules = capsules.where((c) => c.childId == childId).toList();
+        capsules =
+            capsules.where((c) => c.childIds.contains(childId)).toList();
       }
 
       if (emotion != null) {
