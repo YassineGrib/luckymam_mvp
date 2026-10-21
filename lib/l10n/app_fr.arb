@@ -1177,5 +1177,14 @@
   "profileDeleteAccountCancel": "Annuler",
   "profileDeleteAccountConfirm": "Supprimer le compte",
   "profileDeleteAccountReauthRequired": "Pour des raisons de sécurité, veuillez vous reconnecter avant de supprimer votre compte.",
-  "profileDeleteAccountError": "Une erreur est survenue lors de la suppression du compte."
+  "profileDeleteAccountError": "Une erreur est survenue lors de la suppression du compte.",
+  "genderUnknown": "Surprise",
+  "childExpectedInWeeks": "Naissance prévue dans {weeks} sem.",
+  "@childExpectedInWeeks": {
+    "placeholders": {
+      "weeks": {"type": "int"}
+    }
+  },
+  "childDueToday": "Naissance prévue aujourd'hui",
+  "childExpectedDefaultName": "Bébé"
 }

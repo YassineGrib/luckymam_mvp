@@ -19,11 +19,32 @@ String localizedCyclePhase(AppLocalizations l10n, String phase) {
 
 /// Localized gender label for a [ChildGender].
 String childGenderLabel(AppLocalizations l10n, ChildGender gender) {
-  return gender == ChildGender.girl ? l10n.profileGirl : l10n.profileBoy;
+  switch (gender) {
+    case ChildGender.girl:
+      return l10n.profileGirl;
+    case ChildGender.boy:
+      return l10n.profileBoy;
+    case ChildGender.unknown:
+      return l10n.genderUnknown;
+  }
 }
 
 /// Localized age string from [birthDate].
-String childAgeString(AppLocalizations l10n, DateTime birthDate) {
+String childAgeString(
+  AppLocalizations l10n,
+  DateTime birthDate, {
+  bool isExpected = false,
+}) {
+  if (isExpected) {
+    final now = DateTime.now();
+    final days = birthDate.difference(now).inDays;
+    final weeks = (days / 7).ceil().clamp(0, 999);
+    if (weeks == 0) {
+      return l10n.childDueToday;
+    }
+    return l10n.childExpectedInWeeks(weeks);
+  }
+
   final now = DateTime.now();
   final months =
       (now.year - birthDate.year) * 12 + now.month - birthDate.month;
@@ -63,7 +84,7 @@ extension ChildL10n on Child {
       childGenderLabel(l10n, gender);
 
   String localizedAgeString(AppLocalizations l10n) =>
-      childAgeString(l10n, birthDate);
+      childAgeString(l10n, birthDate, isExpected: isExpected);
 }
 
 extension UserProfileL10n on UserProfile {

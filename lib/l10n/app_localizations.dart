@@ -4839,6 +4839,30 @@ abstract class AppLocalizations {
   /// In fr, this message translates to:
   /// **'Une erreur est survenue lors de la suppression du compte.'**
   String get profileDeleteAccountError;
+
+  /// No description provided for @genderUnknown.
+  ///
+  /// In fr, this message translates to:
+  /// **'Surprise'**
+  String get genderUnknown;
+
+  /// No description provided for @childExpectedInWeeks.
+  ///
+  /// In fr, this message translates to:
+  /// **'Naissance prévue dans {weeks} sem.'**
+  String childExpectedInWeeks(int weeks);
+
+  /// No description provided for @childDueToday.
+  ///
+  /// In fr, this message translates to:
+  /// **'Naissance prévue aujourd\'hui'**
+  String get childDueToday;
+
+  /// No description provided for @childExpectedDefaultName.
+  ///
+  /// In fr, this message translates to:
+  /// **'Bébé'**
+  String get childExpectedDefaultName;
 }
 
 class _AppLocalizationsDelegate

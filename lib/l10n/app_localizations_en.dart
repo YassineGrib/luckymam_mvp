@@ -2670,4 +2670,18 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get profileDeleteAccountError =>
       'An error occurred while deleting the account.';
+
+  @override
+  String get genderUnknown => 'Surprise';
+
+  @override
+  String childExpectedInWeeks(int weeks) {
+    return 'Due in $weeks weeks';
+  }
+
+  @override
+  String get childDueToday => 'Due today';
+
+  @override
+  String get childExpectedDefaultName => 'Baby';
 }

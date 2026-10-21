@@ -1132,5 +1132,14 @@
   "profileDeleteAccountCancel": "إلغاء",
   "profileDeleteAccountConfirm": "حذف الحساب",
   "profileDeleteAccountReauthRequired": "لأسباب أمنية، يجب تسجيل الدخول مجدداً قبل حذف الحساب. يُرجى الخروج وتسجيل الدخول ثم المحاولة مرة أخرى.",
-  "profileDeleteAccountError": "حدث خطأ أثناء حذف الحساب."
+  "profileDeleteAccountError": "حدث خطأ أثناء حذف الحساب.",
+  "genderUnknown": "مفاجأة",
+  "childExpectedInWeeks": "الولادة متوقعة بعد {weeks} أسابيع",
+  "@childExpectedInWeeks": {
+    "placeholders": {
+      "weeks": {"type": "int"}
+    }
+  },
+  "childDueToday": "الولادة متوقعة اليوم",
+  "childExpectedDefaultName": "بيبي"
 }

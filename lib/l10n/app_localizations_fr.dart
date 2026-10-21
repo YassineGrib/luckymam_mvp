@@ -2694,4 +2694,18 @@ class AppLocalizationsFr extends AppLocalizations {
   @override
   String get profileDeleteAccountError =>
       'Une erreur est survenue lors de la suppression du compte.';
+
+  @override
+  String get genderUnknown => 'Surprise';
+
+  @override
+  String childExpectedInWeeks(int weeks) {
+    return 'Naissance prévue dans $weeks sem.';
+  }
+
+  @override
+  String get childDueToday => 'Naissance prévue aujourd\'hui';
+
+  @override
+  String get childExpectedDefaultName => 'Bébé';
 }

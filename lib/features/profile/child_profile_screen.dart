@@ -856,6 +856,7 @@ class _BabyPassportHeroCard extends StatelessWidget {
     final detailedAge = _getDetailedAge(child.birthDate, lang);
     final zodiac = _getZodiac(child.birthDate, lang);
     final isBoy = child.gender == ChildGender.boy;
+    final isUnknown = child.gender == ChildGender.unknown;
 
     return Container(
       width: double.infinity,
@@ -893,7 +894,9 @@ class _BabyPassportHeroCard extends StatelessWidget {
               bottom: -15,
               child: IgnorePointer(
                 child: Icon(
-                  isBoy ? Icons.stars_rounded : Icons.cruelty_free_rounded,
+                  isUnknown
+                      ? Icons.child_care_rounded
+                      : (isBoy ? Icons.stars_rounded : Icons.cruelty_free_rounded),
                   size: 130,
                   color: themeColor.withValues(alpha: isDark ? 0.07 : 0.05),
                 ),
@@ -1009,15 +1012,19 @@ class _BabyPassportHeroCard extends StatelessWidget {
                                 mainAxisSize: MainAxisSize.min,
                                 children: [
                                   Icon(
-                                    isBoy ? Icons.male_rounded : Icons.female_rounded,
+                                    isUnknown
+                                        ? Icons.child_care_rounded
+                                        : (isBoy ? Icons.male_rounded : Icons.female_rounded),
                                     size: 13,
                                     color: themeColor,
                                   ),
                                   const SizedBox(width: 4),
                                   Text(
-                                    isBoy
-                                        ? (lang == 'ar' ? 'أمير' : 'Garçon')
-                                        : (lang == 'ar' ? 'أميرة' : 'Fille'),
+                                    isUnknown
+                                        ? (lang == 'ar' ? 'مفاجأة' : 'Surprise')
+                                        : (isBoy
+                                            ? (lang == 'ar' ? 'أمير' : 'Garçon')
+                                            : (lang == 'ar' ? 'أميرة' : 'Fille')),
                                     style: TextStyle(
                                       fontSize: 10.5,
                                       fontWeight: FontWeight.w800,

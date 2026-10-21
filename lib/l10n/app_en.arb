@@ -1132,5 +1132,14 @@
   "profileDeleteAccountCancel": "Cancel",
   "profileDeleteAccountConfirm": "Delete account",
   "profileDeleteAccountReauthRequired": "For security reasons, please log in again before deleting your account.",
-  "profileDeleteAccountError": "An error occurred while deleting the account."
+  "profileDeleteAccountError": "An error occurred while deleting the account.",
+  "genderUnknown": "Surprise",
+  "childExpectedInWeeks": "Due in {weeks} weeks",
+  "@childExpectedInWeeks": {
+    "placeholders": {
+      "weeks": {"type": "int"}
+    }
+  },
+  "childDueToday": "Due today",
+  "childExpectedDefaultName": "Baby"
 }

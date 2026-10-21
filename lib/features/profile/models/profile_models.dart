@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 import 'package:flutter/material.dart';
+import '../../../core/theme/app_colors.dart';
 
 /// User profile status enumeration.
 enum UserStatus {
@@ -13,14 +14,29 @@ enum UserStatus {
 enum ChildGender {
   boy, // Garçon
   girl, // Fille
+  unknown, // Surprise / genre non connu
+}
+
+/// Child lifecycle enumeration.
+enum ChildLifecycle {
+  expected, // À naître -- birthDate holds the EDD
+  born,     // Né(e)
 }
 
 /// Child data model.
 class Child {
   final String id;
   final String name;
+
+  /// For born children: the date of birth.
+  /// For expected children: the expected delivery date (EDD); Firestore stores
+  /// birthDate: null + expectedDate for these.
   final DateTime birthDate;
   final ChildGender gender;
+  final ChildLifecycle lifecycle;
+  final DateTime? expectedDate;
+  final String? pregnancyId;
+  final bool archived;
   final String? photoUrl;
   final String? bloodType;
   final String? themeColorHex;
@@ -31,22 +47,51 @@ class Child {
     required this.name,
     required this.birthDate,
     required this.gender,
+    this.lifecycle = ChildLifecycle.born,
+    this.expectedDate,
+    this.pregnancyId,
+    this.archived = false,
     this.photoUrl,
     this.bloodType,
     this.themeColorHex,
     this.notes,
   });
 
+  bool get isExpected => lifecycle == ChildLifecycle.expected;
+  bool get isBorn => lifecycle == ChildLifecycle.born;
+
   /// Create from Firestore document.
   factory Child.fromFirestore(Map<String, dynamic> data, String id) {
+    final lifecycle = ChildLifecycle.values.firstWhere(
+      (l) => l.name == data['lifecycle'],
+      orElse: () => ChildLifecycle.born,
+    );
+
+    final DateTime birthDate;
+    if (data['birthDate'] != null) {
+      birthDate = (data['birthDate'] as Timestamp).toDate();
+    } else if (data['expectedDate'] != null) {
+      birthDate = (data['expectedDate'] as Timestamp).toDate();
+    } else {
+      birthDate = DateTime.now();
+    }
+
+    final DateTime? expectedDate = data['expectedDate'] != null
+        ? (data['expectedDate'] as Timestamp).toDate()
+        : null;
+
     return Child(
       id: id,
       name: data['name'] ?? '',
-      birthDate: (data['birthDate'] as Timestamp).toDate(),
+      birthDate: birthDate,
       gender: ChildGender.values.firstWhere(
         (g) => g.name == data['gender'],
-        orElse: () => ChildGender.boy,
+        orElse: () => ChildGender.unknown,
       ),
+      lifecycle: lifecycle,
+      expectedDate: expectedDate,
+      pregnancyId: data['pregnancyId'] as String?,
+      archived: (data['archived'] as bool?) ?? false,
       photoUrl: data['photoUrl'],
       bloodType: data['bloodType'] as String?,
       themeColorHex: data['themeColorHex'] as String?,
@@ -58,8 +103,13 @@ class Child {
   Map<String, dynamic> toFirestore() {
     return {
       'name': name,
-      'birthDate': Timestamp.fromDate(birthDate),
+      'birthDate': isExpected ? null : Timestamp.fromDate(birthDate),
       'gender': gender.name,
+      'lifecycle': lifecycle.name,
+      if (expectedDate != null)
+        'expectedDate': Timestamp.fromDate(expectedDate!),
+      if (pregnancyId != null) 'pregnancyId': pregnancyId,
+      'archived': archived,
       'photoUrl': photoUrl,
       if (bloodType != null) 'bloodType': bloodType,
       if (themeColorHex != null) 'themeColorHex': themeColorHex,
@@ -67,11 +117,29 @@ class Child {
     };
   }
 
-  /// Display label for gender.
-  String get genderLabel => gender == ChildGender.girl ? 'Fille' : 'Garçon';
+  /// Display label for gender (legacy French getter).
+  String get genderLabel {
+    switch (gender) {
+      case ChildGender.girl:
+        return 'Fille';
+      case ChildGender.boy:
+        return 'Garçon';
+      case ChildGender.unknown:
+        return 'Surprise';
+    }
+  }
 
-  /// Calculate age string.
+  /// Calculate age string (legacy French getter — the one allowed hardcoded exception).
   String get ageString {
+    if (isExpected) {
+      final now = DateTime.now();
+      final days = birthDate.difference(now).inDays;
+      final weeks = (days / 7).ceil().clamp(0, 999);
+      if (weeks == 0) {
+        return "Naissance prévue aujourd'hui";
+      }
+      return 'Naissance prévue dans $weeks sem.';
+    }
     final now = DateTime.now();
     final months =
         (now.year - birthDate.year) * 12 + now.month - birthDate.month;
@@ -100,9 +168,14 @@ class Child {
         }
       } catch (_) {}
     }
-    return gender == ChildGender.boy
-        ? const Color(0xFF00B0FF)
-        : const Color(0xFFFF5252);
+    switch (gender) {
+      case ChildGender.boy:
+        return const Color(0xFF00B0FF);
+      case ChildGender.girl:
+        return const Color(0xFFFF5252);
+      case ChildGender.unknown:
+        return AppColors.goldenrod;
+    }
   }
 
   Child copyWith({
@@ -110,6 +183,10 @@ class Child {
     String? name,
     DateTime? birthDate,
     ChildGender? gender,
+    ChildLifecycle? lifecycle,
+    DateTime? expectedDate,
+    String? pregnancyId,
+    bool? archived,
     String? photoUrl,
     String? bloodType,
     String? themeColorHex,
@@ -120,6 +197,10 @@ class Child {
       name: name ?? this.name,
       birthDate: birthDate ?? this.birthDate,
       gender: gender ?? this.gender,
+      lifecycle: lifecycle ?? this.lifecycle,
+      expectedDate: expectedDate ?? this.expectedDate,
+      pregnancyId: pregnancyId ?? this.pregnancyId,
+      archived: archived ?? this.archived,
       photoUrl: photoUrl ?? this.photoUrl,
       bloodType: bloodType ?? this.bloodType,
       themeColorHex: themeColorHex ?? this.themeColorHex,

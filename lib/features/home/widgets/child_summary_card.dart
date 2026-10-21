@@ -51,17 +51,24 @@ class ChildSummaryCard extends StatelessWidget {
     }
 
     final isGirl = child.gender == ChildGender.girl;
-    final genderColor = isGirl
-        ? (isDark ? const Color(0xFFFB7185) : const Color(0xFFE11D48))
-        : (isDark ? const Color(0xFF60A5FA) : const Color(0xFF2563EB));
-    final genderBgColor = isGirl
-        ? (isDark ? const Color(0xFFFB7185).withValues(alpha: 0.15) : const Color(0xFFFFF1F2))
-        : (isDark ? const Color(0xFF3B82F6).withValues(alpha: 0.15) : const Color(0xFFEFF6FF));
+    final isUnknown = child.gender == ChildGender.unknown;
+    final genderColor = isUnknown
+        ? child.themeColor
+        : (isGirl
+            ? (isDark ? const Color(0xFFFB7185) : const Color(0xFFE11D48))
+            : (isDark ? const Color(0xFF60A5FA) : const Color(0xFF2563EB)));
+    final genderBgColor = isUnknown
+        ? child.themeColor.withValues(alpha: isDark ? 0.15 : 0.12)
+        : (isGirl
+            ? (isDark ? const Color(0xFFFB7185).withValues(alpha: 0.15) : const Color(0xFFFFF1F2))
+            : (isDark ? const Color(0xFF3B82F6).withValues(alpha: 0.15) : const Color(0xFFEFF6FF)));
 
     final bg = isDark ? const Color(0xFF241C20) : const Color(0xFFFFF4EE);
     final borderColor = isDark
         ? Colors.white.withValues(alpha: 0.08)
-        : (isGirl ? const Color(0xFFFFDFE5) : const Color(0xFFDCEBFE));
+        : (isUnknown
+            ? child.themeColor.withValues(alpha: 0.25)
+            : (isGirl ? const Color(0xFFFFDFE5) : const Color(0xFFDCEBFE)));
 
     final hasPhoto = child.photoUrl != null && child.photoUrl!.isNotEmpty;
 
@@ -165,15 +172,17 @@ class ChildSummaryCard extends StatelessWidget {
                             mainAxisSize: MainAxisSize.min,
                             children: [
                               Icon(
-                                isGirl
-                                    ? Icons.face_3_rounded
-                                    : Icons.face_6_rounded,
+                                isUnknown
+                                    ? Icons.child_care_rounded
+                                    : (isGirl
+                                        ? Icons.face_3_rounded
+                                        : Icons.face_6_rounded),
                                 size: 13,
                                 color: genderColor,
                               ),
                               const SizedBox(width: 4),
                               Text(
-                                isGirl ? l10n.profileGirl : l10n.profileBoy,
+                                child.localizedGenderLabel(l10n),
                                 style: TextStyle(
                                   fontSize: 10,
                                   fontWeight: FontWeight.w700,

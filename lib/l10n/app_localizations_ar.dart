@@ -2662,4 +2662,18 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get profileDeleteAccountError => 'حدث خطأ أثناء حذف الحساب.';
+
+  @override
+  String get genderUnknown => 'مفاجأة';
+
+  @override
+  String childExpectedInWeeks(int weeks) {
+    return 'الولادة متوقعة بعد $weeks أسابيع';
+  }
+
+  @override
+  String get childDueToday => 'الولادة متوقعة اليوم';
+
+  @override
+  String get childExpectedDefaultName => 'بيبي';
 }
