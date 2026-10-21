@@ -3,6 +3,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../core/providers/auth_provider.dart';
 import '../../../core/services/cycle_notification_service.dart';
 import '../../../l10n/app_localizations.dart';
+import '../models/mother_stage.dart';
+import '../models/pregnancy.dart';
 import '../models/profile_models.dart';
 import '../services/profile_service.dart';
 
@@ -32,7 +34,76 @@ final childrenProvider = StreamProvider<List<Child>>((ref) {
 /// State provider for selected child ID
 final selectedChildIdProvider = StateProvider<String?>((ref) => null);
 
-/// Provider for the currently selected child (or first child if none selected)
+/// Stream provider for user's pregnancies list ordered by creation date descending.
+final pregnanciesProvider = StreamProvider<List<Pregnancy>>((ref) {
+  final uid = ref.watch(userIdProvider);
+  if (uid == null) return Stream.value([]);
+
+  final service = ref.watch(profileServiceProvider);
+  return service.watchPregnancies();
+});
+
+/// Provider for the active pregnancy, if any.
+final activePregnancyProvider = Provider<Pregnancy?>((ref) {
+  final pregnancies = ref.watch(pregnanciesProvider).valueOrNull ?? [];
+  return pregnancies.where((p) => p.isActive).firstOrNull;
+});
+
+/// Provider for non-archived born children.
+final bornChildrenProvider = Provider<List<Child>>((ref) {
+  final children = ref.watch(childrenProvider).valueOrNull ?? [];
+  return children.where((c) => c.isBorn && !c.archived).toList();
+});
+
+/// Provider for non-archived expected children.
+final expectedChildrenProvider = Provider<List<Child>>((ref) {
+  final children = ref.watch(childrenProvider).valueOrNull ?? [];
+  return children.where((c) => c.isExpected && !c.archived).toList();
+});
+
+/// Provider for derived MotherStage (defaults to mom while loading).
+final motherStageProvider = Provider<MotherStage>((ref) {
+  final profileAsync = ref.watch(profileProvider);
+  final childrenAsync = ref.watch(childrenProvider);
+  final pregnanciesAsync = ref.watch(pregnanciesProvider);
+
+  if (profileAsync.isLoading ||
+      childrenAsync.isLoading ||
+      pregnanciesAsync.isLoading) {
+    if (!profileAsync.hasValue ||
+        !childrenAsync.hasValue ||
+        !pregnanciesAsync.hasValue) {
+      return MotherStage.mom;
+    }
+  }
+
+  final profile = profileAsync.valueOrNull;
+  if (profile == null) return MotherStage.mom;
+
+  final bornCount = ref.watch(bornChildrenProvider).length;
+  final hasActive = ref.watch(activePregnancyProvider) != null;
+  final ttc = profile.tryingToConceive;
+
+  return deriveMotherStage(
+    bornChildren: bornCount,
+    hasActivePregnancy: hasActive,
+    tryingToConceive: ttc,
+  );
+});
+
+/// Convenience flag: whether the mother is currently carrying an active pregnancy.
+final isPregnantProvider = Provider<bool>((ref) {
+  return ref.watch(motherStageProvider).isPregnant;
+});
+
+/// Convenience flag: whether the mother has at least one born child.
+final hasBornChildrenProvider = Provider<bool>((ref) {
+  return ref.watch(motherStageProvider).hasChildren;
+});
+
+/// Provider for the currently selected child.
+/// When no explicit selection, defaults to the first child with isBorn && !archived;
+/// if none, the first non-archived child; if none, null.
 final selectedChildProvider = Provider<AsyncValue<Child?>>((ref) {
   final childrenAsync = ref.watch(childrenProvider);
   final selectedId = ref.watch(selectedChildIdProvider);
@@ -48,8 +119,17 @@ final selectedChildProvider = Provider<AsyncValue<Child?>>((ref) {
         if (selected != null) return AsyncData(selected);
       }
 
-      // Default to first child
-      return AsyncData(children.first);
+      // Default to first born, non-archived child
+      final bornChild =
+          children.where((c) => c.isBorn && !c.archived).firstOrNull;
+      if (bornChild != null) return AsyncData(bornChild);
+
+      // If none, default to first non-archived child (e.g. expected child)
+      final nonArchived = children.where((c) => !c.archived).firstOrNull;
+      if (nonArchived != null) return AsyncData(nonArchived);
+
+      // If none, null
+      return const AsyncData(null);
     },
   );
 });
