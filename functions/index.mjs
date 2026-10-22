@@ -78,3 +78,6 @@ export const adminSsr = onRequest(
 
 // ─── Chargily Pay V2 Endpoints ──────────────────────────────────────────────
 export { createChargilyCheckout, chargilyWebhook } from "./chargily.mjs";
+
+// ─── AI Assistant Endpoints ─────────────────────────────────────────────────
+export { aiChat } from "./ai/aiChat.mjs";
