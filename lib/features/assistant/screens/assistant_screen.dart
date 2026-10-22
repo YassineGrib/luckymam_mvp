@@ -71,6 +71,7 @@ class _AssistantScreenState extends ConsumerState<AssistantScreen> {
         children: [
           const TopAmbientGradient(height: 320),
           SafeArea(
+            bottom: false,
             child: Column(
               children: [
                 // 1. Top Header with Back button and Mochi Avatar

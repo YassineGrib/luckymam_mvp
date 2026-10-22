@@ -15,8 +15,13 @@ class GeminiDirectBackend implements AssistantBackend {
   final String apiKey;
   final http.Client _client;
 
-  static const String _endpoint =
-      'https://generativelanguage.googleapis.com/v1beta/models/gemini-flash-latest:generateContent';
+  static const List<String> _models = [
+    'gemini-flash-lite-latest',
+    'gemini-flash-latest',
+  ];
+
+  static String _endpointFor(String model) =>
+      'https://generativelanguage.googleapis.com/v1beta/models/$model:generateContent';
 
   @override
   Future<AssistantReply> send({
@@ -85,59 +90,66 @@ class GeminiDirectBackend implements AssistantBackend {
       },
     });
 
-    try {
-      final response = await _client
-          .post(
-            Uri.parse(_endpoint),
-            headers: {
-              'Content-Type': 'application/json',
-              'X-goog-api-key': apiKey,
-            },
-            body: body,
-          )
-          .timeout(const Duration(seconds: 20));
+    Exception? lastError;
 
-      if (response.statusCode == 200) {
-        final data = jsonDecode(response.body) as Map<String, dynamic>;
-        final candidates = data['candidates'] as List<dynamic>?;
-        if (candidates != null && candidates.isNotEmpty) {
-          final first = candidates[0] as Map<String, dynamic>;
-          final content = first['content'] as Map<String, dynamic>?;
-          final parts = content?['parts'] as List<dynamic>?;
-          if (parts != null && parts.isNotEmpty) {
-            final replyText = parts[0]['text'] as String? ?? '';
-            final mood = _deriveMood(replyText);
-            final cards = _deriveContextCards(trimmed, replyText, locale);
-            return AssistantReply(
-              text: replyText.trim(),
-              cards: cards,
-              mood: mood,
-            );
+    for (final model in _models) {
+      try {
+        final response = await _client
+            .post(
+              Uri.parse(_endpointFor(model)),
+              headers: {
+                'Content-Type': 'application/json',
+                'X-goog-api-key': apiKey,
+              },
+              body: body,
+            )
+            .timeout(const Duration(seconds: 15));
+
+        if (response.statusCode == 200) {
+          final data = jsonDecode(response.body) as Map<String, dynamic>;
+          final candidates = data['candidates'] as List<dynamic>?;
+          if (candidates != null && candidates.isNotEmpty) {
+            final first = candidates[0] as Map<String, dynamic>;
+            final content = first['content'] as Map<String, dynamic>?;
+            final parts = content?['parts'] as List<dynamic>?;
+            if (parts != null && parts.isNotEmpty) {
+              final replyText = parts[0]['text'] as String? ?? '';
+              final mood = _deriveMood(replyText);
+              final cards = _deriveContextCards(trimmed, replyText, locale);
+              return AssistantReply(
+                text: replyText.trim(),
+                cards: cards,
+                mood: mood,
+              );
+            }
           }
+          continue;
+        } else if (response.statusCode == 429) {
+          lastError = const AssistantException(
+            kind: AssistantErrorKind.quota,
+            details: 'Rate limit exceeded',
+          );
+          continue;
+        } else {
+          lastError = AssistantException(
+            kind: AssistantErrorKind.unavailable,
+            details: 'HTTP ${response.statusCode}: ${response.body}',
+          );
+          continue;
         }
-        throw const AssistantException(
-          kind: AssistantErrorKind.unavailable,
-          details: 'Empty response from model',
+      } catch (e) {
+        lastError = AssistantException(
+          kind: AssistantErrorKind.network,
+          details: e.toString(),
         );
-      } else if (response.statusCode == 429) {
-        throw const AssistantException(
-          kind: AssistantErrorKind.quota,
-          details: 'Rate limit exceeded',
-        );
-      } else {
-        throw AssistantException(
-          kind: AssistantErrorKind.unavailable,
-          details: 'HTTP ${response.statusCode}: ${response.body}',
-        );
+        continue;
       }
-    } on AssistantException {
-      rethrow;
-    } catch (e) {
-      throw AssistantException(
-        kind: AssistantErrorKind.network,
-        details: e.toString(),
-      );
     }
+
+    if (lastError != null) {
+      throw lastError;
+    }
+    throw const AssistantException(kind: AssistantErrorKind.unavailable);
   }
 
   /// Emergency detection for symptoms requiring immediate medical evaluation.

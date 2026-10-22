@@ -219,11 +219,12 @@ final assistantBackendProvider = Provider<AssistantBackend>((ref) {
   if (isFake) {
     return FakeAssistantBackend();
   }
-  const isDirect = bool.fromEnvironment('ASSISTANT_DIRECT', defaultValue: false);
-  if (isDirect) {
-    return GeminiDirectBackend();
+  const isCallable = bool.fromEnvironment('ASSISTANT_CALLABLE', defaultValue: false);
+  if (isCallable) {
+    return GeminiAssistantBackend();
   }
-  return GeminiAssistantBackend();
+  // Default to GeminiDirectBackend using the Google AI Studio key from docs/ai.md
+  return GeminiDirectBackend();
 });
 
 /// Auto-disposed StateNotifierProvider for AssistantController.
