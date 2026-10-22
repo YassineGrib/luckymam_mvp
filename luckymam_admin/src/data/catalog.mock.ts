@@ -66,6 +66,14 @@ export type Product = {
   createdAt: string;
   featured?: boolean;
   highlights?: string[];
+  audience?: "child" | "mother" | "pregnancy";
+  ageMinMonths?: number;
+  ageMaxMonths?: number;
+  pregnancyTrimesters?: number[];
+  skills?: string[];
+  benefitsFr?: string[];
+  benefitsAr?: string[];
+  benefitsEn?: string[];
 };
 
 export const products: Product[] = [];

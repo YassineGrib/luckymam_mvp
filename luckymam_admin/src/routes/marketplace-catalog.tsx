@@ -98,6 +98,18 @@ type StatusFilter = "all" | ProductStatus;
 type View = "grid" | "list";
 type SortKey = "recent" | "top" | "low_stock" | "price_desc" | "price_asc";
 
+const ALLOWED_SKILLS = [
+  { id: "communication", label: "Communication" },
+  { id: "motricite_fine", label: "Motricité fine" },
+  { id: "motricite_globale", label: "Motricité globale" },
+  { id: "cognitif", label: "Cognitif" },
+  { id: "sensoriel", label: "Sensoriel" },
+  { id: "autonomie", label: "Autonomie" },
+  { id: "sommeil", label: "Sommeil" },
+  { id: "creativite", label: "Créativité" },
+  { id: "langage", label: "Langage" },
+];
+
 const SORTS: { key: SortKey; label: string }[] = [
   { key: "recent", label: "الأحدث" },
   { key: "top", label: "الأكثر مبيعًا" },
@@ -216,6 +228,15 @@ function CatalogPage() {
   const [featured, setFeatured] = useState(false);
   const [sku, setSku] = useState("");
 
+  // Recommendation fields (LM2-149)
+  const [audience, setAudience] = useState<"child" | "mother" | "pregnancy">("child");
+  const [ageMinMonths, setAgeMinMonths] = useState<number | undefined>(undefined);
+  const [ageMaxMonths, setAgeMaxMonths] = useState<number | undefined>(undefined);
+  const [selectedSkills, setSelectedSkills] = useState<string[]>([]);
+  const [benefitsFrStr, setBenefitsFrStr] = useState("");
+  const [benefitsArStr, setBenefitsArStr] = useState("");
+  const [benefitsEnStr, setBenefitsEnStr] = useState("");
+
   // Upload state
   const [uploading, setUploading] = useState(false);
   const [uploadProgress, setUploadProgress] = useState(0);
@@ -254,6 +275,14 @@ function CatalogPage() {
             createdAt: data.createdAt || new Date().toISOString().split("T")[0],
             featured: data.featured || false,
             highlights: data.highlights || [],
+            audience: data.audience || "child",
+            ageMinMonths: data.ageMinMonths !== undefined ? Number(data.ageMinMonths) : undefined,
+            ageMaxMonths: data.ageMaxMonths !== undefined ? Number(data.ageMaxMonths) : undefined,
+            pregnancyTrimesters: data.pregnancyTrimesters || [],
+            skills: data.skills || [],
+            benefitsFr: data.benefitsFr || [],
+            benefitsAr: data.benefitsAr || [],
+            benefitsEn: data.benefitsEn || [],
           } as Product;
         });
 
@@ -296,6 +325,13 @@ function CatalogPage() {
       setStock(prod.stock);
       setProductStatus(prod.status);
       setFeatured(prod.featured || false);
+      setAudience(prod.audience || "child");
+      setAgeMinMonths(prod.ageMinMonths);
+      setAgeMaxMonths(prod.ageMaxMonths);
+      setSelectedSkills(prod.skills || []);
+      setBenefitsFrStr((prod.benefitsFr || []).join("\n"));
+      setBenefitsArStr((prod.benefitsAr || []).join("\n"));
+      setBenefitsEnStr((prod.benefitsEn || []).join("\n"));
     } else {
       setEditingProduct(null);
       setSku(`SKU-${Math.floor(100000 + Math.random() * 900000)}`);
@@ -311,6 +347,13 @@ function CatalogPage() {
       setStock(10);
       setProductStatus("active");
       setFeatured(false);
+      setAudience("child");
+      setAgeMinMonths(undefined);
+      setAgeMaxMonths(undefined);
+      setSelectedSkills([]);
+      setBenefitsFrStr("");
+      setBenefitsArStr("");
+      setBenefitsEnStr("");
     }
     setIsFormOpen(true);
   };
@@ -398,6 +441,13 @@ function CatalogPage() {
       status: Number(stock) === 0 ? "out_of_stock" : productStatus,
       featured,
       createdAt: editingProduct ? editingProduct.createdAt : new Date().toISOString().split("T")[0],
+      audience,
+      ageMinMonths: ageMinMonths !== undefined ? Number(ageMinMonths) : null,
+      ageMaxMonths: ageMaxMonths !== undefined ? Number(ageMaxMonths) : null,
+      skills: selectedSkills,
+      benefitsFr: benefitsFrStr.split("\n").map((s) => s.trim()).filter(Boolean),
+      benefitsAr: benefitsArStr.split("\n").map((s) => s.trim()).filter(Boolean),
+      benefitsEn: benefitsEnStr.split("\n").map((s) => s.trim()).filter(Boolean),
     };
 
     try {
@@ -1157,6 +1207,140 @@ function CatalogPage() {
                 <div className="flex items-center justify-center p-3 rounded-xl border border-emerald-100 bg-emerald-50/30 text-[10px] text-emerald-800 font-semibold gap-2 leading-relaxed">
                   <CheckCircle className="size-4 shrink-0 text-emerald-600" />
                   <span>{tr("المنتجات المضافة يتم ربطها لحظياً مع التطبيق وسيتم توجيهها للشركاء المقابلين.")}</span>
+                </div>
+              </div>
+            </div>
+
+            {/* AI Recommendation Fields (LM2-149) */}
+            <div className="col-span-full border-t border-border/60 pt-4 space-y-4">
+              <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-cherry-600">
+                <Sparkles className="size-4" />
+                <span>{tr("بيانات التوصية الذكية للمساعد Lucky (LM2-149)")}</span>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div className="space-y-1.5">
+                  <Label className="text-xs font-semibold text-ink">{tr("الجمهور المستهدف")}</Label>
+                  <Select value={audience} onValueChange={(val: "child" | "mother" | "pregnancy") => setAudience(val)}>
+                    <SelectTrigger className="rounded-xl border-border/80 focus:ring-cherry-200">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="child">{tr("الطفل (حسب العمر)")}</SelectItem>
+                      <SelectItem value="mother">{tr("الأم (عناية شخصية)")}</SelectItem>
+                      <SelectItem value="pregnancy">{tr("فترة الحمل")}</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                {audience === "child" ? (
+                  <>
+                    <div className="space-y-1.5">
+                      <Label htmlFor="age-min" className="text-xs font-semibold text-ink">
+                        {tr("العمر الأدنى (أشهر)")}
+                      </Label>
+                      <Input
+                        id="age-min"
+                        type="number"
+                        min={0}
+                        placeholder="0"
+                        value={ageMinMonths ?? ""}
+                        onChange={(e) => setAgeMinMonths(e.target.value ? Number(e.target.value) : undefined)}
+                        className="rounded-xl border-border/80 text-xs"
+                      />
+                    </div>
+                    <div className="space-y-1.5">
+                      <Label htmlFor="age-max" className="text-xs font-semibold text-ink">
+                        {tr("العمر الأقصى (أشهر)")}
+                      </Label>
+                      <Input
+                        id="age-max"
+                        type="number"
+                        min={0}
+                        placeholder="36"
+                        value={ageMaxMonths ?? ""}
+                        onChange={(e) => setAgeMaxMonths(e.target.value ? Number(e.target.value) : undefined)}
+                        className="rounded-xl border-border/80 text-xs"
+                      />
+                    </div>
+                  </>
+                ) : (
+                  <div className="col-span-2 flex items-center text-xs text-ink-muted bg-muted/20 p-3 rounded-xl border border-border/60">
+                    {audience === "mother"
+                      ? tr("هذا المنتج مخصص للأمهات ولا يعتمد على عمر الطفل.")
+                      : tr("هذا المنتج مخصص لمراحل الحمل.")}
+                  </div>
+                )}
+              </div>
+
+              {/* Skills Multi-select chips */}
+              <div className="space-y-2">
+                <Label className="text-xs font-semibold text-ink">{tr("مهارات التطور المدعومة")}</Label>
+                <div className="flex flex-wrap gap-2">
+                  {ALLOWED_SKILLS.map((sk) => {
+                    const isSelected = selectedSkills.includes(sk.id);
+                    return (
+                      <button
+                        key={sk.id}
+                        type="button"
+                        onClick={() => {
+                          setSelectedSkills((prev) =>
+                            isSelected ? prev.filter((s) => s !== sk.id) : [...prev, sk.id]
+                          );
+                        }}
+                        className={cn(
+                          "rounded-full px-3 py-1 text-xs font-medium border transition-all cursor-pointer",
+                          isSelected
+                            ? "bg-cherry-600 text-white border-cherry-600 shadow-sm"
+                            : "bg-muted/30 text-ink-muted border-border hover:border-cherry-300"
+                        )}
+                      >
+                        {sk.label}
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+
+              {/* Localized Benefits Textareas (one per line) */}
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+                <div className="space-y-1.5">
+                  <Label htmlFor="benefits-fr" className="text-xs font-semibold text-ink">
+                    Bénéfices FR (un par ligne)
+                  </Label>
+                  <Textarea
+                    id="benefits-fr"
+                    placeholder={"Développe la motricité fine\nMatériaux non toxiques"}
+                    value={benefitsFrStr}
+                    onChange={(e) => setBenefitsFrStr(e.target.value)}
+                    className="rounded-xl border-border/80 text-xs min-h-[75px]"
+                    dir="ltr"
+                  />
+                </div>
+                <div className="space-y-1.5">
+                  <Label htmlFor="benefits-ar" className="text-xs font-semibold text-ink">
+                    الفوائد للمساعد AR (سطر لكل فائدة)
+                  </Label>
+                  <Textarea
+                    id="benefits-ar"
+                    placeholder={"تنمية حاسة اللمس\nخشب طبيعي آمن للرضع"}
+                    value={benefitsArStr}
+                    onChange={(e) => setBenefitsArStr(e.target.value)}
+                    className="rounded-xl border-border/80 text-xs min-h-[75px]"
+                  />
+                </div>
+                <div className="space-y-1.5">
+                  <Label htmlFor="benefits-en" className="text-xs font-semibold text-ink">
+                    Benefits EN (one per line)
+                  </Label>
+                  <Textarea
+                    id="benefits-en"
+                    placeholder={"Improves fine motor skills\nNon-toxic wood"}
+                    value={benefitsEnStr}
+                    onChange={(e) => setBenefitsEnStr(e.target.value)}
+                    className="rounded-xl border-border/80 text-xs min-h-[75px]"
+                    dir="ltr"
+                  />
                 </div>
               </div>
             </div>

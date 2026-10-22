@@ -133,7 +133,6 @@ registerTranslations({
   "اختر المورد": { fr: "Sélectionner un fournisseur", en: "Select vendor" },
   "فئة المنتج": { fr: "Catégorie du produit", en: "Product category" },
   "اختر الفئة": { fr: "Sélectionner une catégorie", en: "Select category" },
-  "الحالة": { fr: "Statut", en: "Status" },
   "الكمية": { fr: "Quantité en stock", en: "Stock quantity" },
 
   // Image Upload

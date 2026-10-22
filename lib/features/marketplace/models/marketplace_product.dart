@@ -129,6 +129,24 @@ class MarketplaceProduct {
 
   final bool featured;
 
+  /// Recommendation audience: `'child' | 'mother' | 'pregnancy'`. Defaults to `'child'`.
+  final String audience;
+
+  /// Recommended age bounds in months (inclusive).
+  final int? ageMinMonths;
+  final int? ageMaxMonths;
+
+  /// Pregnancy trimesters relevant to this product (e.g. `[1, 2, 3]`).
+  final List<int> pregnancyTrimesters;
+
+  /// Developmental skills nurtured by this product (e.g. motricite_fine, sensoriel).
+  final List<String> skills;
+
+  /// Localized benefit bullet points for AI recommendations.
+  final List<String> benefitsFr;
+  final List<String> benefitsAr;
+  final List<String> benefitsEn;
+
   const MarketplaceProduct({
     required this.id,
     this.sku = '',
@@ -151,6 +169,14 @@ class MarketplaceProduct {
     this.highlights = const [],
     this.vendorName,
     this.featured = false,
+    this.audience = 'child',
+    this.ageMinMonths,
+    this.ageMaxMonths,
+    this.pregnancyTrimesters = const [],
+    this.skills = const [],
+    this.benefitsFr = const [],
+    this.benefitsAr = const [],
+    this.benefitsEn = const [],
   });
 
   bool get isInStock => stock > 0;
@@ -186,6 +212,33 @@ class MarketplaceProduct {
         highlightsFr,
         highlightsEn,
       );
+
+  /// Returns localized recommendation benefits, falling back to general highlights.
+  List<String> benefitsFor(String locale) {
+    switch (locale) {
+      case 'ar':
+        if (benefitsAr.isNotEmpty) return benefitsAr;
+        break;
+      case 'en':
+        if (benefitsEn.isNotEmpty) return benefitsEn;
+        break;
+      default:
+        if (benefitsFr.isNotEmpty) return benefitsFr;
+        break;
+    }
+    if (benefitsFr.isNotEmpty) return benefitsFr;
+    if (benefitsAr.isNotEmpty) return benefitsAr;
+    if (benefitsEn.isNotEmpty) return benefitsEn;
+    return displayHighlights(locale);
+  }
+
+  /// Checks if this product is appropriate for a child of [months] age.
+  bool fitsChildAge(int months) {
+    if (audience != 'child') return false;
+    final min = ageMinMonths ?? 0;
+    final max = ageMaxMonths ?? 999;
+    return months >= min && months <= max;
+  }
 
   static String _localizedText(
     String locale,
@@ -242,13 +295,11 @@ class MarketplaceProduct {
     return '$buffer DZD';
   }
 
-  /// Maps a Firestore `marketplace_products` document to a product, or null if hidden.
-  static MarketplaceProduct? fromFirestoreDoc(
-    DocumentSnapshot<Map<String, dynamic>> doc,
-  ) {
-    final data = doc.data();
-    if (data == null) return null;
-
+  /// Deserializes a product map with default fallbacks.
+  static MarketplaceProduct? fromMap(
+    Map<String, dynamic> data, {
+    String id = '',
+  }) {
     final status = data['status'] as String? ?? 'active';
     if (status == 'archived' || status == 'draft' || status == 'out_of_stock') {
       return null;
@@ -285,9 +336,36 @@ class MarketplaceProduct {
         ? highlightsEnRaw.map((e) => e.toString()).toList()
         : const <String>[];
 
+    final trimestersRaw = data['pregnancyTrimesters'];
+    final pregnancyTrimesters = trimestersRaw is List
+        ? trimestersRaw.map((e) => (e as num).toInt()).toList()
+        : const <int>[];
+
+    final skillsRaw = data['skills'];
+    final skills = skillsRaw is List
+        ? skillsRaw.map((e) => e.toString()).toList()
+        : const <String>[];
+
+    final benefitsFrRaw = data['benefitsFr'];
+    final benefitsFr = benefitsFrRaw is List
+        ? benefitsFrRaw.map((e) => e.toString()).toList()
+        : const <String>[];
+
+    final benefitsArRaw = data['benefitsAr'];
+    final benefitsAr = benefitsArRaw is List
+        ? benefitsArRaw.map((e) => e.toString()).toList()
+        : const <String>[];
+
+    final benefitsEnRaw = data['benefitsEn'];
+    final benefitsEn = benefitsEnRaw is List
+        ? benefitsEnRaw.map((e) => e.toString()).toList()
+        : const <String>[];
+
+    final docId = id.isNotEmpty ? id : (data['id'] ?? data['sku'] ?? 'unknown').toString();
+
     return MarketplaceProduct(
-      id: doc.id,
-      sku: (data['sku'] ?? doc.id).toString(),
+      id: docId,
+      sku: (data['sku'] ?? docId).toString(),
       name: (data['name'] ?? data['title'] ?? '').toString(),
       description: (data['description'] ?? '').toString(),
       nameFr: data['nameFr'] as String?,
@@ -307,7 +385,55 @@ class MarketplaceProduct {
       highlightsEn: highlightsEn,
       vendorName: data['vendor'] as String?,
       featured: data['featured'] == true,
+      audience: data['audience'] as String? ?? 'child',
+      ageMinMonths: (data['ageMinMonths'] as num?)?.toInt(),
+      ageMaxMonths: (data['ageMaxMonths'] as num?)?.toInt(),
+      pregnancyTrimesters: pregnancyTrimesters,
+      skills: skills,
+      benefitsFr: benefitsFr,
+      benefitsAr: benefitsAr,
+      benefitsEn: benefitsEn,
     );
+  }
+
+  /// Maps a Firestore `marketplace_products` document to a product, or null if hidden.
+  static MarketplaceProduct? fromFirestoreDoc(
+    DocumentSnapshot<Map<String, dynamic>> doc,
+  ) {
+    final data = doc.data();
+    if (data == null) return null;
+    return fromMap(data, id: doc.id);
+  }
+
+  Map<String, dynamic> toMap() {
+    return {
+      'sku': sku,
+      'name': name,
+      'description': description,
+      if (nameFr != null) 'nameFr': nameFr,
+      if (nameEn != null) 'nameEn': nameEn,
+      if (descriptionFr != null) 'descriptionFr': descriptionFr,
+      if (descriptionEn != null) 'descriptionEn': descriptionEn,
+      'priceDZD': priceDZD,
+      if (compareAtDZD != null) 'compareAt': compareAtDZD,
+      'stock': stock,
+      'partnerId': partnerId,
+      'category': category.name,
+      if (imageUrl != null) 'imageUrl': imageUrl,
+      'highlights': highlights,
+      'highlightsFr': highlightsFr,
+      'highlightsEn': highlightsEn,
+      if (vendorName != null) 'vendor': vendorName,
+      'featured': featured,
+      'audience': audience,
+      if (ageMinMonths != null) 'ageMinMonths': ageMinMonths,
+      if (ageMaxMonths != null) 'ageMaxMonths': ageMaxMonths,
+      'pregnancyTrimesters': pregnancyTrimesters,
+      'skills': skills,
+      'benefitsFr': benefitsFr,
+      'benefitsAr': benefitsAr,
+      'benefitsEn': benefitsEn,
+    };
   }
 
   static ProductCategory? _categoryFromString(String? raw) {
