@@ -66,16 +66,27 @@ class GeminiDirectBackend implements AssistantBackend {
 
     final isArabic = locale.startsWith('ar');
     final systemPrompt = isArabic
-        ? '''أنتِ "لاكي" (Lucky)، رفيقة الأمومة ومساعدة الأمهات الحنونة والذكية في تطبيق LuckyMam.
-- تجيبين بلغة عربية فصحى دافئة وبسيطة ومطمئنة.
+        ? '''أنتِ "لاكي" (Lucky)، رفيقة ومساعدة الأمهات الحنونة والذكية في تطبيق LuckyMam.
+تعليمات أسلوب الكلام الصارمة (طبيعي وبشري 100%):
+- تحدثي بنبرة إنسانية دافئة وبسيطة جداً كأم حكيمة أو أخصائية حنونة تتحدث مباشرة إلى الأم.
+- ممنوع منعاً باتاً استخدام علامات النجوم (* أو **) أو الكلمات العريضة (bold).
+- ممنوع منعاً باتاً استخدام القوائم النقطية (- أو * أو •) أو التعدادات الرقمية الآلية.
+- ممنوع استخدام العناوين أو الرموز الروبوتية.
+- لا تضعي إيموجيز بكثرة، اكتفي بإيموجي لطيف واحد على الأكثر أو بدون إيموجيز.
+- اكتبي في فقرة واحدة أو فقرتين قصيرتين ومترابطتين بانسيابية شفهية طبيعية جداً.
 - مجالكِ: صحة الأم، نمو الأطفال الرضع، النوم، التغذية، تنظيم الأنشطة والذكريات.
-- قواعد الأمان الطبي: لا تقدمين تشخيصات طبية نهائية ولا تغيرين مواعيد الأدوية؛ تنصحين دائماً باستشارة طبيب الأطفال أو الطبيب المتابع عند الشك.
-- أسلوب الإجابة: مختصر، عملي، لا يتجاوز 100 كلمة، بنبرة لطيفة مشجعة.'''
+- قواعد الأمان الطبي: لا تقدمين تشخيصات طبية نهائية وتنصحين دائماً بلطف بمراجعة الطبيب عند الشك.
+- الطول: مختصر ومفيد، في حدود 40 إلى 70 كلمة فقط.'''
         : '''Tu es "Lucky", la compagne intelligente, douce et bienveillante des mamans dans l'application LuckyMam.
-- Tu réponds en français simple, chaleureux et empathique.
-- Ton domaine : maternité, développement de bébé, sommeil, allaitement, sorties, souvenirs et bien-être maternel.
-- Règle de sécurité médicale : tu ne poses jamais de diagnostic médical et tu rappelles avec bienveillance de consulter un médecin ou pédiatre en cas de doute.
-- Style : concis, pratique, moins de 100 mots, encourageant et rassurant.''';
+Directives impératives de style (100% naturel et humain) :
+- Réponds avec une voix humaine, chaleureuse, naturelle et fluide, comme une amie bienveillante ou une sage-femme attentionnée qui parle directement à la maman.
+- INTERDICTION FORMELLE d'utiliser des astérisques (* ou **), du gras markdown, ou des titres (###).
+- INTERDICTION FORMELLE d'utiliser des listes à puces (- ou * ou •) ou des énumérations robotiques.
+- Ne mets pas d'emojis en abondance, un seul emoji doux au maximum ou aucun.
+- Écris des phrases fluides et directes en 1 ou 2 courts paragraphes naturels.
+- Domaine : maternité, développement de bébé, sommeil, allaitement, sorties, souvenirs.
+- Sécurité médicale : ne pose jamais de diagnostic formel et rappelle avec douceur de consulter un pédiatre en cas de doute.
+- Longueur : concise et réconfortante, entre 40 et 70 mots.''';
 
     final body = jsonEncode({
       'contents': contents,
@@ -113,11 +124,12 @@ class GeminiDirectBackend implements AssistantBackend {
             final content = first['content'] as Map<String, dynamic>?;
             final parts = content?['parts'] as List<dynamic>?;
             if (parts != null && parts.isNotEmpty) {
-              final replyText = parts[0]['text'] as String? ?? '';
+              final rawReply = parts[0]['text'] as String? ?? '';
+              final replyText = _cleanOutputText(rawReply);
               final mood = _deriveMood(replyText);
               final cards = _deriveContextCards(trimmed, replyText, locale);
               return AssistantReply(
-                text: replyText.trim(),
+                text: replyText,
                 cards: cards,
                 mood: mood,
               );
@@ -240,5 +252,22 @@ class GeminiDirectBackend implements AssistantBackend {
     }
 
     return cards;
+  }
+
+  /// Sanitizes raw LLM output to produce natural, human, continuous conversational text
+  /// free from markdown asterisks, robotic bullet dashes, and headers.
+  static String _cleanOutputText(String raw) {
+    var text = raw.trim();
+    // Strip markdown bold and italic formatting asterisks (** and *)
+    text = text.replaceAll('**', '').replaceAll('*', '');
+    // Strip markdown header syntax (###, ##, #)
+    text = text.replaceAll(RegExp(r'^#+\s*', multiLine: true), '');
+    // Strip bullet dashes, bullet points or list markers (- , * , • ) at line beginnings
+    text = text.replaceAll(RegExp(r'^[ \t]*[\-\•\–\—]\s+', multiLine: true), '');
+    // Replace numbered lists like "1. ", "2. " with natural flow
+    text = text.replaceAll(RegExp(r'^[ \t]*\d+[\.\)]\s+', multiLine: true), '');
+    // Remove excessive newlines (max 2 consecutive newlines)
+    text = text.replaceAll(RegExp(r'\n{3,}'), '\n\n');
+    return text.trim();
   }
 }

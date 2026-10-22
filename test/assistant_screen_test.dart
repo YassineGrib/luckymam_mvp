@@ -184,7 +184,7 @@ void main() {
       await tester.pumpWidget(_createTestApp(disableAnimations: true));
       await tester.pump(const Duration(milliseconds: 1300));
       expect(tester.takeException(), isNull);
-      expect(find.byType(MochiAvatar), findsOneWidget);
+      expect(find.byType(MochiAvatar), findsWidgets);
     });
 
     testWidgets('shortcut card navigates to assistant', (tester) async {

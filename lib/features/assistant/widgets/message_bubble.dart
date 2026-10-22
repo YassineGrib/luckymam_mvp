@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/extensions/l10n_extension.dart';
+import '../avatar/mochi_avatar.dart';
+import '../avatar/mochi_state.dart';
 import '../models/assistant_models.dart';
 import 'assistant_cards.dart';
 
@@ -58,18 +60,12 @@ class MessageBubble extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.end,
         children: [
           if (!isUser) ...[
-            Container(
-              width: 30,
-              height: 30,
-              margin: const EdgeInsetsDirectional.only(end: 8, bottom: 4),
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                color: AppColors.primaryLight.withValues(alpha: 0.15),
-              ),
-              child: const Icon(
-                Icons.auto_awesome_rounded,
-                size: 16,
-                color: AppColors.primaryLight,
+            const Padding(
+              padding: EdgeInsetsDirectional.only(end: 8, bottom: 4),
+              child: MochiAvatar(
+                size: 28,
+                animated: false,
+                state: MochiState.idle,
               ),
             ),
           ],

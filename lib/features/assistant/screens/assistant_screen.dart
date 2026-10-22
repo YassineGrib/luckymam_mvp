@@ -4,13 +4,15 @@ import '../../../core/theme/app_colors.dart';
 import '../../../core/extensions/l10n_extension.dart';
 import '../../../shared/widgets/top_ambient_gradient.dart';
 import '../avatar/mochi_avatar.dart';
+import '../avatar/mochi_state.dart';
 import '../models/assistant_models.dart';
 import '../providers/assistant_providers.dart';
 import '../widgets/chat_input_bar.dart';
 import '../widgets/message_bubble.dart';
 import '../widgets/suggestion_chips.dart';
 
-/// Fullscreen AI Assistant chat interface featuring the animated Mochi companion.
+/// Redesigned AI Assistant screen featuring a large, animated Hero character
+/// and a focused Single-Turn Q&A flow (سؤال وجواب).
 class AssistantScreen extends ConsumerStatefulWidget {
   const AssistantScreen({super.key});
 
@@ -40,7 +42,7 @@ class _AssistantScreenState extends ConsumerState<AssistantScreen> {
       if (_scrollController.hasClients) {
         _scrollController.animateTo(
           _scrollController.position.maxScrollExtent,
-          duration: const Duration(milliseconds: 300),
+          duration: const Duration(milliseconds: 350),
           curve: Curves.easeOutCubic,
         );
       }
@@ -51,10 +53,11 @@ class _AssistantScreenState extends ConsumerState<AssistantScreen> {
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final l10n = context.l10n;
+    final isArabic = Localizations.localeOf(context).languageCode == 'ar';
     final state = ref.watch(assistantControllerProvider);
     final controller = ref.read(assistantControllerProvider.notifier);
 
-    // Initial greeting message displayed locally
+    // Initial greeting message
     final initialGreeting = AssistantMessage(
       id: 'msg_welcome',
       role: AssistantRole.assistant,
@@ -62,19 +65,43 @@ class _AssistantScreenState extends ConsumerState<AssistantScreen> {
       createdAt: DateTime.now(),
     );
 
-    final displayMessages = [initialGreeting, ...state.messages];
+    // Identify active Single-Turn Q&A
+    AssistantMessage? lastUserMsg;
+    AssistantMessage? lastAssistantMsg;
+
+    for (int i = state.messages.length - 1; i >= 0; i--) {
+      final m = state.messages[i];
+      if (lastUserMsg == null && m.role == AssistantRole.user) {
+        lastUserMsg = m;
+        break;
+      }
+    }
+
+    if (lastUserMsg != null) {
+      final userIdx = state.messages.indexOf(lastUserMsg);
+      for (int i = userIdx + 1; i < state.messages.length; i++) {
+        final m = state.messages[i];
+        if (m.role == AssistantRole.assistant) {
+          lastAssistantMsg = m;
+          break;
+        }
+      }
+    }
+
+    final hasActiveTurn = lastUserMsg != null;
+    final isThinking = state.phase == AssistantPhase.thinking;
 
     return Scaffold(
       backgroundColor:
           isDark ? AppColors.backgroundDark : AppColors.backgroundLight,
       body: Stack(
         children: [
-          const TopAmbientGradient(height: 320),
+          const TopAmbientGradient(height: 380),
           SafeArea(
             bottom: false,
             child: Column(
               children: [
-                // 1. Top Header with Back button and Mochi Avatar
+                // 1. Top Navigation Bar
                 Padding(
                   padding:
                       const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
@@ -84,24 +111,50 @@ class _AssistantScreenState extends ConsumerState<AssistantScreen> {
                         icon: const Icon(Icons.arrow_back_ios_new_rounded),
                         onPressed: () => Navigator.of(context).maybePop(),
                       ),
-                      const SizedBox(width: 8),
+                      const SizedBox(width: 4),
                       Expanded(
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Text(
-                              l10n.assistantName,
-                              style: TextStyle(
-                                fontSize: 18,
-                                fontWeight: FontWeight.w800,
-                                color: isDark ? Colors.white : const Color(0xFF1D1B20),
-                              ),
+                            Row(
+                              children: [
+                                Text(
+                                  l10n.assistantName,
+                                  style: TextStyle(
+                                    fontSize: 18,
+                                    fontWeight: FontWeight.w800,
+                                    color: isDark
+                                        ? Colors.white
+                                        : const Color(0xFF1D1B20),
+                                  ),
+                                ),
+                                const SizedBox(width: 8),
+                                Container(
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 8, vertical: 2),
+                                  decoration: BoxDecoration(
+                                    color: AppColors.primaryLight
+                                        .withValues(alpha: 0.15),
+                                    borderRadius: BorderRadius.circular(12),
+                                  ),
+                                  child: Text(
+                                    isArabic ? 'متصلة' : 'En ligne',
+                                    style: const TextStyle(
+                                      fontSize: 10,
+                                      fontWeight: FontWeight.w600,
+                                      color: AppColors.primaryLight,
+                                    ),
+                                  ),
+                                ),
+                              ],
                             ),
                             Text(
                               l10n.assistantDisclaimer,
                               style: TextStyle(
                                 fontSize: 11,
-                                color: isDark ? Colors.white54 : const Color(0xFF6B6575),
+                                color: isDark
+                                    ? Colors.white54
+                                    : const Color(0xFF6B6575),
                               ),
                               maxLines: 1,
                               overflow: TextOverflow.ellipsis,
@@ -109,52 +162,141 @@ class _AssistantScreenState extends ConsumerState<AssistantScreen> {
                           ],
                         ),
                       ),
-                      // Animated Mochi avatar preview in header
-                      Hero(
-                        tag: 'assistant_mochi_hero',
-                        child: MochiAvatar(
-                          state: state.mochi,
-                          speaking: state.phase == AssistantPhase.speaking,
-                          size: 56,
+                      if (hasActiveTurn)
+                        IconButton(
+                          tooltip: isArabic ? 'سؤال جديد' : 'Nouvelle question',
+                          icon: const Icon(Icons.refresh_rounded),
+                          onPressed: () {
+                            controller.greet();
+                          },
                         ),
-                      ),
                     ],
                   ),
                 ),
 
                 const Divider(height: 1, thickness: 0.5),
 
-                // 2. Chat message list
+                // 2. Main Content Area with Large Hero Character + Q&A
                 Expanded(
-                  child: ListView.builder(
+                  child: SingleChildScrollView(
                     controller: _scrollController,
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 16,
-                      vertical: 12,
+                    physics: const BouncingScrollPhysics(),
+                    padding: const EdgeInsets.symmetric(horizontal: 16),
+                    child: Column(
+                      children: [
+                        const SizedBox(height: 16),
+
+                        // Prominent Animated Hero Avatar
+                        Center(
+                          child: AnimatedContainer(
+                            duration: const Duration(milliseconds: 300),
+                            curve: Curves.easeInOutCubic,
+                            padding: EdgeInsets.symmetric(
+                              vertical: hasActiveTurn ? 8 : 20,
+                            ),
+                            child: Hero(
+                              tag: 'assistant_mochi_hero',
+                              child: MochiAvatar(
+                                size: hasActiveTurn ? 96 : 136,
+                                state: isThinking
+                                    ? MochiState.thinking
+                                    : state.mochi,
+                                speaking: state.phase == AssistantPhase.speaking,
+                              ),
+                            ),
+                          ),
+                        ),
+
+                        // Thinking status indicator
+                        if (isThinking)
+                          Padding(
+                            padding: const EdgeInsets.only(top: 4, bottom: 12),
+                            child: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                const SizedBox(
+                                  width: 12,
+                                  height: 12,
+                                  child: CircularProgressIndicator(
+                                    strokeWidth: 2,
+                                    color: AppColors.primaryLight,
+                                  ),
+                                ),
+                                const SizedBox(width: 8),
+                                Text(
+                                  isArabic
+                                      ? 'لاكي تفكّر في إجابتكِ...'
+                                      : 'Lucky prépare votre réponse...',
+                                  style: TextStyle(
+                                    fontSize: 12,
+                                    fontStyle: FontStyle.italic,
+                                    color: isDark
+                                        ? Colors.white60
+                                        : const Color(0xFF6B6575),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+
+                        const SizedBox(height: 8),
+
+                        // Q&A Presentation (سؤال وجواب)
+                        if (!hasActiveTurn) ...[
+                          // Welcome greeting bubble
+                          MessageBubble(
+                            message: initialGreeting,
+                            onCardAction: () {},
+                          ),
+                          const SizedBox(height: 16),
+                          // Quick suggestions
+                          SuggestionChips(
+                            onSuggestionSelected: (query) {
+                              controller.send(query);
+                              _scrollToBottom();
+                            },
+                          ),
+                        ] else ...[
+                          // 1. User Question
+                          MessageBubble(
+                            message: lastUserMsg,
+                            onCardAction: () {},
+                          ),
+                          const SizedBox(height: 8),
+
+                          // 2. Lucky's Answer
+                          if (lastAssistantMsg != null) ...[
+                            MessageBubble(
+                              message: lastAssistantMsg,
+                              onCardAction: () {},
+                            ),
+                            const SizedBox(height: 12),
+                            // Quick New Question Pill
+                            Center(
+                              child: TextButton.icon(
+                                onPressed: () => controller.greet(),
+                                icon: const Icon(Icons.add_comment_outlined,
+                                    size: 16),
+                                label: Text(
+                                  isArabic
+                                      ? 'طرح سؤال آخر'
+                                      : 'Poser une autre question',
+                                  style: const TextStyle(fontSize: 13),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ],
+
+                        const SizedBox(height: 24),
+                      ],
                     ),
-                    itemCount: displayMessages.length,
-                    itemBuilder: (context, index) {
-                      final msg = displayMessages[index];
-                      return MessageBubble(
-                        message: msg,
-                        onCardAction: () {},
-                      );
-                    },
                   ),
                 ),
 
-                // 3. Quick Suggestion Chips (when conversation is fresh)
-                if (state.messages.length <= 1)
-                  SuggestionChips(
-                    onSuggestionSelected: (query) {
-                      controller.send(query);
-                      _scrollToBottom();
-                    },
-                  ),
-
-                // 4. Input bar
+                // 3. Input Bar at Bottom
                 ChatInputBar(
-                  isThinking: state.phase == AssistantPhase.thinking,
+                  isThinking: isThinking,
                   onTypingChanged: (isTyping) {
                     controller.onUserTyping(isTyping);
                   },

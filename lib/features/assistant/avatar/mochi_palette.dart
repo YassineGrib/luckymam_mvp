@@ -4,8 +4,8 @@ import 'mochi_state.dart';
 /// Color palette, volumetric gradients, and state tinting for the Mochi avatar.
 abstract final class MochiPalette {
   // Base body dough gradient colors (light)
-  static const Color baseLightTop = Color(0xFFFFFAF5);
-  static const Color baseLightBottom = Color(0xFFDDCCBF);
+  static const Color baseLightTop = Color(0xFFFFFFFF);
+  static const Color baseLightBottom = Color(0xFFFFE8ED);
 
   // Base body dough gradient colors (dark)
   static const Color baseDarkTop = Color(0xFF322E3B);
