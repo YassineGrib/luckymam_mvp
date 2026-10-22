@@ -39,6 +39,16 @@ enum MotherStage {
   bool get tracksCycle =>
       this == MotherStage.hope || this == MotherStage.momHope;
 
+  /// Effective active mode for UI display:
+  /// - `pregnantFirst`, `pregnantWithChildren` => [UserStatus.pregnant]
+  /// - `exploring`, `hope`, `momHope` => [UserStatus.hope]
+  /// - `mom` => [UserStatus.mom]
+  UserStatus get effectiveStatus {
+    if (isPregnant) return UserStatus.pregnant;
+    if (this == MotherStage.exploring || tracksCycle) return UserStatus.hope;
+    return UserStatus.mom;
+  }
+
   /// Legacy [UserStatus] equivalent for backward compatibility.
   /// - `pregnant*` => [UserStatus.pregnant]
   /// - `hope` / `exploring` => [UserStatus.hope]

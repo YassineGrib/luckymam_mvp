@@ -10,6 +10,7 @@ import '../../core/providers/theme_provider.dart';
 import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_spacing.dart';
 import 'models/profile_models.dart';
+import 'models/mother_stage.dart';
 import 'privacy_screen.dart';
 import 'help_screen.dart';
 import 'edit_child_screen.dart';
@@ -53,25 +54,32 @@ class ProfileScreen extends ConsumerWidget {
     // Watch profile from Firestore
     final profileAsync = ref.watch(profileProvider);
     final childrenAsync = ref.watch(childrenProvider);
-    final actionsState = ref.watch(profileActionsProvider);
+    final isLoading =
+        ref.watch(profileActionsProvider.select((s) => s.isLoading));
 
     // Show snackbar on success/error
     ref.listen<ProfileActionsState>(profileActionsProvider, (previous, next) {
       final snackL10n = context.l10n;
-      if (next.successMessage != null) {
+      if (next.successMessage != null &&
+          next.successMessage != previous?.successMessage) {
+        ScaffoldMessenger.of(context).hideCurrentSnackBar();
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(next.successMessage!.localize(snackL10n)),
             backgroundColor: Colors.green,
+            duration: const Duration(seconds: 2),
           ),
         );
         ref.read(profileActionsProvider.notifier).clearMessages();
       }
-      if (next.errorDetails != null) {
+      if (next.errorDetails != null &&
+          next.errorDetails != previous?.errorDetails) {
+        ScaffoldMessenger.of(context).hideCurrentSnackBar();
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(snackL10n.profileSnackError(next.errorDetails!)),
             backgroundColor: Colors.red,
+            duration: const Duration(seconds: 3),
           ),
         );
         ref.read(profileActionsProvider.notifier).clearMessages();
@@ -95,7 +103,7 @@ class ProfileScreen extends ConsumerWidget {
                     profile?.displayName ?? user?.displayName ?? l10n.profileDefaultUser,
                 email: profile?.email ?? user?.email ?? '',
                 photoUrl: profile?.photoUrl ?? user?.photoURL,
-                status: profile?.status ?? UserStatus.mom,
+                status: _effectiveUserStatus(ref.watch(motherStageProvider)),
                 primaryColor: primaryColor,
                 textColor: textColor,
                 secondaryColor: secondaryColor,
@@ -124,7 +132,7 @@ class ProfileScreen extends ConsumerWidget {
           ),
 
           // Loading indicator
-          if (actionsState.isLoading)
+          if (isLoading)
             const SliverToBoxAdapter(child: LinearProgressIndicator()),
 
           // Profile sections
@@ -156,13 +164,11 @@ class ProfileScreen extends ConsumerWidget {
                 profileAsync.when(
                   data: (profile) => _StatusSection(
                     profile: profile,
+                    currentStatus:
+                        _effectiveUserStatus(ref.watch(motherStageProvider)),
                     primaryColor: primaryColor,
-                    onStatusChange: (status) {
-                      ref
-                          .read(profileActionsProvider.notifier)
-                          .updateStatus(status);
-                      AnalyticsService().logStatusSelected(status.name);
-                    },
+                    onStatusChange: (status) =>
+                        _handleStatusChange(context, ref, profile, status),
                   ),
                   loading: () =>
                       _LoadingSectionCard(title: l10n.profileCurrentStatus),
@@ -170,8 +176,7 @@ class ProfileScreen extends ConsumerWidget {
                       _ErrorSectionCard(title: l10n.profileCurrentStatus),
                 ),
 
-                // 3. Children — masqué si HOPE ou ENCEINTE
-                if (profileAsync.valueOrNull?.status == UserStatus.mom)
+                // 3. Children (toujours visible pour gérer les enfants nés et attendus)
                 childrenAsync.when(
                   data: (children) => _ChildrenSection(
                     children: children,
@@ -298,14 +303,134 @@ class ProfileScreen extends ConsumerWidget {
     );
   }
 
+  Future<void> _handleStatusChange(
+    BuildContext context,
+    WidgetRef ref,
+    UserProfile? profile,
+    UserStatus status,
+  ) async {
+    if (status == UserStatus.pregnant) {
+      final active = ref.read(activePregnancyProvider);
+      if (active != null) {
+        return;
+      }
+      final defaultName = context.l10n.childExpectedDefaultName;
+      final helpText = context.l10n.cycleLmpDatePickerHelp;
+      final now = DateTime.now();
+      final date = await showDatePicker(
+        context: context,
+        initialDate: profile?.lastPregnancyDate ?? now.subtract(const Duration(days: 70)),
+        firstDate: now.subtract(const Duration(days: 280)),
+        lastDate: now,
+        helpText: helpText,
+        builder: (context, child) {
+          return Theme(
+            data: Theme.of(context).copyWith(
+              colorScheme: ColorScheme.fromSeed(
+                seedColor: AppColors.magentaPink,
+                primary: AppColors.magentaPink,
+              ),
+            ),
+            child: child!,
+          );
+        },
+      );
+
+      if (date != null) {
+        await ref.read(profileServiceProvider).declarePregnancy(
+          lmpDate: date,
+          placeholderName: defaultName,
+        );
+        AnalyticsService().logStatusSelected(status.name);
+      }
+    } else if (status == UserStatus.hope || status == UserStatus.mom) {
+      final active = ref.read(activePregnancyProvider);
+      if (active != null) {
+        final lang = Localizations.localeOf(context).languageCode;
+        final isAr = lang == 'ar';
+        final isFr = lang == 'fr';
+
+        final title = isAr
+            ? 'تغيير الحالة'
+            : (isFr ? 'Changer de statut' : 'Change status');
+        final content = isAr
+            ? 'لديك متابعة حمل نشطة حالياً. ماذا ترغبين في فعله بشأن متابعة الحمل الحالية؟'
+            : (isFr
+                ? 'Vous avez un suivi de grossesse en cours. Que souhaitez-vous faire de ce suivi ?'
+                : 'You have an active pregnancy tracking. What would you like to do?');
+        final cancelLabel = isAr ? 'تراجع' : (isFr ? 'Annuler' : 'Cancel');
+        final deleteLabel = isAr
+            ? 'إلغاء وحذف المتابعة'
+            : (isFr ? 'Annuler et supprimer' : 'Cancel and delete');
+        final archiveLabel = isAr
+            ? 'الاحتفاظ في الذكريات'
+            : (isFr ? 'Garder en souvenirs' : 'Keep in memories');
+
+        final choice = await showDialog<String>(
+          context: context,
+          builder: (dialogCtx) => AlertDialog(
+            title: Text(title),
+            content: Text(content),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.pop(dialogCtx, 'dismiss'),
+                child: Text(cancelLabel),
+              ),
+              TextButton(
+                onPressed: () => Navigator.pop(dialogCtx, 'archive'),
+                child: Text(archiveLabel),
+              ),
+              TextButton(
+                onPressed: () => Navigator.pop(dialogCtx, 'delete'),
+                style: TextButton.styleFrom(foregroundColor: AppColors.error),
+                child: Text(deleteLabel),
+              ),
+            ],
+          ),
+        );
+
+        if (choice == null || choice == 'dismiss') {
+          return;
+        }
+
+        final keepMemories = choice == 'archive';
+        await ref.read(profileServiceProvider).endPregnancy(
+              active.id,
+              keepMemories: keepMemories,
+            );
+      }
+
+      if (status == UserStatus.hope) {
+        await ref.read(profileServiceProvider).setTryingToConceive(true);
+      } else {
+        await ref.read(profileServiceProvider).setTryingToConceive(false);
+      }
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).hideCurrentSnackBar();
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(context.l10n.profileSnackStatusUpdated),
+            backgroundColor: Colors.green,
+            duration: const Duration(seconds: 2),
+          ),
+        );
+      }
+      AnalyticsService().logStatusSelected(status.name);
+    }
+  }
+
+  UserStatus _effectiveUserStatus(MotherStage stage) => stage.effectiveStatus;
+
   void _showEnterLmpDialog(BuildContext context, WidgetRef ref) async {
+    final defaultName = context.l10n.childExpectedDefaultName;
+    final helpText = context.l10n.cycleLmpDatePickerHelp;
     final now = DateTime.now();
     final date = await showDatePicker(
       context: context,
       initialDate: now.subtract(const Duration(days: 70)),
       firstDate: now.subtract(const Duration(days: 280)),
       lastDate: now,
-      helpText: context.l10n.cycleLmpDatePickerHelp,
+      helpText: helpText,
       builder: (context, child) {
         return Theme(
           data: Theme.of(context).copyWith(
@@ -320,6 +445,12 @@ class ProfileScreen extends ConsumerWidget {
     );
 
     if (date != null) {
+      if (ref.read(activePregnancyProvider) == null) {
+        await ref.read(profileServiceProvider).declarePregnancy(
+          lmpDate: date,
+          placeholderName: defaultName,
+        );
+      }
       ref.read(profileActionsProvider.notifier).savePregnancyLmp(date);
       AnalyticsService().logEvent('lmp_saved');
     }
@@ -601,16 +732,19 @@ class _StatusSection extends StatelessWidget {
     required this.profile,
     required this.primaryColor,
     required this.onStatusChange,
+    this.currentStatus,
   });
 
   final UserProfile? profile;
   final Color primaryColor;
   final Function(UserStatus) onStatusChange;
+  final UserStatus? currentStatus;
 
   @override
   Widget build(BuildContext context) {
     final l10n = context.l10n;
     final dateFormat = DateFormat('MMMM yyyy', 'fr_FR');
+    final effectiveStatus = currentStatus ?? profile?.status ?? UserStatus.mom;
 
     return ProfileSectionCard(
       title: l10n.profileCurrentStatus,
@@ -618,14 +752,14 @@ class _StatusSection extends StatelessWidget {
       iconColor: Colors.pink,
       children: [
         _StatusSelector(
-          currentStatus: profile?.status ?? UserStatus.mom,
+          currentStatus: effectiveStatus,
           primaryColor: primaryColor,
           onStatusChange: onStatusChange,
         ),
         const SizedBox(height: AppSpacing.sm),
         ProfileInfoRow(
           label: l10n.profileCurrentPhase,
-          value: profile?.localizedStatusLabel(l10n) ?? l10n.statusMom,
+          value: userStatusLabel(l10n, effectiveStatus),
           valueColor: primaryColor,
         ),
         if (profile?.lastPregnancyDate != null)

@@ -100,8 +100,8 @@ final recentCapsulesProvider = Provider<List<Capsule>>((ref) {
 /// Provider for daily tip adapted to user status and locale
 final dailyTipProvider = Provider<String>((ref) {
   final locale = ref.watch(localeProvider).languageCode;
-  final legacyStatus = ref.watch(motherStageProvider).legacyStatus;
-  return HomeTipsData.tipFor(locale, legacyStatus);
+  final status = ref.watch(motherStageProvider).effectiveStatus;
+  return HomeTipsData.tipFor(locale, status);
 
 
 

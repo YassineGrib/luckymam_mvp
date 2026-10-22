@@ -84,7 +84,7 @@ class _WeeklyDayStripState extends ConsumerState<WeeklyDayStrip> {
     final profileAsync = ref.watch(profileProvider);
     final profile = profileAsync.valueOrNull;
     final motherStage = ref.watch(motherStageProvider);
-    final legacyStatus = motherStage.legacyStatus;
+    final legacyStatus = motherStage.effectiveStatus;
     final hasBornChildren = ref.watch(hasBornChildrenProvider);
     final isPregnant = ref.watch(isPregnantProvider);
     final activePregnancy = ref.watch(activePregnancyProvider);

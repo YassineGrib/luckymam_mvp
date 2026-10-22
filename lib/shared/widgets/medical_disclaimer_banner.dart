@@ -26,6 +26,29 @@ class MedicalDisclaimerBanner extends StatelessWidget {
 
     return _FullDisclaimer(isDark: isDark);
   }
+  static String _fullText(String lang) {
+    switch (lang) {
+      case 'fr':
+        return 'Les informations fournies sont destinées au suivi et ne remplacent pas l\'avis d\'un médecin spécialiste.';
+      case 'en':
+        return 'Information is for tracking only and does not replace professional medical advice.';
+      case 'ar':
+      default:
+        return 'المعلومات الواردة للتتبع والتوثيق فقط، ولا تغني عن استشارة الطبيب المختص.';
+    }
+  }
+
+  static String _compactText(String lang) {
+    switch (lang) {
+      case 'fr':
+        return 'Suivi indicatif — veuillez consulter votre médecin spécialiste';
+      case 'en':
+        return 'Tracking only — please consult your specialist doctor';
+      case 'ar':
+      default:
+        return 'للتتبع فقط — يُرجى استشارة طبيبك المختص';
+    }
+  }
 }
 
 class _FullDisclaimer extends StatelessWidget {
@@ -34,6 +57,9 @@ class _FullDisclaimer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final lang = Localizations.localeOf(context).languageCode;
+    final isRtl = lang == 'ar';
+
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       padding: const EdgeInsets.all(12),
@@ -60,7 +86,7 @@ class _FullDisclaimer extends StatelessWidget {
           const SizedBox(width: 10),
           Expanded(
             child: Text(
-              'المعلومات الواردة للتتبع والتوثيق فقط، ولا تغني عن استشارة الطبيب المختص.',
+              MedicalDisclaimerBanner._fullText(lang),
               style: TextStyle(
                 fontSize: 12,
                 height: 1.5,
@@ -68,7 +94,7 @@ class _FullDisclaimer extends StatelessWidget {
                     ? const Color(0xFFFDD835)
                     : const Color(0xFF6D4C00),
               ),
-              textDirection: TextDirection.rtl,
+              textDirection: isRtl ? TextDirection.rtl : TextDirection.ltr,
             ),
           ),
         ],
@@ -83,6 +109,9 @@ class _CompactDisclaimer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final lang = Localizations.localeOf(context).languageCode;
+    final isRtl = lang == 'ar';
+
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
       child: Row(
@@ -96,12 +125,12 @@ class _CompactDisclaimer extends StatelessWidget {
           const SizedBox(width: 6),
           Flexible(
             child: Text(
-              'للتتبع فقط — يُرجى استشارة طبيبك المختص',
+              MedicalDisclaimerBanner._compactText(lang),
               style: TextStyle(
                 fontSize: 11,
                 color: isDark ? Colors.amber.shade300 : Colors.orange.shade800,
               ),
-              textDirection: TextDirection.rtl,
+              textDirection: isRtl ? TextDirection.rtl : TextDirection.ltr,
               overflow: TextOverflow.ellipsis,
             ),
           ),

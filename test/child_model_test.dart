@@ -56,6 +56,29 @@ void main() {
       expect(b.gender, ChildGender.boy);
     });
 
+    test('French and Arabic gender strings parse correctly (e.g. garçon, fille, ذكر)', () {
+      expect(
+        Child.fromFirestore({'birthDate': ts(2024, 1, 1), 'gender': 'Garçon'}, '1').gender,
+        ChildGender.boy,
+      );
+      expect(
+        Child.fromFirestore({'birthDate': ts(2024, 1, 1), 'gender': 'garcon'}, '2').gender,
+        ChildGender.boy,
+      );
+      expect(
+        Child.fromFirestore({'birthDate': ts(2024, 1, 1), 'gender': 'fille'}, '3').gender,
+        ChildGender.girl,
+      );
+      expect(
+        Child.fromFirestore({'birthDate': ts(2024, 1, 1), 'gender': 'ذكر'}, '4').gender,
+        ChildGender.boy,
+      );
+      expect(
+        Child.fromFirestore({'birthDate': ts(2024, 1, 1), 'gender': 'أنثى'}, '5').gender,
+        ChildGender.girl,
+      );
+    });
+
     test('unknown gender string parses to unknown', () {
       final c = Child.fromFirestore(
         {'name': 'D', 'birthDate': ts(2024, 1, 1), 'gender': 'unknown'},

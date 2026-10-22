@@ -82,7 +82,9 @@ class _HealthHubScreenState extends ConsumerState<HealthHubScreen>
                 ),
               ),
               data: (children) {
-                if (children.isEmpty) {
+                final bornChildren =
+                    children.where((c) => c.isBorn && !c.archived).toList();
+                if (bornChildren.isEmpty) {
                   return _buildNoChildren(
                     primary,
                     textColor,
@@ -91,10 +93,10 @@ class _HealthHubScreenState extends ConsumerState<HealthHubScreen>
                   );
                 }
 
-                // Auto-select first child
-                _selectedChild ??= children.first;
-                if (!children.any((c) => c.id == _selectedChild?.id)) {
-                  _selectedChild = children.first;
+                // Auto-select first born child
+                _selectedChild ??= bornChildren.first;
+                if (!bornChildren.any((c) => c.id == _selectedChild?.id)) {
+                  _selectedChild = bornChildren.first;
                 }
 
                 return Column(
@@ -105,15 +107,15 @@ class _HealthHubScreenState extends ConsumerState<HealthHubScreen>
                       subtitle: l10n.healthHubSubtitle,
                       icon: Icons.monitor_heart_rounded,
                       showBackButton: true,
-                      childrenList: children,
+                      childrenList: bornChildren,
                       selectedChildId: _selectedChild?.id,
                       allowAll: false,
                       onChildSelected: (id) {
                         if (id != null) {
                           setState(() {
-                            _selectedChild = children.firstWhere(
+                            _selectedChild = bornChildren.firstWhere(
                               (c) => c.id == id,
-                              orElse: () => children.first,
+                              orElse: () => bornChildren.first,
                             );
                           });
                         }
@@ -271,26 +273,70 @@ class _HealthHubScreenState extends ConsumerState<HealthHubScreen>
     Color textColor,
     Color secondaryText,
     AppLocalizations l10n,
-  ) => Center(
-    child: Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        Icon(
-          Icons.child_care_rounded,
-          size: 56,
-          color: primary.withValues(alpha: 0.4),
+  ) => Column(
+    children: [
+      Padding(
+        padding: const EdgeInsetsDirectional.fromSTEB(
+          AppSpacing.screenPaddingH,
+          AppSpacing.md,
+          AppSpacing.screenPaddingH,
+          AppSpacing.sm,
         ),
-        const SizedBox(height: AppSpacing.md),
-        Text(
-          l10n.healthNoChildTitle,
-          style: AppTypography.fromContext(context, fontSize: 18, fontWeight: FontWeight.bold, color: textColor),
+        child: Row(
+          children: [
+            GestureDetector(
+              onTap: () => Navigator.of(context).pop(),
+              child: Container(
+                width: 40,
+                height: 40,
+                decoration: BoxDecoration(
+                  color: primary.withValues(alpha: 0.1),
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: Icon(
+                  Icons.arrow_back_ios_new_rounded,
+                  color: primary,
+                  size: 18,
+                ),
+              ),
+            ),
+            const SizedBox(width: 12),
+            Text(
+              l10n.navHealth,
+              style: AppTypography.fromContext(
+                context,
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
+                color: textColor,
+              ),
+            ),
+          ],
         ),
-        const SizedBox(height: AppSpacing.xs),
-        Text(
-          l10n.healthNoChildHint,
-          style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: secondaryText),
+      ),
+      Expanded(
+        child: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(
+                Icons.child_care_rounded,
+                size: 56,
+                color: primary.withValues(alpha: 0.4),
+              ),
+              const SizedBox(height: AppSpacing.md),
+              Text(
+                l10n.healthNoChildTitle,
+                style: AppTypography.fromContext(context, fontSize: 18, fontWeight: FontWeight.bold, color: textColor),
+              ),
+              const SizedBox(height: AppSpacing.xs),
+              Text(
+                l10n.healthNoChildHint,
+                style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: secondaryText),
+              ),
+            ],
+          ),
         ),
-      ],
-    ),
+      ),
+    ],
   );
 }

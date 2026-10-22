@@ -6,6 +6,7 @@ import '../../../core/extensions/l10n_extension.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../capsules/screens/create_capsule_screen.dart';
 import '../../health/screens/health_hub_screen.dart';
+import '../../pregnancy/screens/pregnancy_tracking_screen.dart';
 import '../../profile/models/profile_models.dart';
 import '../../profile/profile_screen.dart';
 import '../../profile/providers/profile_providers.dart';
@@ -56,7 +57,7 @@ class _HomeHeroCompanionCardState extends ConsumerState<HomeHeroCompanionCard>
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final profileAsync = ref.watch(profileProvider);
     final profile = profileAsync.valueOrNull;
-    final status = ref.watch(motherStageProvider).legacyStatus;
+    final status = ref.watch(motherStageProvider).effectiveStatus;
 
     final childrenAsync = ref.watch(childrenProvider);
     final children = childrenAsync.valueOrNull ?? const [];
@@ -543,7 +544,11 @@ class _HomeHeroCompanionCardState extends ConsumerState<HomeHeroCompanionCard>
   }
 
   void _handleAction(BuildContext context, UserStatus status) {
-    if (status == UserStatus.pregnant || status == UserStatus.hope) {
+    if (status == UserStatus.pregnant) {
+      Navigator.of(context).push(
+        MaterialPageRoute(builder: (_) => const PregnancyTrackingScreen()),
+      );
+    } else if (status == UserStatus.hope) {
       Navigator.of(context).push(
         MaterialPageRoute(builder: (_) => const HealthHubScreen()),
       );

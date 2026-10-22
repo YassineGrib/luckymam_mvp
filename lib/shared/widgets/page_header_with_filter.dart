@@ -93,7 +93,7 @@ class PageHeaderWithFilter extends StatelessWidget {
                       borderRadius: BorderRadius.circular(12),
                     ),
                     child: Icon(
-                      Icons.arrow_back,
+                      Icons.arrow_back_ios_new_rounded,
                       color: primary,
                       size: 18,
                     ),

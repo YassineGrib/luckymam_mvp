@@ -93,8 +93,8 @@ class PersonalHeader extends ConsumerWidget {
     final locale = Localizations.localeOf(context).toString();
     final todayFormatted = DateFormat('d MMM', locale).format(DateTime.now());
 
-    final legacyStatus = ref.watch(motherStageProvider).legacyStatus;
-    final statusLabel = _statusLabel(l10n, profile, legacyStatus);
+    final effectiveStatus = ref.watch(motherStageProvider).effectiveStatus;
+    final statusLabel = _statusLabel(l10n, profile, effectiveStatus);
     final unreadCount = ref.watch(unreadNotificationsCountProvider);
 
     return Row(

@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../core/extensions/l10n_extension.dart';
 import '../../capsules/screens/create_capsule_screen.dart';
 import '../../health/screens/health_hub_screen.dart';
+import '../../pregnancy/screens/pregnancy_tracking_screen.dart';
 import '../../profile/models/profile_models.dart';
 import '../../profile/providers/profile_providers.dart';
 import '../../reels/screens/reels_screen.dart';
@@ -19,7 +20,7 @@ class HomeBentoGrid extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final status = ref.watch(motherStageProvider).legacyStatus;
+    final status = ref.watch(motherStageProvider).effectiveStatus;
 
 
     return Padding(
@@ -99,9 +100,15 @@ class _TallHealthBentoCardState extends State<_TallHealthBentoCard> {
       onTapDown: (_) => setState(() => _pressed = true),
       onTapUp: (_) {
         setState(() => _pressed = false);
-        Navigator.of(context).push(
-          MaterialPageRoute(builder: (_) => const HealthHubScreen()),
-        );
+        if (widget.status == UserStatus.pregnant) {
+          Navigator.of(context).push(
+            MaterialPageRoute(builder: (_) => const PregnancyTrackingScreen()),
+          );
+        } else {
+          Navigator.of(context).push(
+            MaterialPageRoute(builder: (_) => const HealthHubScreen()),
+          );
+        }
       },
       onTapCancel: () => setState(() => _pressed = false),
       child: AnimatedScale(

@@ -60,6 +60,30 @@ class Child {
   bool get isExpected => lifecycle == ChildLifecycle.expected;
   bool get isBorn => lifecycle == ChildLifecycle.born;
 
+  /// Robust gender parser supporting English, French, and Arabic terms,
+  /// as well as exact [ChildGender] enum names.
+  static ChildGender parseGender(dynamic raw) {
+    if (raw == null) return ChildGender.unknown;
+    final val = raw.toString().trim().toLowerCase();
+    if (val == 'boy' ||
+        val == 'garçon' ||
+        val == 'garcon' ||
+        val == 'male' ||
+        val == 'homme' ||
+        val == 'ذكر') {
+      return ChildGender.boy;
+    }
+    if (val == 'girl' ||
+        val == 'fille' ||
+        val == 'female' ||
+        val == 'femme' ||
+        val == 'أنثى' ||
+        val == 'انثى') {
+      return ChildGender.girl;
+    }
+    return ChildGender.unknown;
+  }
+
   /// Create from Firestore document.
   factory Child.fromFirestore(Map<String, dynamic> data, String id) {
     final lifecycle = ChildLifecycle.values.firstWhere(
@@ -86,10 +110,7 @@ class Child {
       id: id,
       name: data['name'] ?? '',
       birthDate: birthDate,
-      gender: ChildGender.values.firstWhere(
-        (g) => g.name == data['gender'],
-        orElse: () => ChildGender.unknown,
-      ),
+      gender: parseGender(data['gender']),
       lifecycle: lifecycle,
       expectedDate: expectedDate,
       pregnancyId: data['pregnancyId'] as String?,

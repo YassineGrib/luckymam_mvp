@@ -227,6 +227,26 @@ class _EditMotherProfileScreenState extends ConsumerState<EditMotherProfileScree
       return;
     }
 
+    if (_status == UserStatus.pregnant &&
+        _pregnancyDate == null &&
+        ref.read(activePregnancyProvider) == null) {
+      HapticFeedback.heavyImpact();
+      final lang = Localizations.localeOf(context).languageCode;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            lang == 'ar'
+                ? 'يرجى تحديد تاريخ آخر دورة شهرية (DDR)'
+                : (lang == 'en'
+                    ? 'Please select the date of your last menstrual period'
+                    : 'Veuillez sélectionner la date des dernières règles (DDR)'),
+          ),
+          backgroundColor: AppColors.error,
+        ),
+      );
+      return;
+    }
+
     setState(() => _isSaving = true);
     HapticFeedback.mediumImpact();
 
@@ -1001,6 +1021,9 @@ class _EditMotherProfileScreenState extends ConsumerState<EditMotherProfileScree
         onTap: () {
           HapticFeedback.selectionClick();
           setState(() => _status = status);
+          if (status == UserStatus.pregnant && _pregnancyDate == null) {
+            _pickPregnancyDate();
+          }
         },
         child: AnimatedContainer(
           duration: const Duration(milliseconds: 200),

@@ -37,11 +37,11 @@ final milestoneRemindersProvider = FutureProvider.autoDispose
 /// Stream provider for milestone progress
 final milestoneProgressStreamProvider =
     StreamProvider.family<List<MilestoneProgress>, String>((ref, childId) {
-      final user = ref.watch(profileProvider).value;
-      if (user == null) return Stream.value([]);
+      final uid = ref.watch(profileProvider.select((p) => p.value?.uid));
+      if (uid == null) return Stream.value([]);
 
       final service = ref.watch(timelineServiceProvider);
-      return service.watchMilestoneProgress(user.uid, childId);
+      return service.watchMilestoneProgress(uid, childId);
     });
 
 /// Provider for filtered milestones based on selected child
