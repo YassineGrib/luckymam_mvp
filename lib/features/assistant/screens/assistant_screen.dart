@@ -250,14 +250,6 @@ class _AssistantScreenState extends ConsumerState<AssistantScreen> {
                             message: initialGreeting,
                             onCardAction: () {},
                           ),
-                          const SizedBox(height: 16),
-                          // Quick suggestions
-                          SuggestionChips(
-                            onSuggestionSelected: (query) {
-                              controller.send(query);
-                              _scrollToBottom();
-                            },
-                          ),
                         ] else ...[
                           // 1. User Question
                           MessageBubble(
@@ -296,7 +288,19 @@ class _AssistantScreenState extends ConsumerState<AssistantScreen> {
                   ),
                 ),
 
-                // 3. Input Bar at Bottom
+                // 3. Quick Suggestions docked above the Input Bar
+                if (!hasActiveTurn)
+                  Padding(
+                    padding: const EdgeInsets.only(bottom: 4),
+                    child: SuggestionChips(
+                      onSuggestionSelected: (query) {
+                        controller.send(query);
+                        _scrollToBottom();
+                      },
+                    ),
+                  ),
+
+                // 4. Input Bar at Bottom
                 ChatInputBar(
                   isThinking: isThinking,
                   onTypingChanged: (isTyping) {
