@@ -30,6 +30,10 @@ import '../../core/providers/display_provider.dart';
 import '../timeline/widgets/timeline_rail.dart';
 import '../../core/theme/app_typography.dart';
 import '../../shared/widgets/top_ambient_gradient.dart';
+import '../assistant/avatar/assistant_character.dart';
+import '../assistant/avatar/mochi_avatar.dart';
+import '../assistant/avatar/mochi_state.dart';
+import '../assistant/providers/assistant_character_provider.dart';
 
 /// Full profile screen with Firestore integration.
 class ProfileScreen extends ConsumerWidget {
@@ -1359,6 +1363,176 @@ class _SettingsSection extends ConsumerWidget {
     );
   }
 
+  void _showAssistantCharacterSheet(BuildContext context, WidgetRef ref) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final isAr = Localizations.localeOf(context).languageCode == 'ar';
+
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: isDark ? const Color(0xFF1E2024) : Colors.white,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+      ),
+      builder: (ctx) {
+        return Consumer(
+          builder: (context, ref, _) {
+            final active = ref.watch(assistantCharacterProvider);
+
+            return SafeArea(
+              child: Padding(
+                padding: const EdgeInsets.fromLTRB(20, 16, 20, 24),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Center(
+                      child: Container(
+                        width: 40,
+                        height: 4,
+                        decoration: BoxDecoration(
+                          color: isDark ? Colors.white24 : Colors.black12,
+                          borderRadius: BorderRadius.circular(2),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 16),
+                    Text(
+                      isAr ? 'شخصية المساعد الذكي' : 'Compagnon IA (Assistant)',
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.w700,
+                        color: isDark ? Colors.white : const Color(0xFF1D1B20),
+                      ),
+                    ),
+                    const SizedBox(height: 4),
+                    Text(
+                      isAr
+                          ? 'اختر مظهر رفيقك التفاعلي من بين 3 شخصيات بمحرك حركي موحّد.'
+                          : 'Trois pistes au même moteur réactif pour accompagner vos journées.',
+                      style: TextStyle(
+                        fontSize: 12,
+                        color: isDark ? Colors.white60 : const Color(0xFF6B6575),
+                      ),
+                    ),
+                    const SizedBox(height: 18),
+                    ...AssistantCharacter.values.map((char) {
+                      final isSelected = char == active;
+                      return Padding(
+                        padding: const EdgeInsets.only(bottom: 10),
+                        child: InkWell(
+                          onTap: () {
+                            ref
+                                .read(assistantCharacterProvider.notifier)
+                                .setCharacter(char);
+                            Navigator.of(ctx).pop();
+                          },
+                          borderRadius: BorderRadius.circular(16),
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 14, vertical: 12),
+                            decoration: BoxDecoration(
+                              color: isSelected
+                                  ? AppColors.primaryLight
+                                      .withValues(alpha: isDark ? 0.20 : 0.10)
+                                  : (isDark
+                                      ? const Color(0xFF282B30)
+                                      : const Color(0xFFF6F7F9)),
+                              borderRadius: BorderRadius.circular(16),
+                              border: Border.all(
+                                color: isSelected
+                                    ? AppColors.primaryLight
+                                    : (isDark
+                                        ? Colors.white12
+                                        : Colors.black.withValues(alpha: 0.05)),
+                                width: isSelected ? 1.5 : 1,
+                              ),
+                            ),
+                            child: Row(
+                              children: [
+                                MochiAvatar(
+                                  size: 46,
+                                  character: char,
+                                  state: MochiState.idle,
+                                  animated: false,
+                                ),
+                                const SizedBox(width: 14),
+                                Expanded(
+                                  child: Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      Row(
+                                        children: [
+                                          Text(
+                                            char.displayName(context),
+                                            style: TextStyle(
+                                              fontSize: 15,
+                                              fontWeight: isSelected
+                                                  ? FontWeight.w700
+                                                  : FontWeight.w600,
+                                              color: isDark
+                                                  ? Colors.white
+                                                  : const Color(0xFF1D1B20),
+                                            ),
+                                          ),
+                                          if (char == AssistantCharacter.lueur) ...[
+                                            const SizedBox(width: 6),
+                                            Container(
+                                              padding: const EdgeInsets.symmetric(
+                                                  horizontal: 6, vertical: 2),
+                                              decoration: BoxDecoration(
+                                                color: AppColors.primaryLight
+                                                    .withValues(alpha: 0.18),
+                                                borderRadius:
+                                                    BorderRadius.circular(6),
+                                              ),
+                                              child: Text(
+                                                isAr ? 'الافتراضي' : 'Défaut',
+                                                style: const TextStyle(
+                                                  fontSize: 10,
+                                                  fontWeight: FontWeight.w700,
+                                                  color: AppColors.primaryLight,
+                                                ),
+                                              ),
+                                            ),
+                                          ],
+                                        ],
+                                      ),
+                                      const SizedBox(height: 3),
+                                      Text(
+                                        char.displayDescription(context),
+                                        style: TextStyle(
+                                          fontSize: 11.5,
+                                          color: isDark
+                                              ? Colors.white60
+                                              : const Color(0xFF6B6575),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                                const SizedBox(width: 8),
+                                if (isSelected)
+                                  const Icon(
+                                    Icons.check_circle_rounded,
+                                    color: AppColors.primaryLight,
+                                    size: 22,
+                                  ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      );
+                    }),
+                  ],
+                ),
+              ),
+            );
+          },
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final l10n = context.l10n;
@@ -1403,6 +1577,16 @@ class _SettingsSection extends ConsumerWidget {
         _DisplaySettingsTile(
           textColor: textColor,
           secondaryColor: secondaryColor,
+        ),
+        _SettingsTile(
+          icon: Icons.face_retouching_natural_rounded,
+          textColor: textColor,
+          secondaryColor: secondaryColor,
+          title: activeLocale.languageCode == 'ar'
+              ? 'شخصية المساعد الذكي'
+              : 'Compagnon IA',
+          subtitle: ref.watch(assistantCharacterProvider).displayName(context),
+          onTap: () => _showAssistantCharacterSheet(context, ref),
         ),
         _SettingsTile(
           icon: Icons.notifications_outlined,

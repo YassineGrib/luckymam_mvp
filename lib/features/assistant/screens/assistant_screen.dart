@@ -6,6 +6,7 @@ import '../../../shared/widgets/top_ambient_gradient.dart';
 import '../avatar/mochi_avatar.dart';
 import '../avatar/mochi_state.dart';
 import '../models/assistant_models.dart';
+import '../providers/assistant_character_provider.dart';
 import '../providers/assistant_providers.dart';
 import '../widgets/chat_input_bar.dart';
 import '../widgets/message_bubble.dart';
@@ -198,6 +199,7 @@ class _AssistantScreenState extends ConsumerState<AssistantScreen> {
                               tag: 'assistant_mochi_hero',
                               child: MochiAvatar(
                                 size: hasActiveTurn ? 96 : 136,
+                                character: ref.watch(assistantCharacterProvider),
                                 state: isThinking
                                     ? MochiState.thinking
                                     : state.mochi,

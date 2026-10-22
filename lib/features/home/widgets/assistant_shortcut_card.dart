@@ -1,18 +1,20 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../core/extensions/l10n_extension.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../assistant/avatar/mochi_avatar.dart';
 import '../../assistant/avatar/mochi_state.dart';
+import '../../assistant/providers/assistant_character_provider.dart';
 
 /// Dashboard shortcut Bento card for the Lucky AI Assistant.
-/// Displays an animated mini Mochi avatar with welcoming typography.
-class AssistantShortcutCard extends StatelessWidget {
+/// Displays an animated mini avatar with welcoming typography.
+class AssistantShortcutCard extends ConsumerWidget {
   const AssistantShortcutCard({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final l10n = context.l10n;
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
@@ -78,8 +80,9 @@ class AssistantShortcutCard extends StatelessWidget {
                       ],
                     ),
                     alignment: Alignment.center,
-                    child: const MochiAvatar(
+                    child: MochiAvatar(
                       size: 50,
+                      character: ref.watch(assistantCharacterProvider),
                       state: MochiState.idle,
                       animated: false,
                     ),

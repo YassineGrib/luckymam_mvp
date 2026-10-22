@@ -1,40 +1,65 @@
 import 'dart:math' as math;
 import 'package:flutter/material.dart';
+import 'assistant_character.dart';
 import 'mochi_engine.dart';
 import 'mochi_palette.dart';
 import 'mochi_state.dart';
 
-/// 60 FPS Procedural 2D Canvas Drawing Engine for Mochi.
-/// Implements superellipse body, 3D spherical projected eyes,
-/// blush, badges, and atmospheric particles without any external assets.
+/// 60 FPS Procedural 2D Canvas Drawing Engine for Assistant Characters.
+/// Supports Lueur (luminous orb taking state color), Mochi (squircle with cheeks),
+/// and Galet (matte mineral pill-eyed pebble).
 class MochiPainter extends CustomPainter {
   MochiPainter(
     this.engine, {
     required Listenable repaint,
     this.isDark = false,
+    this.character = AssistantCharacter.lueur,
   }) : super(repaint: repaint);
 
   final MochiEngine engine;
   final bool isDark;
+  final AssistantCharacter? character;
 
   @override
   void paint(Canvas canvas, Size size) {
+    final activeChar = character ?? AssistantCharacter.lueur;
     final W = size.width;
     final H = size.height;
     final R = W * 0.30;
-    final rx = R * 1.14;
-    final ry = R * 0.88;
+
+    final isMochi = activeChar == AssistantCharacter.mochi;
+    final isLueur = activeChar == AssistantCharacter.lueur;
+    final isGalet = activeChar == AssistantCharacter.galet;
+
+    final rx = isMochi ? R * 1.14 : R;
+    final ry = isMochi ? R * 0.88 : R;
 
     final cx = W / 2 + engine.offsetX * R;
-    final cy = H / 2 + engine.offsetY * R + R * 0.06;
+    final cy = H / 2 + engine.offsetY * R + (isMochi ? R * 0.06 : 0.0);
 
-    final baseTop = isDark ? MochiPalette.baseDarkTop : MochiPalette.baseLightTop;
-    final baseBottom = isDark ? MochiPalette.baseDarkBottom : MochiPalette.baseLightBottom;
-    final inkColor = isDark ? MochiPalette.inkDark : MochiPalette.inkLight;
+    final inkColor = isLueur
+        ? (isDark ? Colors.white : const Color(0xFF0D1522))
+        : isGalet
+            ? (isDark ? Colors.white : const Color(0xFF121418))
+            : (isDark ? MochiPalette.inkDark : MochiPalette.inkLight);
+
+    final stateTint = MochiPalette.tintFor(engine.state);
 
     // 1. Soft radial glow halo behind the character
-    final stateTint = MochiPalette.tintFor(engine.state);
-    if (stateTint > 0.05) {
+    if (isLueur) {
+      // Lueur: Volumetric pulsing aura taking the state color
+      final k = math.max(stateTint, 0.35);
+      final auraAlpha = (isDark ? 0.45 : 0.30) * k;
+      final glowPaint = Paint()
+        ..shader = RadialGradient(
+          colors: [
+            engine.currentColor.withValues(alpha: auraAlpha),
+            Colors.transparent,
+          ],
+          stops: const [0.50, 1.0],
+        ).createShader(Rect.fromCircle(center: Offset(cx, cy), radius: R * 1.55));
+      canvas.drawCircle(Offset(cx, cy), R * 1.55, glowPaint);
+    } else if (stateTint > 0.05) {
       final glowPaint = Paint()
         ..shader = RadialGradient(
           colors: [
@@ -51,71 +76,121 @@ class MochiPainter extends CustomPainter {
     canvas.rotate(engine.tilt);
     canvas.scale(engine.scaleX, engine.scaleY);
 
-    // Construct Lamé Superellipse Squircle Path (exponent n = 2.7)
     final bodyPath = Path();
-    const samples = 64;
-    for (int i = 0; i <= samples; i++) {
-      final theta = (i / samples) * 2.0 * math.pi;
-      final cosT = math.cos(theta);
-      final sinT = math.sin(theta);
-      final signCos = cosT.sign;
-      final signSin = sinT.sign;
-      final px = rx * signCos * math.pow(cosT.abs(), 2.0 / 2.7);
-      final py = ry * signSin * math.pow(sinT.abs(), 2.0 / 2.7);
-      if (i == 0) {
-        bodyPath.moveTo(px, py);
-      } else {
-        bodyPath.lineTo(px, py);
+    if (isMochi) {
+      // Construct Lamé Superellipse Squircle Path (exponent n = 2.7)
+      const samples = 64;
+      for (int i = 0; i <= samples; i++) {
+        final theta = (i / samples) * 2.0 * math.pi;
+        final cosT = math.cos(theta);
+        final sinT = math.sin(theta);
+        final signCos = cosT.sign;
+        final signSin = sinT.sign;
+        final px = rx * signCos * math.pow(cosT.abs(), 2.0 / 2.7);
+        final py = ry * signSin * math.pow(sinT.abs(), 2.0 / 2.7);
+        if (i == 0) {
+          bodyPath.moveTo(px, py);
+        } else {
+          bodyPath.lineTo(px, py);
+        }
       }
+      bodyPath.close();
+    } else {
+      // Lueur and Galet: Smooth circle
+      bodyPath.addOval(Rect.fromCircle(center: Offset.zero, radius: R));
     }
-    bodyPath.close();
 
-    // 2.1 Base diagonal linear gradient
-    final baseGradientPaint = Paint()
-      ..shader = LinearGradient(
-        begin: Alignment.topRight,
-        end: Alignment.bottomLeft,
-        colors: [baseTop, baseBottom],
-      ).createShader(Rect.fromLTRB(-rx, -ry, rx, ry));
-    canvas.drawPath(bodyPath, baseGradientPaint);
+    // 2.1 Body Fills
+    if (isLueur) {
+      // Lueur: "Une sphère qui prend la couleur de son état. On sait ce qui se passe sans lire, même de loin."
+      final k = math.max(stateTint, 0.35);
+      final inner = Color.lerp(Colors.white, engine.currentColor, 0.15 * k)!;
+      final outerBase = isDark ? const Color(0xFF1E2430) : const Color(0xFFD6DEE8);
+      final outer = Color.lerp(outerBase, engine.currentColor, 0.85 * k)!;
+      final mid = Color.lerp(inner, outer, 0.52)!;
 
-    // 2.2 Dynamic state tint overlay
-    if (stateTint > 0.01) {
-      final tintPaint = Paint()
+      final orbPaint = Paint()
+        ..shader = RadialGradient(
+          center: const Alignment(-0.30, -0.38),
+          radius: 1.05,
+          colors: [inner, mid, outer],
+          stops: const [0.0, 0.55, 1.0],
+        ).createShader(Rect.fromCircle(center: Offset.zero, radius: R));
+      canvas.drawPath(bodyPath, orbPaint);
+    } else if (isGalet) {
+      // Galet: Matte mineral stone/pebble linear gradient
+      final c0 = isDark ? const Color(0xFF333842) : const Color(0xFFF7F8FA);
+      final c1 = isDark ? const Color(0xFF1E2127) : const Color(0xFFB5BAC3);
+      final galetPaint = Paint()
         ..shader = LinearGradient(
-          begin: Alignment.bottomCenter,
-          end: Alignment.topCenter,
-          colors: [
-            engine.currentColor.withValues(alpha: (0.85 * stateTint).clamp(0.0, 1.0)),
-            engine.currentColor.withValues(alpha: 0.0),
-          ],
-        ).createShader(Rect.fromLTRB(-rx, -ry * 0.25, rx, ry));
-      canvas.drawPath(bodyPath, tintPaint);
-    }
+          begin: Alignment.topRight,
+          end: Alignment.bottomLeft,
+          colors: [c0, c1],
+        ).createShader(Rect.fromCircle(center: Offset.zero, radius: R));
+      canvas.drawPath(bodyPath, galetPaint);
 
-
-    // 3. Cheeks (blush follows gaze)
-    final totalBlush = (engine.blush > 0.01 ? engine.blush : 0.35).clamp(0.0, 1.0);
-    if (totalBlush > 0.01) {
-      canvas.save();
-      canvas.clipPath(bodyPath);
-      final cheekYOffset = math.sin(engine.yaw) * rx * 0.8;
-      final blushPaint = Paint()
-        ..color = MochiPalette.blush.withValues(alpha: (0.45 * totalBlush).clamp(0.0, 1.0));
-      for (final sd in [-1.0, 1.0]) {
-        canvas.drawOval(
-          Rect.fromCenter(
-            center: Offset(sd * rx * 0.55 + cheekYOffset, ry * 0.20),
-            width: R * 0.34,
-            height: R * 0.20,
-          ),
-          blushPaint,
-        );
+      if (stateTint > 0.01) {
+        final tintPaint = Paint()
+          ..shader = LinearGradient(
+            begin: Alignment.bottomCenter,
+            end: Alignment.topCenter,
+            colors: [
+              engine.currentColor.withValues(alpha: (0.75 * stateTint).clamp(0.0, 1.0)),
+              engine.currentColor.withValues(alpha: 0.0),
+            ],
+          ).createShader(Rect.fromLTRB(-R, -R * 0.25, R, R));
+        canvas.drawPath(bodyPath, tintPaint);
       }
-      canvas.restore();
+    } else {
+      // Mochi: Warm pastel peach squircle
+      final baseTop = isDark ? MochiPalette.baseDarkTop : MochiPalette.baseLightTop;
+      final baseBottom = isDark ? MochiPalette.baseDarkBottom : MochiPalette.baseLightBottom;
+      final baseGradientPaint = Paint()
+        ..shader = LinearGradient(
+          begin: Alignment.topRight,
+          end: Alignment.bottomLeft,
+          colors: [baseTop, baseBottom],
+        ).createShader(Rect.fromLTRB(-rx, -ry, rx, ry));
+      canvas.drawPath(bodyPath, baseGradientPaint);
+
+      if (stateTint > 0.01) {
+        final tintPaint = Paint()
+          ..shader = LinearGradient(
+            begin: Alignment.bottomCenter,
+            end: Alignment.topCenter,
+            colors: [
+              engine.currentColor.withValues(alpha: (0.85 * stateTint).clamp(0.0, 1.0)),
+              engine.currentColor.withValues(alpha: 0.0),
+            ],
+          ).createShader(Rect.fromLTRB(-rx, -ry * 0.25, rx, ry));
+        canvas.drawPath(bodyPath, tintPaint);
+      }
     }
 
-    // 4. 3D Spherical projected eyes
+    // 3. Cheeks (blush follows gaze) - Mochi only
+    if (isMochi) {
+      final totalBlush = (engine.blush > 0.01 ? engine.blush : 0.35).clamp(0.0, 1.0);
+      if (totalBlush > 0.01) {
+        canvas.save();
+        canvas.clipPath(bodyPath);
+        final cheekYOffset = math.sin(engine.yaw) * rx * 0.8;
+        final blushPaint = Paint()
+          ..color = MochiPalette.blush.withValues(alpha: (0.45 * totalBlush).clamp(0.0, 1.0));
+        for (final sd in [-1.0, 1.0]) {
+          canvas.drawOval(
+            Rect.fromCenter(
+              center: Offset(sd * rx * 0.55 + cheekYOffset, ry * 0.20),
+              width: R * 0.34,
+              height: R * 0.20,
+            ),
+            blushPaint,
+          );
+        }
+        canvas.restore();
+      }
+    }
+
+    // 4. 3D Spherical projected eyes with character-specific proportions
     canvas.save();
     canvas.clipPath(bodyPath);
 
@@ -129,13 +204,25 @@ class MochiPainter extends CustomPainter {
 
     final shape = engine.currentEyeShape;
 
+    // Character eye specs from CHARACTER_AI
+    // Lueur: {w: .22, h: .46, sp: .29, p: .02}
+    // Galet: {w: .25, h: .52, sp: .31, p: .02}
+    // Mochi: {w: .25, h: .27, sp: .37, p: -.12}
+    final eyeSpacing = isLueur ? 0.29 : isGalet ? 0.31 : 0.37;
+    final eyePitchBias = isMochi ? -0.12 : 0.02;
+    final eyeWidth = isLueur ? R * 0.22 : R * 0.25;
+    final eyeHeight = isLueur
+        ? R * 0.46
+        : isGalet
+            ? R * 0.52
+            : R * 0.27;
+
     for (final sd in [-1.0, 1.0]) {
-      final yaw = sd * 0.37 + engine.yaw;
-      var pitch = -0.12 + engine.pitch + engine.roll;
+      final yaw = sd * eyeSpacing + engine.yaw;
+      var pitch = eyePitchBias + engine.pitch + engine.roll;
       pitch = ((pitch + math.pi) % (2 * math.pi) + 2 * math.pi) % (2 * math.pi) - math.pi;
 
       final cosPitch = math.cos(pitch);
-      // Horizon clipping: if the eye rolls behind the back of the head, clip it
       if (math.cos(yaw) * cosPitch < 0.04) continue;
 
       final px = math.sin(yaw) * cosPitch * rx;
@@ -148,8 +235,8 @@ class MochiPainter extends CustomPainter {
       canvas.translate(px, py);
       canvas.scale(fx, fy);
 
-      final ew = R * 0.25 * engine.eyeScale;
-      final eh = R * 0.27 * engine.eyeScale;
+      final ew = eyeWidth * engine.eyeScale;
+      final eh = eyeHeight * engine.eyeScale;
 
       _drawEye(
         canvas: canvas,

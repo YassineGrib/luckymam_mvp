@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:lukymam_mvp/features/assistant/avatar/assistant_character.dart';
 import 'package:lukymam_mvp/features/assistant/avatar/mochi_avatar.dart';
 import 'package:lukymam_mvp/features/assistant/avatar/mochi_state.dart';
 
@@ -97,5 +98,27 @@ void main() {
       );
       expect(find.bySemanticsLabel('Lucky'), findsOneWidget);
     });
+
+    testWidgets('renders all 3 characters (Lueur, Mochi, Galet) without throwing', (tester) async {
+      for (final char in AssistantCharacter.values) {
+        await tester.pumpWidget(
+          MaterialApp(
+            home: Scaffold(
+              body: Center(
+                child: MochiAvatar(
+                  character: char,
+                  state: MochiState.thinking,
+                  size: 140,
+                ),
+              ),
+            ),
+          ),
+        );
+        await tester.pump(const Duration(milliseconds: 100));
+        expect(tester.takeException(), isNull);
+        expect(find.byType(MochiAvatar), findsOneWidget);
+      }
+    });
   });
 }
+

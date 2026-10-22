@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
+import 'assistant_character.dart';
 import 'mochi_engine.dart';
 import 'mochi_painter.dart';
 import 'mochi_state.dart';
 
-/// Interactive procedural Mochi avatar widget.
+/// Interactive procedural Assistant avatar widget.
+/// Supports Lueur (default), Mochi, and Galet.
 /// Runs a 60 FPS animation ticker, manages physics, handles touch gestures,
 /// and responds to user focus and reduced-motion settings.
 class MochiAvatar extends StatefulWidget {
@@ -13,6 +15,7 @@ class MochiAvatar extends StatefulWidget {
     this.speaking = false,
     this.size = 140,
     this.animated = true,
+    this.character = AssistantCharacter.lueur,
     this.onTap,
     this.customEngine,
   });
@@ -21,6 +24,7 @@ class MochiAvatar extends StatefulWidget {
   final bool speaking;
   final double size;
   final bool animated;
+  final AssistantCharacter character;
   final VoidCallback? onTap;
   final MochiEngine? customEngine;
 
@@ -107,6 +111,7 @@ class MochiAvatarState extends State<MochiAvatar>
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
+    final activeCharacter = widget.character;
 
     return Semantics(
       label: 'Lucky',
@@ -132,6 +137,7 @@ class MochiAvatarState extends State<MochiAvatar>
                   _engine,
                   repaint: _animController,
                   isDark: isDark,
+                  character: activeCharacter,
                 ),
                 size: Size(widget.size, widget.size),
               ),
