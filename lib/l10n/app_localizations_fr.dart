@@ -2711,4 +2711,77 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get scheduleStartsAtBirth => 'Le calendrier démarre à la naissance';
+
+  @override
+  String get assistantName => 'Lucky';
+
+  @override
+  String get assistantTitle => 'Mon assistante';
+
+  @override
+  String get assistantGreeting =>
+      'Bonjour ! Je suis Lucky. Je peux t\'aider pour la santé, les souvenirs, les sorties et les idées cadeaux pour tes enfants.';
+
+  @override
+  String get assistantDisclaimer => 'Lucky ne remplace pas un médecin.';
+
+  @override
+  String get assistantInputHint => 'Écris ton message…';
+
+  @override
+  String get assistantSend => 'Envoyer';
+
+  @override
+  String get assistantThinking => 'Lucky réfléchit…';
+
+  @override
+  String get assistantSuggestionOutingToday =>
+      'Une idée de sortie aujourd\'hui ?';
+
+  @override
+  String get assistantSuggestionNextVaccine => 'Quel est le prochain vaccin ?';
+
+  @override
+  String get assistantSuggestionGiftIdea => 'Une idée de jeu d\'éveil ?';
+
+  @override
+  String get assistantSuggestionMakeAlbum => 'Comment créer un bel album ?';
+
+  @override
+  String get assistantErrorGeneric =>
+      'Une erreur est survenue. Réessaie dans un instant.';
+
+  @override
+  String get assistantErrorQuota =>
+      'Tu as atteint ta limite de messages pour aujourd\'hui.';
+
+  @override
+  String get assistantErrorBusy =>
+      'L\'assistante est très occupée. Réessaie dans quelques instants.';
+
+  @override
+  String get assistantErrorNetwork =>
+      'Connexion réseau instable. Vérifie ta connexion.';
+
+  @override
+  String get assistantCardProductCta => 'Voir le produit';
+
+  @override
+  String get assistantCardAlbumCta => 'Créer l\'album';
+
+  @override
+  String get assistantCardSubscriptionCta => 'Découvrir l\'offre';
+
+  @override
+  String get assistantCardAppointmentCta => 'Ouvrir la santé';
+
+  @override
+  String get assistantCardWeatherTitle => 'Idée de sortie';
+
+  @override
+  String get assistantShortcutTitle => 'Parle à Lucky';
+
+  @override
+  String get assistantShortcutSubtitle =>
+      'Conseils, albums, sorties et idées cadeaux';
 }

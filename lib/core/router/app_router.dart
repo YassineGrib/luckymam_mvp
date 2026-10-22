@@ -20,6 +20,7 @@ import '../../features/marketplace/screens/checkout_screen.dart';
 import '../../features/marketplace/screens/my_orders_screen.dart';
 import '../../features/notifications/notifications_screen.dart';
 import '../../features/home/tabs/timeline_tab.dart';
+import '../../features/assistant/screens/assistant_screen.dart';
 
 /// App router configuration with soft page transitions.
 class AppRouter {
@@ -205,6 +206,16 @@ class AppRouter {
             childId: 'c1',
             childName: 'Amine',
           ),
+        ),
+      ),
+
+      // AI Assistant (Lucky)
+      GoRoute(
+        path: '/assistant',
+        name: 'assistant',
+        pageBuilder: (context, state) => _buildPageWithTransition(
+          key: state.pageKey,
+          child: const AssistantScreen(),
         ),
       ),
 

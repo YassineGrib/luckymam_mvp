@@ -5,6 +5,7 @@ import '../../../core/extensions/l10n_extension.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../shared/widgets/top_ambient_gradient.dart';
 import '../../profile/providers/profile_providers.dart';
+import '../widgets/assistant_shortcut_card.dart';
 import '../widgets/children_overview.dart';
 import '../widgets/daily_tip_card.dart';
 import '../widgets/home_bento_grid.dart';
@@ -81,6 +82,9 @@ class DashboardTab extends ConsumerWidget {
 
                 // 5. Asymmetric Bento Grid (Tall health tracking + 2 stacked cards)
                 const SliverToBoxAdapter(child: HomeBentoGrid()),
+
+                // 5b. Lucky AI Assistant Shortcut Card
+                const SliverToBoxAdapter(child: AssistantShortcutCard()),
 
                 // 6. Mes Enfants (For Mothers)
                 if (hasBornChildren) ...[

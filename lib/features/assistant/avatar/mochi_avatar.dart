@@ -12,6 +12,7 @@ class MochiAvatar extends StatefulWidget {
     required this.state,
     this.speaking = false,
     this.size = 140,
+    this.animated = true,
     this.onTap,
     this.customEngine,
   });
@@ -19,6 +20,7 @@ class MochiAvatar extends StatefulWidget {
   final MochiState state;
   final bool speaking;
   final double size;
+  final bool animated;
   final VoidCallback? onTap;
   final MochiEngine? customEngine;
 
@@ -45,7 +47,7 @@ class MochiAvatarState extends State<MochiAvatar>
     _animController = AnimationController(
       vsync: this,
       duration: const Duration(seconds: 1),
-    )..repeat();
+    );
 
     _lastTimestampMs = DateTime.now().millisecondsSinceEpoch;
     _animController.addListener(() {
@@ -54,6 +56,12 @@ class MochiAvatarState extends State<MochiAvatar>
       _lastTimestampMs = now;
       _engine.update(dt);
     });
+
+    if (widget.animated) {
+      _animController.repeat();
+    } else {
+      _engine.update(0.016);
+    }
   }
 
   @override
@@ -65,6 +73,13 @@ class MochiAvatarState extends State<MochiAvatar>
     if (oldWidget.speaking != widget.speaking) {
       _engine.setSpeaking(widget.speaking);
     }
+    if (oldWidget.animated != widget.animated) {
+      if (widget.animated) {
+        if (!_animController.isAnimating) _animController.repeat();
+      } else {
+        _animController.stop();
+      }
+    }
   }
 
   @override
@@ -72,6 +87,9 @@ class MochiAvatarState extends State<MochiAvatar>
     super.didChangeDependencies();
     final disableAnimations = MediaQuery.of(context).disableAnimations;
     _engine.setReducedMotion(disableAnimations);
+    if (disableAnimations || !widget.animated) {
+      if (_animController.isAnimating) _animController.stop();
+    }
   }
 
   @override

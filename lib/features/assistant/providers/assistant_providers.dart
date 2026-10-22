@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../core/providers/locale_provider.dart';
 import '../avatar/mochi_state.dart';
@@ -60,13 +61,28 @@ class AssistantController extends StateNotifier<AssistantState> {
     return Duration(milliseconds: ms);
   }
 
-  void greet() {
+  Timer? _greetTimer;
+
+  void greet({Duration duration = const Duration(milliseconds: 1200)}) {
+    _greetTimer?.cancel();
     state = state.copyWith(mochi: MochiState.approval);
-    Future.delayed(const Duration(milliseconds: 1200), () {
+    if (duration == Duration.zero) {
+      if (mounted && state.phase == AssistantPhase.idle) {
+        state = state.copyWith(mochi: MochiState.idle);
+      }
+      return;
+    }
+    _greetTimer = Timer(duration, () {
       if (mounted && state.phase == AssistantPhase.idle) {
         state = state.copyWith(mochi: MochiState.idle);
       }
     });
+  }
+
+  @override
+  void dispose() {
+    _greetTimer?.cancel();
+    super.dispose();
   }
 
   void onUserTyping(bool typing) {

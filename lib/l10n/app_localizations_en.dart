@@ -2687,4 +2687,77 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get scheduleStartsAtBirth => 'The schedule starts at birth';
+
+  @override
+  String get assistantName => 'Lucky';
+
+  @override
+  String get assistantTitle => 'My Assistant';
+
+  @override
+  String get assistantGreeting =>
+      'Hello! I am Lucky. I can assist you with your children\'s health, milestones, memory albums, outings, and gift ideas.';
+
+  @override
+  String get assistantDisclaimer =>
+      'Lucky is an informative assistant and does not replace a doctor.';
+
+  @override
+  String get assistantInputHint => 'Type your message…';
+
+  @override
+  String get assistantSend => 'Send';
+
+  @override
+  String get assistantThinking => 'Lucky is thinking…';
+
+  @override
+  String get assistantSuggestionOutingToday => 'An outing idea today?';
+
+  @override
+  String get assistantSuggestionNextVaccine => 'What is the next vaccine?';
+
+  @override
+  String get assistantSuggestionGiftIdea => 'An educational toy idea?';
+
+  @override
+  String get assistantSuggestionMakeAlbum => 'How to make a photo album?';
+
+  @override
+  String get assistantErrorGeneric =>
+      'An error occurred. Please try again in a moment.';
+
+  @override
+  String get assistantErrorQuota =>
+      'You have reached your daily message limit.';
+
+  @override
+  String get assistantErrorBusy =>
+      'The assistant is busy. Please try again shortly.';
+
+  @override
+  String get assistantErrorNetwork =>
+      'Network connection issue. Please check your internet.';
+
+  @override
+  String get assistantCardProductCta => 'View product';
+
+  @override
+  String get assistantCardAlbumCta => 'Create album';
+
+  @override
+  String get assistantCardSubscriptionCta => 'View plan';
+
+  @override
+  String get assistantCardAppointmentCta => 'Open health';
+
+  @override
+  String get assistantCardWeatherTitle => 'Outing idea';
+
+  @override
+  String get assistantShortcutTitle => 'Talk to Lucky';
+
+  @override
+  String get assistantShortcutSubtitle =>
+      'Health tips, albums, outings and gift ideas';
 }

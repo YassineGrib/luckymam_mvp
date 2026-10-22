@@ -2679,4 +2679,76 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get scheduleStartsAtBirth => 'يبدأ الجدول عند الولادة';
+
+  @override
+  String get assistantName => 'Lucky';
+
+  @override
+  String get assistantTitle => 'مساعدتي الذكية';
+
+  @override
+  String get assistantGreeting =>
+      'أهلاً بكِ! أنا لاكي، رفيقتكِ الذكية. يمكنني مساعدتكِ في صحة طفلك، توثيق الذكريات، اقتراح نزهات، وأفكار هدايا وألعاب مفيدة.';
+
+  @override
+  String get assistantDisclaimer => 'لاكي لا يحل محل الطبيب المختص.';
+
+  @override
+  String get assistantInputHint => 'اكتبي رسالتكِ هنا…';
+
+  @override
+  String get assistantSend => 'إرسال';
+
+  @override
+  String get assistantThinking => 'لاكي تفكر…';
+
+  @override
+  String get assistantSuggestionOutingToday => 'فكرة نزهة اليوم؟';
+
+  @override
+  String get assistantSuggestionNextVaccine => 'ما هو اللقاح القادم؟';
+
+  @override
+  String get assistantSuggestionGiftIdea => 'فكرة لعبة لتنمية الذكاء والحواس؟';
+
+  @override
+  String get assistantSuggestionMakeAlbum => 'كيف أنشئ ألبوم ذكريات؟';
+
+  @override
+  String get assistantErrorGeneric =>
+      'حدث خطأ غير متوقع. يرجى المحاولة بعد قليل.';
+
+  @override
+  String get assistantErrorQuota =>
+      'لقد وصلتِ إلى الحد اليومي المتاح من الرسائل.';
+
+  @override
+  String get assistantErrorBusy =>
+      'المساعد مشغول حالياً. يرجى المحاولة بعد لحظات.';
+
+  @override
+  String get assistantErrorNetwork =>
+      'تعذر الاتصال بالشبكة. يرجى التحقق من اتصال الإنترنت.';
+
+  @override
+  String get assistantCardProductCta => 'استكشاف المنتج';
+
+  @override
+  String get assistantCardAlbumCta => 'إنشاء الألبوم';
+
+  @override
+  String get assistantCardSubscriptionCta => 'ترقية الباقة';
+
+  @override
+  String get assistantCardAppointmentCta => 'سجل الصحة';
+
+  @override
+  String get assistantCardWeatherTitle => 'اقتراح نزهة';
+
+  @override
+  String get assistantShortcutTitle => 'تحدثي مع لاكي';
+
+  @override
+  String get assistantShortcutSubtitle =>
+      'نصائح صحية، أفكار ألعاب ونزهات عائلية';
 }

@@ -2,9 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 
+import 'package:go_router/go_router.dart';
+
 import '../../../core/extensions/l10n_extension.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../l10n/app_localizations.dart';
+import '../../assistant/avatar/mochi_avatar.dart';
+import '../../assistant/avatar/mochi_state.dart';
 import '../../notifications/notifications_screen.dart';
 import '../../notifications/providers/notifications_providers.dart';
 import '../../profile/models/profile_models.dart';
@@ -213,7 +217,41 @@ class PersonalHeader extends ConsumerWidget {
           ),
         ),
 
-        const SizedBox(width: 10),
+        const SizedBox(width: 8),
+
+        // ─── Lucky AI Assistant Quick Button ─────────────────────────
+        GestureDetector(
+          onTap: () => context.pushNamed('assistant'),
+          child: Container(
+            width: 42,
+            height: 42,
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              color: isDark
+                  ? const Color(0xFF2E2438)
+                  : const Color(0xFFFFF0F5),
+              border: Border.all(
+                color: const Color(0xFFFFB6C1).withValues(alpha: 0.6),
+                width: 1.5,
+              ),
+              boxShadow: [
+                BoxShadow(
+                  color: const Color(0xFFFFB6C1).withValues(alpha: 0.25),
+                  blurRadius: 8,
+                  offset: const Offset(0, 2),
+                ),
+              ],
+            ),
+            alignment: Alignment.center,
+            child: const MochiAvatar(
+              size: 34,
+              state: MochiState.idle,
+              animated: false,
+            ),
+          ),
+        ),
+
+        const SizedBox(width: 8),
 
         // ─── Circular Notification Button ────────────────────────────
         GestureDetector(

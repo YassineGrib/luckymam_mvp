@@ -4869,6 +4869,138 @@ abstract class AppLocalizations {
   /// In fr, this message translates to:
   /// **'Le calendrier démarre à la naissance'**
   String get scheduleStartsAtBirth;
+
+  /// No description provided for @assistantName.
+  ///
+  /// In fr, this message translates to:
+  /// **'Lucky'**
+  String get assistantName;
+
+  /// No description provided for @assistantTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Mon assistante'**
+  String get assistantTitle;
+
+  /// No description provided for @assistantGreeting.
+  ///
+  /// In fr, this message translates to:
+  /// **'Bonjour ! Je suis Lucky. Je peux t\'aider pour la santé, les souvenirs, les sorties et les idées cadeaux pour tes enfants.'**
+  String get assistantGreeting;
+
+  /// No description provided for @assistantDisclaimer.
+  ///
+  /// In fr, this message translates to:
+  /// **'Lucky ne remplace pas un médecin.'**
+  String get assistantDisclaimer;
+
+  /// No description provided for @assistantInputHint.
+  ///
+  /// In fr, this message translates to:
+  /// **'Écris ton message…'**
+  String get assistantInputHint;
+
+  /// No description provided for @assistantSend.
+  ///
+  /// In fr, this message translates to:
+  /// **'Envoyer'**
+  String get assistantSend;
+
+  /// No description provided for @assistantThinking.
+  ///
+  /// In fr, this message translates to:
+  /// **'Lucky réfléchit…'**
+  String get assistantThinking;
+
+  /// No description provided for @assistantSuggestionOutingToday.
+  ///
+  /// In fr, this message translates to:
+  /// **'Une idée de sortie aujourd\'hui ?'**
+  String get assistantSuggestionOutingToday;
+
+  /// No description provided for @assistantSuggestionNextVaccine.
+  ///
+  /// In fr, this message translates to:
+  /// **'Quel est le prochain vaccin ?'**
+  String get assistantSuggestionNextVaccine;
+
+  /// No description provided for @assistantSuggestionGiftIdea.
+  ///
+  /// In fr, this message translates to:
+  /// **'Une idée de jeu d\'éveil ?'**
+  String get assistantSuggestionGiftIdea;
+
+  /// No description provided for @assistantSuggestionMakeAlbum.
+  ///
+  /// In fr, this message translates to:
+  /// **'Comment créer un bel album ?'**
+  String get assistantSuggestionMakeAlbum;
+
+  /// No description provided for @assistantErrorGeneric.
+  ///
+  /// In fr, this message translates to:
+  /// **'Une erreur est survenue. Réessaie dans un instant.'**
+  String get assistantErrorGeneric;
+
+  /// No description provided for @assistantErrorQuota.
+  ///
+  /// In fr, this message translates to:
+  /// **'Tu as atteint ta limite de messages pour aujourd\'hui.'**
+  String get assistantErrorQuota;
+
+  /// No description provided for @assistantErrorBusy.
+  ///
+  /// In fr, this message translates to:
+  /// **'L\'assistante est très occupée. Réessaie dans quelques instants.'**
+  String get assistantErrorBusy;
+
+  /// No description provided for @assistantErrorNetwork.
+  ///
+  /// In fr, this message translates to:
+  /// **'Connexion réseau instable. Vérifie ta connexion.'**
+  String get assistantErrorNetwork;
+
+  /// No description provided for @assistantCardProductCta.
+  ///
+  /// In fr, this message translates to:
+  /// **'Voir le produit'**
+  String get assistantCardProductCta;
+
+  /// No description provided for @assistantCardAlbumCta.
+  ///
+  /// In fr, this message translates to:
+  /// **'Créer l\'album'**
+  String get assistantCardAlbumCta;
+
+  /// No description provided for @assistantCardSubscriptionCta.
+  ///
+  /// In fr, this message translates to:
+  /// **'Découvrir l\'offre'**
+  String get assistantCardSubscriptionCta;
+
+  /// No description provided for @assistantCardAppointmentCta.
+  ///
+  /// In fr, this message translates to:
+  /// **'Ouvrir la santé'**
+  String get assistantCardAppointmentCta;
+
+  /// No description provided for @assistantCardWeatherTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Idée de sortie'**
+  String get assistantCardWeatherTitle;
+
+  /// No description provided for @assistantShortcutTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Parle à Lucky'**
+  String get assistantShortcutTitle;
+
+  /// No description provided for @assistantShortcutSubtitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Conseils, albums, sorties et idées cadeaux'**
+  String get assistantShortcutSubtitle;
 }
 
 class _AppLocalizationsDelegate
