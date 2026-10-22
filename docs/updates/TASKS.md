@@ -1,6 +1,6 @@
 # Luckymam — Backlog Addendum 27-04-2026 · Suivi des tâches
 
-> **26 tickets** · Mis à jour le : 2026-10-21  
+> **31 tickets** · Mis à jour le : 2026-10-22  
 > Rapports : [LM2-118](../reports/rapport_client_2026_06_20_LM2-118.md) · [LM2-119](../reports/rapport_client_2026_06_20_LM2-119.md) · [LM2-120](../reports/rapport_client_2026_06_20_LM2-120.md) · [LM2-121](../reports/rapport_client_2026_06_20_LM2-121.md) · [LM2-123](../reports/rapport_client_2026_06_20_LM2-123.md) · [LM2-123-v2](../reports/rapport_client_2026_06_20_LM2-123-v2.md) · [LM2-124](../reports/rapport_client_2026_06_20_LM2-124.md) · [LM2-125](../reports/rapport_client_2026_06_21_LM2-125.md) · [LM2-126](../reports/rapport_client_2026_06_21_LM2-126.md) · [LM2-127](../reports/rapport_client_2026_06_21_LM2-127.md) · [LM2-128](../reports/rapport_client_2026_06_21_LM2-128.md) · [LM2-129](../reports/rapport_client_2026_06_21_LM2-129.md) · [LM2-130](../reports/rapport_client_2026_06_21_LM2-130.md) · [LM2-131](../reports/rapport_client_2026_06_21_LM2-131.md) · [LM2-132](../reports/rapport_client_2026_06_21_LM2-132.md) · [LM2-133](../reports/rapport_client_2026_06_21_LM2-133.md) · [LM2-134](../reports/rapport_client_2026_06_21_LM2-134.md) · [LM2-135](../reports/rapport_client_2026_06_21_LM2-135.md) · [LM2-137](../reports/rapport_client_2026_06_21_LM2-137.md) · [LM2-138](../reports/rapport_client_2026_06_21_LM2-138.md) · [LM2-139](../reports/rapport_client_2026_06_21_LM2-139.md) · [LM2-122](../reports/rapport_client_2026_06_21_LM2-122.md) · [LM2-140](../reports/rapport_client_2026-10-21_LM2-140.md) · [LM2-141](../reports/rapport_client_2026-10-21_LM2-141.md) · [LM2-143](../reports/rapport_client_2026-10-21_LM2-143.md) · [LM2-146](../reports/rapport_client_2026-10-21_LM2-146.md)  
 > Légende : ⬜ À faire · 🔄 En cours · ✅ Terminé · 🚫 Bloqué
 
@@ -60,6 +60,18 @@
 
 ---
 
+## 🟣 Addendum Assistant IA — 5 tickets
+
+| ID | Feature | SP | Phase | Statut | Fichier |
+|----|---------|-----|-------|--------|---------|
+| LM2-149 | Champs produit pour l'assistant | 5 | M10-M12 | 🔄 | [LM2-149.md](issues/LM2-149.md) |
+| LM2-150 | Avatar Mochi animé | 13 | M10-M12 | 🔄 | [LM2-150.md](issues/LM2-150.md) |
+| LM2-151 | Écran assistant (chat, cartes, i18n) | 8 | M10-M12 | 🔄 | [LM2-151.md](issues/LM2-151.md) |
+| LM2-152 | Assistant Gemini (Client & Backend) | 13 | M10-M12 | 🔄 | [LM2-152.md](issues/LM2-152.md) |
+| LM2-155 | Météo pour les sorties (Open-Meteo) | 3 | M10-M12 | 🔄 | [LM2-155.md](issues/LM2-155.md) |
+
+---
+
 ## Par phase
 
 | Phase | Tickets | SP total |
@@ -74,13 +86,13 @@
 ## Progression globale
 
 ```
-⬜ À faire   :  0 / 26
-🔄 En cours  :  0 / 26
-✅ Terminé   : 25 / 26  (LM2-118, LM2-119, LM2-120, LM2-121, LM2-122, LM2-123, LM2-124, LM2-125, LM2-126, LM2-127, LM2-128, LM2-129, LM2-130, LM2-131, LM2-132, LM2-133, LM2-134, LM2-135, LM2-137, LM2-138, LM2-139, LM2-140, LM2-141, LM2-143, LM2-146)
-🚫 Bloqué    :  1 / 26  (LM2-136 — nécessite Firebase Hosting + Cloud Functions + facturation Blaze, en attente de validation client)
+⬜ À faire   :  0 / 31
+🔄 En cours  :  5 / 31  (LM2-149, LM2-150, LM2-151, LM2-152, LM2-155)
+✅ Terminé   : 25 / 31  (LM2-118, LM2-119, LM2-120, LM2-121, LM2-122, LM2-123, LM2-124, LM2-125, LM2-126, LM2-127, LM2-128, LM2-129, LM2-130, LM2-131, LM2-132, LM2-133, LM2-134, LM2-135, LM2-137, LM2-138, LM2-139, LM2-140, LM2-141, LM2-143, LM2-146)
+🚫 Bloqué    :  1 / 31  (LM2-136 — nécessite Firebase Hosting + Cloud Functions + facturation Blaze, en attente de validation client)
 ```
 
-**Total Story Points : 199 SP**
+**Total Story Points : 241 SP**
 
 ---
 
