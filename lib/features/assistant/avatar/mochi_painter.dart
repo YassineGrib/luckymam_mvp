@@ -93,31 +93,6 @@ class MochiPainter extends CustomPainter {
       canvas.drawPath(bodyPath, tintPaint);
     }
 
-    // 2.3 Radial edge shading (Ambient Occlusion - dark mode only, no black halo in light mode)
-    if (isDark) {
-      final edgePaint = Paint()
-        ..shader = RadialGradient(
-          center: const Alignment(0.25, -0.32),
-          radius: 1.25,
-          colors: [
-            Colors.transparent,
-            Colors.black.withValues(alpha: 0.15),
-          ],
-          stops: const [0.75, 1.0],
-        ).createShader(Rect.fromLTRB(-rx, -ry, rx, ry));
-      canvas.drawPath(bodyPath, edgePaint);
-    }
-
-    // 2.4 Specular highlight (soft circular gloss on top-right)
-    final specCenter = Offset(rx * 0.34, -ry * 0.46);
-    final specPaint = Paint()
-      ..shader = RadialGradient(
-        colors: [
-          Colors.white.withValues(alpha: isDark ? 0.30 : 0.55),
-          Colors.transparent,
-        ],
-      ).createShader(Rect.fromCircle(center: specCenter, radius: R * 0.42));
-    canvas.drawCircle(specCenter, R * 0.42, specPaint);
 
     // 3. Cheeks (blush follows gaze)
     final totalBlush = (engine.blush > 0.01 ? engine.blush : 0.35).clamp(0.0, 1.0);
