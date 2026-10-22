@@ -86,6 +86,7 @@ dependencies:
   firebase_crashlytics: ^4.3.10
   webview_flutter: ^4.14.1
   url_launcher: ^6.3.2
+  cloud_functions: ^5.6.2
 
 dev_dependencies:
   flutter_test:

@@ -4,6 +4,8 @@ import '../../../core/providers/locale_provider.dart';
 import '../avatar/mochi_state.dart';
 import '../models/assistant_models.dart';
 import '../services/assistant_backend.dart';
+import '../services/fake_assistant_backend.dart';
+import '../services/gemini_assistant_backend.dart';
 import '../services/gemini_direct_backend.dart';
 
 /// Conversation phase of the assistant.
@@ -213,7 +215,15 @@ class AssistantController extends StateNotifier<AssistantState> {
 
 /// Provider for Assistant Backend.
 final assistantBackendProvider = Provider<AssistantBackend>((ref) {
-  return GeminiDirectBackend();
+  const isFake = bool.fromEnvironment('ASSISTANT_FAKE', defaultValue: false);
+  if (isFake) {
+    return FakeAssistantBackend();
+  }
+  const isDirect = bool.fromEnvironment('ASSISTANT_DIRECT', defaultValue: false);
+  if (isDirect) {
+    return GeminiDirectBackend();
+  }
+  return GeminiAssistantBackend();
 });
 
 /// Auto-disposed StateNotifierProvider for AssistantController.
