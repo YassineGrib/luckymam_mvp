@@ -7,6 +7,7 @@ import '../../../l10n/app_localizations.dart';
 
 import '../../profile/providers/profile_providers.dart';
 import '../../profile/profile_screen.dart';
+import '../../../shared/widgets/navigation/app_bottom_nav.dart';
 import '../../../core/theme/app_typography.dart';
 
 String _phaseLabel(AppLocalizations l10n, String phase) {
@@ -48,9 +49,7 @@ class MotherHealthCard extends ConsumerWidget {
         onTap: () {
           // Navigate to profile (where health details are)
           // Ideally, we could navigate to specific tab/section if needed
-          Navigator.of(
-            context,
-          ).push(MaterialPageRoute(builder: (_) => const ProfileScreen()));
+          ref.read(homeNavigationIndexProvider.notifier).state = 4;
         },
         child: Container(
           padding: const EdgeInsets.all(16),

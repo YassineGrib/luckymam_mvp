@@ -16,6 +16,9 @@ class AppColors {
   /// Warm coral for light mode
   static const Color coral = Color(0xFFE85A71);
 
+  /// Light coral / soft coral
+  static const Color coralLight = Color(0xFFF77F95);
+
   /// Teal accent
   static const Color smaltBlue = Color(0xFF4F8289);
 

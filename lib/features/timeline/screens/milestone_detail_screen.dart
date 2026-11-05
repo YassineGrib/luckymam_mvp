@@ -4,10 +4,12 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 import '../../../core/extensions/l10n_extension.dart';
 import '../../../core/services/analytics_service.dart';
 import '../../../core/theme/app_colors.dart';
+import '../../capsules/models/capsule.dart';
 import '../../capsules/screens/capsule_detail_screen.dart';
 import '../../capsules/screens/create_capsule_screen.dart';
 import '../../capsules/providers/capsule_providers.dart';
@@ -82,10 +84,14 @@ class MilestoneDetailScreen extends ConsumerWidget {
     final bgColor = isDark
         ? const Color(0xFF131114)
         : const Color(0xFFFAF7F8);
-    final m = milestone.milestone;
+    final allMilestonesAsync = ref.watch(childMilestonesProvider(childId));
+    final liveMilestone = allMilestonesAsync.valueOrNull
+        ?.where((item) => item.milestone.id == milestone.milestone.id)
+        .firstOrNull ?? milestone;
+    final m = liveMilestone.milestone;
     final category = m.category;
     final phase = m.phase;
-    final status = _resolveStatus(milestone);
+    final status = _resolveStatus(liveMilestone);
 
     return Scaffold(
       backgroundColor: bgColor,
@@ -259,19 +265,20 @@ class MilestoneDetailScreen extends ConsumerWidget {
                       const SizedBox(height: 14),
 
                       // Linked Capsule Card or Capture Action CTA
-                      if (milestone.capsuleId != null)
+                      if (liveMilestone.capsuleId != null)
                         _buildLinkedCapsuleCard(
                           context: context,
                           ref: ref,
+                          activeMilestone: liveMilestone,
                           isDark: isDark,
                           lang: lang,
                           textColor: textColor,
                           secondaryText: secondaryText,
                         )
                       else if (m.canHaveCapsule)
-                        _buildCaptureButton(context),
+                        _buildCaptureButton(context, ref),
 
-                      if (milestone.capsuleId != null || m.canHaveCapsule)
+                      if (liveMilestone.capsuleId != null || m.canHaveCapsule)
                         const SizedBox(height: 14),
 
                       // Conseils & Astuces Photo Bento Card
@@ -718,14 +725,16 @@ class MilestoneDetailScreen extends ConsumerWidget {
   Widget _buildLinkedCapsuleCard({
     required BuildContext context,
     required WidgetRef ref,
+    MilestoneWithDueDate? activeMilestone,
     required bool isDark,
     required String lang,
     required Color textColor,
     required Color secondaryText,
   }) {
+    final current = activeMilestone ?? milestone;
     final l10n = context.l10n;
-    final formattedDate = milestone.completedAt != null
-        ? DateFormat('d MMMM yyyy', lang).format(milestone.completedAt!)
+    final formattedDate = current.completedAt != null
+        ? DateFormat('d MMMM yyyy', lang).format(current.completedAt!)
         : null;
 
     return Container(
@@ -747,7 +756,7 @@ class MilestoneDetailScreen extends ConsumerWidget {
       child: Material(
         color: Colors.transparent,
         child: InkWell(
-          onTap: () => _openLinkedCapsule(context, ref),
+          onTap: () => _openLinkedCapsule(context, ref, current),
           borderRadius: BorderRadius.circular(20),
           child: Padding(
             padding: const EdgeInsets.all(16),
@@ -837,7 +846,7 @@ class MilestoneDetailScreen extends ConsumerWidget {
     );
   }
 
-  Widget _buildCaptureButton(BuildContext context) {
+  Widget _buildCaptureButton(BuildContext context, WidgetRef ref) {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       AnalyticsService().logEvent('milestone_capsule_cta_shown', parameters: {
         'milestone_id': milestone.milestone.id,
@@ -845,7 +854,7 @@ class MilestoneDetailScreen extends ConsumerWidget {
     });
 
     return _AnimatedPressCard(
-      onTap: () => _openCreateCapsule(context),
+      onTap: () => _openCreateCapsule(context, ref),
       child: Container(
         width: double.infinity,
         padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 16),
@@ -1232,33 +1241,63 @@ class MilestoneDetailScreen extends ConsumerWidget {
     );
   }
 
-  void _openCreateCapsule(BuildContext context) {
-    Navigator.of(context).push(
+  Future<void> _openCreateCapsule(BuildContext context, WidgetRef ref) async {
+    final result = await Navigator.of(context).push(
       MaterialPageRoute(
-        builder: (context) =>
-            CreateCapsuleScreen(milestoneId: milestone.milestone.id),
+        builder: (context) => CreateCapsuleScreen(
+          milestoneId: milestone.milestone.id,
+          preselectedChildId: childId,
+        ),
       ),
     );
+    if (result != null) {
+      ref.invalidate(childMilestonesProvider(childId));
+      ref.invalidate(milestoneProgressStreamProvider(childId));
+      ref.invalidate(capsulesProvider);
+    }
   }
 
-  void _openLinkedCapsule(BuildContext context, WidgetRef ref) {
-    if (milestone.capsuleId == null) return;
+  Future<void> _openLinkedCapsule(
+    BuildContext context,
+    WidgetRef ref, [
+    MilestoneWithDueDate? activeMilestone,
+  ]) async {
+    final capsuleId = activeMilestone?.capsuleId ?? milestone.capsuleId;
+    if (capsuleId == null) return;
     final capsules = ref.read(capsulesProvider).value ?? [];
-    final capsule = capsules
-        .where((c) => c.id == milestone.capsuleId)
+    var capsule = capsules
+        .where((c) => c.id == capsuleId)
         .firstOrNull;
     if (capsule == null) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(context.l10n.milestone_capsule_not_found),
-          behavior: SnackBarBehavior.floating,
-        ),
-      );
+      final uid = FirebaseAuth.instance.currentUser?.uid;
+      if (uid != null) {
+        final doc = await FirebaseFirestore.instance
+            .collection('users')
+            .doc(uid)
+            .collection('capsules')
+            .doc(capsuleId)
+            .get();
+        if (doc.exists && doc.data() != null) {
+          capsule = Capsule.fromFirestore(doc);
+        }
+      }
+    }
+    if (capsule == null) {
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(context.l10n.milestone_capsule_not_found),
+            behavior: SnackBarBehavior.floating,
+          ),
+        );
+      }
       return;
     }
-    Navigator.of(context).push(
-      MaterialPageRoute(builder: (_) => CapsuleDetailScreen(capsule: capsule)),
-    );
+    if (context.mounted) {
+      Navigator.of(context).push(
+        MaterialPageRoute(builder: (_) => CapsuleDetailScreen(capsule: capsule!)),
+      );
+    }
   }
 
   void _showConseilSheet(BuildContext context, dynamic m) {

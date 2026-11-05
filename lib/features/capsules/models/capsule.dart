@@ -162,6 +162,8 @@ class Capsule {
   final String? audioUrl;
   final int? audioDuration; // seconds
   final Emotion emotion;
+  /// Optional secondary emotions (up to 3, without duplicates, distinct from [emotion]).
+  final List<Emotion> secondaryEmotions;
   final List<String> tags;
   final bool isFavorite;
   final DateTime createdAt;
@@ -190,6 +192,7 @@ class Capsule {
     this.audioUrl,
     this.audioDuration,
     required this.emotion,
+    this.secondaryEmotions = const [],
     this.tags = const [],
     this.isFavorite = false,
     required this.createdAt,
@@ -210,6 +213,12 @@ class Capsule {
         withMother: withMother,
         pregnancyId: pregnancyId,
       );
+
+  /// All emotions for this capsule: primary emotion first, followed by secondary emotions.
+  List<Emotion> get allEmotions => [
+        emotion,
+        ...secondaryEmotions.where((e) => e != emotion),
+      ];
 
   /// Create from map and document ID.
   static Capsule fromMap(Map<String, dynamic> data, [String id = '']) {
@@ -238,31 +247,51 @@ class Capsule {
       return null;
     }
 
-    return Capsule(
-      id: id.isNotEmpty ? id : (data['id'] as String? ?? ''),
-      userId: data['userId'] as String? ?? '',
-      childId: effectiveChildId,
-      childIds: childIds,
-      withMother: data['withMother'] as bool? ?? false,
-      pregnancyId: data['pregnancyId'] as String?,
-      pregnancyWeek: (data['pregnancyWeek'] as num?)?.toInt(),
-      milestoneId: data['milestoneId'] as String?,
-      vaccineGroupId: data['vaccineGroupId'] as String?,
-      albumId: data['albumId'] as String?,
-      albumSlotId: data['albumSlotId'] as String?,
-      albumType: data['albumType'] as String?,
-      photoUrl: data['photoUrl'] as String? ?? '',
-      audioUrl: data['audioUrl'] as String?,
-      audioDuration: (data['audioDuration'] as num?)?.toInt(),
-      emotion: Emotion.fromString(data['emotion'] as String?),
-      tags: List<String>.from(data['tags'] as List? ?? const []),
-      isFavorite: data['isFavorite'] as bool? ?? false,
-      createdAt: parseDate(data['createdAt']),
-      updatedAt: parseDate(data['updatedAt']),
-      capturedAt: parseNullableDate(data['capturedAt']),
-      category: CapsuleCategory.fromString(data['category'] as String?),
-    );
-  }
+      final primaryEmotion = Emotion.fromString(data['emotion'] as String?);
+      final rawSecondary = data['secondaryEmotions'];
+      final List<Emotion> secondaryEmotions;
+      if (rawSecondary is List) {
+        final seen = <Emotion>{};
+        final parsed = <Emotion>[];
+        for (final item in rawSecondary) {
+          final str = item?.toString();
+          final match = Emotion.values.where((e) => e.name == str).firstOrNull;
+          if (match != null && match != primaryEmotion && seen.add(match)) {
+            parsed.add(match);
+            if (parsed.length >= 3) break;
+          }
+        }
+        secondaryEmotions = parsed;
+      } else {
+        secondaryEmotions = const [];
+      }
+
+      return Capsule(
+        id: id.isNotEmpty ? id : (data['id'] as String? ?? ''),
+        userId: data['userId'] as String? ?? '',
+        childId: effectiveChildId,
+        childIds: childIds,
+        withMother: data['withMother'] as bool? ?? false,
+        pregnancyId: data['pregnancyId'] as String?,
+        pregnancyWeek: (data['pregnancyWeek'] as num?)?.toInt(),
+        milestoneId: data['milestoneId'] as String?,
+        vaccineGroupId: data['vaccineGroupId'] as String?,
+        albumId: data['albumId'] as String?,
+        albumSlotId: data['albumSlotId'] as String?,
+        albumType: data['albumType'] as String?,
+        photoUrl: data['photoUrl'] as String? ?? '',
+        audioUrl: data['audioUrl'] as String?,
+        audioDuration: (data['audioDuration'] as num?)?.toInt(),
+        emotion: primaryEmotion,
+        secondaryEmotions: secondaryEmotions,
+        tags: List<String>.from(data['tags'] as List? ?? const []),
+        isFavorite: data['isFavorite'] as bool? ?? false,
+        createdAt: parseDate(data['createdAt']),
+        updatedAt: parseDate(data['updatedAt']),
+        capturedAt: parseNullableDate(data['capturedAt']),
+        category: CapsuleCategory.fromString(data['category'] as String?),
+      );
+    }
 
   /// Create from Firestore document.
   factory Capsule.fromFirestore(DocumentSnapshot doc) {
@@ -290,6 +319,7 @@ class Capsule {
       'audioUrl': audioUrl,
       'audioDuration': audioDuration,
       'emotion': emotion.name,
+      'secondaryEmotions': secondaryEmotions.map((e) => e.name).toList(),
       'tags': tags,
       'isFavorite': isFavorite,
       'createdAt': Timestamp.fromDate(createdAt),
@@ -327,6 +357,7 @@ class Capsule {
     String? audioUrl,
     int? audioDuration,
     Emotion? emotion,
+    List<Emotion>? secondaryEmotions,
     List<String>? tags,
     bool? isFavorite,
     DateTime? createdAt,
@@ -365,6 +396,7 @@ class Capsule {
       audioUrl: audioUrl ?? this.audioUrl,
       audioDuration: audioDuration ?? this.audioDuration,
       emotion: emotion ?? this.emotion,
+      secondaryEmotions: secondaryEmotions ?? this.secondaryEmotions,
       tags: tags ?? this.tags,
       isFavorite: isFavorite ?? this.isFavorite,
       createdAt: createdAt ?? this.createdAt,

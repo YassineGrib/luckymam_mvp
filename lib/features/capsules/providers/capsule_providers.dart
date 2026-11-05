@@ -63,8 +63,8 @@ final capsuleCountProvider = FutureProvider<int>((ref) async {
   return service.getCapsuleCount();
 });
 
-/// Quota limits by tier.
-const int freemiumCapsuleLimit = 25;
+/// Quota limits by tier (Free tier allows up to 38 capsules max as per LM-SUB-002).
+const int freemiumCapsuleLimit = 38;
 
 /// Provider to check if user can create more capsules (tier-aware).
 final canCreateCapsuleProvider = FutureProvider<bool>((ref) async {
@@ -205,6 +205,7 @@ class CapsuleActionsNotifier extends StateNotifier<CapsuleActionsState> {
     File? audioFile,
     int? audioDuration,
     required Emotion emotion,
+    List<Emotion> secondaryEmotions = const [],
     String? milestoneId,
     String? vaccineGroupId,
     String? albumId,
@@ -226,6 +227,7 @@ class CapsuleActionsNotifier extends StateNotifier<CapsuleActionsState> {
         audioFile: audioFile,
         audioDuration: audioDuration,
         emotion: emotion,
+        secondaryEmotions: secondaryEmotions,
         milestoneId: milestoneId,
         vaccineGroupId: vaccineGroupId,
         albumId: albumId,
@@ -237,14 +239,18 @@ class CapsuleActionsNotifier extends StateNotifier<CapsuleActionsState> {
       );
 
       // If tied to a milestone, mark it as completed
-      if (milestoneId != null && capsule.childId.isNotEmpty) {
+      final effectiveChildId = capsule.childId.isNotEmpty
+          ? capsule.childId
+          : (capsule.childIds.isNotEmpty ? capsule.childIds.first : '');
+      if (milestoneId != null && effectiveChildId.isNotEmpty) {
         try {
           final timelineService = _ref.read(timelineServiceProvider);
           await timelineService.completeMilestone(
             userId: capsule.userId,
-            childId: capsule.childId,
+            childId: effectiveChildId,
             milestoneId: milestoneId,
             capsuleId: capsule.id,
+            completedAt: capsule.capturedAt ?? capsule.createdAt,
           );
           AnalyticsService().logEvent('milestone_capsule_created', parameters: {
             'milestone_id': milestoneId,
@@ -253,12 +259,78 @@ class CapsuleActionsNotifier extends StateNotifier<CapsuleActionsState> {
         } catch (e) {
           // Log error but don't fail the whole operation
         }
+        _ref.invalidate(childMilestonesProvider(effectiveChildId));
+        _ref.invalidate(milestoneProgressStreamProvider(effectiveChildId));
       }
+      _ref.invalidate(capsulesProvider);
       state = state.copyWith(
         isLoading: false,
         successMessage: 'Capsule créée avec succès',
       );
       return capsule;
+    } catch (e) {
+      state = state.copyWith(
+        isLoading: false,
+        error: 'Erreur: ${e.toString()}',
+      );
+      return null;
+    }
+  }
+
+  /// Update an existing capsule.
+  Future<Capsule?> updateCapsule({
+    required String capsuleId,
+    String? childId,
+    List<String>? childIds,
+    bool withMother = false,
+    File? newPhotoFile,
+    File? newAudioFile,
+    bool removeAudio = false,
+    int? audioDuration,
+    required Emotion emotion,
+    List<Emotion> secondaryEmotions = const [],
+    String? milestoneId,
+    String? oldMilestoneId,
+    List<String> tags = const [],
+    DateTime? capturedAt,
+    CapsuleCategory? category,
+  }) async {
+    state = state.copyWith(isLoading: true);
+    try {
+      final updatedCapsule = await _service.updateCapsule(
+        capsuleId: capsuleId,
+        childId: childId,
+        childIds: childIds,
+        withMother: withMother,
+        newPhotoFile: newPhotoFile,
+        newAudioFile: newAudioFile,
+        removeAudio: removeAudio,
+        audioDuration: audioDuration,
+        emotion: emotion,
+        secondaryEmotions: secondaryEmotions,
+        milestoneId: milestoneId,
+        oldMilestoneId: oldMilestoneId,
+        tags: tags,
+        capturedAt: capturedAt,
+        category: category,
+      );
+
+      final effectiveChildId = updatedCapsule.childId.isNotEmpty
+          ? updatedCapsule.childId
+          : (updatedCapsule.childIds.isNotEmpty ? updatedCapsule.childIds.first : '');
+
+      if (effectiveChildId.isNotEmpty) {
+        _ref.invalidate(childMilestonesProvider(effectiveChildId));
+        _ref.invalidate(milestoneProgressStreamProvider(effectiveChildId));
+        _ref.invalidate(capsulesByChildProvider(effectiveChildId));
+      }
+      _ref.invalidate(capsulesProvider);
+
+      state = state.copyWith(
+        isLoading: false,
+        successMessage: 'Capsule modifiée avec succès',
+      );
+      return updatedCapsule;
     } catch (e) {
       state = state.copyWith(
         isLoading: false,

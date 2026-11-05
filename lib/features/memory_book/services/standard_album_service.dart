@@ -51,10 +51,11 @@ class StandardAlbumService {
         .map((doc) => doc.exists ? StandardAlbum.fromFirestore(doc) : null);
   }
 
-  /// Create a new blank album for a child.
+  /// Create a new blank album for a child with customizable photo capacity.
   Future<StandardAlbum> createAlbum({
     required String childId,
     required String title,
+    int pageCount = StandardAlbum.defaultPageCount,
   }) async {
     if (_userId == null) throw Exception('User not authenticated');
 
@@ -65,12 +66,23 @@ class StandardAlbumService {
       userId: _userId!,
       childId: childId,
       title: title,
-      pageCount: StandardAlbum.defaultPageCount,
+      pageCount: pageCount,
       createdAt: now,
       updatedAt: now,
     );
     await docRef.set(album.toFirestore());
     return album;
+  }
+
+  /// Update album page count / target photo capacity.
+  Future<void> updatePageCount({
+    required String albumId,
+    required int pageCount,
+  }) async {
+    await _albumsRef.doc(albumId).update({
+      'pageCount': pageCount,
+      'updatedAt': Timestamp.fromDate(DateTime.now()),
+    });
   }
 
   /// Attach a capsule to a page.

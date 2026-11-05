@@ -185,7 +185,7 @@ class ProfileScreen extends ConsumerWidget {
                   data: (children) => _ChildrenSection(
                     children: children,
                     primaryColor: primaryColor,
-                    onAddChild: () => _openChildScreen(context),
+                    onAddChild: () => _handleAddChild(context, ref, children),
                     onEditChild: (child) =>
                         _openChildScreen(context, child),
                   ),
@@ -193,7 +193,7 @@ class ProfileScreen extends ConsumerWidget {
                       _LoadingSectionCard(title: l10n.myChildren),
                   error: (_, _) => _EmptyChildrenSection(
                     primaryColor: primaryColor,
-                    onAddChild: () => _openChildScreen(context),
+                    onAddChild: () => _handleAddChild(context, ref, const []),
                   ),
                 ),
 
@@ -266,6 +266,113 @@ class ProfileScreen extends ConsumerWidget {
   }
 
 
+
+  void _handleAddChild(
+    BuildContext context,
+    WidgetRef ref,
+    List<Child> currentChildren,
+  ) {
+    final currentTier = ref.read(currentTierValueProvider);
+    final limit = ref.read(tierChildLimitProvider);
+
+    // Filter out MAM system profile if any
+    final realChildren = currentChildren.where((c) => c.id != 'profile_mam').toList();
+
+    if (limit != -1 && realChildren.length >= limit) {
+      _showChildLimitDialog(context, currentTier);
+      return;
+    }
+
+    _openChildScreen(context);
+  }
+
+  void _showChildLimitDialog(BuildContext context, SubscriptionTier currentTier) {
+    final l10n = context.l10n;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final isFree = currentTier == SubscriptionTier.free;
+
+    showDialog(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        backgroundColor: isDark ? AppColors.surfaceDark : AppColors.surfaceLight,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+        title: Row(
+          children: [
+            const Icon(Icons.workspace_premium_rounded, color: AppColors.coral),
+            const SizedBox(width: 8),
+            Expanded(
+              child: Text(
+                l10n.subscriptionChildLimitReachedTitle,
+                style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                  fontWeight: FontWeight.bold,
+                  color: isDark ? Colors.white : AppColors.onSurfaceLight,
+                ),
+              ),
+            ),
+          ],
+        ),
+        content: Text(
+          isFree
+              ? l10n.subscriptionChildLimitReachedMessageFree
+              : l10n.subscriptionChildLimitReachedMessagePremium,
+          style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+            color: isDark ? AppColors.textSecondaryDark : AppColors.textSecondaryLight,
+            height: 1.4,
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(ctx),
+            child: Text(
+              l10n.subscriptionActionLater,
+              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                color: isDark ? Colors.white60 : AppColors.textSecondaryLight,
+              ),
+            ),
+          ),
+          TextButton(
+            onPressed: () {
+              Navigator.pop(ctx);
+              Navigator.of(context).push(
+                MaterialPageRoute(
+                  builder: (_) => const SubscriptionPlansScreen(),
+                ),
+              );
+            },
+            child: Text(
+              l10n.subscriptionCompareOffers,
+              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                color: isDark ? AppColors.coralLight : AppColors.coral,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+          ),
+          ElevatedButton(
+            onPressed: () {
+              Navigator.pop(ctx);
+              Navigator.of(context).push(
+                MaterialPageRoute(
+                  builder: (_) => SubscriptionPlansScreen(
+                    initialSelectedTier: isFree ? SubscriptionTier.premium : SubscriptionTier.vip,
+                  ),
+                ),
+              );
+            },
+            style: ElevatedButton.styleFrom(
+              backgroundColor: AppColors.coral,
+              foregroundColor: Colors.white,
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+              padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+            ),
+            child: Text(
+              isFree ? l10n.subscriptionUpgradeToPremium : l10n.subscriptionUpgradeToVip,
+              style: const TextStyle(fontWeight: FontWeight.bold),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
 
   void _openChildScreen(
     BuildContext context, [
@@ -1245,7 +1352,9 @@ class _SubscriptionSection extends ConsumerWidget {
             TextButton(
               onPressed: () => Navigator.of(context).push(
                 MaterialPageRoute(
-                  builder: (_) => const SubscriptionPlansScreen(),
+                  builder: (_) => const SubscriptionPlansScreen(
+                    initialSelectedTier: SubscriptionTier.premium,
+                  ),
                 ),
               ),
               child: Text(

@@ -214,7 +214,10 @@ class AppLocalizationsEn extends AppLocalizations {
       'In accordance with the provisions of Law No. 18-07 of June 10, 2018, relating to the protection of individuals with regard to the processing of personal data, you consent to the collection, processing, and secure storage of your personal data by Luckymam for the sole purpose of providing our services. You can exercise your rights to access, rectify, or delete your data at any time.';
 
   @override
-  String get law1807Checkbox => 'I accept Law 18/07';
+  String get law1807Checkbox => 'I accept the terms of Law No. 18-07.';
+
+  @override
+  String get law1807ReadFullTerms => 'Read full legal text and privacy policy';
 
   @override
   String get law1807Error => 'Acceptance of Law 18/07 is required to continue.';
@@ -414,17 +417,17 @@ class AppLocalizationsEn extends AppLocalizations {
   String get dailyTipFooter => '— Luckymam Team 💕';
 
   @override
-  String get upgradePremiumTitle => 'Upgrade to Premium & VIP';
+  String get upgradePremiumTitle => 'Upgrade to Premium';
 
   @override
   String get upgradePremiumSubtitle =>
-      'Unlimited capsules • Ad-free experience • Printed album';
+      'Unlimited capsules • Up to 2 children • Sharing included';
 
   @override
   String get upgradePromptBadge => 'LuckyMam Membership';
 
   @override
-  String get upgradePromptCta => 'Explore Plans';
+  String get upgradePromptCta => 'Upgrade to Premium';
 
   @override
   String get marketplaceTitle => 'Marketplace';
@@ -1023,6 +1026,9 @@ class AppLocalizationsEn extends AppLocalizations {
       'Capture your first memories\nby tapping the button below';
 
   @override
+  String get capsulesCreateFirst => 'Create my first memory';
+
+  @override
   String get capsulesLoadErrorSubtitle => 'Unable to load capsules';
 
   @override
@@ -1136,6 +1142,18 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get capsuleEmotion => 'Emotion';
+
+  @override
+  String get capsulePrimaryEmotion => 'Primary emotion';
+
+  @override
+  String get capsuleSecondaryEmotions => 'Secondary emotions';
+
+  @override
+  String get capsuleSecondaryEmotionsHint => 'Optional • Max 3';
+
+  @override
+  String get capsuleNoPhotoPlaceholder => 'Saved memory';
 
   @override
   String get capsuleVoiceMessageOptional => '🎤 Voice message (optional)';
@@ -2204,7 +2222,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get subscriptionPlanFreeSubtitle => 'To get started';
 
   @override
-  String get subscriptionPlanFreeFeatureCapsules => 'Up to 25 capsules';
+  String get subscriptionPlanFreeFeatureCapsules => '38 capsules maximum';
 
   @override
   String get subscriptionPlanFreeFeatureChild => '1 child';
@@ -2322,7 +2340,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get subscriptionCompareFeatureAdFree => '100% Ad-Free Experience';
 
   @override
-  String get subscriptionCompareValueFreeCapsules => '25 capsules';
+  String get subscriptionCompareValueFreeCapsules => 'Up to 38 capsules';
 
   @override
   String get subscriptionCompareValueUnlimited => 'Unlimited';
@@ -2760,4 +2778,359 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get assistantShortcutSubtitle =>
       'Health tips, albums, outings and gift ideas';
+
+  @override
+  String get onboardingLanguageTitle => 'Choose your language';
+
+  @override
+  String get onboardingLanguageSubtitle =>
+      'Select your preferred display language. You can change this anytime in your profile settings.';
+
+  @override
+  String get onboardingLanguageFr => 'Français';
+
+  @override
+  String get onboardingLanguageAr => 'العربية';
+
+  @override
+  String get onboardingLanguageEn => 'English';
+
+  @override
+  String get onboardingLanguageFrSubtitle => 'French (Default)';
+
+  @override
+  String get onboardingLanguageArSubtitle => 'Arabic (RTL - Right to Left)';
+
+  @override
+  String get onboardingLanguageEnSubtitle => 'English (International)';
+
+  @override
+  String get capsuleAudioListen => 'Listen';
+
+  @override
+  String get capsuleAudioPause => 'Pause';
+
+  @override
+  String get capsuleAudioResume => 'Resume';
+
+  @override
+  String get capsuleAudioReRecord => 'Re-record';
+
+  @override
+  String get capsuleAudioDelete => 'Delete';
+
+  @override
+  String get capsuleAudioValidate => 'Confirm audio';
+
+  @override
+  String get capsuleAudioValidatedBadge => 'Audio confirmed';
+
+  @override
+  String get capsuleAudioPendingBadge => 'Pending confirmation';
+
+  @override
+  String get capsuleAudioValidatedSuccess => 'Audio confirmed for capsule ✓';
+
+  @override
+  String get capsuleAudioMicPermissionError =>
+      'Microphone permission required to record';
+
+  @override
+  String get capsuleAudioTooShortError => 'Recording is too short or empty';
+
+  @override
+  String get albumReplacePhotoTitle => 'Replace photo';
+
+  @override
+  String get albumManagePhotoTitle => 'Manage photo';
+
+  @override
+  String get albumCropPhotoTitle => 'Crop & Adjust';
+
+  @override
+  String get albumPickFromCapsules => 'Choose from memories';
+
+  @override
+  String get albumPickFromCapsulesDesc =>
+      'Select an existing capsule for this child';
+
+  @override
+  String get albumPickFromGallery => 'Choose from gallery';
+
+  @override
+  String get albumPickFromGalleryDesc => 'Import a new photo from your phone';
+
+  @override
+  String get albumPickFromCamera => 'Take a photo';
+
+  @override
+  String get albumPickFromCameraDesc => 'Take a new photo with the camera';
+
+  @override
+  String get albumCropCurrentPhoto => 'Crop current photo';
+
+  @override
+  String get albumCropCurrentPhotoDesc =>
+      'Zoom, reposition or rotate the photo';
+
+  @override
+  String get albumClearPageTitle => 'Remove from album';
+
+  @override
+  String get albumClearPageDesc =>
+      'Clear this page without deleting the original capsule';
+
+  @override
+  String get albumClearPageConfirm =>
+      'Are you sure you want to remove this photo? The capsule will remain intact in your memories.';
+
+  @override
+  String get albumRemove => 'Remove';
+
+  @override
+  String get albumPhotoUpdatedSuccess => 'Photo updated successfully';
+
+  @override
+  String get albumPhotoCroppedSuccess =>
+      'Photo cropped and adjusted successfully';
+
+  @override
+  String get albumAspectRatioSquare => 'Square 1:1';
+
+  @override
+  String get albumAspectRatioPortrait => 'Portrait 4:5';
+
+  @override
+  String get albumAspectRatioClassic => 'Classic 3:4';
+
+  @override
+  String get albumAspectRatioStory => 'Full screen 9:16';
+
+  @override
+  String get albumPhotoQuantityTitle => 'Photo quantity';
+
+  @override
+  String get albumPhotoQuantitySubtitle => 'Album capacity & pricing';
+
+  @override
+  String get albumExcludingShipping => 'Price excluding delivery';
+
+  @override
+  String get albumCopiesCount => 'Copies quantity';
+
+  @override
+  String get albumFormatA5 => 'Format A5 (15 × 21 cm)';
+
+  @override
+  String get albumFormatA4 => 'Format A4 (21 × 30 cm)';
+
+  @override
+  String get albumFormatA3 => 'Format A3 (30 × 42 cm)';
+
+  @override
+  String get albumFormatA3SingleOnly =>
+      'Format A3 reserved for 1 photo portrait';
+
+  @override
+  String get albumUnitPrice => 'Unit price';
+
+  @override
+  String get albumSubtotal => 'Subtotal';
+
+  @override
+  String get albumShippingFee => 'Delivery fee';
+
+  @override
+  String get albumShippingFreeVip => '0 DA (VIP Included)';
+
+  @override
+  String get albumTotalToPay => 'Total order';
+
+  @override
+  String get albumChangeCapacityTitle => 'Album capacity';
+
+  @override
+  String get subscriptionPlansHeaderTitle =>
+      'Choose the plan that suits you best';
+
+  @override
+  String get subscriptionPlansHeaderSubtitle =>
+      'Compare features and select the plan that fits your family and memories.';
+
+  @override
+  String get subscriptionPlanRecommendedBadge => 'Recommended';
+
+  @override
+  String get subscriptionVipExclusiveBadge => 'Exclusive';
+
+  @override
+  String get subscriptionUpgradeToPremium => 'Upgrade to Premium';
+
+  @override
+  String get subscriptionUpgradeToVip => 'Upgrade to Annual VIP';
+
+  @override
+  String get subscriptionChooseVipAnnual => 'Choose Annual VIP';
+
+  @override
+  String get subscriptionPlanIncludedInVip => 'Included in your VIP plan';
+
+  @override
+  String get subscriptionDisclaimerAvailableOffers =>
+      '* Subject to available offers.';
+
+  @override
+  String get subscriptionCompareOffers => 'Compare plans';
+
+  @override
+  String get subscriptionActionLater => 'Later';
+
+  @override
+  String get subscriptionCapsuleLimitReachedTitle =>
+      '38 capsules limit reached';
+
+  @override
+  String get subscriptionCapsuleLimitReachedMessage =>
+      'You have reached the 38 capsules limit included in your free plan. Upgrade to Premium to keep creating emotional capsules without limitation.';
+
+  @override
+  String get subscriptionChildLimitReachedTitle => 'Child limit reached';
+
+  @override
+  String get subscriptionChildLimitReachedMessageFree =>
+      'The free plan is limited to 1 child. Upgrade to Premium to add and track up to 2 children!';
+
+  @override
+  String get subscriptionChildLimitReachedMessagePremium =>
+      'The Premium plan is limited to 2 children. Upgrade to Annual VIP for unlimited children!';
+
+  @override
+  String get subscriptionMatrixPrice => 'Price';
+
+  @override
+  String get subscriptionMatrixCapsules => 'Emotional capsules';
+
+  @override
+  String get subscriptionMatrixChildren => 'Number of children';
+
+  @override
+  String get subscriptionMatrixVaccines => 'Vaccination tracking & updates';
+
+  @override
+  String get subscriptionMatrixReels => 'Educational reels';
+
+  @override
+  String get subscriptionMatrixRecording => 'Capsule recording';
+
+  @override
+  String get subscriptionMatrixSharing => 'Emotional capsule sharing';
+
+  @override
+  String get subscriptionMatrixPremiumPerks => 'Access to Premium benefits';
+
+  @override
+  String get subscriptionMatrixVipPerks => 'Access to VIP benefits';
+
+  @override
+  String get subscriptionMatrixGiveaways => 'Giveaways & prize draws';
+
+  @override
+  String get subscriptionMatrixPrintedPhoto =>
+      'Free printed photo delivered home';
+
+  @override
+  String get subscriptionMatrixVipCard => 'Personalized VIP card';
+
+  @override
+  String get subscriptionMatrixPartnerPrivileges => 'Partner privileges';
+
+  @override
+  String get subscriptionMatrixValueFreeCapsules => 'Up to 38 capsules';
+
+  @override
+  String get subscriptionMatrixValueOneChild => '1 child';
+
+  @override
+  String get subscriptionMatrixValueTwoChildren => 'Up to 2 children';
+
+  @override
+  String get subscriptionMatrixValueUnlimitedChildren => 'Unlimited children';
+
+  @override
+  String get subscriptionMatrixValueIncluded => 'Included';
+
+  @override
+  String get subscriptionMatrixValueNotIncluded => 'Not included';
+
+  @override
+  String get subscriptionMatrixValueAvailableOffers =>
+      'Subject to available offers*';
+
+  @override
+  String get subscriptionMatrixValueOnePhotoA3 => '1 free photo (A3)';
+
+  @override
+  String get albumLaunchModelsSectionTitle => 'Available photobook models';
+
+  @override
+  String get albumComingSoonSectionTitle => 'Coming soon';
+
+  @override
+  String get albumComingSoonBadge => 'Coming soon';
+
+  @override
+  String get albumComingSoonToast =>
+      'This photobook template will be available very soon! ✨';
+
+  @override
+  String get albumPortrait1PhotoBadge => '1 portrait photo';
+
+  @override
+  String get album6PhotosBadge => '6 photos';
+
+  @override
+  String albumStartingPriceFrom(int price) {
+    return 'From $price DA';
+  }
+
+  @override
+  String get diaporamaTitle => 'Digital Album (Slideshow)';
+
+  @override
+  String get diaporamaSubtitle => 'Create an animated keepsake slideshow';
+
+  @override
+  String get diaporamaMinPhotosError =>
+      'Please select at least 3 photos for the slideshow';
+
+  @override
+  String get diaporamaMaxPhotosError =>
+      'Maximum 12 photos allowed for the slideshow';
+
+  @override
+  String get diaporamaReorderHint =>
+      'Drag and drop to reorder the slide sequence';
+
+  @override
+  String get diaporamaPlay => 'Play Slideshow';
+
+  @override
+  String get diaporamaReplay => 'Replay';
+
+  @override
+  String get diaporamaShare => 'Share Slideshow';
+
+  @override
+  String diaporamaOpeningTitle(String childName) {
+    return 'Sweet memories of $childName';
+  }
+
+  @override
+  String get diaporamaClosingTitle =>
+      'Precious moments made with love on LuckyMam 🍀';
+
+  @override
+  String diaporamaShareMessage(String childName) {
+    return 'Watch the slideshow of $childName\'s best memories on LuckyMam 🍀';
+  }
 }

@@ -55,6 +55,31 @@ enum Emotion {
     }
   }
 
+  /// Primary color for this emotion.
+  Color get color {
+    switch (this) {
+      case Emotion.happy:
+        return const Color(0xFFF59E0B);
+      case Emotion.love:
+        return const Color(0xFFE11D48);
+      case Emotion.tender:
+        return const Color(0xFFFB923C);
+      case Emotion.sad:
+        return const Color(0xFF3B82F6);
+      case Emotion.surprised:
+        return const Color(0xFF06B6D4);
+      case Emotion.sleepy:
+        return const Color(0xFF0284C7); // Soft twilight sky blue (indigo/purple ban compliant)
+      case Emotion.proud:
+        return const Color(0xFF10B981);
+      case Emotion.worried:
+        return const Color(0xFF64748B);
+    }
+  }
+
+  /// Translucent background color for badges.
+  Color get lightColor => color.withValues(alpha: 0.12);
+
   /// Get French label for this emotion.
   String get labelFr {
     switch (this) {

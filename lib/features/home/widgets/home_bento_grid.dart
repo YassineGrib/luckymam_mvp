@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/extensions/l10n_extension.dart';
-import '../../capsules/screens/create_capsule_screen.dart';
+import '../../capsules/screens/capsules_gallery.dart';
 import '../../health/screens/health_hub_screen.dart';
 import '../../pregnancy/screens/pregnancy_tracking_screen.dart';
 import '../../profile/models/profile_models.dart';
@@ -10,10 +10,10 @@ import '../../profile/providers/profile_providers.dart';
 import '../../reels/screens/reels_screen.dart';
 
 /// Asymmetric Bento Grid layout with aesthetic corner-bleeding watermark icons
-/// and zero RenderFlex overflows.
-/// - Left: Tall Health & Vitality Card with clipped corner watermark.
-/// - Right Top: Memory Capsule Card with clipped corner watermark.
-/// - Right Bottom: Dedicated Reels & Video Tips Card with clipped corner watermark.
+/// and zero RenderFlex overflows (LM-HOME-002 reorganized order).
+/// - Left Top: Dedicated Reels & Video Tips Card (Reels éducatifs).
+/// - Left Bottom: Memory Capsule Card (Mes souvenirs).
+/// - Right: Tall Health & Vitality Card (Santé Enfant / Suivi).
 class HomeBentoGrid extends ConsumerWidget {
   const HomeBentoGrid({super.key});
 
@@ -22,31 +22,30 @@ class HomeBentoGrid extends ConsumerWidget {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final status = ref.watch(motherStageProvider).effectiveStatus;
 
-
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // ─── Left Tall Bento Card (Santé & Suivi) ───────────────────
-          Expanded(
-            flex: 5,
-            child: _TallHealthBentoCard(isDark: isDark, status: status),
-          ),
-          const SizedBox(width: 14),
-
-          // ─── Right Stacked Bento Cards ──────────────────────────────
+          // ─── Left Stacked Bento Cards (LM-HOME-002) ──────────────────
           Expanded(
             flex: 5,
             child: Column(
               children: [
-                // Top: Capsule Capture card (spacious, watermark in corner)
-                _MemoryBentoCard(isDark: isDark),
-                const SizedBox(height: 14),
-                // Bottom: Dedicated Reels card (spacious, watermark in corner)
+                // Top: Dedicated Reels card (takes left position)
                 _ReelsBentoCard(isDark: isDark),
+                const SizedBox(height: 14),
+                // Bottom: Capsule Capture card (moves to bottom)
+                _MemoryBentoCard(isDark: isDark),
               ],
             ),
+          ),
+          const SizedBox(width: 14),
+
+          // ─── Right Tall Bento Card: Health & Vitality (LM-HOME-002) ──
+          Expanded(
+            flex: 5,
+            child: _TallHealthBentoCard(isDark: isDark, status: status),
           ),
         ],
       ),
@@ -137,9 +136,9 @@ class _TallHealthBentoCardState extends State<_TallHealthBentoCard> {
                 // ─── Watermark Icon Shifted Further Down & Right ─────
                 // Only a portion is visible inside the card (~65%),
                 // and the rest is elegantly clipped off the corner.
-                Positioned(
+                PositionedDirectional(
                   bottom: -36,
-                  right: -30,
+                  end: -30,
                   child: IgnorePointer(
                     child: Icon(
                       watermarkIcon,
@@ -345,7 +344,9 @@ class _MemoryBentoCardState extends State<_MemoryBentoCard> {
       onTapUp: (_) {
         setState(() => _pressed = false);
         Navigator.of(context).push(
-          MaterialPageRoute(builder: (_) => const CreateCapsuleScreen()),
+          MaterialPageRoute(
+            builder: (_) => const CapsulesGallery(showBackButton: true),
+          ),
         );
       },
       onTapCancel: () => setState(() => _pressed = false),
@@ -373,9 +374,9 @@ class _MemoryBentoCardState extends State<_MemoryBentoCard> {
             child: Stack(
               children: [
                 // ─── Watermark Camera Shifted Further Down & Right ───
-                Positioned(
+                PositionedDirectional(
                   bottom: -26,
-                  right: -20,
+                  end: -20,
                   child: IgnorePointer(
                     child: Icon(
                       Icons.photo_camera_rounded,
@@ -445,7 +446,7 @@ class _MemoryBentoCardState extends State<_MemoryBentoCard> {
                           ),
                           const SizedBox(height: 2),
                           Text(
-                            '${l10n.timeline_add} ↗',
+                            '${l10n.dashboardSeeAll} ↗',
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
                             style: TextStyle(
@@ -528,16 +529,16 @@ class _ReelsBentoCardState extends State<_ReelsBentoCard> {
             child: Stack(
               children: [
                 // ─── Watermark Play Icon Shifted Further Down & Right ─
-                Positioned(
+                PositionedDirectional(
                   bottom: -26,
-                  right: -20,
+                  end: -20,
                   child: IgnorePointer(
                     child: Icon(
                       Icons.play_circle_fill_rounded,
                       size: 94,
                       color: isDark
                           ? Colors.white.withValues(alpha: 0.06)
-                          : const Color(0xFF8E44AD).withValues(alpha: 0.11),
+                          : const Color(0xFFE85A71).withValues(alpha: 0.12),
                     ),
                   ),
                 ),

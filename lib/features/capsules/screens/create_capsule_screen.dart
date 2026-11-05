@@ -1,6 +1,8 @@
 import 'dart:io';
 
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
@@ -11,9 +13,14 @@ import '../../../core/theme/app_spacing.dart';
 import '../../../core/theme/app_typography.dart';
 import '../../profile/models/profile_models.dart';
 import '../../profile/providers/profile_providers.dart';
+import '../../timeline/data/milestones_data.dart';
+import '../../timeline/models/milestone.dart';
+import '../../timeline/models/phase.dart';
+import '../../timeline/services/timeline_service.dart';
 import '../models/capsule.dart';
 import '../models/emotion.dart';
 import '../providers/capsule_providers.dart';
+import '../../profile/edit_child_screen.dart';
 import '../widgets/audio_recorder.dart';
 import '../widgets/emotion_picker.dart';
 import '../widgets/image_crop_screen.dart';
@@ -27,6 +34,7 @@ class CreateCapsuleScreen extends ConsumerStatefulWidget {
   final String? albumSlotId;
   final String? albumType;
   final String? preselectedChildId;
+  final Capsule? existingCapsule;
 
   const CreateCapsuleScreen({
     super.key,
@@ -36,6 +44,7 @@ class CreateCapsuleScreen extends ConsumerStatefulWidget {
     this.albumSlotId,
     this.albumType,
     this.preselectedChildId,
+    this.existingCapsule,
   });
 
   @override
@@ -47,28 +56,71 @@ class _CreateCapsuleScreenState extends ConsumerState<CreateCapsuleScreen> {
   final ImagePicker _picker = ImagePicker();
 
   File? _selectedPhoto;
+  String? _existingPhotoUrl;
   File? _recordedAudio;
+  String? _existingAudioUrl;
+  bool _removeAudio = false;
   int? _audioDuration;
   Emotion? _selectedEmotion;
+  List<Emotion> _secondaryEmotions = [];
   Child? _selectedChild;
+  bool _withMother = false;
+  bool _isAudioValidated = false;
   final List<String> _tags = [];
   final TextEditingController _tagController = TextEditingController();
   DateTime? _capturedAt;
   CapsuleCategory? _selectedCategory;
+  String? _selectedMilestoneId;
 
   bool _isLoading = false;
 
   @override
   void initState() {
     super.initState();
-    if (widget.vaccineGroupId != null) {
-      _selectedCategory = CapsuleCategory.enfance;
+    if (widget.existingCapsule != null) {
+      final c = widget.existingCapsule!;
+      _existingPhotoUrl = c.photoUrl;
+      _existingAudioUrl = c.audioUrl;
+      _audioDuration = c.audioDuration;
+      _selectedEmotion = c.emotion;
+      _secondaryEmotions = List<Emotion>.from(c.secondaryEmotions);
+      _selectedCategory = c.category;
+      _selectedMilestoneId = c.milestoneId;
+      _capturedAt = c.capturedAt ?? c.createdAt;
+      _tags.addAll(c.tags);
+      _withMother = c.withMother;
+      _isAudioValidated = (c.audioUrl != null && c.audioUrl!.isNotEmpty);
+    } else {
+      _selectedMilestoneId = widget.milestoneId;
+      if (widget.vaccineGroupId != null) {
+        _selectedCategory = CapsuleCategory.enfance;
+      } else if (_selectedMilestoneId != null) {
+        final milestone = allMilestones
+            .where((m) => m.id == _selectedMilestoneId)
+            .firstOrNull;
+        if (milestone != null) {
+          if (milestone.phase == Phase.gestation) {
+            _selectedCategory ??= CapsuleCategory.gestation;
+          } else if (milestone.phase == Phase.postPartum) {
+            _selectedCategory ??= CapsuleCategory.postPartum;
+          } else {
+            _selectedCategory ??= CapsuleCategory.enfance;
+          }
+        }
+      }
     }
   }
 
   @override
   void dispose() {
     _tagController.dispose();
+    if (_recordedAudio != null && !_isAudioValidated) {
+      try {
+        if (_recordedAudio!.existsSync()) {
+          _recordedAudio!.deleteSync();
+        }
+      } catch (_) {}
+    }
     super.dispose();
   }
 
@@ -192,11 +244,29 @@ class _CreateCapsuleScreenState extends ConsumerState<CreateCapsuleScreen> {
                       ),
                       EmotionPicker(
                         selectedEmotion: _selectedEmotion,
+                        secondaryEmotions: _secondaryEmotions,
                         onEmotionSelected: (emotion) {
-                          setState(() => _selectedEmotion = emotion);
+                          setState(() {
+                            _selectedEmotion = emotion;
+                            _secondaryEmotions.remove(emotion);
+                          });
+                        },
+                        onSecondaryEmotionsChanged: (emotions) {
+                          setState(() => _secondaryEmotions = emotions);
                         },
                       ),
                     ],
+                  ),
+                  const SizedBox(height: AppSpacing.md),
+
+                  // 🎯 Section 3.5: Linked Milestone (Timeline)
+                  _buildMilestoneSection(
+                    context,
+                    lang,
+                    isDark,
+                    primary,
+                    textColor,
+                    secondaryText,
                   ),
                   const SizedBox(height: AppSpacing.md),
 
@@ -236,22 +306,85 @@ class _CreateCapsuleScreenState extends ConsumerState<CreateCapsuleScreen> {
                         ],
                       ),
                       const SizedBox(height: AppSpacing.sm),
-                      if (_recordedAudio == null)
+                      if (_recordedAudio == null &&
+                          (_existingAudioUrl == null || _removeAudio))
                         AudioRecorderWidget(
-                          onRecordingComplete: (file, duration) {
+                          onRecordingComplete: (file, duration) async {
+                            if (_recordedAudio != null && _recordedAudio!.path != file.path) {
+                              try {
+                                if (await _recordedAudio!.exists()) {
+                                  await _recordedAudio!.delete();
+                                }
+                              } catch (_) {}
+                            }
                             setState(() {
                               _recordedAudio = file;
                               _audioDuration = duration;
+                              _removeAudio = false;
+                              _isAudioValidated = false;
                             });
                           },
+                          onError: (error) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                content: Text(error),
+                                backgroundColor: AppColors.error,
+                              ),
+                            );
+                          },
                         )
-                      else
+                      else if (_recordedAudio != null ||
+                          (_existingAudioUrl != null && !_removeAudio))
                         RecordedAudioPreview(
-                          duration: _audioDuration!,
-                          onDelete: () {
+                          audioFile: _recordedAudio,
+                          audioUrl: _existingAudioUrl,
+                          duration: _audioDuration ?? 0,
+                          isValidated: _isAudioValidated,
+                          onValidate: () {
+                            setState(() {
+                              _isAudioValidated = true;
+                            });
+                            HapticFeedback.lightImpact();
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                content: Text(context.l10n.capsuleAudioValidatedSuccess),
+                                backgroundColor: AppColors.success,
+                                duration: const Duration(seconds: 1),
+                              ),
+                            );
+                          },
+                          onReRecord: () async {
+                            if (_recordedAudio != null) {
+                              try {
+                                if (await _recordedAudio!.exists()) {
+                                  await _recordedAudio!.delete();
+                                }
+                              } catch (_) {}
+                            }
                             setState(() {
                               _recordedAudio = null;
                               _audioDuration = null;
+                              _isAudioValidated = false;
+                              if (_existingAudioUrl != null) {
+                                _removeAudio = true;
+                              }
+                            });
+                          },
+                          onDelete: () async {
+                            if (_recordedAudio != null) {
+                              try {
+                                if (await _recordedAudio!.exists()) {
+                                  await _recordedAudio!.delete();
+                                }
+                              } catch (_) {}
+                            }
+                            setState(() {
+                              _recordedAudio = null;
+                              _audioDuration = null;
+                              _isAudioValidated = false;
+                              if (_existingAudioUrl != null) {
+                                _removeAudio = true;
+                              }
                             });
                           },
                         ),
@@ -287,12 +420,15 @@ class _CreateCapsuleScreenState extends ConsumerState<CreateCapsuleScreen> {
     );
   }
 
-  bool get _canSave =>
-      _selectedPhoto != null &&
-      _selectedChild != null &&
-      _selectedEmotion != null &&
-      _selectedCategory != null &&
-      !_isLoading;
+  bool get _canSave {
+    final hasPhoto = _selectedPhoto != null ||
+        (_existingPhotoUrl != null && _existingPhotoUrl!.isNotEmpty);
+    return hasPhoto &&
+        (_selectedChild != null || _withMother) &&
+        _selectedEmotion != null &&
+        _selectedCategory != null &&
+        !_isLoading;
+  }
 
   Widget _buildHeader(
     BuildContext context,
@@ -302,6 +438,7 @@ class _CreateCapsuleScreenState extends ConsumerState<CreateCapsuleScreen> {
     Color secondaryText,
   ) {
     final l10n = context.l10n;
+    final lang = Localizations.localeOf(context).languageCode;
 
     return Row(
       children: [
@@ -357,7 +494,11 @@ class _CreateCapsuleScreenState extends ConsumerState<CreateCapsuleScreen> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                l10n.capsuleNewTitle,
+                widget.existingCapsule != null
+                    ? (lang == 'ar'
+                        ? 'تعديل الذكرى'
+                        : (lang == 'en' ? 'Edit Memory' : 'Modifier le souvenir'))
+                    : l10n.capsuleNewTitle,
                 style: AppTypography.fromContext(
                   context,
                   fontSize: 18,
@@ -368,7 +509,13 @@ class _CreateCapsuleScreenState extends ConsumerState<CreateCapsuleScreen> {
               ),
               const SizedBox(height: 2),
               Text(
-                l10n.milestone_capture_this_moment,
+                widget.existingCapsule != null
+                    ? (lang == 'ar'
+                        ? 'تحديث بيانات ومحتوى الكبسولة'
+                        : (lang == 'en'
+                            ? 'Update capsule media and information'
+                            : 'Mettre à jour les informations et médias'))
+                    : l10n.milestone_capture_this_moment,
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
                 style: AppTypography.fromContext(
@@ -439,6 +586,452 @@ class _CreateCapsuleScreenState extends ConsumerState<CreateCapsuleScreen> {
           ),
         ],
       ),
+    );
+  }
+
+  Widget _buildMilestoneSection(
+    BuildContext context,
+    String lang,
+    bool isDark,
+    Color primary,
+    Color textColor,
+    Color secondaryText,
+  ) {
+    Milestone? currentMilestone;
+    if (_selectedMilestoneId != null) {
+      currentMilestone = allMilestones
+          .where((m) => m.id == _selectedMilestoneId)
+          .firstOrNull;
+    }
+
+    final isArabic = lang == 'ar';
+    final sectionTitle = isArabic
+        ? 'المعلم المرتبط في خط الحياة (Timeline)'
+        : (lang == 'en'
+            ? 'Linked Timeline Milestone'
+            : 'Jalon associé (Timeline)');
+    final sectionSubtitle = isArabic
+        ? 'لتوثيق الكبسولة فوراً ضمن محطات مسار نمو الطفل'
+        : (lang == 'en'
+            ? 'To display this capsule directly on child life timeline'
+            : 'Pour afficher ce souvenir directement sur la Timeline');
+
+    return _buildSectionCard(
+      context: context,
+      isDark: isDark,
+      watermarkIcon: Icons.flag_rounded,
+      backgroundColor: isDark
+          ? const Color(0xFF1B2228)
+          : const Color(0xFFF5F9FA),
+      borderColor: isDark
+          ? const Color(0xFF0EA5E9).withValues(alpha: 0.25)
+          : const Color(0xFF0EA5E9).withValues(alpha: 0.18),
+      children: [
+        Row(
+          children: [
+            Container(
+              width: 28,
+              height: 28,
+              decoration: BoxDecoration(
+                color: const Color(0xFF0EA5E9).withValues(alpha: 0.15),
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: const Icon(
+                Icons.flag_rounded,
+                size: 16,
+                color: Color(0xFF0EA5E9),
+              ),
+            ),
+            const SizedBox(width: 8),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    sectionTitle,
+                    style: AppTypography.fromContext(
+                      context,
+                      fontSize: 14,
+                      fontWeight: FontWeight.w700,
+                      color: textColor,
+                    ),
+                  ),
+                  const SizedBox(height: 1),
+                  Text(
+                    sectionSubtitle,
+                    style: AppTypography.fromContext(
+                      context,
+                      fontSize: 11,
+                      color: secondaryText,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+        const SizedBox(height: 12),
+        if (currentMilestone != null) ...[
+          // Currently Selected Milestone Card
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+            decoration: BoxDecoration(
+              color: isDark
+                  ? const Color(0xFF131D24)
+                  : const Color(0xFFEBF6FA),
+              borderRadius: BorderRadius.circular(14),
+              border: Border.all(
+                color: const Color(0xFF0EA5E9).withValues(alpha: 0.4),
+                width: 1.2,
+              ),
+            ),
+            child: Row(
+              children: [
+                Container(
+                  width: 36,
+                  height: 36,
+                  decoration: BoxDecoration(
+                    color: const Color(0xFF0EA5E9).withValues(alpha: 0.2),
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  child: Center(
+                    child: Icon(
+                      currentMilestone.category.icon,
+                      size: 20,
+                      color: const Color(0xFF0EA5E9),
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 10),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        currentMilestone.getTitle(lang),
+                        style: AppTypography.fromContext(
+                          context,
+                          fontSize: 13.5,
+                          fontWeight: FontWeight.w700,
+                          color: textColor,
+                        ),
+                      ),
+                      const SizedBox(height: 2),
+                      Row(
+                        children: [
+                          Container(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 6,
+                              vertical: 2,
+                            ),
+                            decoration: BoxDecoration(
+                              color: currentMilestone.phase.color
+                                  .withValues(alpha: 0.15),
+                              borderRadius: BorderRadius.circular(6),
+                            ),
+                            child: Text(
+                              currentMilestone.phase.labelFr,
+                              style: TextStyle(
+                                fontSize: 10,
+                                fontWeight: FontWeight.w600,
+                                color: currentMilestone.phase.color,
+                              ),
+                            ),
+                          ),
+                          const SizedBox(width: 6),
+                          Text(
+                            currentMilestone.ageRange,
+                            style: AppTypography.fromContext(
+                              context,
+                              fontSize: 11,
+                              color: secondaryText,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+                IconButton(
+                  icon: const Icon(Icons.swap_horiz_rounded, size: 20),
+                  tooltip: isArabic ? 'تغيير' : 'Changer',
+                  color: const Color(0xFF0EA5E9),
+                  onPressed: () => _showMilestonePickerSheet(
+                    context,
+                    lang,
+                    isDark,
+                    primary,
+                    textColor,
+                    secondaryText,
+                  ),
+                ),
+                IconButton(
+                  icon: const Icon(Icons.close_rounded, size: 18),
+                  tooltip: isArabic ? 'إزالة' : 'Retirer',
+                  color: secondaryText,
+                  onPressed: () => setState(() => _selectedMilestoneId = null),
+                ),
+              ],
+            ),
+          ),
+        ] else ...[
+          // Unselected State - Tap to Select Milestone
+          InkWell(
+            onTap: () => _showMilestonePickerSheet(
+              context,
+              lang,
+              isDark,
+              primary,
+              textColor,
+              secondaryText,
+            ),
+            borderRadius: BorderRadius.circular(14),
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+              decoration: BoxDecoration(
+                color: isDark
+                    ? AppColors.inputBackgroundDark
+                    : AppColors.inputBackgroundLight,
+                borderRadius: BorderRadius.circular(14),
+                border: Border.all(
+                  color: isDark ? Colors.white10 : const Color(0xFFECEAEF),
+                  width: 1,
+                ),
+              ),
+              child: Row(
+                children: [
+                  const Icon(
+                    Icons.add_circle_outline_rounded,
+                    size: 20,
+                    color: Color(0xFF0EA5E9),
+                  ),
+                  const SizedBox(width: 10),
+                  Expanded(
+                    child: Text(
+                      isArabic
+                          ? 'اختيار معلم زمني (Timeline) لهذا التوثيق'
+                          : (lang == 'en'
+                              ? 'Choose a timeline milestone for this capsule'
+                              : 'Choisir un jalon de la Timeline pour ce souvenir'),
+                      style: AppTypography.fromContext(
+                        context,
+                        fontSize: 13,
+                        color: textColor,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ),
+                  Icon(
+                    Icons.chevron_right_rounded,
+                    size: 18,
+                    color: secondaryText,
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ],
+      ],
+    );
+  }
+
+  void _showMilestonePickerSheet(
+    BuildContext context,
+    String lang,
+    bool isDark,
+    Color primary,
+    Color textColor,
+    Color secondaryText,
+  ) {
+    final surface = isDark ? AppColors.surfaceDark : Colors.white;
+    final isArabic = lang == 'ar';
+
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: surface,
+      isScrollControlled: true,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+      ),
+      builder: (bottomSheetContext) {
+        // Filter milestones: keep those with actionType capsule/mixed
+        final milestones = allMilestones.where((m) => m.canHaveCapsule).toList();
+
+        return DraggableScrollableSheet(
+          initialChildSize: 0.65,
+          minChildSize: 0.4,
+          maxChildSize: 0.9,
+          expand: false,
+          builder: (context, scrollController) {
+            return Column(
+              children: [
+                const SizedBox(height: 12),
+                Container(
+                  width: 38,
+                  height: 4,
+                  decoration: BoxDecoration(
+                    color: isDark ? Colors.white24 : Colors.black12,
+                    borderRadius: BorderRadius.circular(2),
+                  ),
+                ),
+                const SizedBox(height: 14),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 20),
+                  child: Row(
+                    children: [
+                      Icon(Icons.flag_rounded, color: primary, size: 22),
+                      const SizedBox(width: 8),
+                      Expanded(
+                        child: Text(
+                          isArabic
+                              ? 'اختيار المعلم في خط الحياة'
+                              : 'Sélectionner un jalon (Timeline)',
+                          style: AppTypography.fromContext(
+                            context,
+                            fontSize: 16,
+                            fontWeight: FontWeight.w800,
+                            color: textColor,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(height: 10),
+                Divider(
+                  height: 1,
+                  color: isDark ? Colors.white10 : const Color(0xFFECEAEF),
+                ),
+                Expanded(
+                  child: ListView.separated(
+                    controller: scrollController,
+                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                    itemCount: milestones.length + 1,
+                    separatorBuilder: (_, _) => const SizedBox(height: 8),
+                    itemBuilder: (context, index) {
+                      if (index == 0) {
+                        final isNoneSelected = _selectedMilestoneId == null;
+                        return InkWell(
+                          onTap: () {
+                            setState(() => _selectedMilestoneId = null);
+                            Navigator.pop(bottomSheetContext);
+                          },
+                          borderRadius: BorderRadius.circular(14),
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+                            decoration: BoxDecoration(
+                              color: isNoneSelected
+                                  ? primary.withValues(alpha: 0.12)
+                                  : (isDark ? const Color(0xFF221F28) : const Color(0xFFF7F5FA)),
+                              borderRadius: BorderRadius.circular(14),
+                              border: Border.all(
+                                color: isNoneSelected ? primary : Colors.transparent,
+                                width: 1.2,
+                              ),
+                            ),
+                            child: Row(
+                              children: [
+                                Icon(Icons.bookmark_border_rounded, size: 20, color: secondaryText),
+                                const SizedBox(width: 10),
+                                Expanded(
+                                  child: Text(
+                                    isArabic
+                                        ? 'بدون معلم محدد (ذكرى حرة)'
+                                        : 'Sans jalon spécifique (Souvenir libre)',
+                                    style: TextStyle(
+                                      fontWeight: isNoneSelected ? FontWeight.w700 : FontWeight.w500,
+                                      color: isNoneSelected ? primary : textColor,
+                                      fontSize: 13.5,
+                                    ),
+                                  ),
+                                ),
+                                if (isNoneSelected)
+                                  Icon(Icons.check_circle_rounded, size: 18, color: primary),
+                              ],
+                            ),
+                          ),
+                        );
+                      }
+
+                      final m = milestones[index - 1];
+                      final isSelected = _selectedMilestoneId == m.id;
+
+                      return InkWell(
+                        onTap: () {
+                          setState(() {
+                            _selectedMilestoneId = m.id;
+                            if (m.phase == Phase.gestation) {
+                              _selectedCategory = CapsuleCategory.gestation;
+                            } else if (m.phase == Phase.postPartum) {
+                              _selectedCategory = CapsuleCategory.postPartum;
+                            } else {
+                              _selectedCategory = CapsuleCategory.enfance;
+                            }
+                          });
+                          Navigator.pop(bottomSheetContext);
+                        },
+                        borderRadius: BorderRadius.circular(14),
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+                          decoration: BoxDecoration(
+                            color: isSelected
+                                ? const Color(0xFF0EA5E9).withValues(alpha: 0.14)
+                                : (isDark ? const Color(0xFF221F28) : const Color(0xFFF7F5FA)),
+                            borderRadius: BorderRadius.circular(14),
+                            border: Border.all(
+                              color: isSelected ? const Color(0xFF0EA5E9) : Colors.transparent,
+                              width: 1.2,
+                            ),
+                          ),
+                          child: Row(
+                            children: [
+                              Container(
+                                width: 34,
+                                height: 34,
+                                decoration: BoxDecoration(
+                                  color: m.category.color.withValues(alpha: 0.15),
+                                  borderRadius: BorderRadius.circular(10),
+                                ),
+                                child: Icon(m.category.icon, size: 18, color: m.category.color),
+                              ),
+                              const SizedBox(width: 10),
+                              Expanded(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      m.getTitle(lang),
+                                      style: TextStyle(
+                                        fontWeight: isSelected ? FontWeight.w700 : FontWeight.w600,
+                                        color: isSelected ? const Color(0xFF0EA5E9) : textColor,
+                                        fontSize: 13.5,
+                                      ),
+                                    ),
+                                    const SizedBox(height: 2),
+                                    Text(
+                                      '${m.phase.labelFr} • ${m.ageRange}',
+                                      style: TextStyle(
+                                        fontSize: 11,
+                                        color: secondaryText,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              if (isSelected)
+                                const Icon(Icons.check_circle_rounded, size: 18, color: Color(0xFF0EA5E9)),
+                            ],
+                          ),
+                        ),
+                      );
+                    },
+                  ),
+                ),
+              ],
+            );
+          },
+        );
+      },
     );
   }
 
@@ -513,6 +1106,54 @@ class _CreateCapsuleScreenState extends ConsumerState<CreateCapsuleScreen> {
                       ),
                     ),
                   ],
+                ),
+              ),
+            ],
+          ),
+        ),
+      );
+    } else if (_existingPhotoUrl != null && _existingPhotoUrl!.isNotEmpty) {
+      return Container(
+        height: 280,
+        width: double.infinity,
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(20),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withValues(alpha: isDark ? 0.35 : 0.08),
+              blurRadius: 16,
+              offset: const Offset(0, 6),
+            ),
+          ],
+        ),
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(20),
+          child: Stack(
+            fit: StackFit.expand,
+            children: [
+              CachedNetworkImage(
+                imageUrl: _existingPhotoUrl!,
+                fit: BoxFit.cover,
+                placeholder: (context, url) => Container(
+                  color: isDark ? Colors.white10 : Colors.black12,
+                  child: const Center(
+                    child: CircularProgressIndicator(),
+                  ),
+                ),
+                errorWidget: (context, url, error) => Container(
+                  color: isDark ? Colors.white10 : Colors.black12,
+                  child: const Center(
+                    child: Icon(Icons.broken_image, color: Colors.white54),
+                  ),
+                ),
+              ),
+              PositionedDirectional(
+                top: 10,
+                end: 10,
+                child: _buildFrostedActionButton(
+                  icon: Icons.refresh_rounded,
+                  label: l10n.capsuleChangePhoto,
+                  onTap: _showPhotoSourceSheet,
                 ),
               ),
             ],
@@ -878,40 +1519,22 @@ class _CreateCapsuleScreenState extends ConsumerState<CreateCapsuleScreen> {
   ) {
     final l10n = context.l10n;
 
-    if (children.isEmpty) {
-      return Container(
-        padding: const EdgeInsets.all(AppSpacing.md),
-        decoration: BoxDecoration(
-          color: AppColors.warning.withValues(alpha: 0.1),
-          borderRadius: BorderRadius.circular(12),
-        ),
-        child: Row(
-          children: [
-            Icon(Icons.info_outline_rounded, color: AppColors.warning),
-            const SizedBox(width: AppSpacing.sm),
-            Expanded(
-              child: Text(
-                l10n.capsuleAddChildPrompt,
-                style: AppTypography.fromContext(
-                  context,
-                  fontSize: 13,
-                  color: textColor,
-                ),
-              ),
-            ),
-          ],
-        ),
-      );
-    }
-
-    if (_selectedChild == null && children.isNotEmpty) {
-      if (widget.preselectedChildId != null) {
-        _selectedChild = children.firstWhere(
-          (c) => c.id == widget.preselectedChildId,
-          orElse: () => children.first,
-        );
+    if (_selectedChild == null && !_withMother) {
+      if (children.isEmpty) {
+        _withMother = true;
       } else {
-        _selectedChild = children.first;
+        final preferredChildId = widget.existingCapsule?.childId ??
+            (widget.existingCapsule?.childIds.isNotEmpty == true
+                ? widget.existingCapsule!.childIds.first
+                : widget.preselectedChildId);
+        if (preferredChildId != null) {
+          _selectedChild = children.firstWhere(
+            (c) => c.id == preferredChildId,
+            orElse: () => children.first,
+          );
+        } else {
+          _selectedChild = children.first;
+        }
       }
     }
 
@@ -947,31 +1570,34 @@ class _CreateCapsuleScreenState extends ConsumerState<CreateCapsuleScreen> {
         SingleChildScrollView(
           scrollDirection: Axis.horizontal,
           child: Row(
-            children: children.map((child) {
-              final isSelected = _selectedChild?.id == child.id;
-              final hasPhoto = child.photoUrl != null && child.photoUrl!.isNotEmpty;
-
-              return Padding(
+            children: [
+              // 1. MAM Profile Chip (Maman)
+              Padding(
                 padding: const EdgeInsetsDirectional.only(end: 10),
                 child: GestureDetector(
-                  onTap: () => setState(() => _selectedChild = child),
+                  onTap: () => setState(() {
+                    _withMother = !_withMother;
+                    if (!_withMother && _selectedChild == null && children.isNotEmpty) {
+                      _selectedChild = children.first;
+                    }
+                  }),
                   child: AnimatedContainer(
                     duration: const Duration(milliseconds: 200),
                     padding: const EdgeInsetsDirectional.fromSTEB(6, 5, 14, 5),
                     decoration: BoxDecoration(
-                      color: isSelected
+                      color: _withMother
                           ? primary.withValues(alpha: isDark ? 0.22 : 0.12)
                           : (isDark
                                 ? const Color(0xFF262230)
                                 : const Color(0xFFF6F3F9)),
                       borderRadius: BorderRadius.circular(18),
                       border: Border.all(
-                        color: isSelected
+                        color: _withMother
                             ? primary
                             : (isDark ? Colors.white12 : const Color(0xFFE6E2EC)),
-                        width: isSelected ? 1.8 : 1.0,
+                        width: _withMother ? 1.8 : 1.0,
                       ),
-                      boxShadow: isSelected
+                      boxShadow: _withMother
                           ? [
                               BoxShadow(
                                 color: primary.withValues(alpha: 0.22),
@@ -984,57 +1610,38 @@ class _CreateCapsuleScreenState extends ConsumerState<CreateCapsuleScreen> {
                     child: Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        // Enlarged Child Photo Avatar (36x36)
                         Container(
                           width: 36,
                           height: 36,
                           decoration: BoxDecoration(
                             shape: BoxShape.circle,
+                            color: _withMother ? primary : AppColors.magentaPink.withValues(alpha: 0.2),
                             border: Border.all(
-                              color: isSelected ? primary : Colors.white,
+                              color: _withMother ? primary : Colors.white,
                               width: 1.5,
                             ),
-                            boxShadow: [
-                              BoxShadow(
-                                color: Colors.black.withValues(alpha: 0.12),
-                                blurRadius: 4,
-                                offset: const Offset(0, 1),
-                              ),
-                            ],
                           ),
-                          child: ClipOval(
-                            child: hasPhoto
-                                ? Image.network(
-                                    child.photoUrl!,
-                                    fit: BoxFit.cover,
-                                    errorBuilder: (_, _, _) => _buildChildInitials(
-                                      child,
-                                      isSelected,
-                                      primary,
-                                      secondaryText,
-                                    ),
-                                  )
-                                : _buildChildInitials(
-                                    child,
-                                    isSelected,
-                                    primary,
-                                    secondaryText,
-                                  ),
+                          child: Center(
+                            child: Icon(
+                              Icons.favorite_rounded,
+                              size: 18,
+                              color: _withMother ? Colors.white : AppColors.magentaPink,
+                            ),
                           ),
                         ),
                         const SizedBox(width: 10),
                         Text(
-                          child.name,
+                          'MAM',
                           style: AppTypography.fromContext(
                             context,
                             fontSize: 13.5,
-                            fontWeight: isSelected
+                            fontWeight: _withMother
                                 ? FontWeight.w700
                                 : FontWeight.w600,
-                            color: isSelected ? primary : textColor,
+                            color: _withMother ? primary : textColor,
                           ),
                         ),
-                        if (isSelected) ...[
+                        if (_withMother) ...[
                           const SizedBox(width: 6),
                           Icon(
                             Icons.check_circle_rounded,
@@ -1046,8 +1653,166 @@ class _CreateCapsuleScreenState extends ConsumerState<CreateCapsuleScreen> {
                     ),
                   ),
                 ),
-              );
-            }).toList(),
+              ),
+
+              // 2. Children Chips
+              ...children.map((child) {
+                final isSelected = _selectedChild?.id == child.id;
+                final hasPhoto = child.photoUrl != null && child.photoUrl!.isNotEmpty;
+
+                return Padding(
+                  padding: const EdgeInsetsDirectional.only(end: 10),
+                  child: GestureDetector(
+                    onTap: () => setState(() {
+                      if (_selectedChild?.id == child.id) {
+                        if (_withMother) {
+                          _selectedChild = null;
+                        }
+                      } else {
+                        _selectedChild = child;
+                      }
+                    }),
+                    child: AnimatedContainer(
+                      duration: const Duration(milliseconds: 200),
+                      padding: const EdgeInsetsDirectional.fromSTEB(6, 5, 14, 5),
+                      decoration: BoxDecoration(
+                        color: isSelected
+                            ? primary.withValues(alpha: isDark ? 0.22 : 0.12)
+                            : (isDark
+                                  ? const Color(0xFF262230)
+                                  : const Color(0xFFF6F3F9)),
+                        borderRadius: BorderRadius.circular(18),
+                        border: Border.all(
+                          color: isSelected
+                              ? primary
+                              : (isDark ? Colors.white12 : const Color(0xFFE6E2EC)),
+                          width: isSelected ? 1.8 : 1.0,
+                        ),
+                        boxShadow: isSelected
+                            ? [
+                                BoxShadow(
+                                  color: primary.withValues(alpha: 0.22),
+                                  blurRadius: 8,
+                                  offset: const Offset(0, 2),
+                                ),
+                              ]
+                            : null,
+                      ),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Container(
+                            width: 36,
+                            height: 36,
+                            decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              border: Border.all(
+                                color: isSelected ? primary : Colors.white,
+                                width: 1.5,
+                              ),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Colors.black.withValues(alpha: 0.12),
+                                  blurRadius: 4,
+                                  offset: const Offset(0, 1),
+                                ),
+                              ],
+                            ),
+                            child: ClipOval(
+                              child: hasPhoto
+                                  ? Image.network(
+                                      child.photoUrl!,
+                                      fit: BoxFit.cover,
+                                      errorBuilder: (_, _, _) => _buildChildInitials(
+                                        child,
+                                        isSelected,
+                                        primary,
+                                        secondaryText,
+                                      ),
+                                    )
+                                  : _buildChildInitials(
+                                      child,
+                                      isSelected,
+                                      primary,
+                                      secondaryText,
+                                    ),
+                            ),
+                          ),
+                          const SizedBox(width: 10),
+                          Text(
+                            child.name,
+                            style: AppTypography.fromContext(
+                              context,
+                              fontSize: 13.5,
+                              fontWeight: isSelected
+                                  ? FontWeight.w700
+                                  : FontWeight.w600,
+                              color: isSelected ? primary : textColor,
+                            ),
+                          ),
+                          if (isSelected) ...[
+                            const SizedBox(width: 6),
+                            Icon(
+                              Icons.check_circle_rounded,
+                              size: 16,
+                              color: primary,
+                            ),
+                          ],
+                        ],
+                      ),
+                    ),
+                  ),
+                );
+              }),
+
+              // 3. Add Child Action Chip
+              Padding(
+                padding: const EdgeInsetsDirectional.only(end: 10),
+                child: GestureDetector(
+                  onTap: () {
+                    Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder: (_) => const EditChildScreen(),
+                      ),
+                    );
+                  },
+                  child: Container(
+                    padding: const EdgeInsetsDirectional.fromSTEB(8, 6, 12, 6),
+                    decoration: BoxDecoration(
+                      color: isDark ? Colors.white.withValues(alpha: 0.05) : Colors.black.withValues(alpha: 0.04),
+                      borderRadius: BorderRadius.circular(18),
+                      border: Border.all(
+                        color: isDark ? Colors.white12 : Colors.black12,
+                        style: BorderStyle.solid,
+                      ),
+                    ),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Container(
+                          width: 28,
+                          height: 28,
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            color: primary.withValues(alpha: 0.15),
+                          ),
+                          child: Icon(Icons.add_rounded, size: 18, color: primary),
+                        ),
+                        const SizedBox(width: 6),
+                        Text(
+                          l10n.addChild,
+                          style: TextStyle(
+                            fontSize: 12.5,
+                            fontWeight: FontWeight.w600,
+                            color: primary,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+            ],
           ),
         ),
       ],
@@ -1181,6 +1946,7 @@ class _CreateCapsuleScreenState extends ConsumerState<CreateCapsuleScreen> {
     Color secondaryText,
   ) {
     final l10n = context.l10n;
+    final lang = Localizations.localeOf(context).languageCode;
 
     return Container(
       padding: EdgeInsets.fromLTRB(
@@ -1208,7 +1974,7 @@ class _CreateCapsuleScreenState extends ConsumerState<CreateCapsuleScreen> {
       child: SizedBox(
         height: 52,
         child: ElevatedButton(
-          onPressed: _canSave ? _saveCapsule : null,
+          onPressed: (!_canSave || _isLoading) ? null : _saveCapsule,
           style: ElevatedButton.styleFrom(
             backgroundColor: _canSave ? primary : (isDark ? Colors.white12 : Colors.black12),
             foregroundColor: Colors.white,
@@ -1231,13 +1997,21 @@ class _CreateCapsuleScreenState extends ConsumerState<CreateCapsuleScreen> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Icon(
-                      Icons.auto_awesome_rounded,
+                      widget.existingCapsule != null
+                          ? Icons.check_circle_outline_rounded
+                          : Icons.auto_awesome_rounded,
                       size: 18,
                       color: _canSave ? Colors.white : secondaryText,
                     ),
                     const SizedBox(width: 8),
                     Text(
-                      l10n.capsuleCreateCTA,
+                      widget.existingCapsule != null
+                          ? (lang == 'ar'
+                              ? 'حفظ التعديلات'
+                              : (lang == 'en'
+                                  ? 'Save Changes'
+                                  : 'Enregistrer les modifications'))
+                          : l10n.capsuleCreateCTA,
                       style: TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.w700,
@@ -1487,38 +2261,110 @@ class _CreateCapsuleScreenState extends ConsumerState<CreateCapsuleScreen> {
   }
 
   Future<void> _saveCapsule() async {
-    if (!_canSave) return;
+    if (!_canSave || _isLoading) return;
 
     setState(() => _isLoading = true);
 
-    final result = await ref
-        .read(capsuleActionsProvider.notifier)
-        .createCapsule(
-          childId: _selectedChild!.id,
-          photoFile: _selectedPhoto!,
-          audioFile: _recordedAudio,
-          audioDuration: _audioDuration,
-          emotion: _selectedEmotion!,
-          milestoneId: widget.milestoneId,
-          vaccineGroupId: widget.vaccineGroupId,
-          albumId: widget.albumId,
-          albumSlotId: widget.albumSlotId,
-          albumType: widget.albumType,
-          tags: _tags,
-          capturedAt: _capturedAt,
-          category: _selectedCategory,
+    try {
+      Capsule? result;
+      final effectiveChildId = _selectedChild?.id ?? '';
+      final effectiveChildIds = _selectedChild != null ? [_selectedChild!.id] : const <String>[];
+
+      // Spec LM-CAP-004: Only associate audio if validated, non-empty and non-corrupted
+      File? effectiveAudio;
+      int? effectiveAudioDuration;
+      if (_recordedAudio != null && _isAudioValidated) {
+        if (_recordedAudio!.existsSync() && _recordedAudio!.lengthSync() > 0) {
+          effectiveAudio = _recordedAudio;
+          effectiveAudioDuration = _audioDuration;
+        }
+      }
+
+      if (widget.existingCapsule != null) {
+        result = await ref.read(capsuleActionsProvider.notifier).updateCapsule(
+              capsuleId: widget.existingCapsule!.id,
+              childId: effectiveChildId,
+              childIds: effectiveChildIds,
+              withMother: _withMother,
+              newPhotoFile: _selectedPhoto,
+              newAudioFile: effectiveAudio,
+              removeAudio: _removeAudio || (_recordedAudio != null && !_isAudioValidated),
+              audioDuration: effectiveAudio != null ? effectiveAudioDuration : (_removeAudio ? null : _audioDuration),
+              emotion: _selectedEmotion!,
+              secondaryEmotions: _secondaryEmotions,
+              milestoneId: _selectedMilestoneId,
+              oldMilestoneId: widget.existingCapsule!.milestoneId,
+              tags: _tags,
+              capturedAt: _capturedAt,
+              category: _selectedCategory,
+            );
+      } else {
+        result = await ref.read(capsuleActionsProvider.notifier).createCapsule(
+              childId: effectiveChildId,
+              childIds: effectiveChildIds,
+              withMother: _withMother,
+              photoFile: _selectedPhoto!,
+              audioFile: effectiveAudio,
+              audioDuration: effectiveAudioDuration,
+              emotion: _selectedEmotion!,
+              secondaryEmotions: _secondaryEmotions,
+              milestoneId: _selectedMilestoneId,
+              vaccineGroupId: widget.vaccineGroupId,
+              albumId: widget.albumId,
+              albumSlotId: widget.albumSlotId,
+              albumType: widget.albumType,
+              tags: _tags,
+              capturedAt: _capturedAt,
+              category: _selectedCategory,
+            );
+      }
+
+      setState(() => _isLoading = false);
+
+      if (result != null && mounted) {
+        if (_selectedChild != null) {
+          ref.invalidate(childMilestonesProvider(_selectedChild!.id));
+          ref.invalidate(milestoneProgressStreamProvider(_selectedChild!.id));
+          ref.invalidate(capsulesByChildProvider(_selectedChild!.id));
+        }
+        ref.invalidate(capsulesProvider);
+        Navigator.pop(context, result);
+        final lang = Localizations.localeOf(context).languageCode;
+        final successMsg = widget.existingCapsule != null
+            ? (lang == 'ar'
+                ? 'تم تحديث الذكرى بنجاح'
+                : (lang == 'en'
+                    ? 'Memory updated successfully'
+                    : 'Souvenir mis à jour avec succès'))
+            : context.l10n.capsuleCreatedSuccess;
+
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(successMsg),
+            backgroundColor: AppColors.success,
+          ),
         );
-
-    setState(() => _isLoading = false);
-
-    if (result != null && mounted) {
-      Navigator.pop(context);
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(context.l10n.capsuleCreatedSuccess),
-          backgroundColor: AppColors.success,
-        ),
-      );
+      } else if (result == null && mounted) {
+        final errorMsg = ref.read(capsuleActionsProvider).error;
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(
+              errorMsg ?? context.l10n.milestone_error('Échec de sauvegarde'),
+            ),
+            backgroundColor: AppColors.error,
+          ),
+        );
+      }
+    } catch (e) {
+      setState(() => _isLoading = false);
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(context.l10n.milestone_error(e.toString())),
+            backgroundColor: AppColors.error,
+          ),
+        );
+      }
     }
   }
 }

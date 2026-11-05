@@ -17,6 +17,13 @@ import '../models/standard_album.dart';
 import '../providers/standard_album_providers.dart';
 import '../widgets/album_print_cta.dart';
 import '../widgets/capsule_picker_sheet.dart';
+import 'dart:io';
+import 'package:image_picker/image_picker.dart';
+import '../../capsules/models/emotion.dart';
+import '../../capsules/widgets/image_crop_screen.dart';
+import '../../print_album/services/album_pricing_service.dart';
+import '../widgets/album_photo_action_sheet.dart';
+
 
 /// Redesigned flagship Standard (Free-form) Album Detail Screen for LuckyMam.
 /// Features a Dual-Mode Experience mirroring the VIP Predefined Album:
@@ -330,6 +337,8 @@ class _StandardAlbumDetailScreenState
                       onSelected: (value) {
                         if (value == 'rename') {
                           _renameAlbumDialog(context, album);
+                        } else if (value == 'change_capacity') {
+                          _showChangePhotoCountDialog(context, album);
                         } else if (value == 'add_page') {
                           _addNewPage(album);
                         } else if (value == 'delete') {
@@ -344,6 +353,25 @@ class _StandardAlbumDetailScreenState
                               const Icon(Icons.edit_outlined, size: 18),
                               const SizedBox(width: 10),
                               Text(l10n.albumRenameTitle),
+                            ],
+                          ),
+                        ),
+                        PopupMenuItem(
+                          value: 'change_capacity',
+                          child: Row(
+                            children: [
+                              const Icon(
+                                Icons.photo_size_select_actual_outlined,
+                                size: 18,
+                              ),
+                              const SizedBox(width: 10),
+                              Text(
+                                lang == 'ar'
+                                    ? 'تغيير عدد الصور'
+                                    : (lang == 'fr'
+                                        ? 'Nombre de photos'
+                                        : 'Photo quantity'),
+                              ),
                             ],
                           ),
                         ),
@@ -535,6 +563,10 @@ class _StandardAlbumDetailScreenState
                 lang: lang,
                 isRtl: isRtl,
                 onPickExisting: () => _pickExistingCapsule(context, album, index),
+                onReplace: () => _replacePagePhoto(context, album, index, capsule),
+                onCrop: capsule != null
+                    ? () => _cropPagePhoto(context, album, index, capsule!)
+                    : null,
                 onCreateNew: () => _createNewCapsule(context, album, index),
                 onClearPage: () => _clearPage(context, album, index),
               );
@@ -1005,6 +1037,268 @@ class _StandardAlbumDetailScreenState
   // ───────────────────────────────────────────────────────────────────────────
   // ACTIONS & DIALOGS
   // ───────────────────────────────────────────────────────────────────────────
+  Future<void> _replacePagePhoto(
+    BuildContext context,
+    StandardAlbum album,
+    int pageIndex,
+    Capsule? currentCapsule,
+  ) async {
+    final lang = Localizations.localeOf(context).languageCode;
+    final isAr = lang == 'ar';
+    final pageTitle = isAr ? 'الصفحة ${pageIndex + 1}' : 'Page ${pageIndex + 1}';
+
+    await AlbumPhotoActionSheet.show(
+      context: context,
+      title: pageTitle,
+      hasPhoto: currentCapsule != null,
+      accentColor: _accentColor,
+      onPickFromMemories: () => _pickExistingCapsule(context, album, pageIndex),
+      onPickFromGallery: () =>
+          _pickFromGallery(context, album, pageIndex, currentCapsule),
+      onTakePhoto: () =>
+          _takePhotoWithCamera(context, album, pageIndex, currentCapsule),
+      onCrop: currentCapsule != null
+          ? () => _cropPagePhoto(context, album, pageIndex, currentCapsule)
+          : null,
+      onClear: currentCapsule != null
+          ? () => _clearPage(context, album, pageIndex)
+          : null,
+    );
+  }
+
+  Future<void> _cropPagePhoto(
+    BuildContext context,
+    StandardAlbum album,
+    int pageIndex,
+    Capsule capsule,
+  ) async {
+    final lang = Localizations.localeOf(context).languageCode;
+    final File? croppedFile = await Navigator.of(context).push<File>(
+      MaterialPageRoute(
+        builder: (_) => ImageCropScreen(
+          imageUrl: capsule.photoUrl,
+          aspectRatio: 1.0,
+          title: lang == 'ar' ? 'قص وضبط الصورة' : 'Recadrer & Ajuster',
+        ),
+      ),
+    );
+
+    if (croppedFile == null || !context.mounted) {
+      // User cancelled modifications -> original photo stays untouched
+      return;
+    }
+
+    try {
+      final messenger = ScaffoldMessenger.of(context);
+      messenger.showSnackBar(
+        SnackBar(
+          content: Row(
+            children: [
+              const SizedBox(
+                width: 16,
+                height: 16,
+                child: CircularProgressIndicator(
+                  strokeWidth: 2,
+                  color: Colors.white,
+                ),
+              ),
+              const SizedBox(width: 12),
+              Text(
+                lang == 'ar'
+                    ? 'جاري حفظ التعديلات...'
+                    : 'Application du recadrage...',
+              ),
+            ],
+          ),
+          duration: const Duration(seconds: 2),
+          backgroundColor: _accentColor,
+        ),
+      );
+
+      final newCapsule = await ref.read(capsuleServiceProvider).createCapsule(
+        photoFile: croppedFile,
+        childId: album.childId,
+        emotion: capsule.emotion,
+        category: capsule.category,
+        tags: capsule.tags,
+        albumId: album.id,
+        albumSlotId: '$pageIndex',
+        albumType: 'standard',
+      );
+
+      await ref.read(standardAlbumActionsProvider.notifier).addCapsuleToPage(
+        albumId: album.id,
+        pageIndex: pageIndex,
+        capsuleId: newCapsule.id,
+        method: 'cropped',
+      );
+
+      messenger.hideCurrentSnackBar();
+      messenger.showSnackBar(
+        SnackBar(
+          content: Text(
+            lang == 'ar'
+                ? 'تم قص وتعديل الصورة بنجاح ✓'
+                : 'Photo recadrée et ajustée avec succès ✓',
+          ),
+          backgroundColor: AppColors.success,
+          duration: const Duration(seconds: 2),
+        ),
+      );
+    } catch (e) {
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(
+              lang == 'ar'
+                  ? 'حدث خطأ أثناء تعديل الصورة: $e'
+                  : 'Erreur lors du recadrage : $e',
+            ),
+            backgroundColor: AppColors.error,
+          ),
+        );
+      }
+    }
+  }
+
+  Future<void> _pickFromGallery(
+    BuildContext context,
+    StandardAlbum album,
+    int pageIndex,
+    Capsule? currentCapsule,
+  ) async {
+    final picker = ImagePicker();
+    final picked = await picker.pickImage(
+      source: ImageSource.gallery,
+      imageQuality: 95,
+    );
+    if (picked == null || !context.mounted) return;
+
+    await _processPickedImageForPage(
+      context: context,
+      album: album,
+      pageIndex: pageIndex,
+      imageFile: File(picked.path),
+      currentCapsule: currentCapsule,
+    );
+  }
+
+  Future<void> _takePhotoWithCamera(
+    BuildContext context,
+    StandardAlbum album,
+    int pageIndex,
+    Capsule? currentCapsule,
+  ) async {
+    final picker = ImagePicker();
+    final picked = await picker.pickImage(
+      source: ImageSource.camera,
+      imageQuality: 95,
+    );
+    if (picked == null || !context.mounted) return;
+
+    await _processPickedImageForPage(
+      context: context,
+      album: album,
+      pageIndex: pageIndex,
+      imageFile: File(picked.path),
+      currentCapsule: currentCapsule,
+    );
+  }
+
+  Future<void> _processPickedImageForPage({
+    required BuildContext context,
+    required StandardAlbum album,
+    required int pageIndex,
+    required File imageFile,
+    Capsule? currentCapsule,
+  }) async {
+    final lang = Localizations.localeOf(context).languageCode;
+    final File? croppedFile = await Navigator.of(context).push<File>(
+      MaterialPageRoute(
+        builder: (_) => ImageCropScreen(
+          imageFile: imageFile,
+          aspectRatio: 1.0,
+          title: lang == 'ar' ? 'تأطير وتعديل الصورة' : 'Recadrer & Ajuster',
+        ),
+      ),
+    );
+
+    if (croppedFile == null || !context.mounted) {
+      // User cancelled crop
+      return;
+    }
+
+    try {
+      final messenger = ScaffoldMessenger.of(context);
+      messenger.showSnackBar(
+        SnackBar(
+          content: Row(
+            children: [
+              const SizedBox(
+                width: 16,
+                height: 16,
+                child: CircularProgressIndicator(
+                  strokeWidth: 2,
+                  color: Colors.white,
+                ),
+              ),
+              const SizedBox(width: 12),
+              Text(
+                lang == 'ar'
+                    ? 'جاري إضافة الصورة...'
+                    : 'Ajout de la photo à la page...',
+              ),
+            ],
+          ),
+          duration: const Duration(seconds: 2),
+          backgroundColor: _accentColor,
+        ),
+      );
+
+      final newCapsule = await ref.read(capsuleServiceProvider).createCapsule(
+        photoFile: croppedFile,
+        childId: album.childId,
+        emotion: currentCapsule?.emotion ?? Emotion.happy,
+        category: currentCapsule?.category,
+        tags: currentCapsule?.tags ?? const [],
+        albumId: album.id,
+        albumSlotId: '$pageIndex',
+        albumType: 'standard',
+      );
+
+      await ref.read(standardAlbumActionsProvider.notifier).addCapsuleToPage(
+        albumId: album.id,
+        pageIndex: pageIndex,
+        capsuleId: newCapsule.id,
+        method: 'new_image',
+      );
+
+      messenger.hideCurrentSnackBar();
+      messenger.showSnackBar(
+        SnackBar(
+          content: Text(
+            lang == 'ar'
+                ? 'تم تحديث الصورة في الألبوم ✓'
+                : 'Photo mise à jour dans l\'album ✓',
+          ),
+          backgroundColor: AppColors.success,
+          duration: const Duration(seconds: 2),
+        ),
+      );
+    } catch (e) {
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(
+              lang == 'ar' ? 'حدث خطأ: $e' : 'Erreur : $e',
+            ),
+            backgroundColor: AppColors.error,
+          ),
+        );
+      }
+    }
+  }
+
   void _addNewPage(StandardAlbum album) {
     HapticFeedback.mediumImpact();
     ref.read(standardAlbumActionsProvider.notifier).addPage(album.id);
@@ -1097,6 +1391,218 @@ class _StandardAlbumDetailScreenState
     );
   }
 
+  void _showChangePhotoCountDialog(
+    BuildContext context,
+    StandardAlbum album,
+  ) {
+    final lang = Localizations.localeOf(context).languageCode;
+    final isAr = lang == 'ar';
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final textColor = isDark ? Colors.white : AppColors.onSurfaceLight;
+    final secondaryText =
+        isDark ? AppColors.textSecondaryDark : AppColors.textSecondaryLight;
+
+    int selectedCount = album.pageCount;
+
+    showDialog(
+      context: context,
+      builder: (ctx) => StatefulBuilder(
+        builder: (ctx, setDialogState) {
+          final price = AlbumPricingService.getAlbumPrice(
+            photoCount: selectedCount,
+            format: 'A5',
+          );
+
+          return AlertDialog(
+            backgroundColor: isDark ? const Color(0xFF1E1A22) : Colors.white,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(22),
+            ),
+            titlePadding: const EdgeInsets.fromLTRB(22, 22, 22, 8),
+            contentPadding:
+                const EdgeInsets.symmetric(horizontal: 22, vertical: 8),
+            actionsPadding: const EdgeInsets.fromLTRB(16, 8, 16, 16),
+            title: Row(
+              children: [
+                Container(
+                  width: 38,
+                  height: 38,
+                  decoration: BoxDecoration(
+                    color: _accentColor.withValues(alpha: 0.15),
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: const Icon(
+                    Icons.photo_size_select_actual_outlined,
+                    color: _accentColor,
+                    size: 20,
+                  ),
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Text(
+                    isAr ? 'تغيير سعة الألبوم' : 'Capacité de l\'album',
+                    style: AppTypography.fromContext(
+                      context,
+                      fontSize: 16,
+                      fontWeight: FontWeight.w800,
+                      color: textColor,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            content: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  isAr
+                      ? 'اختاري عدد الصور الإجمالي لألبومك (1، 2، 4، 6، 8، 10 أو 12 صورة) :'
+                      : 'Choisissez la quantité de photos pour cet album libre (1, 2, 4, 6, 8, 10 ou 12 photos) :',
+                  style: AppTypography.fromContext(
+                    context,
+                    fontSize: 12,
+                    fontWeight: FontWeight.w500,
+                    color: secondaryText,
+                  ),
+                ),
+                const SizedBox(height: 14),
+
+                // Choice Chips
+                Wrap(
+                  spacing: 8,
+                  runSpacing: 8,
+                  children: AlbumPricingService.allowedPhotoCounts.map((count) {
+                    final isSelected = selectedCount == count;
+                    return ChoiceChip(
+                      label: Text(
+                        '$count',
+                        style: TextStyle(
+                          fontSize: 13,
+                          fontWeight:
+                              isSelected ? FontWeight.bold : FontWeight.w600,
+                          color: isSelected ? Colors.white : textColor,
+                        ),
+                      ),
+                      selected: isSelected,
+                      selectedColor: _accentColor,
+                      backgroundColor: isDark
+                          ? Colors.white.withValues(alpha: 0.06)
+                          : Colors.black.withValues(alpha: 0.04),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                        side: BorderSide(
+                          color: isSelected
+                              ? _accentColor
+                              : (isDark ? Colors.white12 : Colors.black12),
+                        ),
+                      ),
+                      onSelected: (val) {
+                        if (val) {
+                          setDialogState(() => selectedCount = count);
+                        }
+                      },
+                    );
+                  }).toList(),
+                ),
+
+                const SizedBox(height: 16),
+
+                // Price Recap Container (LM-ORD-001)
+                Container(
+                  padding: const EdgeInsets.all(12),
+                  decoration: BoxDecoration(
+                    color: _accentColor.withValues(alpha: 0.08),
+                    borderRadius: BorderRadius.circular(14),
+                    border: Border.all(
+                      color: _accentColor.withValues(alpha: 0.25),
+                    ),
+                  ),
+                  child: Row(
+                    children: [
+                      const Icon(
+                        Icons.receipt_long_rounded,
+                        color: _accentColor,
+                        size: 20,
+                      ),
+                      const SizedBox(width: 10),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              price != null
+                                  ? '${isAr ? 'ابتداءً من' : 'À partir de'} ${AlbumPricingService.formatDinar(price, locale: lang)}'
+                                  : (isAr ? 'غير متوفر' : 'Non défini'),
+                              style: const TextStyle(
+                                fontSize: 14.5,
+                                fontWeight: FontWeight.w800,
+                                color: _accentColor,
+                              ),
+                            ),
+                            Text(
+                              isAr
+                                  ? 'السعر غير شامل مصاريف التوصيل'
+                                  : 'Prix hors frais de livraison',
+                              style: TextStyle(
+                                fontSize: 10.5,
+                                fontWeight: FontWeight.w500,
+                                color: secondaryText,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.pop(ctx),
+                child: Text(context.l10n.albumCancel),
+              ),
+              FilledButton(
+                style: FilledButton.styleFrom(
+                  backgroundColor: _accentColor,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                ),
+                onPressed: () async {
+                  Navigator.pop(ctx);
+                  if (selectedCount == album.pageCount) return;
+
+                  await ref
+                      .read(standardAlbumActionsProvider.notifier)
+                      .updatePageCount(
+                        albumId: album.id,
+                        pageCount: selectedCount,
+                      );
+
+                  if (context.mounted) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text(
+                          isAr
+                              ? 'تم تحديث سعة الألبوم إلى $selectedCount صورة ✓'
+                              : 'Capacité mise à jour à $selectedCount photos ✓',
+                        ),
+                        backgroundColor: AppColors.success,
+                      ),
+                    );
+                  }
+                },
+                child: Text(context.l10n.albumSave),
+              ),
+            ],
+          );
+        },
+      ),
+    );
+  }
+
   void _renameAlbumDialog(BuildContext context, StandardAlbum album) {
     final l10n = context.l10n;
     final controller = TextEditingController(text: album.title);
@@ -1184,6 +1690,8 @@ class _StandardPhotobookPage extends StatelessWidget {
     required this.lang,
     required this.isRtl,
     required this.onPickExisting,
+    required this.onReplace,
+    this.onCrop,
     required this.onCreateNew,
     required this.onClearPage,
   });
@@ -1199,6 +1707,8 @@ class _StandardPhotobookPage extends StatelessWidget {
   final String lang;
   final bool isRtl;
   final VoidCallback onPickExisting;
+  final VoidCallback onReplace;
+  final VoidCallback? onCrop;
   final VoidCallback onCreateNew;
   final VoidCallback onClearPage;
 
@@ -1315,14 +1825,14 @@ class _StandardPhotobookPage extends StatelessWidget {
                         : _buildEmptyPageCanvas(context),
                   ),
 
-                  // Bottom Action Toolbar if filled
+                  // Bottom Action Toolbar if filled (Remplacer, Recadrer, Vider)
                   if (isFilled) ...[
                     const SizedBox(height: 10),
                     Row(
                       children: [
                         Expanded(
                           child: OutlinedButton.icon(
-                            onPressed: onPickExisting,
+                            onPressed: onReplace,
                             style: OutlinedButton.styleFrom(
                               foregroundColor: accentColor,
                               side: BorderSide(
@@ -1333,11 +1843,11 @@ class _StandardPhotobookPage extends StatelessWidget {
                               ),
                               padding: const EdgeInsets.symmetric(vertical: 9),
                             ),
-                            icon: const Icon(Icons.sync_rounded, size: 15),
+                            icon: const Icon(Icons.swap_horiz_rounded, size: 16),
                             label: Text(
                               lang == 'ar'
-                                  ? 'تغيير'
-                                  : (lang == 'fr' ? 'Changer' : 'Change'),
+                                  ? 'استبدال'
+                                  : (lang == 'fr' ? 'Remplacer' : 'Replace'),
                               style: const TextStyle(
                                 fontSize: 12,
                                 fontWeight: FontWeight.w600,
@@ -1345,6 +1855,34 @@ class _StandardPhotobookPage extends StatelessWidget {
                             ),
                           ),
                         ),
+                        if (onCrop != null) ...[
+                          const SizedBox(width: 8),
+                          Expanded(
+                            child: OutlinedButton.icon(
+                              onPressed: onCrop,
+                              style: OutlinedButton.styleFrom(
+                                foregroundColor: accentColor,
+                                side: BorderSide(
+                                  color: accentColor.withValues(alpha: 0.35),
+                                ),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(12),
+                                ),
+                                padding: const EdgeInsets.symmetric(vertical: 9),
+                              ),
+                              icon: const Icon(Icons.crop_rotate_rounded, size: 16),
+                              label: Text(
+                                lang == 'ar'
+                                    ? 'قص وضبط'
+                                    : (lang == 'fr' ? 'Recadrer' : 'Crop'),
+                                style: const TextStyle(
+                                  fontSize: 12,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
                         const SizedBox(width: 8),
                         IconButton(
                           onPressed: onClearPage,
@@ -1409,6 +1947,48 @@ class _StandardPhotobookPage extends StatelessWidget {
                       size: 40, color: Colors.grey),
                 ),
               ),
+
+              // Quick Crop / Adjust Chip
+              if (onCrop != null)
+                PositionedDirectional(
+                  top: 10,
+                  end: 10,
+                  child: Material(
+                    color: Colors.black.withValues(alpha: 0.55),
+                    borderRadius: BorderRadius.circular(20),
+                    child: InkWell(
+                      onTap: onCrop,
+                      borderRadius: BorderRadius.circular(20),
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 10,
+                          vertical: 6,
+                        ),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            const Icon(
+                              Icons.crop_rotate_rounded,
+                              size: 14,
+                              color: Colors.white,
+                            ),
+                            const SizedBox(width: 4),
+                            Text(
+                              lang == 'ar'
+                                  ? 'قص'
+                                  : (lang == 'fr' ? 'Recadrer' : 'Crop'),
+                              style: const TextStyle(
+                                color: Colors.white,
+                                fontSize: 11,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
 
               // Bottom gradient caption
               Positioned(

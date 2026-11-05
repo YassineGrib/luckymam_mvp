@@ -92,18 +92,54 @@ class ProfileService {
     required String displayName,
     required String email,
   }) async {
+    await ensureMamProfileCreated(defaultName: displayName);
+  }
+
+  /// Ensures that a primary "MAM" user profile exists in Firestore (LM-ONB-004).
+  /// Generates the profile automatically at the end of onboarding or upon login/registration
+  /// if not already present, without producing duplicate records.
+  /// If a profile already exists, ensures it retains all existing data, associations,
+  /// and preferences.
+  Future<UserProfile> ensureMamProfileCreated({String? defaultName}) async {
     final uid = currentUserId;
     if (uid == null) throw Exception('User not authenticated');
 
-    final profile = UserProfile(
+    final existing = await getProfile();
+    if (existing != null) {
+      // Profile already exists: idempotent, do not recreate or duplicate.
+      // Ensure displayName is populated if it was left blank.
+      if (existing.displayName == null || existing.displayName!.trim().isEmpty) {
+        final authUser = _auth.currentUser;
+        final name = (authUser?.displayName != null && authUser!.displayName!.trim().isNotEmpty)
+            ? authUser.displayName!.trim()
+            : (defaultName ?? 'Maman');
+        await updateProfileFields({'displayName': name});
+        return (await getProfile())!;
+      }
+      return existing;
+    }
+
+    // Generate new primary "MAM" profile
+    final authUser = _auth.currentUser;
+    final now = DateTime.now();
+    final name = (authUser?.displayName != null && authUser!.displayName!.trim().isNotEmpty)
+        ? authUser.displayName!.trim()
+        : (defaultName ?? 'Maman');
+
+    final newProfile = UserProfile(
       uid: uid,
-      displayName: displayName,
-      email: email,
-      createdAt: DateTime.now(),
-      updatedAt: DateTime.now(),
+      displayName: name,
+      email: authUser?.email,
+      phone: authUser?.phoneNumber,
+      photoUrl: authUser?.photoURL,
+      status: UserStatus.mom,
+      createdAt: now,
+      updatedAt: now,
+      schemaVersion: kCurrentProfileSchemaVersion,
     );
 
-    await saveProfile(profile);
+    await saveProfile(newProfile);
+    return newProfile;
   }
 
   // ============ CHILDREN OPERATIONS ============

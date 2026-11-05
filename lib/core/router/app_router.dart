@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import '../../features/splash/splash_screen.dart';
 import '../../features/onboarding/onboarding_screen.dart';
+import '../../features/onboarding/language_selection_screen.dart';
 import '../../features/auth/login_screen.dart';
 import '../../features/auth/signup_screen.dart';
 import '../../features/auth/forgot_password_screen.dart';
@@ -173,6 +174,16 @@ class AppRouter {
         pageBuilder: (context, state) => _buildPageWithTransition(
           key: state.pageKey,
           child: const Law1807ConsentScreen(),
+        ),
+      ),
+
+      // Language Selection (LM-ONB-003)
+      GoRoute(
+        path: '/select-language',
+        name: 'select-language',
+        pageBuilder: (context, state) => _buildPageWithTransition(
+          key: state.pageKey,
+          child: const LanguageSelectionScreen(),
         ),
       ),
 

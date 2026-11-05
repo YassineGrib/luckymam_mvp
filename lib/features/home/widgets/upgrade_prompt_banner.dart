@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/extensions/l10n_extension.dart';
 import '../../../core/theme/app_colors.dart';
+import '../../subscription/models/subscription_models.dart';
 import '../../subscription/providers/subscription_providers.dart';
 import '../../subscription/screens/subscription_plans_screen.dart';
 
@@ -78,7 +79,7 @@ class UpgradePromptBanner extends ConsumerWidget {
                 child: InkWell(
                   onTap: () => Navigator.of(context).push(
                     MaterialPageRoute(
-                      builder: (_) => const SubscriptionPlansScreen(),
+                      builder: (_) => const SubscriptionPlansScreen(initialSelectedTier: SubscriptionTier.premium),
                     ),
                   ),
                   borderRadius: BorderRadius.circular(24),
@@ -109,11 +110,7 @@ class UpgradePromptBanner extends ConsumerWidget {
                               child: Row(
                                 mainAxisSize: MainAxisSize.min,
                                 children: [
-                                  const Icon(
-                                    Icons.diamond_rounded,
-                                    size: 13,
-                                    color: accentColor,
-                                  ),
+                                  const Icon(Icons.star_rounded, size: 13, color: accentColor),
                                   const SizedBox(width: 5),
                                   Text(
                                     l10n.upgradePromptBadge,
@@ -232,7 +229,7 @@ class UpgradePromptBanner extends ConsumerWidget {
                                 ),
                               ),
                               child: Text(
-                                '${l10n.subscriptionPlanPriceDzd(2490)} ${l10n.subscriptionPlanBillingPerYear}',
+                                '2 490 DA / an',
                                 style: const TextStyle(
                                   fontSize: 11.5,
                                   fontWeight: FontWeight.w800,

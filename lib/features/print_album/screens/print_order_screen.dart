@@ -13,6 +13,7 @@ import '../../profile/providers/profile_providers.dart';
 import '../../profile/widgets/edit_dialogs.dart';
 import '../../subscription/providers/subscription_providers.dart';
 import '../models/print_order.dart';
+import '../services/album_pricing_service.dart';
 import '../providers/print_order_providers.dart';
 
 /// Redesigned flagship Print Order Screen for LuckyMam.
@@ -53,6 +54,8 @@ class _PrintOrderScreenState extends ConsumerState<PrintOrderScreen> {
   String? _selectedWilaya;
   bool _profileLoaded = false;
   bool _submitted = false;
+  String _selectedFormat = 'A5';
+  int _albumCopies = 1;
 
   @override
   void dispose() {
@@ -339,88 +342,284 @@ class _PrintOrderScreenState extends ConsumerState<PrintOrderScreen> {
                                     ),
                                   ],
                                 ),
-                                const Divider(height: 22),
-                                // Quality specs
-                                Row(
-                                  children: [
-                                    const Icon(
-                                      Icons.photo_filter_rounded,
-                                      size: 15,
-                                      color: Color(0xFFD97706),
-                                    ),
-                                    const SizedBox(width: 6),
-                                    Text(
-                                      isRtl
-                                          ? 'ورق حريري 250 جم • تجليد مقوى مقاوم للماء'
-                                          : 'Papier Soie 250g • Couverture rigide étanche',
-                                      style: AppTypography.fromContext(
-                                        context,
-                                        fontSize: 11.5,
-                                        fontWeight: FontWeight.w600,
-                                        color: secondaryText,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                                const SizedBox(height: 10),
-                                // VIP Status / Price Row
+                                const Divider(height: 20),
+
+                                // ── Format Selector (A5, A4, A3) ──
                                 Row(
                                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                   children: [
                                     Text(
-                                      isRtl ? 'تكلفة الطباعة والشحن:' : 'Frais d\'impression :',
+                                      isRtl ? 'المقاس المختار :' : 'Format :',
                                       style: AppTypography.fromContext(
                                         context,
                                         fontSize: 12.5,
-                                        fontWeight: FontWeight.w600,
+                                        fontWeight: FontWeight.w700,
                                         color: textColor,
                                       ),
                                     ),
-                                    if (isVip)
-                                      Container(
-                                        padding: const EdgeInsets.symmetric(
-                                          horizontal: 10,
-                                          vertical: 4,
-                                        ),
-                                        decoration: BoxDecoration(
-                                          color: AppColors.success.withValues(alpha: 0.14),
-                                          borderRadius: BorderRadius.circular(10),
-                                          border: Border.all(
-                                            color: AppColors.success.withValues(alpha: 0.35),
-                                          ),
-                                        ),
-                                        child: Row(
-                                          mainAxisSize: MainAxisSize.min,
-                                          children: [
-                                            const Text('👑', style: TextStyle(fontSize: 12)),
-                                            const SizedBox(width: 4),
-                                            Text(
-                                              isRtl
-                                                  ? 'مشمول مجاناً في باقة VIP'
-                                                  : 'Inclus VIP (0 DZD)',
-                                              style: AppTypography.fromContext(
-                                                context,
-                                                fontSize: 11.5,
-                                                fontWeight: FontWeight.w800,
-                                                color: AppColors.success,
+                                    Row(
+                                      children: ['A5', 'A4', 'A3'].map((fmt) {
+                                        final isAvailable = AlbumPricingService.isOptionAvailable(
+                                          photoCount: widget.pageCount,
+                                          format: fmt,
+                                        );
+                                        final isSelected = _selectedFormat == fmt && isAvailable;
+
+                                        return Padding(
+                                          padding: const EdgeInsets.symmetric(horizontal: 3),
+                                          child: InkWell(
+                                            onTap: isAvailable
+                                                ? () => setState(() => _selectedFormat = fmt)
+                                                : null,
+                                            borderRadius: BorderRadius.circular(10),
+                                            child: AnimatedContainer(
+                                              duration: const Duration(milliseconds: 180),
+                                              padding: const EdgeInsets.symmetric(
+                                                horizontal: 10,
+                                                vertical: 5,
+                                              ),
+                                              decoration: BoxDecoration(
+                                                color: isSelected
+                                                    ? AppColors.primaryLight
+                                                    : isDark
+                                                        ? Colors.white.withValues(alpha: 0.05)
+                                                        : Colors.black.withValues(alpha: 0.04),
+                                                borderRadius: BorderRadius.circular(10),
+                                                border: Border.all(
+                                                  color: isSelected
+                                                      ? AppColors.primaryLight
+                                                      : isAvailable
+                                                          ? (isDark ? Colors.white12 : Colors.black12)
+                                                          : Colors.transparent,
+                                                ),
+                                              ),
+                                              child: Text(
+                                                fmt,
+                                                style: TextStyle(
+                                                  fontSize: 12,
+                                                  fontWeight: isSelected ? FontWeight.bold : FontWeight.w600,
+                                                  color: isSelected
+                                                      ? Colors.white
+                                                      : isAvailable
+                                                          ? textColor
+                                                          : secondaryText.withValues(alpha: 0.35),
+                                                ),
                                               ),
                                             ),
-                                          ],
-                                        ),
-                                      )
-                                    else
-                                      Text(
-                                        isRtl
-                                          ? 'تأكيد السعر هاتفياً (الدفع عند الاستلام)'
-                                          : 'Confirmation par téléphone',
-                                        style: AppTypography.fromContext(
-                                          context,
-                                          fontSize: 11.5,
-                                          fontWeight: FontWeight.w700,
-                                          color: AppColors.coral,
-                                        ),
-                                      ),
+                                          ),
+                                        );
+                                      }).toList(),
+                                    ),
                                   ],
+                                ),
+                                if (widget.pageCount > 1) ...[
+                                  const SizedBox(height: 4),
+                                  Align(
+                                    alignment: isRtl ? Alignment.centerRight : Alignment.centerLeft,
+                                    child: Text(
+                                      isRtl
+                                          ? '* مقاس A3 مخصص فقط لصور البورتريه الفردية (صورة واحدة).'
+                                          : '* Format A3 réservé au portrait 1 photo.',
+                                      style: TextStyle(
+                                        fontSize: 10,
+                                        color: secondaryText.withValues(alpha: 0.65),
+                                        fontStyle: FontStyle.italic,
+                                      ),
+                                    ),
+                                  ),
+                                ],
+
+                                const SizedBox(height: 12),
+
+                                // ── Quantity Stepper (Copies) ──
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Text(
+                                      isRtl ? 'عدد النسخ :' : 'Quantité d\'exemplaires :',
+                                      style: AppTypography.fromContext(
+                                        context,
+                                        fontSize: 12.5,
+                                        fontWeight: FontWeight.w700,
+                                        color: textColor,
+                                      ),
+                                    ),
+                                    Container(
+                                      decoration: BoxDecoration(
+                                        color: isDark ? Colors.white.withValues(alpha: 0.06) : Colors.black.withValues(alpha: 0.04),
+                                        borderRadius: BorderRadius.circular(10),
+                                        border: Border.all(color: isDark ? Colors.white12 : Colors.black12),
+                                      ),
+                                      child: Row(
+                                        mainAxisSize: MainAxisSize.min,
+                                        children: [
+                                          InkWell(
+                                            onTap: _albumCopies > 1
+                                                ? () => setState(() => _albumCopies--)
+                                                : null,
+                                            borderRadius: BorderRadius.circular(8),
+                                            child: Padding(
+                                              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                                              child: Icon(
+                                                Icons.remove,
+                                                size: 15,
+                                                color: _albumCopies > 1 ? textColor : secondaryText.withValues(alpha: 0.3),
+                                              ),
+                                            ),
+                                          ),
+                                          Padding(
+                                            padding: const EdgeInsets.symmetric(horizontal: 8),
+                                            child: Text(
+                                              '$_albumCopies',
+                                              style: TextStyle(
+                                                fontSize: 13,
+                                                fontWeight: FontWeight.bold,
+                                                color: textColor,
+                                              ),
+                                            ),
+                                          ),
+                                          InkWell(
+                                            onTap: () => setState(() => _albumCopies++),
+                                            borderRadius: BorderRadius.circular(8),
+                                            child: Padding(
+                                              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                                              child: Icon(
+                                                Icons.add,
+                                                size: 15,
+                                                color: textColor,
+                                              ),
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ],
+                                ),
+
+                                const SizedBox(height: 14),
+
+                                // ── Transparent Pricing Breakdown (LM-ORD-001) ──
+                                Builder(
+                                  builder: (context) {
+                                    final unitPrice = AlbumPricingService.getAlbumPrice(
+                                      photoCount: widget.pageCount,
+                                      format: _selectedFormat,
+                                    );
+                                    final shippingFee = AlbumPricingService.calculateShippingFee(isVip: isVip);
+                                    final subtotal = (unitPrice ?? 0) * _albumCopies;
+                                    final total = unitPrice != null ? (subtotal + shippingFee) : 0;
+
+                                    return Container(
+                                      padding: const EdgeInsets.all(12),
+                                      decoration: BoxDecoration(
+                                        color: isDark ? Colors.white.withValues(alpha: 0.035) : Colors.black.withValues(alpha: 0.025),
+                                        borderRadius: BorderRadius.circular(14),
+                                        border: Border.all(color: isDark ? Colors.white10 : Colors.black.withValues(alpha: 0.06)),
+                                      ),
+                                      child: Column(
+                                        children: [
+                                          // Product & Unit Price
+                                          Row(
+                                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                            children: [
+                                              Text(
+                                                isRtl ? 'سعر النسخة :' : 'Prix unitaire :',
+                                                style: TextStyle(fontSize: 12, color: secondaryText),
+                                              ),
+                                              Text(
+                                                unitPrice != null
+                                                    ? AlbumPricingService.formatDinar(unitPrice, locale: lang)
+                                                    : (isRtl ? 'غير متوفر' : 'Non défini'),
+                                                style: TextStyle(fontSize: 12, fontWeight: FontWeight.w600, color: textColor),
+                                              ),
+                                            ],
+                                          ),
+                                          const SizedBox(height: 6),
+
+                                          // Subtotal + Mandatory mention: Prix hors frais de livraison
+                                          Row(
+                                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                            children: [
+                                              Column(
+                                                crossAxisAlignment: CrossAxisAlignment.start,
+                                                children: [
+                                                  Text(
+                                                    isRtl ? 'المجموع الفرعي :' : 'Sous-total :',
+                                                    style: TextStyle(fontSize: 12, fontWeight: FontWeight.w600, color: textColor),
+                                                  ),
+                                                  Text(
+                                                    isRtl ? 'السعر غير شامل مصاريف التوصيل' : 'Prix hors frais de livraison',
+                                                    style: TextStyle(fontSize: 10, color: secondaryText),
+                                                  ),
+                                                ],
+                                              ),
+                                              Text(
+                                                unitPrice != null
+                                                    ? AlbumPricingService.formatDinar(subtotal, locale: lang)
+                                                    : '-',
+                                                style: const TextStyle(fontSize: 13, fontWeight: FontWeight.bold, color: AppColors.primaryLight),
+                                              ),
+                                            ],
+                                          ),
+                                          const SizedBox(height: 8),
+
+                                          // Shipping Fee
+                                          Row(
+                                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                            children: [
+                                              Text(
+                                                isRtl ? 'مصاريف التوصيل :' : 'Frais de livraison :',
+                                                style: TextStyle(fontSize: 12, color: secondaryText),
+                                              ),
+                                              if (isVip)
+                                                Row(
+                                                  children: [
+                                                    const Text('👑', style: TextStyle(fontSize: 11)),
+                                                    const SizedBox(width: 4),
+                                                    Text(
+                                                      isRtl ? 'مجاني (باقة VIP)' : '0 DA (Inclus VIP)',
+                                                      style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: AppColors.success),
+                                                    ),
+                                                  ],
+                                                )
+                                              else
+                                                Text(
+                                                  AlbumPricingService.formatDinar(shippingFee, locale: lang),
+                                                  style: TextStyle(fontSize: 12, fontWeight: FontWeight.w600, color: textColor),
+                                                ),
+                                            ],
+                                          ),
+                                          const Divider(height: 16),
+
+                                          // Total Order
+                                          Row(
+                                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                            children: [
+                                              Text(
+                                                isRtl ? 'المجموع الإجمالي :' : 'Total à régler :',
+                                                style: AppTypography.fromContext(
+                                                  context,
+                                                  fontSize: 13.5,
+                                                  fontWeight: FontWeight.w800,
+                                                  color: textColor,
+                                                ),
+                                              ),
+                                              Text(
+                                                unitPrice != null
+                                                    ? AlbumPricingService.formatDinar(total, locale: lang)
+                                                    : '-',
+                                                style: const TextStyle(
+                                                  fontSize: 16,
+                                                  fontWeight: FontWeight.w900,
+                                                  color: AppColors.primaryLight,
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        ],
+                                      ),
+                                    );
+                                  },
                                 ),
                               ],
                             ),
@@ -920,7 +1119,30 @@ class _PrintOrderScreenState extends ConsumerState<PrintOrderScreen> {
 
     HapticFeedback.mediumImpact();
     final l10n = context.l10n;
+    final isRtl = context.isRtl;
     final isVip = ref.read(isVipProvider);
+
+    final unitPrice = AlbumPricingService.getAlbumPrice(
+      photoCount: widget.pageCount,
+      format: _selectedFormat,
+    );
+    if (unitPrice == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            isRtl
+                ? 'المقاس المحدد غير متوفر لعدد الصور هذا'
+                : 'Format non disponible pour cette quantité de photos',
+          ),
+          backgroundColor: AppColors.error,
+        ),
+      );
+      return;
+    }
+
+    final shippingFee = AlbumPricingService.calculateShippingFee(isVip: isVip);
+    final subtotal = unitPrice * _albumCopies;
+    final totalAmount = subtotal + shippingFee;
 
     final order = PrintOrder(
       id: '',
@@ -931,6 +1153,11 @@ class _PrintOrderScreenState extends ConsumerState<PrintOrderScreen> {
       albumType: widget.albumType,
       albumTitle: widget.albumTitle,
       pageCount: widget.pageCount,
+      format: _selectedFormat,
+      subtotal: subtotal,
+      shippingFee: shippingFee,
+      totalAmount: totalAmount,
+      albumCopies: _albumCopies,
       fullName: _nameCtrl.text.trim(),
       phone: _phoneCtrl.text.trim(),
       wilaya: _selectedWilaya ?? '',

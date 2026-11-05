@@ -214,7 +214,10 @@ class AppLocalizationsAr extends AppLocalizations {
       'وفقاً لأحكام القانون رقم 18-07 المؤرخ في 10 يونيو 2018 المتعلق بحماية الأشخاص الطبيعيين في مجال معالجة المعطيات ذات الطابع الشخصي، فإنك توافق على جمع بياناتك الشخصية ومعالجتها وتخزينها بأمان في تطبيق Luckymam لاستخدامها حصرياً في تقديم خدمات التطبيق وتخصيص تجربتك. يمكنك ممارسة حقوقك في الوصول والتصحيح والحذف في أي وقت.';
 
   @override
-  String get law1807Checkbox => 'أوافق على أحكام القانون 18-07';
+  String get law1807Checkbox => 'أوافق على شروط وأحكام القانون رقم 18-07.';
+
+  @override
+  String get law1807ReadFullTerms => 'قراءة النص الكامل وسياسة الخصوصية';
 
   @override
   String get law1807Error => 'يجب الموافقة على أحكام القانون 18-07 للمتابعة.';
@@ -412,17 +415,17 @@ class AppLocalizationsAr extends AppLocalizations {
   String get dailyTipFooter => '— فريق Luckymam 💕';
 
   @override
-  String get upgradePremiumTitle => 'الترقية إلى بريميوم و VIP';
+  String get upgradePremiumTitle => 'الترقية إلى بريميوم';
 
   @override
   String get upgradePremiumSubtitle =>
-      'ذكريات غير محدودة • بدون إعلانات • ألبوم مطبوع';
+      'كبسولات غير محدودة • حتى طفلين • مشاركة مشمولة';
 
   @override
   String get upgradePromptBadge => 'عضوية لاكي مام المميزة';
 
   @override
-  String get upgradePromptCta => 'اكتشاف الباقات';
+  String get upgradePromptCta => 'الترقية إلى بريميوم';
 
   @override
   String get marketplaceTitle => 'المتجر';
@@ -1018,6 +1021,9 @@ class AppLocalizationsAr extends AppLocalizations {
       'سجّلي ذكرياتك الأولى\nبالضغط على الزر أدناه';
 
   @override
+  String get capsulesCreateFirst => 'إنشاء أول ذكرى لي';
+
+  @override
   String get capsulesLoadErrorSubtitle => 'تعذّر تحميل الكبسولات';
 
   @override
@@ -1131,6 +1137,18 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get capsuleEmotion => 'المشاعر';
+
+  @override
+  String get capsulePrimaryEmotion => 'الشعور الرئيسي';
+
+  @override
+  String get capsuleSecondaryEmotions => 'مشاعر إضافية';
+
+  @override
+  String get capsuleSecondaryEmotionsHint => 'اختياري • 3 كحد أقصى';
+
+  @override
+  String get capsuleNoPhotoPlaceholder => 'ذكرى محفوظة';
 
   @override
   String get capsuleVoiceMessageOptional => '🎤 رسالة صوتية (اختياري)';
@@ -2197,7 +2215,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get subscriptionPlanFreeSubtitle => 'للبدء';
 
   @override
-  String get subscriptionPlanFreeFeatureCapsules => '25 كبسولة كحد أقصى';
+  String get subscriptionPlanFreeFeatureCapsules => '38 كبسولة كحد أقصى';
 
   @override
   String get subscriptionPlanFreeFeatureChild => 'طفل واحد';
@@ -2315,7 +2333,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get subscriptionCompareFeatureAdFree => 'تجربة نقية بدون أي إعلانات';
 
   @override
-  String get subscriptionCompareValueFreeCapsules => '25 كبسولة';
+  String get subscriptionCompareValueFreeCapsules => 'حتى 38 كبسولة';
 
   @override
   String get subscriptionCompareValueUnlimited => 'غير محدود';
@@ -2751,4 +2769,353 @@ class AppLocalizationsAr extends AppLocalizations {
   @override
   String get assistantShortcutSubtitle =>
       'نصائح صحية، أفكار ألعاب ونزهات عائلية';
+
+  @override
+  String get onboardingLanguageTitle => 'اختاري لغتكِ المفضلة';
+
+  @override
+  String get onboardingLanguageSubtitle =>
+      'حددي لغة عرض التطبيق المناسبة لكِ. يمكنكِ تغييرها في أي وقت من إعدادات حسابكِ.';
+
+  @override
+  String get onboardingLanguageFr => 'Français';
+
+  @override
+  String get onboardingLanguageAr => 'العربية';
+
+  @override
+  String get onboardingLanguageEn => 'English';
+
+  @override
+  String get onboardingLanguageFrSubtitle => 'الفرنسية (افتراضياً)';
+
+  @override
+  String get onboardingLanguageArSubtitle => 'العربية (من اليمين إلى اليسار)';
+
+  @override
+  String get onboardingLanguageEnSubtitle => 'الإنجليزية (دولياً)';
+
+  @override
+  String get capsuleAudioListen => 'استماع';
+
+  @override
+  String get capsuleAudioPause => 'إيقاف مؤقت';
+
+  @override
+  String get capsuleAudioResume => 'استئناف';
+
+  @override
+  String get capsuleAudioReRecord => 'إعادة التسجيل';
+
+  @override
+  String get capsuleAudioDelete => 'حذف';
+
+  @override
+  String get capsuleAudioValidate => 'تأكيد الصوت';
+
+  @override
+  String get capsuleAudioValidatedBadge => 'تم تأكيد الصوت';
+
+  @override
+  String get capsuleAudioPendingBadge => 'قيد المعاينة';
+
+  @override
+  String get capsuleAudioValidatedSuccess => 'تم تأكيد الصوت للذكرى ✓';
+
+  @override
+  String get capsuleAudioMicPermissionError => 'إذن الميكروفون مطلوب للتسجيل';
+
+  @override
+  String get capsuleAudioTooShortError => 'التسجيل قصير جداً أو فارغ';
+
+  @override
+  String get albumReplacePhotoTitle => 'استبدال الصورة';
+
+  @override
+  String get albumManagePhotoTitle => 'إدارة الصورة';
+
+  @override
+  String get albumCropPhotoTitle => 'قص وتعديل الصورة';
+
+  @override
+  String get albumPickFromCapsules => 'اختيار من ذكرياتي';
+
+  @override
+  String get albumPickFromCapsulesDesc => 'اختيار كبسولة محفوظة لهذا الطفل';
+
+  @override
+  String get albumPickFromGallery => 'اختيار من المعرض';
+
+  @override
+  String get albumPickFromGalleryDesc => 'استيراد صورة جديدة من معرض الهاتف';
+
+  @override
+  String get albumPickFromCamera => 'التقاط صورة جديدة';
+
+  @override
+  String get albumPickFromCameraDesc => 'التقاط صورة مباشرة بواسطة الكاميرا';
+
+  @override
+  String get albumCropCurrentPhoto => 'قص وضبط الصورة الحالية';
+
+  @override
+  String get albumCropCurrentPhotoDesc => 'تكبير، إعادة تموضع أو تدوير الصورة';
+
+  @override
+  String get albumClearPageTitle => 'إزالة من الألبوم';
+
+  @override
+  String get albumClearPageDesc => 'تفريغ هذه الصفحة دون حذف الكبسولة الأصلية';
+
+  @override
+  String get albumClearPageConfirm =>
+      'هل أنتِ متأكدة من إزالة هذه الصورة؟ ستبقى الكبسولة محفوظة في ذكرياتك دون أي تغيير.';
+
+  @override
+  String get albumRemove => 'إزالة';
+
+  @override
+  String get albumPhotoUpdatedSuccess => 'تم تحديث الصورة بنجاح';
+
+  @override
+  String get albumPhotoCroppedSuccess => 'تم قص وتعديل الصورة بنجاح';
+
+  @override
+  String get albumAspectRatioSquare => 'مربع 1:1';
+
+  @override
+  String get albumAspectRatioPortrait => 'عمودي 4:5';
+
+  @override
+  String get albumAspectRatioClassic => 'كلاسيكي 3:4';
+
+  @override
+  String get albumAspectRatioStory => 'شاشة كاملة 9:16';
+
+  @override
+  String get albumPhotoQuantityTitle => 'عدد الصور';
+
+  @override
+  String get albumPhotoQuantitySubtitle => 'سعة الألبوم والسعر';
+
+  @override
+  String get albumExcludingShipping => 'السعر غير شامل مصاريف التوصيل';
+
+  @override
+  String get albumCopiesCount => 'عدد النسخ';
+
+  @override
+  String get albumFormatA5 => 'مقاس A5 (15 × 21 سم)';
+
+  @override
+  String get albumFormatA4 => 'مقاس A4 (21 × 30 سم)';
+
+  @override
+  String get albumFormatA3 => 'مقاس A3 (30 × 42 سم)';
+
+  @override
+  String get albumFormatA3SingleOnly =>
+      'مقاس A3 مخصص فقط لصور البورتريه الفردية';
+
+  @override
+  String get albumUnitPrice => 'سعر النسخة';
+
+  @override
+  String get albumSubtotal => 'المجموع الفرعي';
+
+  @override
+  String get albumShippingFee => 'مصاريف التوصيل';
+
+  @override
+  String get albumShippingFreeVip => 'مجاني (باقة VIP)';
+
+  @override
+  String get albumTotalToPay => 'المجموع الإجمالي';
+
+  @override
+  String get albumChangeCapacityTitle => 'سعة الألبوم';
+
+  @override
+  String get subscriptionPlansHeaderTitle =>
+      'اختاري الباقة التي ترافقك وتناسب عائلتك';
+
+  @override
+  String get subscriptionPlansHeaderSubtitle =>
+      'قارني المزايا واختاري العرض المناسب لعائلتك وذكرياتك.';
+
+  @override
+  String get subscriptionPlanRecommendedBadge => 'موصى بها';
+
+  @override
+  String get subscriptionVipExclusiveBadge => 'حصري';
+
+  @override
+  String get subscriptionUpgradeToPremium => 'الترقية إلى بريميوم';
+
+  @override
+  String get subscriptionUpgradeToVip => 'الترقية إلى VIP السنوي';
+
+  @override
+  String get subscriptionChooseVipAnnual => 'اختيار VIP السنوي';
+
+  @override
+  String get subscriptionPlanIncludedInVip => 'مشمول في باقة VIP الخاصة بك';
+
+  @override
+  String get subscriptionDisclaimerAvailableOffers =>
+      '* في حدود العروض المتاحة.';
+
+  @override
+  String get subscriptionCompareOffers => 'مقارنة الباقات';
+
+  @override
+  String get subscriptionActionLater => 'لاحقاً';
+
+  @override
+  String get subscriptionCapsuleLimitReachedTitle =>
+      'تم بلوغ الحد الأقصى (38 كبسولة)';
+
+  @override
+  String get subscriptionCapsuleLimitReachedMessage =>
+      'لقد وصلتِ إلى الحد الأقصى البالغ 38 كبسولة المشمولة في باقتك المجانية. قومي بالترقية إلى بريميوم لمواصلة إنشاء كبسولات الذكريات بلا حدود.';
+
+  @override
+  String get subscriptionChildLimitReachedTitle =>
+      'تم بلوغ الحد الأقصى للأطفال';
+
+  @override
+  String get subscriptionChildLimitReachedMessageFree =>
+      'الباقة المجانية تتيح إضافة طفل واحد فقط. قومي بالترقية إلى بريميوم لإضافة ومتابعة حتى طفلين!';
+
+  @override
+  String get subscriptionChildLimitReachedMessagePremium =>
+      'باقة بريميوم تتيح متابعة طفلين كحد أقصى. قومي بالترقية إلى VIP السنوي لإضافة عدد غير محدود من الأطفال!';
+
+  @override
+  String get subscriptionMatrixPrice => 'السعر';
+
+  @override
+  String get subscriptionMatrixCapsules => 'كبسولات الذكريات';
+
+  @override
+  String get subscriptionMatrixChildren => 'عدد الأطفال';
+
+  @override
+  String get subscriptionMatrixVaccines => 'متابعة التطعيمات والتحديثات';
+
+  @override
+  String get subscriptionMatrixReels => 'فيديوهات تثقيفية قصيرة';
+
+  @override
+  String get subscriptionMatrixRecording => 'تسجيل كبسولات الذكريات';
+
+  @override
+  String get subscriptionMatrixSharing => 'مشاركة كبسولات الذكريات';
+
+  @override
+  String get subscriptionMatrixPremiumPerks => 'الوصول إلى مزايا بريميوم';
+
+  @override
+  String get subscriptionMatrixVipPerks => 'الوصول إلى مزايا VIP';
+
+  @override
+  String get subscriptionMatrixGiveaways => 'السحوبات والهدايا';
+
+  @override
+  String get subscriptionMatrixPrintedPhoto =>
+      'صورة مطبوعة مجانية توصيل للمنزل';
+
+  @override
+  String get subscriptionMatrixVipCard => 'بطاقة VIP مخصصة';
+
+  @override
+  String get subscriptionMatrixPartnerPrivileges => 'امتيازات خاصة لدى الشركاء';
+
+  @override
+  String get subscriptionMatrixValueFreeCapsules => 'حتى 38 كبسولة';
+
+  @override
+  String get subscriptionMatrixValueOneChild => 'طفل واحد';
+
+  @override
+  String get subscriptionMatrixValueTwoChildren => 'حتى طفلين';
+
+  @override
+  String get subscriptionMatrixValueUnlimitedChildren =>
+      'عدد غير محدود من الأطفال';
+
+  @override
+  String get subscriptionMatrixValueIncluded => 'مشمول';
+
+  @override
+  String get subscriptionMatrixValueNotIncluded => 'غير مشمول';
+
+  @override
+  String get subscriptionMatrixValueAvailableOffers => 'حسب العروض المتاحة*';
+
+  @override
+  String get subscriptionMatrixValueOnePhotoA3 => 'صورة مجانية (A3)';
+
+  @override
+  String get albumLaunchModelsSectionTitle => 'النماذج المتاحة للطلب';
+
+  @override
+  String get albumComingSoonSectionTitle => 'قريباً في التطبيق';
+
+  @override
+  String get albumComingSoonBadge => 'قريباً';
+
+  @override
+  String get albumComingSoonToast => 'سيتوفر هذا النموذج قريباً جداً! ✨';
+
+  @override
+  String get albumPortrait1PhotoBadge => 'صورة بورتريه واحدة';
+
+  @override
+  String get album6PhotosBadge => '٦ صور';
+
+  @override
+  String albumStartingPriceFrom(int price) {
+    return 'ابتداءً من $price د.ج';
+  }
+
+  @override
+  String get diaporamaTitle => 'ألبوم رقمي (عرض متحرك)';
+
+  @override
+  String get diaporamaSubtitle => 'أنشئي عرضاً متحركاً لأجمل الذكريات';
+
+  @override
+  String get diaporamaMinPhotosError =>
+      'يرجى اختيار 3 صور على الأقل للعرض المتحرك';
+
+  @override
+  String get diaporamaMaxPhotosError => 'الحد الأقصى هو 12 صورة للعرض المتحرك';
+
+  @override
+  String get diaporamaReorderHint =>
+      'اسحبي وأفلتي لإعادة ترتيب تسلسل ظهور الصور';
+
+  @override
+  String get diaporamaPlay => 'تشغيل العرض المتحرك';
+
+  @override
+  String get diaporamaReplay => 'إعادة التشغيل';
+
+  @override
+  String get diaporamaShare => 'مشاركة العرض';
+
+  @override
+  String diaporamaOpeningTitle(String childName) {
+    return 'ذكريات $childName الغالية';
+  }
+
+  @override
+  String get diaporamaClosingTitle =>
+      'لحظات ثمينة صُنعت بكل حب على LuckyMam 🍀';
+
+  @override
+  String diaporamaShareMessage(String childName) {
+    return 'شاهدوا العرض التذكاري لأجمل ذكريات $childName على تطبيق لاكي مام 🍀';
+  }
 }

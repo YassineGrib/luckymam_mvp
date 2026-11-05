@@ -56,15 +56,16 @@ class _SignUpScreenState extends State<SignUpScreen> {
     setState(() => _isLoading = false);
 
     if (result.isSuccess) {
-      // Create initial profile in Firestore
+      // Create initial MAM profile in Firestore (LM-ONB-004)
       try {
         final profileService = ProfileService();
-        await profileService.createInitialProfile(
-          displayName: _nameController.text,
-          email: _emailController.text,
+        await profileService.ensureMamProfileCreated(
+          defaultName: _nameController.text.trim().isNotEmpty
+              ? _nameController.text.trim()
+              : null,
         );
       } catch (e) {
-        debugPrint('Error creating initial profile: $e');
+        debugPrint('Error creating initial MAM profile: $e');
       }
 
       // Navigate to law consent screen on success
@@ -99,12 +100,14 @@ class _SignUpScreenState extends State<SignUpScreen> {
     if (result.isSuccess) {
       String destination = '/law-consent';
       try {
-        final profile = await ProfileService().getProfile();
+        final profileService = ProfileService();
+        await profileService.ensureMamProfileCreated();
+        final profile = await profileService.getProfile();
         if (profile != null && profile.consent1807 == true) {
           destination = '/home';
         }
       } catch (e) {
-        debugPrint('Error checking compliance on Google signup: $e');
+        debugPrint('Error checking compliance / MAM profile on Google signup: $e');
       }
 
       if (!mounted) return;

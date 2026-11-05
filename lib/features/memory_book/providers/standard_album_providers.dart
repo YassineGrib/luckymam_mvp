@@ -46,17 +46,36 @@ class StandardAlbumActionsNotifier extends StateNotifier<AsyncValue<void>> {
   Future<StandardAlbum?> createAlbum({
     required String childId,
     required String title,
+    int pageCount = StandardAlbum.defaultPageCount,
   }) async {
     state = const AsyncValue.loading();
     StandardAlbum? created;
     state = await AsyncValue.guard(() async {
-      created = await _service.createAlbum(childId: childId, title: title);
+      created = await _service.createAlbum(
+        childId: childId,
+        title: title,
+        pageCount: pageCount,
+      );
       AnalyticsService().logEvent(
         'album_standard_created',
-        parameters: {'childId': childId, 'albumId': created!.id},
+        parameters: {
+          'childId': childId,
+          'albumId': created!.id,
+          'pageCount': pageCount,
+        },
       );
     });
     return created;
+  }
+
+  Future<void> updatePageCount({
+    required String albumId,
+    required int pageCount,
+  }) async {
+    state = const AsyncValue.loading();
+    state = await AsyncValue.guard(
+      () => _service.updatePageCount(albumId: albumId, pageCount: pageCount),
+    );
   }
 
   Future<void> addCapsuleToPage({

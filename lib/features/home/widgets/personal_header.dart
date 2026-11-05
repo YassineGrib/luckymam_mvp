@@ -14,6 +14,7 @@ import '../../notifications/providers/notifications_providers.dart';
 import '../../profile/models/profile_models.dart';
 import '../../profile/profile_screen.dart';
 import '../../profile/providers/profile_providers.dart';
+import '../../../shared/widgets/navigation/app_bottom_nav.dart';
 import '../providers/home_providers.dart';
 
 /// Redesigned airy modern top header bar for the Home Dashboard.
@@ -106,9 +107,7 @@ class PersonalHeader extends ConsumerWidget {
         // ─── Circular User Avatar ────────────────────────────────────
         GestureDetector(
           onTap: () {
-            Navigator.of(context).push(
-              MaterialPageRoute(builder: (_) => const ProfileScreen()),
-            );
+            ref.read(homeNavigationIndexProvider.notifier).state = 4;
           },
           child: Stack(
             children: [

@@ -18,7 +18,16 @@ import '../models/predefined_album.dart';
 import '../providers/predefined_album_providers.dart';
 import '../widgets/album_print_cta.dart';
 import '../widgets/capsule_picker_sheet.dart';
+import 'dart:io';
+import 'package:image_picker/image_picker.dart';
+import '../../capsules/models/emotion.dart';
+import '../../capsules/widgets/image_crop_screen.dart';
+import '../widgets/album_photo_action_sheet.dart';
+
 import 'album_template_picker_screen.dart';
+import '../../digital_album/models/digital_slideshow_model.dart';
+import '../../digital_album/screens/digital_slideshow_creator_screen.dart';
+import '../../digital_album/screens/digital_slideshow_player_screen.dart';
 
 /// Redesigned flagship Predefined Album Detail Screen for LuckyMam.
 /// Features a Dual-Mode Experience:
@@ -319,6 +328,58 @@ class _PredefinedAlbumDetailScreenState
                         ],
                       ),
                     ),
+
+                    const SizedBox(width: 8),
+
+                    // Diaporama Action Button (LM-DIG-001)
+                    GestureDetector(
+                      onTap: () => _openDiaporama(
+                        context,
+                        album,
+                        template,
+                        capsulesAsync,
+                        childName ?? '',
+                        lang,
+                      ),
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 10,
+                          vertical: 7,
+                        ),
+                        decoration: BoxDecoration(
+                          gradient: const LinearGradient(
+                            colors: [AppColors.coral, Color(0xFFFF8F00)],
+                          ),
+                          borderRadius: BorderRadius.circular(14),
+                          boxShadow: [
+                            BoxShadow(
+                              color: AppColors.coral.withValues(alpha: 0.35),
+                              blurRadius: 8,
+                              offset: const Offset(0, 2),
+                            ),
+                          ],
+                        ),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            const Icon(
+                              Icons.play_arrow_rounded,
+                              size: 16,
+                              color: Colors.white,
+                            ),
+                            const SizedBox(width: 4),
+                            Text(
+                              lang == 'ar' ? 'عرض' : 'Diaporama',
+                              style: const TextStyle(
+                                fontSize: 11.5,
+                                fontWeight: FontWeight.w800,
+                                color: Colors.white,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
                   ],
                 ),
               ),
@@ -415,6 +476,63 @@ class _PredefinedAlbumDetailScreenState
     );
   }
 
+  void _openDiaporama(
+    BuildContext context,
+    PredefinedAlbum album,
+    AlbumTemplate template,
+    AsyncValue<List<Capsule>> capsulesAsync,
+    String childName,
+    String lang,
+  ) {
+    HapticFeedback.mediumImpact();
+    final slides = <DigitalSlide>[];
+    if (capsulesAsync.hasValue) {
+      final capsuleList = capsulesAsync.value!;
+      final sortedSlots = [...template.slots]
+        ..sort((a, b) => a.order.compareTo(b.order));
+      for (final slot in sortedSlots) {
+        final capsuleId = album.slotCapsules[slot.id];
+        if (capsuleId == null) continue;
+        final capsule =
+            capsuleList.where((c) => c.id == capsuleId).firstOrNull;
+        if (capsule == null || capsule.photoUrl.isEmpty) continue;
+        slides.add(
+          DigitalSlide(
+            id: capsule.id,
+            photoUrl: capsule.photoUrl,
+            title: slot.getTitle(lang),
+            date: capsule.createdAt,
+            order: slides.length + 1,
+          ),
+        );
+      }
+    }
+
+    if (slides.length >= DigitalSlideshow.minPhotos) {
+      final slideshow = DigitalSlideshow(
+        childId: album.childId,
+        childName: childName,
+        title: template.getTitle(lang),
+        slides: slides,
+      );
+      Navigator.of(context).push(
+        MaterialPageRoute(
+          builder: (_) => DigitalSlideshowPlayerScreen(slideshow: slideshow),
+        ),
+      );
+    } else {
+      Navigator.of(context).push(
+        MaterialPageRoute(
+          builder: (_) => DigitalSlideshowCreatorScreen(
+            childId: album.childId,
+            childName: childName,
+            initialSlides: slides,
+          ),
+        ),
+      );
+    }
+  }
+
   // ───────────────────────────────────────────────────────────────────────────
   // MODE 1: REALISTIC BOOK FLIP READER
   // ───────────────────────────────────────────────────────────────────────────
@@ -467,7 +585,15 @@ class _PredefinedAlbumDetailScreenState
                 isDark: isDark,
                 lang: lang,
                 isRtl: isRtl,
-                onPickExisting: () => _pickExistingCapsule(context, album, template, slot),
+                onPickExisting: () =>
+                    _pickExistingCapsule(context, album, template, slot),
+                onReplace: () =>
+                    _replaceSlotPhoto(context, album, template, slot, capsule),
+                onCrop: capsule != null
+                    ? () =>
+                        _cropSlotPhoto(context, album, template, slot, capsule!)
+                    : null,
+                onClearSlot: () => _clearSlot(context, album, slot),
                 onCreateNew: () => _createNewCapsule(context, album, slot),
               );
             },
@@ -716,6 +842,318 @@ class _PredefinedAlbumDetailScreenState
     );
   }
 
+  Future<void> _replaceSlotPhoto(
+    BuildContext context,
+    PredefinedAlbum album,
+    AlbumTemplate template,
+    AlbumEventSlot slot,
+    Capsule? currentCapsule,
+  ) async {
+    final lang = Localizations.localeOf(context).languageCode;
+    final slotTitle = slot.getTitle(lang);
+    final primaryColor = template.gradientColors.first;
+
+    await AlbumPhotoActionSheet.show(
+      context: context,
+      title: slotTitle,
+      subtitle: slot.getDescription(lang),
+      hasPhoto: currentCapsule != null,
+      accentColor: primaryColor,
+      onPickFromMemories: () =>
+          _pickExistingCapsule(context, album, template, slot),
+      onPickFromGallery: () => _pickFromGalleryForSlot(
+          context, album, template, slot, currentCapsule),
+      onTakePhoto: () =>
+          _takePhotoForSlot(context, album, template, slot, currentCapsule),
+      onCrop: currentCapsule != null
+          ? () =>
+              _cropSlotPhoto(context, album, template, slot, currentCapsule)
+          : null,
+      onClear: currentCapsule != null
+          ? () => _clearSlot(context, album, slot)
+          : null,
+    );
+  }
+
+  Future<void> _cropSlotPhoto(
+    BuildContext context,
+    PredefinedAlbum album,
+    AlbumTemplate template,
+    AlbumEventSlot slot,
+    Capsule capsule,
+  ) async {
+    final lang = Localizations.localeOf(context).languageCode;
+    final primaryColor = template.gradientColors.first;
+    final File? croppedFile = await Navigator.of(context).push<File>(
+      MaterialPageRoute(
+        builder: (_) => ImageCropScreen(
+          imageUrl: capsule.photoUrl,
+          aspectRatio: 1.0,
+          title: lang == 'ar' ? 'قص وضبط الصورة' : 'Recadrer & Ajuster',
+        ),
+      ),
+    );
+
+    if (croppedFile == null || !context.mounted) {
+      // User cancelled modifications -> original photo stays untouched
+      return;
+    }
+
+    try {
+      final messenger = ScaffoldMessenger.of(context);
+      messenger.showSnackBar(
+        SnackBar(
+          content: Row(
+            children: [
+              const SizedBox(
+                width: 16,
+                height: 16,
+                child: CircularProgressIndicator(
+                  strokeWidth: 2,
+                  color: Colors.white,
+                ),
+              ),
+              const SizedBox(width: 12),
+              Text(
+                lang == 'ar'
+                    ? 'جاري حفظ التعديلات...'
+                    : 'Application du recadrage...',
+              ),
+            ],
+          ),
+          duration: const Duration(seconds: 2),
+          backgroundColor: primaryColor,
+        ),
+      );
+
+      final newCapsule = await ref.read(capsuleServiceProvider).createCapsule(
+        photoFile: croppedFile,
+        childId: album.childId,
+        emotion: capsule.emotion,
+        category: capsule.category,
+        tags: capsule.tags,
+        albumId: album.id,
+        albumSlotId: slot.id,
+        albumType: 'predefined',
+      );
+
+      await ref
+          .read(predefinedAlbumActionsProvider.notifier)
+          .attachCapsuleToSlot(
+            albumId: album.id,
+            slotId: slot.id,
+            capsuleId: newCapsule.id,
+            templateId: template.id,
+            method: 'cropped',
+          );
+
+      messenger.hideCurrentSnackBar();
+      messenger.showSnackBar(
+        SnackBar(
+          content: Text(
+            lang == 'ar'
+                ? 'تم قص وتعديل الصورة بنجاح ✓'
+                : 'Photo recadrée et ajustée avec succès ✓',
+          ),
+          backgroundColor: AppColors.success,
+          duration: const Duration(seconds: 2),
+        ),
+      );
+    } catch (e) {
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(lang == 'ar' ? 'حدث خطأ: $e' : 'Erreur : $e'),
+            backgroundColor: AppColors.error,
+          ),
+        );
+      }
+    }
+  }
+
+  Future<void> _pickFromGalleryForSlot(
+    BuildContext context,
+    PredefinedAlbum album,
+    AlbumTemplate template,
+    AlbumEventSlot slot,
+    Capsule? currentCapsule,
+  ) async {
+    final picker = ImagePicker();
+    final picked = await picker.pickImage(
+      source: ImageSource.gallery,
+      imageQuality: 95,
+    );
+    if (picked == null || !context.mounted) return;
+
+    await _processPickedImageForSlot(
+      context: context,
+      album: album,
+      template: template,
+      slot: slot,
+      imageFile: File(picked.path),
+      currentCapsule: currentCapsule,
+    );
+  }
+
+  Future<void> _takePhotoForSlot(
+    BuildContext context,
+    PredefinedAlbum album,
+    AlbumTemplate template,
+    AlbumEventSlot slot,
+    Capsule? currentCapsule,
+  ) async {
+    final picker = ImagePicker();
+    final picked = await picker.pickImage(
+      source: ImageSource.camera,
+      imageQuality: 95,
+    );
+    if (picked == null || !context.mounted) return;
+
+    await _processPickedImageForSlot(
+      context: context,
+      album: album,
+      template: template,
+      slot: slot,
+      imageFile: File(picked.path),
+      currentCapsule: currentCapsule,
+    );
+  }
+
+  Future<void> _processPickedImageForSlot({
+    required BuildContext context,
+    required PredefinedAlbum album,
+    required AlbumTemplate template,
+    required AlbumEventSlot slot,
+    required File imageFile,
+    Capsule? currentCapsule,
+  }) async {
+    final lang = Localizations.localeOf(context).languageCode;
+    final primaryColor = template.gradientColors.first;
+    final File? croppedFile = await Navigator.of(context).push<File>(
+      MaterialPageRoute(
+        builder: (_) => ImageCropScreen(
+          imageFile: imageFile,
+          aspectRatio: 1.0,
+          title: lang == 'ar' ? 'تأطير وتعديل الصورة' : 'Recadrer & Ajuster',
+        ),
+      ),
+    );
+
+    if (croppedFile == null || !context.mounted) {
+      // User cancelled crop
+      return;
+    }
+
+    try {
+      final messenger = ScaffoldMessenger.of(context);
+      messenger.showSnackBar(
+        SnackBar(
+          content: Row(
+            children: [
+              const SizedBox(
+                width: 16,
+                height: 16,
+                child: CircularProgressIndicator(
+                  strokeWidth: 2,
+                  color: Colors.white,
+                ),
+              ),
+              const SizedBox(width: 12),
+              Text(
+                lang == 'ar'
+                    ? 'جاري إضافة الصورة...'
+                    : 'Ajout de la photo à la page...',
+              ),
+            ],
+          ),
+          duration: const Duration(seconds: 2),
+          backgroundColor: primaryColor,
+        ),
+      );
+
+      final newCapsule = await ref.read(capsuleServiceProvider).createCapsule(
+        photoFile: croppedFile,
+        childId: album.childId,
+        emotion: currentCapsule?.emotion ?? Emotion.happy,
+        category: currentCapsule?.category,
+        tags: currentCapsule?.tags ?? const [],
+        albumId: album.id,
+        albumSlotId: slot.id,
+        albumType: 'predefined',
+      );
+
+      await ref
+          .read(predefinedAlbumActionsProvider.notifier)
+          .attachCapsuleToSlot(
+            albumId: album.id,
+            slotId: slot.id,
+            capsuleId: newCapsule.id,
+            templateId: template.id,
+            method: 'new_image',
+          );
+
+      messenger.hideCurrentSnackBar();
+      messenger.showSnackBar(
+        SnackBar(
+          content: Text(
+            lang == 'ar'
+                ? 'تم تحديث الصورة في الألبوم ✓'
+                : 'Photo mise à jour dans l\'album ✓',
+          ),
+          backgroundColor: AppColors.success,
+          duration: const Duration(seconds: 2),
+        ),
+      );
+    } catch (e) {
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(
+              lang == 'ar' ? 'حدث خطأ: $e' : 'Erreur : $e',
+            ),
+            backgroundColor: AppColors.error,
+          ),
+        );
+      }
+    }
+  }
+
+  void _clearSlot(
+    BuildContext context,
+    PredefinedAlbum album,
+    AlbumEventSlot slot,
+  ) {
+    final lang = Localizations.localeOf(context).languageCode;
+    showDialog(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: Text(lang == 'ar' ? 'إفراغ الصفحة' : 'Clear Page'),
+        content: Text(
+          lang == 'ar'
+              ? 'هل أنتِ متأكدة من إزالة هذه الصورة من الصفحة؟ لن يتم حذف الكبسولة الأصلية.'
+              : 'Are you sure you want to remove this photo from the page? The original capsule will remain intact in your memories.',
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(ctx),
+            child: Text(context.l10n.albumCancel),
+          ),
+          FilledButton(
+            style: FilledButton.styleFrom(backgroundColor: AppColors.error),
+            onPressed: () {
+              ref.read(predefinedAlbumActionsProvider.notifier).clearSlot(
+                    albumId: album.id,
+                    slotId: slot.id,
+                  );
+              Navigator.pop(ctx);
+            },
+            child: Text(lang == 'ar' ? 'إزالة' : 'Remove'),
+          ),
+        ],
+      ),
+    );
+  }
+
   void _pickExistingCapsule(
     BuildContext context,
     PredefinedAlbum album,
@@ -777,6 +1215,9 @@ class _PhotobookPage extends StatelessWidget {
     required this.lang,
     required this.isRtl,
     required this.onPickExisting,
+    required this.onReplace,
+    this.onCrop,
+    required this.onClearSlot,
     required this.onCreateNew,
   });
 
@@ -793,6 +1234,9 @@ class _PhotobookPage extends StatelessWidget {
   final String lang;
   final bool isRtl;
   final VoidCallback onPickExisting;
+  final VoidCallback onReplace;
+  final VoidCallback? onCrop;
+  final VoidCallback onClearSlot;
   final VoidCallback onCreateNew;
 
   @override
@@ -927,6 +1371,85 @@ class _PhotobookPage extends StatelessWidget {
                         ? _buildFilledPageCanvas(context)
                         : _buildEmptyPageCanvas(context),
                   ),
+
+                  // Bottom Action Toolbar if filled (Remplacer, Recadrer, Vider)
+                  if (isFilled) ...[
+                    const SizedBox(height: 10),
+                    Row(
+                      children: [
+                        Expanded(
+                          child: OutlinedButton.icon(
+                            onPressed: onReplace,
+                            style: OutlinedButton.styleFrom(
+                              foregroundColor: primaryColor,
+                              side: BorderSide(
+                                color: primaryColor.withValues(alpha: 0.35),
+                              ),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                              padding: const EdgeInsets.symmetric(vertical: 9),
+                            ),
+                            icon: const Icon(Icons.swap_horiz_rounded, size: 16),
+                            label: Text(
+                              lang == 'ar'
+                                  ? 'استبدال'
+                                  : (lang == 'fr' ? 'Remplacer' : 'Replace'),
+                              style: const TextStyle(
+                                fontSize: 12,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                          ),
+                        ),
+                        if (onCrop != null) ...[
+                          const SizedBox(width: 8),
+                          Expanded(
+                            child: OutlinedButton.icon(
+                              onPressed: onCrop,
+                              style: OutlinedButton.styleFrom(
+                                foregroundColor: primaryColor,
+                                side: BorderSide(
+                                  color: primaryColor.withValues(alpha: 0.35),
+                                ),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(12),
+                                ),
+                                padding: const EdgeInsets.symmetric(vertical: 9),
+                              ),
+                              icon: const Icon(Icons.crop_rotate_rounded, size: 16),
+                              label: Text(
+                                lang == 'ar'
+                                    ? 'قص وضبط'
+                                    : (lang == 'fr' ? 'Recadrer' : 'Crop'),
+                                style: const TextStyle(
+                                  fontSize: 12,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
+                        const SizedBox(width: 8),
+                        IconButton(
+                          onPressed: onClearSlot,
+                          tooltip: lang == 'ar' ? 'إفراغ الصفحة' : 'Clear',
+                          style: IconButton.styleFrom(
+                            backgroundColor:
+                                AppColors.error.withValues(alpha: 0.1),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                          ),
+                          icon: const Icon(
+                            Icons.delete_outline_rounded,
+                            size: 18,
+                            color: AppColors.error,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
                 ],
               ),
             ),
@@ -970,6 +1493,48 @@ class _PhotobookPage extends StatelessWidget {
                   child: const Icon(Icons.broken_image_rounded, size: 40, color: Colors.grey),
                 ),
               ),
+
+              // Quick Crop / Adjust Chip
+              if (onCrop != null)
+                PositionedDirectional(
+                  top: 10,
+                  end: 10,
+                  child: Material(
+                    color: Colors.black.withValues(alpha: 0.55),
+                    borderRadius: BorderRadius.circular(20),
+                    child: InkWell(
+                      onTap: onCrop,
+                      borderRadius: BorderRadius.circular(20),
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 10,
+                          vertical: 6,
+                        ),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            const Icon(
+                              Icons.crop_rotate_rounded,
+                              size: 14,
+                              color: Colors.white,
+                            ),
+                            const SizedBox(width: 4),
+                            Text(
+                              lang == 'ar'
+                                  ? 'قص'
+                                  : (lang == 'fr' ? 'Recadrer' : 'Crop'),
+                              style: const TextStyle(
+                                color: Colors.white,
+                                fontSize: 11,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
 
               // Bottom gradient caption
               Positioned(

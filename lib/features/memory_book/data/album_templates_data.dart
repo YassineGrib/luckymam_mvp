@@ -5,15 +5,21 @@ import '../models/album_template.dart';
 /// Predefined album templates offered to mothers.
 /// Static content in V1 — extensible via CMS/back-office later.
 const List<AlbumTemplate> albumTemplates = [
+  // ── Modèle 1 Officiel : Album de Naissance (6 photos) ───────────
   AlbumTemplate(
     id: 'tpl_birth',
-    titleFr: 'Album de Naissance',
-    titleAr: 'ألبوم الولادة',
-    titleEn: 'Birth Album',
-    subtitleFr: 'Les tout premiers instants de bébé',
-    subtitleEn: "Baby's very first moments",
+    titleFr: 'Album de Naissance (6 photos)',
+    titleAr: 'ألبوم الولادة (٦ صور)',
+    titleEn: 'Birth Album (6 photos)',
+    subtitleFr: 'Les tout premiers instants de bébé réunis dans un album',
+    subtitleEn: "Baby's very first moments captured together",
     icon: Icons.child_care_rounded,
     gradientColors: [Color(0xFFFF6F91), Color(0xFFFF9A76)],
+    isLaunchModel: true,
+    isComingSoon: false,
+    isSinglePortraitPhoto: false,
+    startingPriceDa: 1980,
+    supportedFormats: ['A5', 'A4'],
     slots: [
       AlbumEventSlot(
         id: 'birth_first_cry',
@@ -77,6 +83,37 @@ const List<AlbumTemplate> albumTemplates = [
       ),
     ],
   ),
+
+  // ── Modèle 2 Officiel : Portrait Souvenir (1 photo portrait) ────
+  AlbumTemplate(
+    id: 'tpl_portrait_1',
+    titleFr: 'Portrait Souvenir (1 photo)',
+    titleAr: 'صورة تذكارية (صورة واحدة)',
+    titleEn: 'Keepsake Portrait (1 photo)',
+    subtitleFr: 'Un portrait unique en grand format pour sublimer un souvenir fort',
+    subtitleEn: 'A unique large portrait print celebrating a special memory',
+    icon: Icons.portrait_rounded,
+    gradientColors: [Color(0xFFE85A71), Color(0xFFFFB085)],
+    isLaunchModel: true,
+    isComingSoon: false,
+    isSinglePortraitPhoto: true,
+    startingPriceDa: 440,
+    supportedFormats: ['A5', 'A4', 'A3'],
+    slots: [
+      AlbumEventSlot(
+        id: 'portrait_main',
+        titleFr: 'Photo portrait souvenir',
+        titleAr: 'صورة البورتريه التذكارية',
+        titleEn: 'Keepsake portrait photo',
+        descriptionFr: 'Votre photo préférée sublimée en tirage portrait haute qualité.',
+        descriptionEn: 'Your favorite photo enhanced in high-quality portrait print.',
+        icon: Icons.photo_camera_rounded,
+        order: 1,
+      ),
+    ],
+  ),
+
+  // ── Thème à Venir : Première Année ──────────────────────────────
   AlbumTemplate(
     id: 'tpl_first_year',
     titleFr: 'Première Année',
@@ -85,7 +122,11 @@ const List<AlbumTemplate> albumTemplates = [
     subtitleFr: 'Les grandes étapes de la première année',
     subtitleEn: 'Milestones of the first year',
     icon: Icons.auto_awesome_rounded,
-    gradientColors: [Color(0xFF7C4DFF), Color(0xFF448AFF)],
+    gradientColors: [Color(0xFF0284C7), Color(0xFF38BDF8)], // Soft ocean blue (Purple ban compliant)
+    isLaunchModel: false,
+    isComingSoon: true,
+    startingPriceDa: 1980,
+    supportedFormats: ['A5', 'A4'],
     slots: [
       AlbumEventSlot(
         id: 'year_first_smile',
@@ -139,6 +180,8 @@ const List<AlbumTemplate> albumTemplates = [
       ),
     ],
   ),
+
+  // ── Thème à Venir : Aqiqa & Traditions ──────────────────────────
   AlbumTemplate(
     id: 'tpl_traditions',
     titleFr: 'Aqiqa & Traditions',
@@ -148,6 +191,10 @@ const List<AlbumTemplate> albumTemplates = [
     subtitleEn: 'Family and religious rituals',
     icon: Icons.mosque_rounded,
     gradientColors: [Color(0xFF00BFA5), Color(0xFF64DD17)],
+    isLaunchModel: false,
+    isComingSoon: true,
+    startingPriceDa: 1210,
+    supportedFormats: ['A5', 'A4'],
     slots: [
       AlbumEventSlot(
         id: 'trad_aqiqa',

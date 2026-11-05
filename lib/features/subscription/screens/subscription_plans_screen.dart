@@ -13,9 +13,14 @@ import '../widgets/plan_comparison_table.dart';
 import '../widgets/subscription_faq_section.dart';
 import 'payment_screen.dart';
 
-/// High-Converting Collapsed Subscription Paywall Screen (Reference UX).
+/// High-Converting Subscription Paywall Screen emphasizing Premium as 'Recommandée' (LM-SUB-001/002).
 class SubscriptionPlansScreen extends ConsumerStatefulWidget {
-  const SubscriptionPlansScreen({super.key});
+  final SubscriptionTier initialSelectedTier;
+
+  const SubscriptionPlansScreen({
+    super.key,
+    this.initialSelectedTier = SubscriptionTier.premium,
+  });
 
   @override
   ConsumerState<SubscriptionPlansScreen> createState() =>
@@ -24,8 +29,13 @@ class SubscriptionPlansScreen extends ConsumerStatefulWidget {
 
 class _SubscriptionPlansScreenState
     extends ConsumerState<SubscriptionPlansScreen> {
-  // Default to VIP plan as recommended in modern mobile paywalls
-  SubscriptionTier _selectedTier = SubscriptionTier.vip;
+  late SubscriptionTier _selectedTier;
+
+  @override
+  void initState() {
+    super.initState();
+    _selectedTier = widget.initialSelectedTier;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -37,8 +47,21 @@ class _SubscriptionPlansScreenState
 
     final selectedPlan = plans.firstWhere(
       (p) => p.tier == _selectedTier,
-      orElse: () => plans.last,
+      orElse: () => plans.firstWhere(
+        (p) => p.tier == SubscriptionTier.premium,
+        orElse: () => plans.first,
+      ),
     );
+
+    // Order plans with Premium first (LM-SUB-001: Mise en avant de Premium), then VIP, then Free
+    final orderedPlans = <SubscriptionPlan>[];
+    final premiumPlan = plans.where((p) => p.tier == SubscriptionTier.premium).firstOrNull;
+    final vipPlan = plans.where((p) => p.tier == SubscriptionTier.vip).firstOrNull;
+    final freePlan = plans.where((p) => p.tier == SubscriptionTier.free).firstOrNull;
+
+    if (premiumPlan != null) orderedPlans.add(premiumPlan);
+    if (vipPlan != null) orderedPlans.add(vipPlan);
+    if (freePlan != null) orderedPlans.add(freePlan);
 
     // Snackbar on success/error
     ref.listen<SubscriptionActionsState>(subscriptionActionsProvider, (
@@ -89,7 +112,7 @@ class _SubscriptionPlansScreenState
 
     final heroBg = isDark
         ? const Color(0xFF2C1924)
-        : const Color(0xFFFCE4EC); // Soft pink tone from reference
+        : const Color(0xFFFCE4EC); // Soft pink brand tone
     final sheetBg = isDark ? AppColors.surfaceDark : Colors.white;
     final textColor = isDark ? Colors.white : const Color(0xFF111827);
     final subTextColor =
@@ -125,13 +148,13 @@ class _SubscriptionPlansScreenState
                           mainAxisSize: MainAxisSize.min,
                           children: [
                             const Icon(
-                              Icons.diamond_rounded,
+                              Icons.star_rounded,
                               size: 14,
-                              color: Color(0xFFFF6F00),
+                              color: AppColors.coral,
                             ),
                             const SizedBox(width: 4),
                             Text(
-                              l10n.subscriptionHeroBadgeTitle,
+                              'LuckyMam Premium',
                               style: AppTypography.fromContext(
                                 context,
                                 fontSize: 11.5,
@@ -166,14 +189,23 @@ class _SubscriptionPlansScreenState
                   ),
                   const SizedBox(height: 6),
 
-                  // Headline
+                  // Headline: "Choisissez la formule qui vous accompagne" (LM-SUB-002 s.6.1)
                   Text(
-                    l10n.subscriptionHeroHeadline,
+                    l10n.subscriptionPlansHeaderTitle,
                     style: AppTypography.fromContext(
                       context,
-                      fontSize: 26,
+                      fontSize: 24,
                       fontWeight: FontWeight.w900,
                       color: textColor,
+                    ),
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    l10n.subscriptionPlansHeaderSubtitle,
+                    style: AppTypography.fromContext(
+                      context,
+                      fontSize: 12.5,
+                      color: subTextColor,
                     ),
                   ),
                   const SizedBox(height: 12),
@@ -181,15 +213,15 @@ class _SubscriptionPlansScreenState
                   // 3 Key Benefits
                   _buildBenefitRow(
                     context,
-                    Icons.bolt_rounded,
-                    l10n.subscriptionHeroBenefit1,
+                    Icons.all_inclusive_rounded,
+                    l10n.subscriptionPlanPremiumFeatureUnlimitedCapsules,
                     textColor,
                   ),
                   const SizedBox(height: 7),
                   _buildBenefitRow(
                     context,
-                    Icons.diamond_rounded,
-                    l10n.subscriptionHeroBenefit2,
+                    Icons.share_rounded,
+                    l10n.subscriptionMatrixSharing,
                     textColor,
                   ),
                   const SizedBox(height: 7),
@@ -205,7 +237,7 @@ class _SubscriptionPlansScreenState
 
             if (actionsState.isLoading)
               const LinearProgressIndicator(
-                color: Color(0xFFFF6F00),
+                color: AppColors.coral,
                 minHeight: 2.5,
               ),
 
@@ -232,13 +264,14 @@ class _SubscriptionPlansScreenState
                   physics: const BouncingScrollPhysics(),
                   padding: const EdgeInsets.fromLTRB(18, 20, 18, 14),
                   children: [
-                    // Plans (VIP, Premium, Free)
-                    ...plans.reversed.map((plan) {
+                    // Ordered Plans (Premium first, then VIP, then Free)
+                    ...orderedPlans.map((plan) {
                       return _buildCollapsedPlanCard(
                         context: context,
                         plan: plan,
                         isSelected: plan.tier == _selectedTier,
                         isCurrent: plan.tier == currentTier,
+                        currentTier: currentTier,
                         isDark: isDark,
                         textColor: textColor,
                         subTextColor: subTextColor,
@@ -255,17 +288,15 @@ class _SubscriptionPlansScreenState
                         icon: const Icon(
                           Icons.compare_arrows_rounded,
                           size: 18,
-                          color: Color(0xFFFF6F00),
+                          color: AppColors.coral,
                         ),
                         label: Text(
-                          l10n.subscriptionViewDetails,
+                          l10n.subscriptionCompareOffers,
                           style: AppTypography.fromContext(
                             context,
                             fontSize: 13,
                             fontWeight: FontWeight.bold,
-                            color: isDark
-                                ? const Color(0xFFFFB74D)
-                                : const Color(0xFFE65100),
+                            color: AppColors.coral,
                           ),
                         ),
                       ),
@@ -273,11 +304,11 @@ class _SubscriptionPlansScreenState
 
                     const SizedBox(height: 10),
 
-                    // ── 3. Bottom Action Button (Like 'Book with Apple Pay') ─
+                    // ── 3. Bottom Action Button ─────────────────────────────
                     _buildMainActionButton(
                       context: context,
                       selectedPlan: selectedPlan,
-                      isCurrent: selectedPlan.tier == currentTier,
+                      currentTier: currentTier,
                       isDark: isDark,
                       l10n: l10n,
                     ),
@@ -318,14 +349,14 @@ class _SubscriptionPlansScreenState
     return Row(
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
-        Icon(icon, size: 18, color: const Color(0xFFFF6F00)),
+        Icon(icon, size: 18, color: AppColors.coral),
         const SizedBox(width: 8),
         Expanded(
           child: Text(
             text,
             style: AppTypography.fromContext(
               context,
-              fontSize: 13.5,
+              fontSize: 13,
               fontWeight: FontWeight.w600,
               color: textColor,
             ),
@@ -340,10 +371,11 @@ class _SubscriptionPlansScreenState
     required SubscriptionPlan plan,
     required bool isSelected,
     required bool isCurrent,
+    required SubscriptionTier currentTier,
     required bool isDark,
     required Color textColor,
     required Color subTextColor,
-    required dynamic l10n,
+    required AppLocalizations l10n,
   }) {
     final isVip = plan.tier == SubscriptionTier.vip;
     final isPremium = plan.tier == SubscriptionTier.premium;
@@ -352,12 +384,31 @@ class _SubscriptionPlansScreenState
         : '';
 
     final cardBg = isDark
-        ? (isSelected ? const Color(0xFF2A2128) : AppColors.surfaceDark)
-        : (isSelected ? const Color(0xFFFFF9FA) : Colors.white);
+        ? (isSelected
+            ? (isPremium
+                ? const Color(0xFF2E1C22)
+                : const Color(0xFF2A2128))
+            : AppColors.surfaceDark)
+        : (isSelected
+            ? (isPremium
+                ? const Color(0xFFFFF6F7)
+                : const Color(0xFFFFFBF0))
+            : Colors.white);
 
     final borderColor = isSelected
-        ? (isVip ? const Color(0xFFFF8F00) : const Color(0xFFE85A71))
+        ? (isPremium
+            ? AppColors.coral
+            : (isVip ? const Color(0xFFFF8F00) : const Color(0xFF78909C)))
         : (isDark ? AppColors.dividerDark : const Color(0xFFE5E7EB));
+
+    String cardSubtitle;
+    if (isPremium) {
+      cardSubtitle = l10n.upgradePremiumSubtitle;
+    } else if (isVip) {
+      cardSubtitle = l10n.subscriptionVipCardSubtitle;
+    } else {
+      cardSubtitle = '${l10n.subscriptionMatrixValueFreeCapsules} • ${l10n.subscriptionMatrixValueOneChild}';
+    }
 
     return GestureDetector(
       onTap: () {
@@ -381,10 +432,12 @@ class _SubscriptionPlansScreenState
               boxShadow: [
                 BoxShadow(
                   color: isSelected
-                      ? (isVip
-                              ? const Color(0xFFFF8F00)
-                              : const Color(0xFFE85A71))
-                          .withValues(alpha: 0.15)
+                      ? (isPremium
+                              ? AppColors.coral
+                              : (isVip
+                                  ? const Color(0xFFFF8F00)
+                                  : const Color(0xFF78909C)))
+                          .withValues(alpha: 0.16)
                       : Colors.black.withValues(alpha: isDark ? 0.2 : 0.03),
                   blurRadius: isSelected ? 12 : 6,
                   offset: const Offset(0, 3),
@@ -447,12 +500,12 @@ class _SubscriptionPlansScreenState
                               context,
                               fontSize: 19,
                               fontWeight: FontWeight.w900,
-                              color: isVip
-                                  ? (isDark
-                                      ? const Color(0xFFFFB74D)
-                                      : const Color(0xFFE65100))
-                                  : (isPremium
-                                      ? AppColors.coral
+                              color: isPremium
+                                  ? AppColors.coral
+                                  : (isVip
+                                      ? (isDark
+                                          ? const Color(0xFFFFB74D)
+                                          : const Color(0xFFE65100))
                                       : textColor),
                             ),
                           ),
@@ -472,18 +525,18 @@ class _SubscriptionPlansScreenState
                       ),
                       const SizedBox(height: 2),
                       Text(
-                        isVip
-                            ? l10n.subscriptionVipCardSubtitle
-                            : plan.localizedSubtitle(l10n),
+                        cardSubtitle,
                         style: AppTypography.fromContext(
                           context,
                           fontSize: 11.5,
-                          fontWeight: isVip ? FontWeight.w600 : FontWeight.normal,
-                          color: isVip
-                              ? (isDark
-                                  ? const Color(0xFFFFB74D)
-                                  : const Color(0xFFB23B00))
-                              : subTextColor,
+                          fontWeight: (isPremium || isVip) ? FontWeight.w600 : FontWeight.normal,
+                          color: isPremium
+                              ? AppColors.coral
+                              : (isVip
+                                  ? (isDark
+                                      ? const Color(0xFFFFB74D)
+                                      : const Color(0xFFB23B00))
+                                  : subTextColor),
                         ),
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
@@ -492,32 +545,35 @@ class _SubscriptionPlansScreenState
                   ),
                 ),
 
-                // Right details: Per-month breakdown & Checkbox indicator
+                // Right details: Per-month breakdown & Radio selection indicator
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.end,
                   children: [
-                    // Radio Selection Indicator
                     AnimatedContainer(
                       duration: const Duration(milliseconds: 200),
                       width: 24,
                       height: 24,
                       decoration: BoxDecoration(
                         color: isSelected
-                            ? (isDark ? Colors.white : const Color(0xFF111827))
+                            ? (isPremium
+                                ? AppColors.coral
+                                : (isDark ? Colors.white : const Color(0xFF111827)))
                             : Colors.transparent,
                         shape: BoxShape.circle,
                         border: Border.all(
                           color: isSelected
-                              ? (isDark ? Colors.white : const Color(0xFF111827))
+                              ? (isPremium
+                                  ? AppColors.coral
+                                  : (isDark ? Colors.white : const Color(0xFF111827)))
                               : subTextColor.withValues(alpha: 0.5),
                           width: 2,
                         ),
                       ),
                       child: isSelected
-                          ? Icon(
+                          ? const Icon(
                               Icons.check_rounded,
                               size: 15,
-                              color: isDark ? Colors.black : Colors.white,
+                              color: Colors.white,
                             )
                           : null,
                     ),
@@ -539,8 +595,8 @@ class _SubscriptionPlansScreenState
             ),
           ),
 
-          // Floating Top Badge for VIP (supports RTL/LTR with PositionedDirectional)
-          if (isVip)
+          // Floating Top Badge for Premium (Recommandée) - LM-SUB-001
+          if (isPremium)
             PositionedDirectional(
               top: -9,
               end: 18,
@@ -548,12 +604,12 @@ class _SubscriptionPlansScreenState
                 padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 3),
                 decoration: BoxDecoration(
                   gradient: const LinearGradient(
-                    colors: [Color(0xFFFFB300), Color(0xFFFF6F00)],
+                    colors: [Color(0xFFFF7043), Color(0xFFE85A71)],
                   ),
                   borderRadius: BorderRadius.circular(10),
                   boxShadow: [
                     BoxShadow(
-                      color: const Color(0xFFFF6F00).withValues(alpha: 0.4),
+                      color: AppColors.coral.withValues(alpha: 0.4),
                       blurRadius: 6,
                       offset: const Offset(0, 2),
                     ),
@@ -562,14 +618,50 @@ class _SubscriptionPlansScreenState
                 child: Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    const Icon(Icons.local_fire_department_rounded,
-                        size: 13, color: Colors.white),
+                    const Icon(Icons.star_rounded, size: 13, color: Colors.white),
                     const SizedBox(width: 3),
                     Text(
-                      l10n.subscriptionVipBadge,
+                      l10n.subscriptionPlanRecommendedBadge,
                       style: AppTypography.fromContext(
                         context,
                         fontSize: 10.5,
+                        fontWeight: FontWeight.w800,
+                        color: Colors.white,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            )
+          else if (isVip)
+            PositionedDirectional(
+              top: -9,
+              end: 18,
+              child: Container(
+                padding: const EdgeInsets.symmetric(horizontal: 9, vertical: 3),
+                decoration: BoxDecoration(
+                  gradient: const LinearGradient(
+                    colors: [Color(0xFFFFB300), Color(0xFFFF8F00)],
+                  ),
+                  borderRadius: BorderRadius.circular(10),
+                  boxShadow: [
+                    BoxShadow(
+                      color: const Color(0xFFFF8F00).withValues(alpha: 0.3),
+                      blurRadius: 6,
+                      offset: const Offset(0, 2),
+                    ),
+                  ],
+                ),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    const Icon(Icons.diamond_rounded, size: 12, color: Colors.white),
+                    const SizedBox(width: 3),
+                    Text(
+                      l10n.subscriptionVipExclusiveBadge,
+                      style: AppTypography.fromContext(
+                        context,
+                        fontSize: 10,
                         fontWeight: FontWeight.w800,
                         color: Colors.white,
                       ),
@@ -586,11 +678,14 @@ class _SubscriptionPlansScreenState
   Widget _buildMainActionButton({
     required BuildContext context,
     required SubscriptionPlan selectedPlan,
-    required bool isCurrent,
+    required SubscriptionTier currentTier,
     required bool isDark,
     required AppLocalizations l10n,
   }) {
-    if (isCurrent) {
+    final isCurrent = selectedPlan.tier == currentTier;
+    final isDisabled = selectedPlan.isActionDisabled(currentTier: currentTier);
+
+    if (isDisabled || isCurrent) {
       return SizedBox(
         width: double.infinity,
         height: 54,
@@ -605,7 +700,7 @@ class _SubscriptionPlansScreenState
             ),
           ),
           child: Text(
-            l10n.subscriptionPlanCurrentButton,
+            selectedPlan.localizedActionButton(currentTier: currentTier, l10n: l10n),
             style: AppTypography.fromContext(
               context,
               fontSize: 15.5,
@@ -617,9 +712,15 @@ class _SubscriptionPlansScreenState
       );
     }
 
-    final buttonLabel = selectedPlan.priceDZD == 0
-        ? l10n.subscriptionPlanSelect
-        : l10n.subscriptionContinueButton(selectedPlan.priceDZD);
+    String buttonLabel;
+    if (selectedPlan.tier == SubscriptionTier.free) {
+      buttonLabel = l10n.subscriptionPlanSelect;
+    } else {
+      final actionText = selectedPlan.localizedActionButton(currentTier: currentTier, l10n: l10n);
+      buttonLabel = '$actionText • ${selectedPlan.formattedPriceWithCycle}';
+    }
+
+    final isPremium = selectedPlan.tier == SubscriptionTier.premium;
 
     return SizedBox(
       width: double.infinity,
@@ -627,10 +728,12 @@ class _SubscriptionPlansScreenState
       child: ElevatedButton(
         onPressed: () => _onContinueSelectedPlan(context, selectedPlan),
         style: ElevatedButton.styleFrom(
-          backgroundColor: isDark ? Colors.white : const Color(0xFF111827),
-          foregroundColor: isDark ? Colors.black : Colors.white,
+          backgroundColor: isPremium ? AppColors.coral : (isDark ? Colors.white : const Color(0xFF111827)),
+          foregroundColor: Colors.white,
           elevation: 4,
-          shadowColor: Colors.black.withValues(alpha: 0.25),
+          shadowColor: isPremium
+              ? AppColors.coral.withValues(alpha: 0.4)
+              : Colors.black.withValues(alpha: 0.25),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(28),
           ),
@@ -639,19 +742,24 @@ class _SubscriptionPlansScreenState
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Icon(
-              selectedPlan.tier == SubscriptionTier.vip
-                  ? Icons.diamond_rounded
-                  : Icons.bolt_rounded,
+              isPremium
+                  ? Icons.star_rounded
+                  : (selectedPlan.tier == SubscriptionTier.vip
+                      ? Icons.diamond_rounded
+                      : Icons.bolt_rounded),
               size: 20,
-              color: const Color(0xFFFF6F00),
+              color: Colors.white,
             ),
             const SizedBox(width: 8),
-            Text(
-              buttonLabel,
-              style: AppTypography.fromContext(
-                context,
-                fontSize: 16,
-                fontWeight: FontWeight.w800,
+            Flexible(
+              child: Text(
+                buttonLabel,
+                style: AppTypography.fromContext(
+                  context,
+                  fontSize: 15.5,
+                  fontWeight: FontWeight.w800,
+                ),
+                overflow: TextOverflow.ellipsis,
               ),
             ),
           ],
@@ -689,7 +797,7 @@ class _SubscriptionPlansScreenState
       builder: (modalContext) {
         final isDark = Theme.of(context).brightness == Brightness.dark;
         return Container(
-          height: MediaQuery.of(context).size.height * 0.85,
+          height: MediaQuery.of(context).size.height * 0.88,
           decoration: BoxDecoration(
             color: isDark ? AppColors.surfaceDark : Colors.white,
             borderRadius: const BorderRadius.vertical(top: Radius.circular(28)),
@@ -710,10 +818,10 @@ class _SubscriptionPlansScreenState
                 child: ListView(
                   physics: const BouncingScrollPhysics(),
                   padding: const EdgeInsets.fromLTRB(16, 10, 16, 30),
-                  children: const [
-                    PlanComparisonTable(),
-                    SizedBox(height: 16),
-                    SubscriptionFaqSection(),
+                  children: [
+                    PlanComparisonTable(highlightedTier: _selectedTier),
+                    const SizedBox(height: 16),
+                    const SubscriptionFaqSection(),
                   ],
                 ),
               ),
@@ -724,4 +832,3 @@ class _SubscriptionPlansScreenState
     );
   }
 }
-

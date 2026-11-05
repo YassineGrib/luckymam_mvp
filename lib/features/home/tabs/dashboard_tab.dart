@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../core/extensions/l10n_extension.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../shared/widgets/top_ambient_gradient.dart';
+import '../../capsules/screens/capsules_gallery.dart';
 import '../../profile/providers/profile_providers.dart';
 import '../widgets/assistant_shortcut_card.dart';
 import '../widgets/children_overview.dart';
@@ -86,16 +87,14 @@ class DashboardTab extends ConsumerWidget {
                 // 5b. Lucky AI Assistant Shortcut Card
                 const SliverToBoxAdapter(child: AssistantShortcutCard()),
 
-                // 6. Mes Enfants (For Mothers)
-                if (hasBornChildren) ...[
-                  SliverToBoxAdapter(
-                    child: SectionHeader(
-                      title: l10n.dashboardMyChildren,
-                      icon: Icons.child_friendly_rounded,
-                    ),
+                // 6. Mes Enfants (Accessible pour tous les statuts: Espoir, Enceinte, Maman)
+                SliverToBoxAdapter(
+                  child: SectionHeader(
+                    title: l10n.dashboardMyChildren,
+                    icon: Icons.child_friendly_rounded,
                   ),
-                  const SliverToBoxAdapter(child: ChildrenOverview()),
-                ],
+                ),
+                const SliverToBoxAdapter(child: ChildrenOverview()),
 
                 // 7. Recent Memories Carousel
                 SliverToBoxAdapter(
@@ -104,10 +103,10 @@ class DashboardTab extends ConsumerWidget {
                     icon: Icons.photo_library_rounded,
                     trailing: l10n.dashboardSeeAll,
                     onTrailingTap: () {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(
-                          content: Text(l10n.dashboardSeeAllCapsules),
-                          duration: const Duration(seconds: 1),
+                      Navigator.of(context).push(
+                        MaterialPageRoute(
+                          builder: (_) =>
+                              const CapsulesGallery(showBackButton: true),
                         ),
                       );
                     },

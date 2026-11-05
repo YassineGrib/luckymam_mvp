@@ -8,6 +8,7 @@ import '../../../core/theme/app_spacing.dart';
 import '../../../core/theme/app_typography.dart';
 import '../../../shared/widgets/top_ambient_gradient.dart';
 import '../../profile/providers/profile_providers.dart';
+import '../../print_album/services/album_pricing_service.dart';
 import '../data/album_templates_data.dart';
 import '../models/album_template.dart';
 import '../models/predefined_album.dart';
@@ -370,13 +371,40 @@ class _AlbumTemplatePickerScreenState
                   child: SizedBox(height: 14),
                 ),
 
-                // 2. 2-Column 3D Children's Book Covers Grid
+                // 2. Section Header: Modèles disponibles (LM-ALB-007)
+                SliverToBoxAdapter(
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: AppSpacing.screenPaddingH,
+                      vertical: 6,
+                    ),
+                    child: Row(
+                      children: [
+                        const Icon(
+                          Icons.verified_rounded,
+                          size: 16,
+                          color: AppColors.coral,
+                        ),
+                        const SizedBox(width: 6),
+                        Text(
+                          l10n.albumLaunchModelsSectionTitle,
+                          style: AppTypography.fromContext(
+                            context,
+                            fontSize: 14.5,
+                            fontWeight: FontWeight.w800,
+                            color: textColor,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+                const SliverToBoxAdapter(child: SizedBox(height: 10)),
+
+                // 2b. 2-Column 3D Covers Grid (Launch Models: 6 photos & Portrait 1 photo)
                 SliverPadding(
-                  padding: const EdgeInsets.fromLTRB(
-                    AppSpacing.screenPaddingH,
-                    0,
-                    AppSpacing.screenPaddingH,
-                    60,
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: AppSpacing.screenPaddingH,
                   ),
                   sliver: SliverGrid(
                     gridDelegate:
@@ -384,11 +412,14 @@ class _AlbumTemplatePickerScreenState
                       crossAxisCount: 2,
                       crossAxisSpacing: 16,
                       mainAxisSpacing: 20,
-                      childAspectRatio: 0.65,
+                      childAspectRatio: 0.62,
                     ),
                     delegate: SliverChildBuilderDelegate(
                       (context, index) {
-                        final template = albumTemplates[index];
+                        final launchTemplates = albumTemplates
+                            .where((t) => t.isLaunchModel)
+                            .toList();
+                        final template = launchTemplates[index];
                         final existingAlbum = childAlbums
                             .where((a) => a.templateId == template.id)
                             .firstOrNull;
@@ -407,7 +438,88 @@ class _AlbumTemplatePickerScreenState
                           ),
                         );
                       },
-                      childCount: albumTemplates.length,
+                      childCount: albumTemplates
+                          .where((t) => t.isLaunchModel)
+                          .length,
+                    ),
+                  ),
+                ),
+
+                const SliverToBoxAdapter(child: SizedBox(height: 24)),
+
+                // 3. Section Header: Prochainement disponibles (Coming Soon)
+                SliverToBoxAdapter(
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: AppSpacing.screenPaddingH,
+                      vertical: 6,
+                    ),
+                    child: Row(
+                      children: [
+                        Icon(
+                          Icons.schedule_rounded,
+                          size: 16,
+                          color: secondaryText,
+                        ),
+                        const SizedBox(width: 6),
+                        Text(
+                          l10n.albumComingSoonSectionTitle,
+                          style: AppTypography.fromContext(
+                            context,
+                            fontSize: 14.5,
+                            fontWeight: FontWeight.w800,
+                            color: textColor,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+                const SliverToBoxAdapter(child: SizedBox(height: 10)),
+
+                // 3b. 2-Column 3D Covers Grid (Coming Soon)
+                SliverPadding(
+                  padding: const EdgeInsets.fromLTRB(
+                    AppSpacing.screenPaddingH,
+                    0,
+                    AppSpacing.screenPaddingH,
+                    60,
+                  ),
+                  sliver: SliverGrid(
+                    gridDelegate:
+                        const SliverGridDelegateWithFixedCrossAxisCount(
+                      crossAxisCount: 2,
+                      crossAxisSpacing: 16,
+                      mainAxisSpacing: 20,
+                      childAspectRatio: 0.62,
+                    ),
+                    delegate: SliverChildBuilderDelegate(
+                      (context, index) {
+                        final comingSoonTemplates = albumTemplates
+                            .where((t) => t.isComingSoon)
+                            .toList();
+                        final template = comingSoonTemplates[index];
+                        return _BookCoverCard(
+                          template: template,
+                          existingAlbum: null,
+                          lang: lang,
+                          isRtl: isRtl,
+                          isDark: isDark,
+                          onTap: () {
+                            HapticFeedback.lightImpact();
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                content: Text(l10n.albumComingSoonToast),
+                                backgroundColor: AppColors.primaryLight,
+                                duration: const Duration(seconds: 2),
+                              ),
+                            );
+                          },
+                        );
+                      },
+                      childCount: albumTemplates
+                          .where((t) => t.isComingSoon)
+                          .length,
                     ),
                   ),
                 ),
@@ -574,7 +686,7 @@ class _AlbumTemplatePickerScreenState
 
               // Slots list (capped preview)
               ConstrainedBox(
-                constraints: const BoxConstraints(maxHeight: 210),
+                constraints: const BoxConstraints(maxHeight: 180),
                 child: ListView.separated(
                   shrinkWrap: true,
                   physics: const BouncingScrollPhysics(),
@@ -641,7 +753,112 @@ class _AlbumTemplatePickerScreenState
                 ),
               ),
 
-              const SizedBox(height: 20),
+              const SizedBox(height: 14),
+
+              // Available Formats & Pricing Row (LM-ALB-007 & LM-ALB-002)
+              Text(
+                lang == 'ar'
+                    ? 'المقاسات والأسعار المتاحة:'
+                    : (lang == 'fr'
+                        ? 'Formats d\'impression et tarifs :'
+                        : 'Print formats & pricing:'),
+                style: AppTypography.fromContext(
+                  context,
+                  fontSize: 12.5,
+                  fontWeight: FontWeight.w700,
+                  color: secondaryText,
+                ),
+              ),
+              const SizedBox(height: 8),
+              Wrap(
+                spacing: 8,
+                runSpacing: 8,
+                children: template.supportedFormats.map((fmt) {
+                  final price = AlbumPricingService.getAlbumPrice(
+                    photoCount: template.slotCount,
+                    format: fmt,
+                  );
+                  final formattedPrice = price != null
+                      ? AlbumPricingService.formatDinar(price, locale: lang)
+                      : '';
+                  return Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 10,
+                      vertical: 5,
+                    ),
+                    decoration: BoxDecoration(
+                      color: isDark
+                          ? Colors.white.withValues(alpha: 0.05)
+                          : const Color(0xFFF6F4F7),
+                      borderRadius: BorderRadius.circular(10),
+                      border: Border.all(
+                        color: primaryColor.withValues(alpha: 0.25),
+                        width: 1,
+                      ),
+                    ),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Text(
+                          fmt,
+                          style: TextStyle(
+                            fontSize: 12,
+                            fontWeight: FontWeight.w800,
+                            color: primaryColor,
+                          ),
+                        ),
+                        const SizedBox(width: 6),
+                        Text(
+                          formattedPrice,
+                          style: TextStyle(
+                            fontSize: 11.5,
+                            fontWeight: FontWeight.w700,
+                            color: textColor,
+                          ),
+                        ),
+                      ],
+                    ),
+                  );
+                }).toList(),
+              ),
+              const SizedBox(height: 6),
+              Text(
+                l10n.albumExcludingShipping,
+                style: TextStyle(
+                  fontSize: 11,
+                  fontWeight: FontWeight.w500,
+                  color: secondaryText.withValues(alpha: 0.8),
+                ),
+              ),
+              const SizedBox(height: 10),
+
+              // LM-ALB-003: Discrete clover badge notice
+              Row(
+                children: [
+                  const Icon(
+                    Icons.verified_rounded,
+                    size: 14,
+                    color: Color(0xFF2E7D32),
+                  ),
+                  const SizedBox(width: 6),
+                  Expanded(
+                    child: Text(
+                      lang == 'ar'
+                          ? 'علامة مائية رقيقة لشعار LuckyMam مدمجة في هامش الألبوم'
+                          : (lang == 'fr'
+                              ? 'Filigrane discret du trèfle LuckyMam intégré dans la marge'
+                              : 'Discreet LuckyMam clover watermark integrated in the margin'),
+                      style: TextStyle(
+                        fontSize: 11,
+                        fontWeight: FontWeight.w500,
+                        color: secondaryText,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+
+              const SizedBox(height: 16),
 
               // Action Button
               Container(
@@ -774,6 +991,7 @@ class _BookCoverCardState extends State<_BookCoverCard> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = context.l10n;
     final template = widget.template;
     final primaryColor = template.gradientColors.first;
     final endColor = template.gradientColors.last;
@@ -946,10 +1164,10 @@ class _BookCoverCardState extends State<_BookCoverCard> {
                             vertical: 3.5,
                           ),
                           decoration: BoxDecoration(
-                            color: Colors.black.withValues(alpha: 0.2),
+                            color: Colors.black.withValues(alpha: 0.22),
                             borderRadius: BorderRadius.circular(10),
                             border: Border.all(
-                              color: Colors.white.withValues(alpha: 0.3),
+                              color: Colors.white.withValues(alpha: 0.35),
                               width: 0.8,
                             ),
                           ),
@@ -959,19 +1177,29 @@ class _BookCoverCardState extends State<_BookCoverCard> {
                               Icon(
                                 widget.existingAlbum != null
                                     ? Icons.check_circle_rounded
-                                    : Icons.bookmark_rounded,
+                                    : (template.isComingSoon
+                                        ? Icons.schedule_rounded
+                                        : (template.isSinglePortraitPhoto
+                                            ? Icons.portrait_rounded
+                                            : Icons.auto_stories_rounded)),
                                 size: 11,
                                 color: widget.existingAlbum != null
                                     ? const Color(0xFF69F0AE)
-                                    : const Color(0xFFFFD54F),
+                                    : (template.isComingSoon
+                                        ? const Color(0xFFFFD54F)
+                                        : Colors.white),
                               ),
-                              const SizedBox(width: 3),
+                              const SizedBox(width: 4),
                               Text(
                                 widget.existingAlbum != null
                                     ? '${widget.existingAlbum!.filledCount}/${template.slotCount}'
-                                    : '${template.slotCount}',
+                                    : (template.isComingSoon
+                                        ? l10n.albumComingSoonBadge
+                                        : (template.isSinglePortraitPhoto
+                                            ? l10n.albumPortrait1PhotoBadge
+                                            : l10n.album6PhotosBadge)),
                                 style: const TextStyle(
-                                  fontSize: 10.5,
+                                  fontSize: 10,
                                   fontWeight: FontWeight.w800,
                                   color: Colors.white,
                                 ),
@@ -1045,6 +1273,33 @@ class _BookCoverCardState extends State<_BookCoverCard> {
                         maxLines: 2,
                         overflow: TextOverflow.ellipsis,
                       ),
+                      if (template.isLaunchModel) ...[
+                        const SizedBox(height: 5),
+                        Container(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 6,
+                            vertical: 2.5,
+                          ),
+                          decoration: BoxDecoration(
+                            color: Colors.black.withValues(alpha: 0.20),
+                            borderRadius: BorderRadius.circular(6),
+                            border: Border.all(
+                              color: Colors.white.withValues(alpha: 0.30),
+                              width: 0.7,
+                            ),
+                          ),
+                          child: Text(
+                            '${template.supportedFormats.join('/')} • ${l10n.albumStartingPriceFrom(template.startingPriceDa)}',
+                            style: const TextStyle(
+                              fontSize: 9.5,
+                              fontWeight: FontWeight.w700,
+                              color: Colors.white,
+                            ),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ),
+                      ],
                       const SizedBox(height: 4),
                     ],
                   ),

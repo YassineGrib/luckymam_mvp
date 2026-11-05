@@ -9,6 +9,7 @@ import '../../core/services/fcm_service.dart';
 import '../../core/services/notification_service.dart';
 import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_spacing.dart';
+import '../../shared/widgets/navigation/app_bottom_nav.dart';
 import '../../core/theme/app_typography.dart';
 import '../capsules/screens/create_capsule_screen.dart';
 import '../memory_book/screens/album_template_picker_screen.dart';
@@ -167,6 +168,7 @@ class _NotificationsScreenState extends ConsumerState<NotificationsScreen> {
 
     return Scaffold(
       backgroundColor: bg,
+      extendBody: true,
       body: Stack(
         children: [
           // Ambient soft top glow
@@ -552,7 +554,7 @@ class _NotificationsScreenState extends ConsumerState<NotificationsScreen> {
                                 AppSpacing.screenPaddingH,
                                 0,
                                 AppSpacing.screenPaddingH,
-                                40,
+                                120,
                               ),
                               sliver: SliverList(
                                 delegate: SliverChildBuilderDelegate(
@@ -589,6 +591,11 @@ class _NotificationsScreenState extends ConsumerState<NotificationsScreen> {
             ),
           ),
         ],
+      ),
+      bottomNavigationBar: AppBottomNav(
+        currentIndex: ref.watch(homeNavigationIndexProvider),
+        onTap: (index) => navigateToHomeTab(context, ref, index),
+        items: getAppNavItems(context),
       ),
     );
   }
@@ -1146,7 +1153,7 @@ class _EmptyNotificationsView extends StatelessWidget {
   Widget build(BuildContext context) {
     return Center(
       child: Padding(
-        padding: const EdgeInsets.all(32),
+        padding: const EdgeInsets.fromLTRB(32, 32, 32, 120),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [

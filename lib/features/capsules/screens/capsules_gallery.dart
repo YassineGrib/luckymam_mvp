@@ -13,12 +13,19 @@ import '../widgets/capsule_grid_item.dart';
 import '../widgets/emotion_picker.dart';
 import 'capsule_detail_screen.dart';
 import 'create_capsule_screen.dart';
+import '../../subscription/models/subscription_models.dart';
+import '../../subscription/screens/subscription_plans_screen.dart';
 import '../../../shared/widgets/page_header_with_filter.dart';
 import '../../../shared/widgets/top_ambient_gradient.dart';
 
 /// Gallery screen for viewing all capsules.
 class CapsulesGallery extends ConsumerWidget {
-  const CapsulesGallery({super.key});
+  const CapsulesGallery({
+    super.key,
+    this.showBackButton = false,
+  });
+
+  final bool showBackButton;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -56,7 +63,8 @@ class CapsulesGallery extends ConsumerWidget {
                 final canMake = canCreate.valueOrNull ?? true;
 
                 return PageHeaderWithFilter(
-                  title: l10n.capsulesGalleryTitle,
+                  title: l10n.dashboardMyMemories,
+                  showBackButton: showBackButton,
                   subtitleWidget: Row(
                     children: [
                       Text(
@@ -82,6 +90,7 @@ class CapsulesGallery extends ConsumerWidget {
                   childrenList: children.cast<Child>(),
                   selectedChildId: filters.childId,
                   allowAll: true,
+                  allowMam: true,
                   onChildSelected: (id) =>
                       ref.read(capsuleFilterProvider.notifier).setChildId(id),
                   trailing: GestureDetector(
@@ -178,49 +187,80 @@ class CapsulesGallery extends ConsumerWidget {
         backgroundColor: isDark
             ? AppColors.surfaceDark
             : AppColors.surfaceLight,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
         title: Row(
           children: [
-            Icon(Icons.warning_amber_rounded, color: AppColors.warning),
+            const Icon(Icons.workspace_premium_rounded, color: AppColors.coral),
             const SizedBox(width: 8),
-            Text(
-              l10n.capsulesQuotaLimitTitle,
-              style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                fontWeight: FontWeight.bold,
-                color: isDark ? Colors.white : AppColors.onSurfaceLight,
+            Expanded(
+              child: Text(
+                l10n.subscriptionCapsuleLimitReachedTitle,
+                style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                  fontWeight: FontWeight.bold,
+                  color: isDark ? Colors.white : AppColors.onSurfaceLight,
+                ),
               ),
             ),
           ],
         ),
         content: Text(
-          l10n.capsulesQuotaLimitMessage(freemiumCapsuleLimit),
+          l10n.subscriptionCapsuleLimitReachedMessage,
           style: Theme.of(context).textTheme.bodyMedium?.copyWith(
             color: isDark
                 ? AppColors.textSecondaryDark
                 : AppColors.textSecondaryLight,
+            height: 1.4,
           ),
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
             child: Text(
-              l10n.capsulesUnderstood,
+              l10n.subscriptionActionLater,
               style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                color: isDark ? Colors.white70 : AppColors.textSecondaryLight,
+                color: isDark ? Colors.white60 : AppColors.textSecondaryLight,
               ),
             ),
           ),
           TextButton(
             onPressed: () {
               Navigator.pop(context);
-              // TODO: Navigate to premium upgrade screen
+              Navigator.of(context).push(
+                MaterialPageRoute(
+                  builder: (_) => const SubscriptionPlansScreen(),
+                ),
+              );
             },
             child: Text(
-              l10n.capsulesViewPremium,
+              l10n.subscriptionCompareOffers,
               style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                color: AppColors.goldenrod,
+                color: isDark ? AppColors.coralLight : AppColors.coral,
                 fontWeight: FontWeight.w600,
               ),
+            ),
+          ),
+          ElevatedButton(
+            onPressed: () {
+              Navigator.pop(context);
+              Navigator.of(context).push(
+                MaterialPageRoute(
+                  builder: (_) => const SubscriptionPlansScreen(
+                    initialSelectedTier: SubscriptionTier.premium,
+                  ),
+                ),
+              );
+            },
+            style: ElevatedButton.styleFrom(
+              backgroundColor: AppColors.coral,
+              foregroundColor: Colors.white,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12),
+              ),
+              padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+            ),
+            child: Text(
+              l10n.subscriptionUpgradeToPremium,
+              style: const TextStyle(fontWeight: FontWeight.bold),
             ),
           ),
         ],
@@ -320,6 +360,31 @@ class CapsulesGallery extends ConsumerWidget {
                 context,
               ).textTheme.bodyMedium?.copyWith(fontSize: 14, color: secondaryText),
               textAlign: TextAlign.center,
+            ),
+            const SizedBox(height: AppSpacing.lg),
+            ElevatedButton.icon(
+              onPressed: () => Navigator.of(context).push(
+                MaterialPageRoute(
+                  builder: (context) => const CreateCapsuleScreen(),
+                ),
+              ),
+              icon: const Icon(Icons.add_rounded, size: 20),
+              label: Text(
+                l10n.capsulesCreateFirst,
+                style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 14),
+              ),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: primary,
+                foregroundColor: Colors.white,
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 22,
+                  vertical: 12,
+                ),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(20),
+                ),
+                elevation: 2,
+              ),
             ),
           ],
         ),

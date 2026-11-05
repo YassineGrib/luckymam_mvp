@@ -85,12 +85,14 @@ class _LoginScreenState extends State<LoginScreen> {
     if (result.isSuccess) {
       String destination = '/law-consent';
       try {
-        final profile = await ProfileService().getProfile();
+        final profileService = ProfileService();
+        await profileService.ensureMamProfileCreated();
+        final profile = await profileService.getProfile();
         if (profile != null && profile.consent1807 == true) {
           destination = '/home';
         }
       } catch (e) {
-        debugPrint('Error checking compliance on login: $e');
+        debugPrint('Error checking compliance / MAM profile on login: $e');
       }
 
       if (!mounted) return;
@@ -126,12 +128,14 @@ class _LoginScreenState extends State<LoginScreen> {
     if (result.isSuccess) {
       String destination = '/law-consent';
       try {
-        final profile = await ProfileService().getProfile();
+        final profileService = ProfileService();
+        await profileService.ensureMamProfileCreated();
+        final profile = await profileService.getProfile();
         if (profile != null && profile.consent1807 == true) {
           destination = '/home';
         }
       } catch (e) {
-        debugPrint('Error checking compliance on Google login: $e');
+        debugPrint('Error checking compliance / MAM profile on Google login: $e');
       }
 
       if (!mounted) return;

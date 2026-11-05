@@ -6,6 +6,9 @@ import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_spacing.dart';
 
 import '../../capsules/screens/create_capsule_screen.dart';
+import '../../capsules/screens/capsule_detail_screen.dart';
+import '../../capsules/models/capsule.dart';
+import '../../capsules/providers/capsule_providers.dart';
 import '../../profile/models/profile_models.dart';
 import '../../profile/providers/profile_providers.dart';
 import '../models/phase.dart';
@@ -13,6 +16,7 @@ import '../services/timeline_service.dart';
 import '../widgets/timeline_rail.dart';
 import '../widgets/phase_carousel.dart';
 import 'milestone_detail_screen.dart';
+import '../../profile/edit_child_screen.dart';
 import '../../../core/extensions/l10n_extension.dart';
 import '../../../core/services/analytics_service.dart';
 import '../../../core/providers/display_provider.dart';
@@ -127,6 +131,8 @@ class _TimelineScreenState extends ConsumerState<TimelineScreen> {
 
                 final allMilestonesAsync =
                     ref.watch(childMilestonesProvider(selectedChild.id));
+                final allCapsulesAsync =
+                    ref.watch(capsulesByChildProvider(selectedChild.id));
                 final viewMode = ref.watch(timelineViewModeProvider);
 
                 return allMilestonesAsync.when(
@@ -136,9 +142,58 @@ class _TimelineScreenState extends ConsumerState<TimelineScreen> {
                     child: Text(context.l10n.errorWithMessage('$e')),
                   ),
                   data: (allMilestones) {
-                    final phaseMilestones = allMilestones
+                    final allCapsules =
+                        allCapsulesAsync.value ?? const <Capsule>[];
+
+                    final linkedCapsuleIds = allMilestones
+                        .where((m) =>
+                            m.capsuleId != null && m.capsuleId!.isNotEmpty)
+                        .map((m) => m.capsuleId!)
+                        .toSet();
+
+                    // Enrich milestones with real-time thumbnail & completion date from capsules
+                    final enrichedMilestones = allMilestones.map((m) {
+                      if (m.isCompleted && m.capsuleId != null) {
+                        final cap = allCapsules
+                            .where((c) => c.id == m.capsuleId)
+                            .firstOrNull;
+                        if (cap != null) {
+                          return MilestoneWithDueDate(
+                            milestone: m.milestone,
+                            dueDate: m.dueDate,
+                            isCompleted: true,
+                            capsuleId: m.capsuleId,
+                            thumbnailUrl: m.thumbnailUrl ??
+                                (cap.photoUrl.isNotEmpty ? cap.photoUrl : null),
+                            completedAt: m.completedAt ??
+                                cap.capturedAt ??
+                                cap.createdAt,
+                          );
+                        }
+                      }
+                      return m;
+                    }).toList();
+
+                    // Free standalone capsules (not linked to any milestone)
+                    final freeCapsules = allCapsules.where((c) {
+                      if (c.milestoneId != null && c.milestoneId!.isNotEmpty) {
+                        return false;
+                      }
+                      if (linkedCapsuleIds.contains(c.id)) return false;
+                      return true;
+                    }).toList();
+
+                    final phaseMilestones = enrichedMilestones
                         .where((m) => m.milestone.phase == _selectedPhase)
                         .toList();
+
+                    final phaseCapsules = freeCapsules
+                        .where((c) =>
+                            TimelineService.determineCapsulePhase(
+                                c, selectedChild) ==
+                            _selectedPhase)
+                        .toList();
+
                     final completedCount =
                         phaseMilestones.where((m) => m.isCompleted).length;
                     final totalCount = phaseMilestones.length;
@@ -203,6 +258,7 @@ class _TimelineScreenState extends ConsumerState<TimelineScreen> {
                           context,
                           completedCount,
                           totalCount,
+                          phaseCapsules.length,
                           viewMode,
                           textColor,
                           secondaryText,
@@ -211,12 +267,13 @@ class _TimelineScreenState extends ConsumerState<TimelineScreen> {
 
                         const SizedBox(height: 8),
 
-                        // Milestones content
+                        // Milestones and capsules content
                         Expanded(
                           child: _buildMilestonesContent(
                             context,
                             selectedChild,
                             phaseMilestones,
+                            phaseCapsules,
                             viewMode,
                             textColor,
                             secondaryText,
@@ -240,6 +297,7 @@ class _TimelineScreenState extends ConsumerState<TimelineScreen> {
     BuildContext context,
     int completedCount,
     int totalCount,
+    int capsulesCount,
     TimelineViewMode viewMode,
     Color textColor,
     Color secondaryText,
@@ -249,6 +307,10 @@ class _TimelineScreenState extends ConsumerState<TimelineScreen> {
     final title = lang == 'ar'
         ? 'المعالم والذكريات'
         : (lang == 'en' ? 'Milestones & Memories' : 'Jalons & Souvenirs');
+
+    final badgeText = capsulesCount > 0
+        ? '$completedCount / $totalCount  •  +$capsulesCount 📸'
+        : '$completedCount / $totalCount';
 
     return Padding(
       padding: const EdgeInsets.symmetric(
@@ -273,7 +335,7 @@ class _TimelineScreenState extends ConsumerState<TimelineScreen> {
               borderRadius: BorderRadius.circular(10),
             ),
             child: Text(
-              '$completedCount / $totalCount',
+              badgeText,
               style: AppTypography.fromContext(
                 context,
                 fontSize: 11,
@@ -298,6 +360,7 @@ class _TimelineScreenState extends ConsumerState<TimelineScreen> {
     BuildContext context,
     Child selectedChild,
     List<MilestoneWithDueDate> phaseMilestones,
+    List<Capsule> phaseCapsules,
     TimelineViewMode viewMode,
     Color textColor,
     Color secondaryText,
@@ -305,15 +368,17 @@ class _TimelineScreenState extends ConsumerState<TimelineScreen> {
     // Side-effect: schedule milestone reminders whenever milestones are loaded.
     ref.watch(milestoneRemindersProvider(selectedChild.id));
 
-    if (phaseMilestones.isEmpty) {
+    if (phaseMilestones.isEmpty && phaseCapsules.isEmpty) {
       return _buildEmptyPhase(context, textColor, secondaryText);
     }
 
     return TimelineRail(
       milestones: phaseMilestones,
+      capsules: phaseCapsules,
       phase: _selectedPhase,
       viewMode: viewMode,
       onMilestoneTap: (m) => _openMilestoneDetail(context, m),
+      onCapsuleTap: (c) => _openCapsuleDetail(context, c),
     );
   }
 
@@ -460,6 +525,24 @@ class _TimelineScreenState extends ConsumerState<TimelineScreen> {
               l10n.timelineAddChildHint,
               style: AppTypography.fromContext(context, fontSize: 14, color: secondaryText),
             ),
+            const SizedBox(height: AppSpacing.md),
+            ElevatedButton.icon(
+              onPressed: () {
+                Navigator.of(context).push(
+                  MaterialPageRoute(builder: (_) => const EditChildScreen()),
+                );
+              },
+              icon: const Icon(Icons.add_rounded, size: 18),
+              label: Text(l10n.addChild),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: primary,
+                foregroundColor: Colors.white,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(14),
+                ),
+                padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+              ),
+            ),
           ],
         ),
       ),
@@ -500,6 +583,14 @@ class _TimelineScreenState extends ConsumerState<TimelineScreen> {
           milestone: milestone,
           childId: selectedChild.id,
         ),
+      ),
+    );
+  }
+
+  void _openCapsuleDetail(BuildContext context, Capsule capsule) {
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (_) => CapsuleDetailScreen(capsule: capsule),
       ),
     );
   }
@@ -559,17 +650,22 @@ class _TimelineScreenState extends ConsumerState<TimelineScreen> {
               color: primary,
               title: l10n.timeline_create_capsule,
               subtitle: l10n.timeline_create_capsule_subtitle,
-              onTap: () {
+              onTap: () async {
                 Navigator.pop(context);
                 AnalyticsService().logEvent('timeline_quickadd_selected',
                     parameters: {'action': 'create_capsule'});
-                Navigator.of(context).push(
+                final result = await Navigator.of(context).push(
                   MaterialPageRoute(
                     builder: (_) => CreateCapsuleScreen(
                       preselectedChildId: child.id,
                     ),
                   ),
                 );
+                if (result != null) {
+                  ref.invalidate(childMilestonesProvider(child.id));
+                  ref.invalidate(milestoneProgressStreamProvider(child.id));
+                  ref.invalidate(capsulesProvider);
+                }
               },
             ),
             const SizedBox(height: 12),

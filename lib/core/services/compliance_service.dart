@@ -4,14 +4,17 @@ import 'package:firebase_auth/firebase_auth.dart';
 
 /// Compliance service for Algerian Law 18-07 privacy consent.
 class ComplianceService {
-  final FirebaseFirestore _firestore;
-  final FirebaseAuth _auth;
+  final FirebaseFirestore? _customFirestore;
+  final FirebaseAuth? _customAuth;
 
   ComplianceService({
     FirebaseFirestore? firestore,
     FirebaseAuth? auth,
-  })  : _firestore = firestore ?? FirebaseFirestore.instance,
-        _auth = auth ?? FirebaseAuth.instance;
+  })  : _customFirestore = firestore,
+        _customAuth = auth;
+
+  FirebaseFirestore get _firestore => _customFirestore ?? FirebaseFirestore.instance;
+  FirebaseAuth get _auth => _customAuth ?? FirebaseAuth.instance;
 
   /// Computes a deterministic FNV-1a 64-bit hash of the consent evidence
   /// to ensure records cannot be tampered with undetected.

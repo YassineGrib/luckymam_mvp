@@ -22,6 +22,7 @@ class PageHeaderWithFilter extends StatelessWidget {
     required this.selectedChildId,
     required this.onChildSelected,
     this.allowAll = false,
+    this.allowMam = false,
   });
 
   /// Titre principal de la page
@@ -59,6 +60,9 @@ class PageHeaderWithFilter extends StatelessWidget {
 
   /// Booléen: ajouter l'option "Tous" en première position ?
   final bool allowAll;
+
+  /// Booléen: ajouter l'option "MAM" pour le profil maman ?
+  final bool allowMam;
 
   @override
   Widget build(BuildContext context) {
@@ -152,24 +156,20 @@ class PageHeaderWithFilter extends StatelessWidget {
           ),
         ),
 
-        // 2. Baby Selector (Compact)
-        if (childrenList.isNotEmpty && (childrenList.length > 1 || allowAll))
+        // 2. Baby & Profile Selector (Compact)
+        if ((childrenList.isNotEmpty && (childrenList.length > 1 || allowAll)) || allowMam)
           Container(
             height: 42, // COMPACT HEIGHT (au lieu de 50 ou 64)
             margin: const EdgeInsets.symmetric(
               horizontal: AppSpacing.screenPaddingH,
               vertical: 4,
             ),
-            child: ListView.separated(
+            child: ListView(
               scrollDirection: Axis.horizontal,
-              itemCount: allowAll
-                  ? childrenList.length + 1
-                  : childrenList.length,
-              separatorBuilder: (_, _) => const SizedBox(width: 8),
-              itemBuilder: (context, index) {
+              children: [
                 // Bouton "Tous"
-                if (allowAll && index == 0) {
-                  return _buildPill(
+                if (allowAll) ...[
+                  _buildPill(
                     context: context,
                     isSelected: selectedChildId == null,
                     label: 'Tous',
@@ -177,25 +177,40 @@ class PageHeaderWithFilter extends StatelessWidget {
                     textColor: textColor,
                     isDark: isDark,
                     onTap: () => onChildSelected(null),
-                  );
-                }
+                  ),
+                  const SizedBox(width: 8),
+                ],
 
-                // Bouton Enfant
-                final childIndex = allowAll ? index - 1 : index;
-                final child = childrenList[childIndex];
-                final isSelected = selectedChildId == child.id;
+                // Bouton "MAM"
+                if (allowMam) ...[
+                  _buildPill(
+                    context: context,
+                    isSelected: selectedChildId == 'mam',
+                    label: 'MAM',
+                    icon: Icons.face_3_rounded,
+                    primary: primary,
+                    textColor: textColor,
+                    isDark: isDark,
+                    onTap: () => onChildSelected('mam'),
+                  ),
+                  const SizedBox(width: 8),
+                ],
 
-                return _buildPill(
-                  context: context,
-                  isSelected: isSelected,
-                  label: child.name,
-                  primary: primary,
-                  textColor: textColor,
-                  isDark: isDark,
-                  photoUrl: child.photoUrl,
-                  onTap: () => onChildSelected(child.id),
-                );
-              },
+                // Boutons Enfants
+                for (int i = 0; i < childrenList.length; i++) ...[
+                  _buildPill(
+                    context: context,
+                    isSelected: selectedChildId == childrenList[i].id,
+                    label: childrenList[i].name,
+                    primary: primary,
+                    textColor: textColor,
+                    isDark: isDark,
+                    photoUrl: childrenList[i].photoUrl,
+                    onTap: () => onChildSelected(childrenList[i].id),
+                  ),
+                  if (i < childrenList.length - 1) const SizedBox(width: 8),
+                ],
+              ],
             ),
           ),
       ],
@@ -210,6 +225,7 @@ class PageHeaderWithFilter extends StatelessWidget {
     required Color textColor,
     required bool isDark,
     String? photoUrl,
+    IconData? icon,
     required VoidCallback onTap,
   }) {
     final surface = isDark ? AppColors.surfaceDark : AppColors.surfaceLight;
@@ -219,7 +235,7 @@ class PageHeaderWithFilter extends StatelessWidget {
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 200),
         padding: EdgeInsetsDirectional.fromSTEB(
-          (photoUrl != null && photoUrl.isNotEmpty) || label != 'Tous' ? 5 : 14,
+          (photoUrl != null && photoUrl.isNotEmpty) || icon != null || label != 'Tous' ? 5 : 14,
           3,
           14,
           3,
@@ -256,6 +272,25 @@ class PageHeaderWithFilter extends StatelessWidget {
                   image: DecorationImage(
                     image: NetworkImage(photoUrl),
                     fit: BoxFit.cover,
+                  ),
+                ),
+              ),
+              const SizedBox(width: 8),
+            ] else if (icon != null) ...[
+              Container(
+                width: 32,
+                height: 32,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: isSelected
+                      ? primary
+                      : (isDark ? Colors.white12 : Colors.grey.withValues(alpha: 0.2)),
+                ),
+                child: Center(
+                  child: Icon(
+                    icon,
+                    size: 16,
+                    color: isSelected ? Colors.white : textColor,
                   ),
                 ),
               ),

@@ -13,6 +13,12 @@ class PrintOrder {
   final String albumTitle;
   final int pageCount;
 
+  final String format; // 'A5' | 'A4' | 'A3'
+  final int subtotal;
+  final int shippingFee;
+  final int totalAmount;
+  final int albumCopies;
+
   final String fullName;
   final String phone;
   final String wilaya;
@@ -33,6 +39,11 @@ class PrintOrder {
     required this.albumType,
     required this.albumTitle,
     required this.pageCount,
+    this.format = 'A5',
+    this.subtotal = 0,
+    this.shippingFee = 0,
+    this.totalAmount = 0,
+    this.albumCopies = 1,
     required this.fullName,
     required this.phone,
     required this.wilaya,
@@ -50,6 +61,11 @@ class PrintOrder {
     'albumType': albumType,
     'albumTitle': albumTitle,
     'pageCount': pageCount,
+    'format': format,
+    'subtotal': subtotal,
+    'shippingFee': shippingFee,
+    'totalAmount': totalAmount,
+    'albumCopies': albumCopies,
     'fullName': fullName,
     'phone': phone,
     'wilaya': wilaya,

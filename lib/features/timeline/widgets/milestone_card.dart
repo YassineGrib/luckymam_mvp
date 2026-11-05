@@ -292,6 +292,8 @@ class _MilestoneThumbnailState extends State<_MilestoneThumbnail> {
           width: 56,
           height: 56,
           fit: BoxFit.cover,
+          cacheWidth: 200,
+          cacheHeight: 200,
           loadingBuilder: (context, child, loadingProgress) {
             if (loadingProgress == null) return child;
             return Container(

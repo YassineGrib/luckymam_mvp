@@ -76,6 +76,13 @@ final tierCapsuleLimitProvider = Provider<int>((ref) {
   return plan.capsuleLimit;
 });
 
+/// Child limit based on current tier (Free: 1, Premium: 2, VIP: unlimited).
+final tierChildLimitProvider = Provider<int>((ref) {
+  final tier = ref.watch(currentTierValueProvider);
+  final plan = SubscriptionPlan.allPlans.firstWhere((p) => p.tier == tier);
+  return plan.childLimit;
+});
+
 /// Whether the user has an active paid subscription.
 final isPremiumProvider = Provider<bool>((ref) {
   final tier = ref.watch(currentTierValueProvider);
@@ -86,6 +93,12 @@ final isPremiumProvider = Provider<bool>((ref) {
 final isVipProvider = Provider<bool>((ref) {
   final tier = ref.watch(currentTierValueProvider);
   return tier == SubscriptionTier.vip;
+});
+
+/// Whether the user can share capsules (Premium and VIP only).
+final canShareCapsulesProvider = Provider<bool>((ref) {
+  final tier = ref.watch(currentTierValueProvider);
+  return tier.isPaid;
 });
 
 /// Whether the VIP album perk has been claimed.

@@ -53,6 +53,11 @@ class AlbumTemplate {
   final IconData icon;
   final List<Color> gradientColors;
   final List<AlbumEventSlot> slots;
+  final bool isLaunchModel;
+  final bool isComingSoon;
+  final bool isSinglePortraitPhoto;
+  final List<String> supportedFormats;
+  final int startingPriceDa;
 
   const AlbumTemplate({
     required this.id,
@@ -64,6 +69,11 @@ class AlbumTemplate {
     required this.icon,
     required this.gradientColors,
     required this.slots,
+    this.isLaunchModel = true,
+    this.isComingSoon = false,
+    this.isSinglePortraitPhoto = false,
+    this.supportedFormats = const ['A5', 'A4'],
+    this.startingPriceDa = 1980,
   });
 
   int get slotCount => slots.length;
@@ -76,11 +86,11 @@ class AlbumTemplate {
 
   String getSubtitle(String locale) {
     if (locale == 'ar') {
-      // fallback or mapping if subtitleAr not present (currently only subtitleFr is stored)
-      // let's return Arabic subtitles mapped here or custom fallback
       switch (id) {
         case 'tpl_birth':
-          return 'اللحظات الأولى للطفل';
+          return 'اللحظات الأولى للطفل (٦ صور)';
+        case 'tpl_portrait_1':
+          return 'صورة تذكارية واحدة بتنسيق بورتريه';
         case 'tpl_first_year':
           return 'مراحل النمو الكبرى في العام الأول';
         case 'tpl_traditions':

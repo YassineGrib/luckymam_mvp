@@ -10,6 +10,7 @@ import '../../pregnancy/screens/pregnancy_tracking_screen.dart';
 import '../../profile/models/profile_models.dart';
 import '../../profile/profile_screen.dart';
 import '../../profile/providers/profile_providers.dart';
+import '../../../shared/widgets/navigation/app_bottom_nav.dart';
 
 /// Central Hero Companion Card on the Home Dashboard.
 /// Features soft pastel gradients, subtle asset pattern overlay,
@@ -252,9 +253,7 @@ class _HomeHeroCompanionCardState extends ConsumerState<HomeHeroCompanionCard>
 
         return GestureDetector(
           onTap: () {
-            Navigator.of(context).push(
-              MaterialPageRoute(builder: (_) => const ProfileScreen()),
-            );
+            ref.read(homeNavigationIndexProvider.notifier).state = 4;
           },
           behavior: HitTestBehavior.opaque,
           child: Column(

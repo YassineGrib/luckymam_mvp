@@ -1,6 +1,17 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 
+import '../../../core/extensions/l10n_extension.dart';
 import '../../../core/theme/app_colors.dart';
+
+/// Global provider for the active tab index in HomeScreen.
+/// 0: Home (Dashboard)
+/// 1: Timeline
+/// 2: Capsules
+/// 3: Health (Vaccinations)
+/// 4: Profile
+final homeNavigationIndexProvider = StateProvider<int>((ref) => 0);
 
 /// Navigation item data model.
 class NavItem {
@@ -13,6 +24,49 @@ class NavItem {
     required this.activeIcon,
     required this.label,
   });
+}
+
+/// Builds standardized navigation items for the bottom navigation bar.
+List<NavItem> getAppNavItems(BuildContext context) {
+  final l10n = context.l10n;
+  return [
+    NavItem(
+      icon: Icons.home_outlined,
+      activeIcon: Icons.home_rounded,
+      label: l10n.navHome,
+    ),
+    NavItem(
+      icon: Icons.timeline_outlined,
+      activeIcon: Icons.timeline_rounded,
+      label: l10n.navTimeline,
+    ),
+    NavItem(
+      icon: Icons.camera_alt_outlined,
+      activeIcon: Icons.camera_alt_rounded,
+      label: l10n.navCapsules,
+    ),
+    NavItem(
+      icon: Icons.vaccines_outlined,
+      activeIcon: Icons.vaccines_rounded,
+      label: l10n.navHealth,
+    ),
+    NavItem(
+      icon: Icons.person_outline_rounded,
+      activeIcon: Icons.person_rounded,
+      label: l10n.navProfile,
+    ),
+  ];
+}
+
+/// Helper to navigate to a home tab without losing the bottom navigation bar.
+/// Pops secondary routes if open, or directs GoRouter to '/home'.
+void navigateToHomeTab(BuildContext context, WidgetRef ref, int index) {
+  ref.read(homeNavigationIndexProvider.notifier).state = index;
+  if (Navigator.of(context).canPop()) {
+    Navigator.of(context).popUntil((route) => route.isFirst);
+  } else {
+    context.go('/home');
+  }
 }
 
 /// Premium floating bottom navigation bar with pill-style active indicator.

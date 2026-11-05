@@ -13,6 +13,7 @@ import '../widgets/album_cover_card.dart';
 import 'album_detail_screen.dart';
 import 'album_template_picker_screen.dart';
 import 'standard_album_detail_screen.dart';
+import '../../digital_album/screens/digital_slideshow_creator_screen.dart';
 import '../../../shared/widgets/page_header_with_filter.dart';
 import '../../../shared/widgets/top_ambient_gradient.dart';
 
@@ -118,6 +119,30 @@ class MemoryBookScreen extends ConsumerWidget {
                             ),
                           ),
                         ],
+                      ),
+                    ),
+                  ),
+                ),
+
+                const SliverToBoxAdapter(child: SizedBox(height: 12)),
+
+                // 2b. Diaporama Album Numérique Banner (LM-DIG-001)
+                SliverToBoxAdapter(
+                  child: childrenAsync.when(
+                    loading: () => const SizedBox.shrink(),
+                    error: (_, _) => const SizedBox.shrink(),
+                    data: (children) => Padding(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: AppSpacing.screenPaddingH,
+                      ),
+                      child: _DiaporamaCreationBanner(
+                        title: l10n.diaporamaTitle,
+                        subtitle: l10n.diaporamaSubtitle,
+                        isDark: isDark,
+                        onTap: () => _openDiaporamaCreator(
+                          context,
+                          children.cast<Child>(),
+                        ),
                       ),
                     ),
                   ),
@@ -273,6 +298,22 @@ class MemoryBookScreen extends ConsumerWidget {
   ) {
     _resolveChild(context, children, (child) {
       _showCreateStandardAlbumDialog(context, ref, child);
+    });
+  }
+
+  void _openDiaporamaCreator(
+    BuildContext context,
+    List<Child> children,
+  ) {
+    _resolveChild(context, children, (child) {
+      Navigator.of(context).push(
+        MaterialPageRoute(
+          builder: (_) => DigitalSlideshowCreatorScreen(
+            childId: child.id,
+            childName: child.name,
+          ),
+        ),
+      );
     });
   }
 
@@ -723,6 +764,168 @@ class _AlbumCreationBentoCardState extends State<_AlbumCreationBentoCard> {
                             overflow: TextOverflow.ellipsis,
                           ),
                         ],
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+/// Bento banner for Digital Album Slideshow creation (LM-DIG-001).
+class _DiaporamaCreationBanner extends StatefulWidget {
+  final String title;
+  final String subtitle;
+  final bool isDark;
+  final VoidCallback onTap;
+
+  const _DiaporamaCreationBanner({
+    required this.title,
+    required this.subtitle,
+    required this.isDark,
+    required this.onTap,
+  });
+
+  @override
+  State<_DiaporamaCreationBanner> createState() =>
+      _DiaporamaCreationBannerState();
+}
+
+class _DiaporamaCreationBannerState extends State<_DiaporamaCreationBanner> {
+  bool _isPressed = false;
+
+  @override
+  Widget build(BuildContext context) {
+    final isDark = widget.isDark;
+    final isRtl = Directionality.of(context) == TextDirection.rtl;
+    final bg = isDark ? const Color(0xFF261D1A) : const Color(0xFFFFF8F1);
+    final border = isDark
+        ? Colors.white.withValues(alpha: 0.08)
+        : const Color(0xFFFFE0B2);
+    final textColor = isDark ? Colors.white : const Color(0xFF24160E);
+    final subtextColor = isDark
+        ? Colors.white.withValues(alpha: 0.70)
+        : const Color(0xFF6B584D);
+
+    return GestureDetector(
+      onTapDown: (_) => setState(() => _isPressed = true),
+      onTapUp: (_) {
+        setState(() => _isPressed = false);
+        widget.onTap();
+      },
+      onTapCancel: () => setState(() => _isPressed = false),
+      child: AnimatedScale(
+        scale: _isPressed ? 0.98 : 1.0,
+        duration: const Duration(milliseconds: 140),
+        curve: Curves.easeOutCubic,
+        child: Container(
+          decoration: BoxDecoration(
+            color: bg,
+            borderRadius: BorderRadius.circular(20),
+            border: Border.all(color: border, width: 1.2),
+            boxShadow: [
+              BoxShadow(
+                color: const Color(0xFFFF8F00).withValues(
+                  alpha: isDark ? 0.16 : 0.12,
+                ),
+                blurRadius: 14,
+                offset: const Offset(0, 4),
+              ),
+            ],
+          ),
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(20),
+            child: Stack(
+              children: [
+                PositionedDirectional(
+                  bottom: -15,
+                  end: -10,
+                  child: IgnorePointer(
+                    child: Icon(
+                      Icons.slideshow_rounded,
+                      size: 78,
+                      color: const Color(0xFFFF8F00).withValues(alpha: 0.12),
+                    ),
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 16,
+                    vertical: 14,
+                  ),
+                  child: Row(
+                    children: [
+                      Container(
+                        width: 44,
+                        height: 44,
+                        decoration: BoxDecoration(
+                          gradient: const LinearGradient(
+                            colors: [AppColors.coral, Color(0xFFFF8F00)],
+                            begin: Alignment.topLeft,
+                            end: Alignment.bottomRight,
+                          ),
+                          borderRadius: BorderRadius.circular(14),
+                          boxShadow: [
+                            BoxShadow(
+                              color: AppColors.coral.withValues(alpha: 0.35),
+                              blurRadius: 8,
+                              offset: const Offset(0, 3),
+                            ),
+                          ],
+                        ),
+                        child: const Icon(
+                          Icons.play_arrow_rounded,
+                          size: 26,
+                          color: Colors.white,
+                        ),
+                      ),
+                      const SizedBox(width: 14),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              widget.title,
+                              style: TextStyle(
+                                fontSize: 14.5,
+                                fontWeight: FontWeight.w800,
+                                color: textColor,
+                              ),
+                            ),
+                            const SizedBox(height: 2),
+                            Text(
+                              widget.subtitle,
+                              style: TextStyle(
+                                fontSize: 11.5,
+                                fontWeight: FontWeight.w500,
+                                color: subtextColor,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      const SizedBox(width: 8),
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 10,
+                          vertical: 6,
+                        ),
+                        decoration: BoxDecoration(
+                          color: const Color(0xFFFF8F00).withValues(alpha: 0.15),
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        child: Icon(
+                          isRtl
+                              ? Icons.arrow_back_ios_new_rounded
+                              : Icons.arrow_forward_ios_rounded,
+                          size: 13,
+                          color: const Color(0xFFFF8F00),
+                        ),
                       ),
                     ],
                   ),

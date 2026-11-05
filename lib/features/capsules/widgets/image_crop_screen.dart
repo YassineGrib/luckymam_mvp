@@ -3,6 +3,7 @@ import 'dart:math' as math;
 import 'dart:typed_data';
 import 'dart:ui' as ui;
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 import '../../../core/extensions/l10n_extension.dart';
@@ -11,12 +12,21 @@ import '../../../core/theme/app_colors.dart';
 /// Screen allowing the user to interactively pan, scale, rotate, and crop an image
 /// to a full-screen vertical (9:16) Story ratio with zero top/bottom black bars.
 class ImageCropScreen extends StatefulWidget {
-  final File imageFile;
+  final File? imageFile;
+  final String? imageUrl;
+  final double aspectRatio;
+  final String? title;
 
   const ImageCropScreen({
     super.key,
-    required this.imageFile,
-  });
+    this.imageFile,
+    this.imageUrl,
+    this.aspectRatio = 9.0 / 16.0,
+    this.title,
+  }) : assert(
+          imageFile != null || imageUrl != null,
+          'Either imageFile or imageUrl must be provided',
+        );
 
   /// Checks whether an image is already vertical and close to the 9:16 Story ratio (0.5625).
   /// If true, the caller can auto-crop without interrupting the user.
@@ -119,22 +129,72 @@ class _ImageCropScreenState extends State<ImageCropScreen> {
   bool _hasInitializedTransform = false;
   bool _showGrid = true;
   bool _isPreviewMode = false;
+  late double _currentAspectRatio;
+  String? _errorMessage;
 
   @override
   void initState() {
     super.initState();
+    _currentAspectRatio = widget.aspectRatio;
     _loadImage();
   }
 
   Future<void> _loadImage() async {
-    final bytes = await widget.imageFile.readAsBytes();
-    final codec = await ui.instantiateImageCodec(bytes);
-    final frame = await codec.getNextFrame();
-    if (mounted) {
-      setState(() {
-        _decodedImage = frame.image;
-      });
+    setState(() {
+      _errorMessage = null;
+    });
+    try {
+      Uint8List bytes;
+      if (widget.imageFile != null) {
+        bytes = await widget.imageFile!.readAsBytes();
+      } else if (widget.imageUrl != null) {
+        final url = widget.imageUrl!;
+        if (url.startsWith('http://') || url.startsWith('https://')) {
+          final client = HttpClient();
+          final request = await client.getUrl(Uri.parse(url));
+          final response = await request.close();
+          bytes = await consolidateHttpClientResponseBytes(response);
+        } else {
+          bytes = await File(url).readAsBytes();
+        }
+      } else {
+        throw Exception('Aucune source d\'image fournie');
+      }
+
+      final codec = await ui.instantiateImageCodec(bytes);
+      final frame = await codec.getNextFrame();
+      if (mounted) {
+        setState(() {
+          _decodedImage = frame.image;
+        });
+      }
+    } catch (e) {
+      if (mounted) {
+        setState(() {
+          _errorMessage = e.toString();
+        });
+      }
     }
+  }
+
+  void _setAspectRatio(double ratio) {
+    if ((_currentAspectRatio - ratio).abs() < 0.001) return;
+    setState(() {
+      _currentAspectRatio = ratio;
+      _hasInitializedTransform = false;
+    });
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _resetTransform();
+    });
+  }
+
+  String get _aspectRatioBadgeLabel {
+    if ((_currentAspectRatio - 9.0 / 16.0).abs() < 0.01) return 'Story 9:16';
+    if ((_currentAspectRatio - 1.0).abs() < 0.01) return 'Carré 1:1';
+    if ((_currentAspectRatio - 4.0 / 5.0).abs() < 0.01) return 'Portrait 4:5';
+    if ((_currentAspectRatio - 3.0 / 4.0).abs() < 0.01) return 'Classique 3:4';
+    if ((_currentAspectRatio - 4.0 / 3.0).abs() < 0.01) return 'Paysage 4:3';
+    return '${_currentAspectRatio.toStringAsFixed(2)}';
   }
 
   @override
@@ -235,7 +295,7 @@ class _ImageCropScreenState extends State<ImageCropScreen> {
           mainAxisSize: MainAxisSize.min,
           children: [
             Text(
-              l10n.capsuleCropTitle,
+              widget.title ?? l10n.capsuleCropTitle,
               style: const TextStyle(
                 color: Colors.white,
                 fontSize: 17,
@@ -253,9 +313,9 @@ class _ImageCropScreenState extends State<ImageCropScreen> {
                   width: 1,
                 ),
               ),
-              child: const Text(
-                'Story 9:16',
-                style: TextStyle(
+              child: Text(
+                _aspectRatioBadgeLabel,
+                style: const TextStyle(
                   color: Colors.white,
                   fontSize: 11,
                   fontWeight: FontWeight.bold,
@@ -301,11 +361,42 @@ class _ImageCropScreenState extends State<ImageCropScreen> {
           ),
         ],
       ),
-      body: _decodedImage == null
-          ? const Center(
-              child: CircularProgressIndicator(color: Colors.white),
+      body: _errorMessage != null
+          ? Center(
+              child: Padding(
+                padding: const EdgeInsets.all(24),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    const Icon(
+                      Icons.broken_image_rounded,
+                      color: Colors.white70,
+                      size: 48,
+                    ),
+                    const SizedBox(height: 12),
+                    Text(
+                      _errorMessage!,
+                      textAlign: TextAlign.center,
+                      style: const TextStyle(color: Colors.white70, fontSize: 13),
+                    ),
+                    const SizedBox(height: 16),
+                    FilledButton(
+                      style: FilledButton.styleFrom(backgroundColor: primary),
+                      onPressed: _loadImage,
+                      child: Text(
+                        isAr ? 'إعادة المحاولة' : 'Réessayer',
+                        style: const TextStyle(color: Colors.white),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
             )
-          : SafeArea(
+          : _decodedImage == null
+              ? const Center(
+                  child: CircularProgressIndicator(color: Colors.white),
+                )
+              : SafeArea(
               child: Column(
                 children: [
                   // Top instruction banner
@@ -362,7 +453,25 @@ class _ImageCropScreenState extends State<ImageCropScreen> {
                     ),
                   ),
 
-                  // 9:16 Full Screen Story Viewport
+                                    // Aspect Ratio Selector Chips
+                  SingleChildScrollView(
+                    scrollDirection: Axis.horizontal,
+                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        _buildRatioChip('1:1', 1.0, isAr ? 'مربع' : 'Carré', primary),
+                        const SizedBox(width: 8),
+                        _buildRatioChip('4:5', 4.0 / 5.0, isAr ? 'عمودي' : 'Portrait', primary),
+                        const SizedBox(width: 8),
+                        _buildRatioChip('3:4', 3.0 / 4.0, isAr ? 'كلاسيكي' : 'Classique', primary),
+                        const SizedBox(width: 8),
+                        _buildRatioChip('9:16', 9.0 / 16.0, isAr ? 'ستوري' : 'Story', primary),
+                      ],
+                    ),
+                  ),
+
+                  // Dynamic Aspect Ratio Viewport (Story, Photobook 1:1, 4:5, 3:4)
                   Expanded(
                     child: Center(
                       child: Padding(
@@ -371,7 +480,7 @@ class _ImageCropScreenState extends State<ImageCropScreen> {
                           vertical: 4,
                         ),
                         child: AspectRatio(
-                          aspectRatio: 9 / 16,
+                          aspectRatio: _currentAspectRatio,
                           child: AnimatedContainer(
                             duration: const Duration(milliseconds: 250),
                             key: _cropKey,
@@ -545,6 +654,55 @@ class _ImageCropScreenState extends State<ImageCropScreen> {
     );
   }
 
+    Widget _buildRatioChip(
+    String label,
+    double ratio,
+    String tooltip,
+    Color primaryColor,
+  ) {
+    final isSelected = (_currentAspectRatio - ratio).abs() < 0.01;
+    return InkWell(
+      onTap: () => _setAspectRatio(ratio),
+      borderRadius: BorderRadius.circular(16),
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 200),
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+        decoration: BoxDecoration(
+          color: isSelected
+              ? primaryColor.withValues(alpha: 0.25)
+              : Colors.white.withValues(alpha: 0.06),
+          borderRadius: BorderRadius.circular(16),
+          border: Border.all(
+            color: isSelected ? primaryColor : Colors.white12,
+            width: isSelected ? 1.5 : 1.0,
+          ),
+        ),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(
+              label,
+              style: TextStyle(
+                color: isSelected ? Colors.white : Colors.white70,
+                fontSize: 12,
+                fontWeight: isSelected ? FontWeight.bold : FontWeight.w500,
+              ),
+            ),
+            const SizedBox(width: 4),
+            Text(
+              tooltip,
+              style: TextStyle(
+                color: isSelected ? primaryColor : Colors.white38,
+                fontSize: 10,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
   Widget _buildToolButton({
     required IconData icon,
     required String label,
@@ -607,8 +765,16 @@ class _ImageCropScreenState extends State<ImageCropScreen> {
       final Size cropSize = renderBox.size;
       final Matrix4 transform = _transformationController.value;
 
-      const int targetWidth = 1080;
-      const int targetHeight = 1920;
+      final double targetAspect = _currentAspectRatio;
+      final int targetWidth;
+      final int targetHeight;
+      if (targetAspect <= 1.0) {
+        targetWidth = 1080;
+        targetHeight = (targetWidth / targetAspect).round();
+      } else {
+        targetHeight = 1080;
+        targetWidth = (targetHeight * targetAspect).round();
+      }
 
       final double viewportW = cropSize.width;
       final double viewportH = cropSize.height;

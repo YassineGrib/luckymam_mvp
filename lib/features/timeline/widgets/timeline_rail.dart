@@ -10,6 +10,7 @@ import '../../../core/theme/app_spacing.dart';
 import '../models/milestone.dart';
 import '../models/phase.dart';
 import '../services/timeline_service.dart';
+import '../../capsules/models/capsule.dart';
 
 /// View mode toggle for the timeline — controlled by parent (timeline_screen)
 enum TimelineViewMode { horizontal, vertical }
@@ -17,14 +18,45 @@ enum TimelineViewMode { horizontal, vertical }
 /// Status of a milestone node
 enum _NodeStatus { completed, overdue, current, upcoming }
 
+/// Unified timeline entry for chronological rail rendering
+sealed class TimelineEntry {
+  DateTime get sortDate;
+  int get secondaryOrder;
+}
+
+class MilestoneTimelineEntry extends TimelineEntry {
+  final MilestoneWithDueDate milestone;
+  MilestoneTimelineEntry(this.milestone);
+
+  @override
+  DateTime get sortDate =>
+      milestone.completedAt ?? milestone.dueDate ?? DateTime(2099);
+
+  @override
+  int get secondaryOrder => milestone.milestone.orderInPhase;
+}
+
+class CapsuleTimelineEntry extends TimelineEntry {
+  final Capsule capsule;
+  CapsuleTimelineEntry(this.capsule);
+
+  @override
+  DateTime get sortDate => capsule.capturedAt ?? capsule.createdAt;
+
+  @override
+  int get secondaryOrder => 999;
+}
+
 // ─────────────────────────────────────────────────────────────────────────────
 // TimelineRail — view mode is controlled externally via [viewMode]
 // The toggle button lives in the screen's title bar (trailing slot)
 // ─────────────────────────────────────────────────────────────────────────────
 class TimelineRail extends StatelessWidget {
   final List<MilestoneWithDueDate> milestones;
+  final List<Capsule> capsules;
   final Phase phase;
   final void Function(MilestoneWithDueDate) onMilestoneTap;
+  final void Function(Capsule)? onCapsuleTap;
 
   /// Controlled from outside — drives horizontal vs vertical layout
   final TimelineViewMode viewMode;
@@ -32,8 +64,10 @@ class TimelineRail extends StatelessWidget {
   const TimelineRail({
     super.key,
     required this.milestones,
+    this.capsules = const [],
     required this.phase,
     required this.onMilestoneTap,
+    this.onCapsuleTap,
     required this.viewMode,
   });
 
@@ -54,12 +88,18 @@ class TimelineRail extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    if (milestones.isEmpty) return const SizedBox.shrink();
+    final entries = <TimelineEntry>[
+      ...milestones.map(MilestoneTimelineEntry.new),
+      ...capsules.map(CapsuleTimelineEntry.new),
+    ];
 
-    final sorted = List<MilestoneWithDueDate>.from(milestones)
-      ..sort(
-        (a, b) => a.milestone.orderInPhase.compareTo(b.milestone.orderInPhase),
-      );
+    if (entries.isEmpty) return const SizedBox.shrink();
+
+    entries.sort((a, b) {
+      final cmp = a.sortDate.compareTo(b.sortDate);
+      if (cmp != 0) return cmp;
+      return a.secondaryOrder.compareTo(b.secondaryOrder);
+    });
 
     return AnimatedSwitcher(
       duration: const Duration(milliseconds: 280),
@@ -68,17 +108,19 @@ class TimelineRail extends StatelessWidget {
       child: viewMode == TimelineViewMode.horizontal
           ? _HorizontalTimeline(
               key: const ValueKey('horizontal'),
-              milestones: sorted,
+              entries: entries,
               phase: phase,
               statusOf: _status,
-              onTap: onMilestoneTap,
+              onMilestoneTap: onMilestoneTap,
+              onCapsuleTap: onCapsuleTap,
             )
           : _VerticalTimeline(
               key: const ValueKey('vertical'),
-              milestones: sorted,
+              entries: entries,
               phase: phase,
               statusOf: _status,
-              onTap: onMilestoneTap,
+              onMilestoneTap: onMilestoneTap,
+              onCapsuleTap: onCapsuleTap,
             ),
     );
   }
@@ -90,16 +132,18 @@ class TimelineRail extends StatelessWidget {
 class _HorizontalTimeline extends StatelessWidget {
   const _HorizontalTimeline({
     super.key,
-    required this.milestones,
+    required this.entries,
     required this.phase,
     required this.statusOf,
-    required this.onTap,
+    required this.onMilestoneTap,
+    this.onCapsuleTap,
   });
 
-  final List<MilestoneWithDueDate> milestones;
+  final List<TimelineEntry> entries;
   final Phase phase;
   final _NodeStatus Function(MilestoneWithDueDate) statusOf;
-  final void Function(MilestoneWithDueDate) onTap;
+  final void Function(MilestoneWithDueDate) onMilestoneTap;
+  final void Function(Capsule)? onCapsuleTap;
 
   @override
   Widget build(BuildContext context) {
@@ -109,18 +153,34 @@ class _HorizontalTimeline extends StatelessWidget {
         horizontal: AppSpacing.screenPaddingH,
         vertical: AppSpacing.xs,
       ),
-      itemCount: milestones.length,
+      itemCount: entries.length,
       itemBuilder: (context, index) {
-        final m = milestones[index];
-        final status = statusOf(m);
-        return _HorizontalNode(
-          milestone: m,
-          status: status,
-          phase: phase,
-          isFirst: index == 0,
-          isLast: index == milestones.length - 1,
-          onTap: () => onTap(m),
-        );
+        final entry = entries[index];
+        final isFirst = index == 0;
+        final isLast = index == entries.length - 1;
+
+        if (entry is MilestoneTimelineEntry) {
+          final m = entry.milestone;
+          final status = statusOf(m);
+          return _HorizontalNode(
+            milestone: m,
+            status: status,
+            phase: phase,
+            isFirst: isFirst,
+            isLast: isLast,
+            onTap: () => onMilestoneTap(m),
+          );
+        } else if (entry is CapsuleTimelineEntry) {
+          final c = entry.capsule;
+          return _HorizontalCapsuleNode(
+            capsule: c,
+            phase: phase,
+            isFirst: isFirst,
+            isLast: isLast,
+            onTap: () => onCapsuleTap?.call(c),
+          );
+        }
+        return const SizedBox.shrink();
       },
     );
   }
@@ -132,16 +192,18 @@ class _HorizontalTimeline extends StatelessWidget {
 class _VerticalTimeline extends StatelessWidget {
   const _VerticalTimeline({
     super.key,
-    required this.milestones,
+    required this.entries,
     required this.phase,
     required this.statusOf,
-    required this.onTap,
+    required this.onMilestoneTap,
+    this.onCapsuleTap,
   });
 
-  final List<MilestoneWithDueDate> milestones;
+  final List<TimelineEntry> entries;
   final Phase phase;
   final _NodeStatus Function(MilestoneWithDueDate) statusOf;
-  final void Function(MilestoneWithDueDate) onTap;
+  final void Function(MilestoneWithDueDate) onMilestoneTap;
+  final void Function(Capsule)? onCapsuleTap;
 
   @override
   Widget build(BuildContext context) {
@@ -153,18 +215,34 @@ class _VerticalTimeline extends StatelessWidget {
         top: AppSpacing.xs,
         bottom: 110,
       ),
-      itemCount: milestones.length,
+      itemCount: entries.length,
       itemBuilder: (context, index) {
-        final m = milestones[index];
-        final status = statusOf(m);
-        return _VerticalNode(
-          milestone: m,
-          status: status,
-          phase: phase,
-          isFirst: index == 0,
-          isLast: index == milestones.length - 1,
-          onTap: () => onTap(m),
-        );
+        final entry = entries[index];
+        final isFirst = index == 0;
+        final isLast = index == entries.length - 1;
+
+        if (entry is MilestoneTimelineEntry) {
+          final m = entry.milestone;
+          final status = statusOf(m);
+          return _VerticalNode(
+            milestone: m,
+            status: status,
+            phase: phase,
+            isFirst: isFirst,
+            isLast: isLast,
+            onTap: () => onMilestoneTap(m),
+          );
+        } else if (entry is CapsuleTimelineEntry) {
+          final c = entry.capsule;
+          return _VerticalCapsuleNode(
+            capsule: c,
+            phase: phase,
+            isFirst: isFirst,
+            isLast: isLast,
+            onTap: () => onCapsuleTap?.call(c),
+          );
+        }
+        return const SizedBox.shrink();
       },
     );
   }
@@ -869,6 +947,30 @@ class _MilestoneCardState extends State<_MilestoneCard> {
                     ),
                   ],
 
+                  // Photo thumbnail for completed milestone with photo (LM-CAP-002)
+                  if (isCompleted &&
+                      milestone.thumbnailUrl != null &&
+                      milestone.thumbnailUrl!.isNotEmpty) ...[
+                    const SizedBox(height: 8),
+                    ClipRRect(
+                      borderRadius: BorderRadius.circular(12),
+                      child: Container(
+                        height: isHorizontal ? 95 : 125,
+                        width: double.infinity,
+                        color: isDark
+                            ? const Color(0xFF26202B)
+                            : const Color(0xFFF3EDF7),
+                        child: Image.network(
+                          milestone.thumbnailUrl!,
+                          fit: BoxFit.cover,
+                          cacheWidth: 400,
+                          cacheHeight: 400,
+                          errorBuilder: (_, _, _) => const SizedBox.shrink(),
+                        ),
+                      ),
+                    ),
+                  ],
+
                   // "Voir la capsule" CTA for completed milestones with capsule
                   if (isCompleted && milestone.capsuleId != null) ...[
                     const SizedBox(height: 9),
@@ -913,3 +1015,626 @@ class _MilestoneCardState extends State<_MilestoneCard> {
     );
   }
 }
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Horizontal capsule node
+// ─────────────────────────────────────────────────────────────────────────────
+class _HorizontalCapsuleNode extends StatelessWidget {
+  const _HorizontalCapsuleNode({
+    required this.capsule,
+    required this.phase,
+    required this.isFirst,
+    required this.isLast,
+    required this.onTap,
+  });
+
+  final Capsule capsule;
+  final Phase phase;
+  final bool isFirst;
+  final bool isLast;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final color = phase.color;
+
+    const cardWidth = 224.0;
+    const dotSize = 24.0;
+
+    return SizedBox(
+      width: cardWidth + 14,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // ── Connector row: line — capsule dot — line ──────────
+          SizedBox(
+            height: dotSize + 6,
+            child: Row(
+              children: [
+                Expanded(
+                  child: isFirst
+                      ? const SizedBox()
+                      : Container(
+                          height: 2.5,
+                          decoration: BoxDecoration(
+                            gradient: LinearGradient(
+                              colors: [
+                                color.withValues(alpha: 0.25),
+                                color.withValues(alpha: 0.7),
+                              ],
+                            ),
+                          ),
+                        ),
+                ),
+                _capsuleRailDot(dotSize, color, isDark),
+                Expanded(
+                  child: isLast
+                      ? const SizedBox()
+                      : Container(
+                          height: 2.5,
+                          color: color.withValues(alpha: 0.25),
+                        ),
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(height: 8),
+          _CapsuleCard(
+            capsule: capsule,
+            phase: phase,
+            isDark: isDark,
+            width: cardWidth,
+            isHorizontal: true,
+            onTap: onTap,
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Vertical capsule node
+// ─────────────────────────────────────────────────────────────────────────────
+class _VerticalCapsuleNode extends StatelessWidget {
+  const _VerticalCapsuleNode({
+    required this.capsule,
+    required this.phase,
+    required this.isFirst,
+    required this.isLast,
+    required this.onTap,
+  });
+
+  final Capsule capsule;
+  final Phase phase;
+  final bool isFirst;
+  final bool isLast;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final color = phase.color;
+
+    const railWidth = 44.0;
+    const dotSize = 24.0;
+    const nodeCenterY = 33.0;
+    final topGap = (nodeCenterY - (dotSize / 2)).clamp(0.0, 50.0);
+
+    return IntrinsicHeight(
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          SizedBox(
+            width: railWidth,
+            child: Column(
+              children: [
+                SizedBox(
+                  height: topGap,
+                  child: isFirst
+                      ? const SizedBox()
+                      : Center(
+                          child: Container(
+                            width: 2.5,
+                            decoration: BoxDecoration(
+                              gradient: LinearGradient(
+                                begin: Alignment.topCenter,
+                                end: Alignment.bottomCenter,
+                                colors: [
+                                  color.withValues(alpha: 0.25),
+                                  color.withValues(alpha: 0.7),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ),
+                ),
+                _capsuleRailDot(dotSize, color, isDark),
+                Expanded(
+                  child: isLast
+                      ? const SizedBox()
+                      : Center(
+                          child: Container(
+                            width: 2.5,
+                            color: color.withValues(alpha: 0.25),
+                          ),
+                        ),
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(width: 8),
+          Expanded(
+            child: _CapsuleCard(
+              capsule: capsule,
+              phase: phase,
+              isDark: isDark,
+              isHorizontal: false,
+              onTap: onTap,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+Widget _capsuleRailDot(double size, Color color, bool isDark) {
+  return Container(
+    width: size,
+    height: size,
+    decoration: BoxDecoration(
+      shape: BoxShape.circle,
+      color: color.withValues(alpha: 0.15),
+      border: Border.all(color: color, width: 2),
+      boxShadow: [
+        BoxShadow(
+          color: color.withValues(alpha: 0.3),
+          blurRadius: 6,
+          spreadRadius: 1,
+        ),
+      ],
+    ),
+    child: Center(
+      child: Icon(
+        Icons.photo_library_rounded,
+        size: size * 0.52,
+        color: color,
+      ),
+    ),
+  );
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Shared capsule card content (used by horizontal and vertical nodes)
+// ─────────────────────────────────────────────────────────────────────────────
+class _CapsuleCard extends StatefulWidget {
+  const _CapsuleCard({
+    required this.capsule,
+    required this.phase,
+    required this.isDark,
+    required this.isHorizontal,
+    required this.onTap,
+    this.width,
+  });
+
+  final Capsule capsule;
+  final Phase phase;
+  final bool isDark;
+  final bool isHorizontal;
+  final VoidCallback onTap;
+  final double? width;
+
+  @override
+  State<_CapsuleCard> createState() => _CapsuleCardState();
+}
+
+class _CapsuleCardState extends State<_CapsuleCard> {
+  bool _isPressed = false;
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = context.l10n;
+    final lang = Localizations.localeOf(context).languageCode;
+    final capsule = widget.capsule;
+    final phase = widget.phase;
+    final isDark = widget.isDark;
+    final isHorizontal = widget.isHorizontal;
+    final width = widget.width;
+
+    final date = capsule.capturedAt ?? capsule.createdAt;
+    final formattedDate =
+        DateFormat('d MMMM yyyy', lang == 'ar' ? 'ar' : 'fr_FR').format(date);
+
+    final subtitleColor = isDark
+        ? AppColors.textSecondaryDark
+        : AppColors.textSecondaryLight;
+
+    final souvenirLabel = lang == 'ar'
+        ? 'ذكرى ملتقطة'
+        : (lang == 'en' ? 'Captured Memory' : 'Souvenir capturé');
+
+    return AnimatedScale(
+      scale: _isPressed ? 0.96 : 1.0,
+      duration: const Duration(milliseconds: 140),
+      curve: Curves.easeOutCubic,
+      child: GestureDetector(
+        onTapDown: (_) => setState(() => _isPressed = true),
+        onTapUp: (_) => setState(() => _isPressed = false),
+        onTapCancel: () => setState(() => _isPressed = false),
+        onTap: widget.onTap,
+        child: Container(
+          width: width,
+          margin: EdgeInsetsDirectional.only(
+            end: isHorizontal ? 12 : 0,
+            top: isHorizontal ? 0 : 5,
+            bottom: isHorizontal ? 0 : 11,
+          ),
+          clipBehavior: Clip.antiAlias,
+          padding: const EdgeInsets.all(13),
+          decoration: BoxDecoration(
+            color: isDark ? AppColors.surfaceDark : Colors.white,
+            borderRadius: BorderRadius.circular(20),
+            border: Border.all(
+              color: phase.color.withValues(alpha: 0.35),
+              width: 1.2,
+            ),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withValues(alpha: isDark ? 0.22 : 0.035),
+                blurRadius: 6,
+                offset: const Offset(0, 2),
+              ),
+            ],
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // Top row: Memory badge + Emotion badge
+              Row(
+                children: [
+                  Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 7,
+                      vertical: 3,
+                    ),
+                    decoration: BoxDecoration(
+                      color: phase.color.withValues(alpha: 0.12),
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Icon(
+                          Icons.camera_alt_rounded,
+                          size: 11,
+                          color: phase.color,
+                        ),
+                        const SizedBox(width: 4),
+                        Text(
+                          souvenirLabel,
+                          style: AppTypography.fromContext(
+                            context,
+                            fontSize: 10,
+                            fontWeight: FontWeight.w700,
+                            color: phase.color,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  const Spacer(),
+                  // Emotion badge (Primary + compact secondary indicator LM-CAP-003)
+                  Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 6.5,
+                          vertical: 2.5,
+                        ),
+                        decoration: BoxDecoration(
+                          color: capsule.emotion.lightColor,
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Text(
+                              capsule.emotion.emoji,
+                              style: const TextStyle(fontSize: 11),
+                            ),
+                            const SizedBox(width: 3.5),
+                            Text(
+                              capsule.emotion.getLabel(lang),
+                              style: AppTypography.fromContext(
+                                context,
+                                fontSize: 10,
+                                fontWeight: FontWeight.w700,
+                                color: capsule.emotion.color,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      if (capsule.secondaryEmotions.isNotEmpty) ...[
+                        const SizedBox(width: 4),
+                        Container(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 5,
+                            vertical: 2.5,
+                          ),
+                          decoration: BoxDecoration(
+                            color: isDark ? Colors.white10 : const Color(0xFFF1EEF5),
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              ...capsule.secondaryEmotions.take(2).map((sec) => Padding(
+                                    padding: const EdgeInsets.symmetric(horizontal: 1),
+                                    child: Text(
+                                      sec.emoji,
+                                      style: const TextStyle(fontSize: 10.5),
+                                    ),
+                                  )),
+                              if (capsule.secondaryEmotions.length > 2)
+                                Text(
+                                  '+${capsule.secondaryEmotions.length - 2}',
+                                  style: TextStyle(
+                                    fontSize: 8.5,
+                                    fontWeight: FontWeight.w700,
+                                    color: subtitleColor,
+                                  ),
+                                ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ],
+                  ),
+                ],
+              ),
+
+              const SizedBox(height: 8),
+
+              // Thumbnail photo or dynamic category placeholder (LM-CAP-002)
+              ClipRRect(
+                borderRadius: BorderRadius.circular(12),
+                child: Stack(
+                  children: [
+                    SizedBox(
+                      height: isHorizontal ? 100 : 130,
+                      width: double.infinity,
+                      child: capsule.photoUrl.isNotEmpty
+                          ? Image.network(
+                              capsule.photoUrl,
+                              fit: BoxFit.cover,
+                              cacheWidth: 400,
+                              cacheHeight: 400,
+                              errorBuilder: (_, _, _) => _buildGenericPlaceholder(
+                                isDark: isDark,
+                                isHorizontal: isHorizontal,
+                                phaseColor: phase.color,
+                                category: capsule.category,
+                                lang: lang,
+                                placeholderText: l10n.capsuleNoPhotoPlaceholder,
+                              ),
+                            )
+                          : _buildGenericPlaceholder(
+                              isDark: isDark,
+                              isHorizontal: isHorizontal,
+                              phaseColor: phase.color,
+                              category: capsule.category,
+                              lang: lang,
+                              placeholderText: l10n.capsuleNoPhotoPlaceholder,
+                            ),
+                    ),
+                    if (capsule.audioUrl != null &&
+                        capsule.audioUrl!.isNotEmpty)
+                      PositionedDirectional(
+                        bottom: 6,
+                        end: 6,
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 6,
+                            vertical: 3,
+                          ),
+                          decoration: BoxDecoration(
+                            color: Colors.black.withValues(alpha: 0.65),
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              const Icon(
+                                Icons.mic_rounded,
+                                size: 11,
+                                color: Colors.white,
+                              ),
+                              if (capsule.audioDuration != null &&
+                                  capsule.audioDuration! > 0) ...[
+                                const SizedBox(width: 3),
+                                Text(
+                                  '${capsule.audioDuration}s',
+                                  style: const TextStyle(
+                                    fontSize: 9.5,
+                                    fontWeight: FontWeight.w700,
+                                    color: Colors.white,
+                                  ),
+                                ),
+                              ],
+                            ],
+                          ),
+                        ),
+                      ),
+                  ],
+                ),
+              ),
+              const SizedBox(height: 7),
+
+              // Date info row
+              Row(
+                children: [
+                  Icon(
+                    Icons.event_available_rounded,
+                    size: 12,
+                    color: subtitleColor,
+                  ),
+                  const SizedBox(width: 4),
+                  Expanded(
+                    child: Text(
+                      formattedDate,
+                      style: AppTypography.fromContext(
+                        context,
+                        fontSize: 10,
+                        color: subtitleColor,
+                        fontWeight: FontWeight.w600,
+                      ),
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ),
+                ],
+              ),
+
+              // Tags if present
+              if (capsule.tags.isNotEmpty) ...[
+                const SizedBox(height: 5),
+                Wrap(
+                  spacing: 4,
+                  runSpacing: 2,
+                  children: capsule.tags.take(2).map((tag) {
+                    return Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 5.5,
+                        vertical: 1.5,
+                      ),
+                      decoration: BoxDecoration(
+                        color: isDark ? Colors.white10 : const Color(0xFFF2EFF6),
+                        borderRadius: BorderRadius.circular(6),
+                      ),
+                      child: Text(
+                        '#$tag',
+                        style: TextStyle(
+                          fontSize: 9.5,
+                          color: subtitleColor,
+                        ),
+                      ),
+                    );
+                  }).toList(),
+                ),
+              ],
+
+              const SizedBox(height: 8),
+
+              // "Voir le souvenir" CTA button
+              Container(
+                width: double.infinity,
+                padding: const EdgeInsets.symmetric(vertical: 7.5),
+                decoration: BoxDecoration(
+                  color: phase.color.withValues(alpha: 0.12),
+                  borderRadius: BorderRadius.circular(12),
+                  border: Border.all(
+                    color: phase.color.withValues(alpha: 0.35),
+                  ),
+                ),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(
+                      Icons.play_circle_outline_rounded,
+                      color: phase.color,
+                      size: 13,
+                    ),
+                    const SizedBox(width: 4.5),
+                    Text(
+                      lang == 'ar'
+                          ? 'عرض الذكرى'
+                          : (lang == 'en' ? 'View memory' : 'Voir le souvenir'),
+                      style: AppTypography.fromContext(
+                        context,
+                        fontSize: 11,
+                        fontWeight: FontWeight.w700,
+                        color: phase.color,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildGenericPlaceholder({
+    required bool isDark,
+    required bool isHorizontal,
+    required Color phaseColor,
+    required CapsuleCategory? category,
+    required String lang,
+    required String placeholderText,
+  }) {
+    final catIcon = category?.icon ?? Icons.auto_awesome_rounded;
+    final catLabel = category?.getLabel(lang) ?? placeholderText;
+
+    return Container(
+      decoration: BoxDecoration(
+        color: isDark ? const Color(0xFF26202B) : const Color(0xFFF7F5FA),
+        border: Border.all(
+          color: phaseColor.withValues(alpha: isDark ? 0.35 : 0.22),
+          width: 1,
+        ),
+      ),
+      child: Stack(
+        alignment: Alignment.center,
+        children: [
+          Positioned(
+            right: -10,
+            bottom: -10,
+            child: Icon(
+              catIcon,
+              size: 56,
+              color: phaseColor.withValues(alpha: isDark ? 0.08 : 0.06),
+            ),
+          ),
+          Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Container(
+                width: 36,
+                height: 36,
+                decoration: BoxDecoration(
+                  color: phaseColor.withValues(alpha: isDark ? 0.22 : 0.12),
+                  shape: BoxShape.circle,
+                ),
+                child: Icon(
+                  catIcon,
+                  size: 19,
+                  color: phaseColor,
+                ),
+              ),
+              const SizedBox(height: 5),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 8),
+                child: Text(
+                  catLabel,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: TextStyle(
+                    fontSize: 10.5,
+                    fontWeight: FontWeight.w600,
+                    color: isDark ? Colors.white70 : const Color(0xFF555060),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+}
+

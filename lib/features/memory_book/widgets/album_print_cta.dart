@@ -6,6 +6,7 @@ import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_spacing.dart';
 import '../../print_album/screens/album_print_preview_screen.dart';
 import '../../print_album/services/album_pdf_service.dart';
+import '../../print_album/services/album_pricing_service.dart';
 
 /// Shared "Commander l'impression" call-to-action used by both predefined
 /// and standard album detail screens. Disabled with a hint until at least
@@ -117,15 +118,37 @@ class AlbumPrintCta extends StatelessWidget {
             const Icon(
               Icons.local_print_shop_rounded,
               color: Colors.white,
-              size: 20,
+              size: 22,
             ),
             const SizedBox(width: AppSpacing.sm),
-            Text(
-              l10n.printOrderPrinting,
-              style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                fontWeight: FontWeight.bold,
-                color: Colors.white,
-              ),
+            Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  l10n.printOrderPrinting,
+                  style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                    fontWeight: FontWeight.bold,
+                    color: Colors.white,
+                  ),
+                ),
+                Builder(
+                  builder: (context) {
+                    final lang = Localizations.localeOf(context).languageCode;
+                    final isAr = lang == 'ar';
+                    final startingPrice =
+                        AlbumPricingService.getStartingPriceForPhotoCount(pages.length);
+                    return Text(
+                      '${isAr ? 'ابتداءً من' : 'À partir de'} ${AlbumPricingService.formatDinar(startingPrice, locale: lang)} (${isAr ? 'بدون توصيل' : 'hors livraison'})',
+                      style: const TextStyle(
+                        fontSize: 10.5,
+                        fontWeight: FontWeight.w600,
+                        color: Colors.white70,
+                      ),
+                    );
+                  },
+                ),
+              ],
             ),
           ],
         ),

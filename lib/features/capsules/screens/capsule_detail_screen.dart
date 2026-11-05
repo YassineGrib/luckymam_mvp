@@ -15,6 +15,7 @@ import '../../subscription/providers/subscription_providers.dart';
 import '../models/capsule.dart';
 import '../providers/capsule_providers.dart';
 import '../widgets/audio_player.dart';
+import 'create_capsule_screen.dart';
 
 /// Detail screen for viewing a single capsule.
 class CapsuleDetailScreen extends ConsumerStatefulWidget {
@@ -29,8 +30,15 @@ class CapsuleDetailScreen extends ConsumerStatefulWidget {
 
 class _CapsuleDetailScreenState extends ConsumerState<CapsuleDetailScreen> {
   bool _isAudioPlaying = false;
+  late Capsule _capsule;
 
-  Capsule get capsule => widget.capsule;
+  @override
+  void initState() {
+    super.initState();
+    _capsule = widget.capsule;
+  }
+
+  Capsule get capsule => _capsule;
 
   @override
   Widget build(BuildContext context) {
@@ -224,6 +232,26 @@ class _CapsuleDetailScreenState extends ConsumerState<CapsuleDetailScreen> {
                                   : AppColors.surfaceLight,
                               itemBuilder: (context) => [
                                 PopupMenuItem(
+                                  value: 'edit',
+                                  child: Row(
+                                    children: [
+                                      const Icon(
+                                        Icons.edit_outlined,
+                                        color: AppColors.primaryLight,
+                                      ),
+                                      const SizedBox(width: 8),
+                                      Text(
+                                        lang == 'ar'
+                                            ? 'تعديل'
+                                            : (lang == 'en' ? 'Edit' : 'Modifier'),
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .bodyMedium,
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                                PopupMenuItem(
                                   value: 'delete',
                                   child: Row(
                                     children: [
@@ -304,6 +332,49 @@ class _CapsuleDetailScreenState extends ConsumerState<CapsuleDetailScreen> {
                                 ),
                               ],
                             ),
+
+                            // Secondary emotions (LM-CAP-003)
+                            if (capsule.secondaryEmotions.isNotEmpty) ...[
+                              const SizedBox(height: AppSpacing.xs),
+                              Wrap(
+                                spacing: 6,
+                                runSpacing: 4,
+                                children: capsule.secondaryEmotions.map((secEmotion) {
+                                  return Container(
+                                    padding: const EdgeInsets.symmetric(
+                                      horizontal: 8,
+                                      vertical: 3.5,
+                                    ),
+                                    decoration: BoxDecoration(
+                                      color: Colors.white.withValues(alpha: 0.18),
+                                      borderRadius: BorderRadius.circular(10),
+                                      border: Border.all(
+                                        color: Colors.white.withValues(alpha: 0.35),
+                                        width: 0.8,
+                                      ),
+                                    ),
+                                    child: Row(
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: [
+                                        Text(
+                                          secEmotion.emoji,
+                                          style: const TextStyle(fontSize: 12),
+                                        ),
+                                        const SizedBox(width: 4),
+                                        Text(
+                                          secEmotion.getLabel(lang),
+                                          style: const TextStyle(
+                                            fontSize: 11,
+                                            fontWeight: FontWeight.w600,
+                                            color: Colors.white,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  );
+                                }).toList(),
+                              ),
+                            ],
 
                             // Category & date badges
                             if (capsule.category != null ||
@@ -405,8 +476,26 @@ class _CapsuleDetailScreenState extends ConsumerState<CapsuleDetailScreen> {
     ref.read(capsuleActionsProvider.notifier).toggleFavorite(capsule.id);
   }
 
-  void _handleMenuAction(BuildContext context, WidgetRef ref, String action) {
-    if (action == 'delete') {
+  Future<void> _handleMenuAction(
+    BuildContext context,
+    WidgetRef ref,
+    String action,
+  ) async {
+    if (action == 'edit') {
+      final updated = await Navigator.push<Capsule?>(
+        context,
+        MaterialPageRoute(
+          builder: (context) => CreateCapsuleScreen(
+            existingCapsule: _capsule,
+          ),
+        ),
+      );
+      if (updated != null && mounted) {
+        setState(() {
+          _capsule = updated;
+        });
+      }
+    } else if (action == 'delete') {
       _showDeleteConfirmation(context, ref);
     }
   }

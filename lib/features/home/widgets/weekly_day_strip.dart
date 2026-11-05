@@ -696,9 +696,9 @@ class _WeeklyDayStripState extends ConsumerState<WeeklyDayStrip> {
   }
 
   String _viewCalendarText(String locale) {
-    if (locale.startsWith('ar')) return 'عرض التقويم ›';
-    if (locale.startsWith('en')) return 'Full calendar ›';
-    return 'Calendrier complet ›';
+    if (locale.startsWith('ar')) return 'جدول التطعيمات الكامل ›';
+    if (locale.startsWith('en')) return 'Full vaccine calendar ›';
+    return 'Calendrier vaccinal complet ›';
   }
 
   String _eventsLabel(int count, String locale) {
@@ -720,9 +720,9 @@ class _WeeklyDayStripState extends ConsumerState<WeeklyDayStrip> {
       return 'لا توجد مواعيد أو تلقيحات مقررة لهذا اليوم. يمكنك مراجعة جدول التلقيحات والمواعيد الطبية الكاملة.';
     }
     if (locale.startsWith('en')) {
-      return 'No appointments or vaccinations scheduled for today. You can check the full health & vaccine calendar.';
+      return 'No appointments or vaccinations scheduled for today. You can check the full vaccination calendar.';
     }
-    return 'Aucun rendez-vous ou vaccin prévu pour cette journée. Vous pouvez consulter le calendrier complet.';
+    return 'Aucun rendez-vous ou vaccin prévu pour cette journée. Vous pouvez consulter le calendrier vaccinal complet.';
   }
 
   String _statusLabel(UserStatus status, String locale) {

@@ -9,6 +9,7 @@ import 'package:uuid/uuid.dart';
 import '../../../core/services/analytics_service.dart';
 import '../models/capsule.dart';
 import '../models/emotion.dart';
+import '../../timeline/services/timeline_service.dart';
 
 /// Default schema version for capsule documents.
 const int kCurrentCapsuleSchemaVersion = 2;
@@ -65,11 +66,24 @@ Map<String, dynamic>? computeCapsuleSubjectMigration(
 
 /// Service for capsule CRUD operations and media upload.
 class CapsuleService {
-  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
-  final FirebaseStorage _storage = FirebaseStorage.instance;
-  final FirebaseAuth _auth = FirebaseAuth.instance;
+  final FirebaseFirestore? _customFirestore;
+  final FirebaseStorage? _customStorage;
+  final FirebaseAuth? _customAuth;
   final Uuid _uuid = const Uuid();
   final AnalyticsService _analytics = AnalyticsService();
+
+  CapsuleService({
+    FirebaseFirestore? firestore,
+    FirebaseStorage? storage,
+    FirebaseAuth? auth,
+  })  : _customFirestore = firestore,
+        _customStorage = storage,
+        _customAuth = auth;
+
+  FirebaseFirestore get _firestore =>
+      _customFirestore ?? FirebaseFirestore.instance;
+  FirebaseStorage get _storage => _customStorage ?? FirebaseStorage.instance;
+  FirebaseAuth get _auth => _customAuth ?? FirebaseAuth.instance;
 
   /// Get current user ID.
   String? get _userId => _auth.currentUser?.uid;
@@ -143,6 +157,7 @@ class CapsuleService {
     File? audioFile,
     int? audioDuration,
     required Emotion emotion,
+    List<Emotion>? secondaryEmotions,
     String? milestoneId,
     String? vaccineGroupId,
     String? albumId,
@@ -183,6 +198,12 @@ class CapsuleService {
       );
     }
 
+    final cleanSecondaryEmotions = (secondaryEmotions ?? const <Emotion>[])
+        .where((e) => e != emotion)
+        .toSet()
+        .take(3)
+        .toList();
+
     // Create capsule document
     final capsule = Capsule(
       id: capsuleId,
@@ -201,6 +222,7 @@ class CapsuleService {
       audioUrl: audioUrl,
       audioDuration: audioDuration,
       emotion: emotion,
+      secondaryEmotions: cleanSecondaryEmotions,
       tags: tags,
       isFavorite: false,
       createdAt: now,
@@ -308,6 +330,174 @@ class CapsuleService {
     }
 
     return capsule;
+  }
+
+  /// Update an existing capsule and handle media replacement, milestone re-linking, and storage cleanup.
+  Future<Capsule> updateCapsule({
+    required String capsuleId,
+    String? childId,
+    List<String>? childIds,
+    bool withMother = false,
+    File? newPhotoFile,
+    File? newAudioFile,
+    bool removeAudio = false,
+    int? audioDuration,
+    required Emotion emotion,
+    List<Emotion>? secondaryEmotions,
+    String? milestoneId,
+    String? oldMilestoneId,
+    List<String> tags = const [],
+    DateTime? capturedAt,
+    CapsuleCategory? category,
+  }) async {
+    final effectiveChildIds = resolveEffectiveCapsuleChildIds(
+      childId: childId,
+      childIds: childIds,
+    );
+    validateCapsuleSubjects(
+      childIds: effectiveChildIds,
+      withMother: withMother,
+    );
+
+    if (_userId == null) throw Exception('User not authenticated');
+
+    final docRef = _capsulesRef.doc(capsuleId);
+    final docSnapshot = await docRef.get();
+    if (!docSnapshot.exists) {
+      throw Exception('Capsule not found with ID: $capsuleId');
+    }
+
+    final existing = Capsule.fromFirestore(docSnapshot);
+    final now = DateTime.now();
+
+    // 1. Photo replacement or preservation
+    String photoUrl = existing.photoUrl;
+    if (newPhotoFile != null) {
+      final uploadedUrl = await _uploadMedia(
+        file: newPhotoFile,
+        capsuleId: capsuleId,
+        type: 'photo',
+      );
+      if (existing.photoUrl.isNotEmpty && existing.photoUrl != uploadedUrl) {
+        await _deleteMedia(existing.photoUrl);
+      }
+      photoUrl = uploadedUrl;
+    }
+
+    // 2. Audio replacement, removal, or preservation
+    String? audioUrl = existing.audioUrl;
+    int? effectiveDuration = audioDuration ?? existing.audioDuration;
+
+    if (removeAudio) {
+      if (existing.audioUrl != null && existing.audioUrl!.isNotEmpty) {
+        await _deleteMedia(existing.audioUrl!);
+      }
+      audioUrl = null;
+      effectiveDuration = null;
+    } else if (newAudioFile != null) {
+      final uploadedAudioUrl = await _uploadMedia(
+        file: newAudioFile,
+        capsuleId: capsuleId,
+        type: 'audio',
+      );
+      if (existing.audioUrl != null &&
+          existing.audioUrl!.isNotEmpty &&
+          existing.audioUrl != uploadedAudioUrl) {
+        await _deleteMedia(existing.audioUrl!);
+      }
+      audioUrl = uploadedAudioUrl;
+      effectiveDuration = audioDuration;
+    }
+
+    // 3. Milestone linking & unlinking
+    final targetChildId = effectiveChildIds.isNotEmpty
+        ? effectiveChildIds.first
+        : existing.childId;
+    final prevMilestoneId = oldMilestoneId ?? existing.milestoneId;
+
+    if (prevMilestoneId != null &&
+        prevMilestoneId != milestoneId &&
+        targetChildId.isNotEmpty) {
+      try {
+        final timelineService = TimelineService(_firestore);
+        await timelineService.uncompleteMilestone(
+          userId: _userId!,
+          childId: targetChildId,
+          milestoneId: prevMilestoneId,
+        );
+      } catch (e) {
+        debugPrint('[CapsuleService] Error uncompleting milestone $prevMilestoneId: $e');
+      }
+    }
+
+    if (milestoneId != null && targetChildId.isNotEmpty) {
+      try {
+        final timelineService = TimelineService(_firestore);
+        await timelineService.completeMilestone(
+          userId: _userId!,
+          childId: targetChildId,
+          milestoneId: milestoneId,
+          capsuleId: capsuleId,
+          completedAt: capturedAt ?? existing.capturedAt ?? now,
+        );
+      } catch (e) {
+        debugPrint('[CapsuleService] Error linking milestone $milestoneId: $e');
+      }
+    }
+
+    final cleanSecondaryEmotions = secondaryEmotions != null
+        ? secondaryEmotions.where((e) => e != emotion).toSet().take(3).toList()
+        : existing.secondaryEmotions.where((e) => e != emotion).toList();
+
+    // 4. Update document in Firestore
+    final updatedCapsule = existing.copyWith(
+      childId: targetChildId,
+      childIds: effectiveChildIds,
+      withMother: withMother,
+      photoUrl: photoUrl,
+      audioUrl: audioUrl,
+      audioDuration: effectiveDuration,
+      emotion: emotion,
+      secondaryEmotions: cleanSecondaryEmotions,
+      milestoneId: milestoneId,
+      tags: tags,
+      capturedAt: capturedAt ?? existing.capturedAt,
+      category: category ?? existing.category,
+      updatedAt: now,
+    );
+
+    await docRef.update({
+      'childId': targetChildId,
+      'childIds': effectiveChildIds,
+      'withMother': withMother,
+      'space': updatedCapsule.space.name,
+      'photoUrl': photoUrl,
+      'audioUrl': audioUrl,
+      'audioDuration': effectiveDuration,
+      'emotion': emotion.name,
+      'secondaryEmotions': cleanSecondaryEmotions.map((e) => e.name).toList(),
+      'milestoneId': milestoneId,
+      'tags': tags,
+      'capturedAt': updatedCapsule.capturedAt != null
+          ? Timestamp.fromDate(updatedCapsule.capturedAt!)
+          : null,
+      'category': updatedCapsule.category?.name,
+      'updatedAt': Timestamp.fromDate(now),
+    });
+
+    await _analytics.logEvent(
+      'capsule_updated',
+      parameters: {
+        'capsuleId': capsuleId,
+        'childId': targetChildId,
+        'milestoneId': milestoneId ?? '',
+        'hasNewPhoto': (newPhotoFile != null).toString(),
+        'hasNewAudio': (newAudioFile != null).toString(),
+        'audioRemoved': removeAudio.toString(),
+      },
+    );
+
+    return updatedCapsule;
   }
 
   /// Toggle favorite status.
@@ -466,8 +656,17 @@ class CapsuleService {
 
       // Apply filters
       if (childId != null) {
-        capsules =
-            capsules.where((c) => c.childIds.contains(childId)).toList();
+        if (childId == 'mam') {
+          capsules = capsules
+              .where((c) =>
+                  c.withMother ||
+                  c.space == CapsuleSpace.mother ||
+                  c.childIds.contains('mam'))
+              .toList();
+        } else {
+          capsules =
+              capsules.where((c) => c.childIds.contains(childId)).toList();
+        }
       }
 
       if (emotion != null) {

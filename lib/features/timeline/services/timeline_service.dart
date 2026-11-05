@@ -6,6 +6,7 @@ import '../../profile/providers/profile_providers.dart';
 import '../data/milestones_data.dart';
 import '../models/milestone.dart';
 import '../models/phase.dart';
+import '../../capsules/models/capsule.dart';
 import 'milestone_notification_service.dart';
 
 /// Provider for TimelineService
@@ -59,9 +60,8 @@ final childMilestonesProvider =
       if (child.isExpected) return const [];
 
       final service = ref.watch(timelineServiceProvider);
-      final progressList = await ref.watch(
-        milestoneProgressStreamProvider(childId).future,
-      );
+      final progressAsync = ref.watch(milestoneProgressStreamProvider(childId));
+      final progressList = progressAsync.value ?? const <MilestoneProgress>[];
 
       final milestones = service.getMilestonesForChild(child);
 
@@ -299,6 +299,44 @@ class TimelineService {
     }
   }
 
+  /// Determine the life phase for a capsule based on its category, pregnancy data,
+  /// or capture date relative to the child's birth date.
+  static Phase determineCapsulePhase(Capsule capsule, Child child) {
+    if (capsule.category != null) {
+      switch (capsule.category!) {
+        case CapsuleCategory.preGestation:
+          return Phase.preGestation;
+        case CapsuleCategory.gestation:
+          return Phase.gestation;
+        case CapsuleCategory.postPartum:
+          return Phase.postPartum;
+        case CapsuleCategory.enfance:
+          return Phase.enfance;
+        case CapsuleCategory.adulte:
+          return Phase.adulte;
+      }
+    }
+
+    if (capsule.pregnancyId != null ||
+        (capsule.pregnancyWeek != null && capsule.pregnancyWeek! > 0)) {
+      return Phase.gestation;
+    }
+
+    final date = capsule.capturedAt ?? capsule.createdAt;
+    final birth = child.birthDate;
+    final ageInDays = date.difference(birth).inDays;
+
+    if (ageInDays < 0) {
+      return Phase.gestation;
+    } else if (ageInDays <= 365) {
+      return Phase.postPartum;
+    } else if (ageInDays <= 6570) {
+      return Phase.enfance;
+    } else {
+      return Phase.adulte;
+    }
+  }
+
   /// Save milestone progress to Firestore
   Future<void> saveMilestoneProgress(MilestoneProgress progress) async {
     await _firestore
@@ -340,6 +378,7 @@ class TimelineService {
     required String milestoneId,
     String? capsuleId,
     String? notes,
+    DateTime? completedAt,
   }) async {
     final docId = '${childId}_$milestoneId';
     final docRef = _firestore
@@ -354,7 +393,7 @@ class TimelineService {
       userId: userId,
       childId: childId,
       status: MilestoneStatus.completed,
-      completedAt: DateTime.now(),
+      completedAt: completedAt ?? DateTime.now(),
       capsuleId: capsuleId,
       notes: notes,
     );

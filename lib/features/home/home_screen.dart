@@ -2,7 +2,6 @@ import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../../core/extensions/l10n_extension.dart';
 import '../../l10n/app_localizations.dart';
 import '../capsules/providers/capsule_providers.dart';
 import '../profile/providers/profile_providers.dart';
@@ -24,8 +23,6 @@ class HomeScreen extends ConsumerStatefulWidget {
 }
 
 class _HomeScreenState extends ConsumerState<HomeScreen> {
-  int _currentIndex = 0;
-
   @override
   void initState() {
     super.initState();
@@ -36,6 +33,9 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
       try {
         final profileService = ref.read(profileServiceProvider);
         final capsuleService = ref.read(capsuleServiceProvider);
+        await profileService.ensureMamProfileCreated(
+          defaultName: l10n.defaultMotherName,
+        );
         await profileService.runProfileMigrationIfNeeded(
           placeholderName: l10n.childExpectedDefaultName,
         );
@@ -66,49 +66,20 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     ProfileTab(),
   ];
 
-  List<NavItem> _navItems(BuildContext context) {
-    final l10n = context.l10n;
-    return [
-      NavItem(
-        icon: Icons.home_outlined,
-        activeIcon: Icons.home_rounded,
-        label: l10n.navHome,
-      ),
-      NavItem(
-        icon: Icons.timeline_outlined,
-        activeIcon: Icons.timeline_rounded,
-        label: l10n.navTimeline,
-      ),
-      NavItem(
-        icon: Icons.camera_alt_outlined,
-        activeIcon: Icons.camera_alt_rounded,
-        label: l10n.navCapsules,
-      ),
-      NavItem(
-        icon: Icons.vaccines_outlined,
-        activeIcon: Icons.vaccines_rounded,
-        label: l10n.navHealth,
-      ),
-      NavItem(
-        icon: Icons.person_outline_rounded,
-        activeIcon: Icons.person_rounded,
-        label: l10n.navProfile,
-      ),
-    ];
-  }
-
   @override
   Widget build(BuildContext context) {
+    final currentIndex = ref.watch(homeNavigationIndexProvider);
+
     return Scaffold(
-      body: IndexedStack(index: _currentIndex, children: _tabs),
+      body: IndexedStack(index: currentIndex, children: _tabs),
       extendBody: true,
       bottomNavigationBar: AppBottomNav(
-        currentIndex: _currentIndex,
+        currentIndex: currentIndex,
         onTap: (index) {
-          if (index != _currentIndex) _maybeShowInterstitial();
-          setState(() => _currentIndex = index);
+          if (index != currentIndex) _maybeShowInterstitial();
+          ref.read(homeNavigationIndexProvider.notifier).state = index;
         },
-        items: _navItems(context),
+        items: getAppNavItems(context),
       ),
     );
   }

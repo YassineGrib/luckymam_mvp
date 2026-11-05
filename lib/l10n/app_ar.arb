@@ -64,7 +64,8 @@
   "appVersion": "الإصدار 1.0.0",
   "law1807Title": "القانون 18-07 لحماية المعطيات الشخصية",
   "law1807Text": "وفقاً لأحكام القانون رقم 18-07 المؤرخ في 10 يونيو 2018 المتعلق بحماية الأشخاص الطبيعيين في مجال معالجة المعطيات ذات الطابع الشخصي، فإنك توافق على جمع بياناتك الشخصية ومعالجتها وتخزينها بأمان في تطبيق Luckymam لاستخدامها حصرياً في تقديم خدمات التطبيق وتخصيص تجربتك. يمكنك ممارسة حقوقك في الوصول والتصحيح والحذف في أي وقت.",
-  "law1807Checkbox": "أوافق على أحكام القانون 18-07",
+  "law1807Checkbox": "أوافق على شروط وأحكام القانون رقم 18-07.",
+  "law1807ReadFullTerms": "قراءة النص الكامل وسياسة الخصوصية",
   "law1807Error": "يجب الموافقة على أحكام القانون 18-07 للمتابعة.",
   "capsule": "كبسولة",
   "navHome": "الرئيسية",
@@ -125,10 +126,10 @@
   "statusMom": "أم",
   "dailyTipSectionTitle": "نصيحة اليوم",
   "dailyTipFooter": "— فريق Luckymam 💕",
-  "upgradePremiumTitle": "الترقية إلى بريميوم و VIP",
-  "upgradePremiumSubtitle": "ذكريات غير محدودة • بدون إعلانات • ألبوم مطبوع",
+  "upgradePremiumTitle": "الترقية إلى بريميوم",
+  "upgradePremiumSubtitle": "كبسولات غير محدودة • حتى طفلين • مشاركة مشمولة",
   "upgradePromptBadge": "عضوية لاكي مام المميزة",
-  "upgradePromptCta": "اكتشاف الباقات",
+  "upgradePromptCta": "الترقية إلى بريميوم",
   "marketplaceTitle": "المتجر",
   "marketplaceSubtitle": "منتجات شركائنا الموثوقين",
   "marketplaceMyOrders": "طلباتي",
@@ -177,8 +178,12 @@
   "printAlbumSummary": "{pageCount} صفحات · {childName}",
   "@printAlbumSummary": {
     "placeholders": {
-      "pageCount": {"type": "int"},
-      "childName": {"type": "String"}
+      "pageCount": {
+        "type": "int"
+      },
+      "childName": {
+        "type": "String"
+      }
     }
   },
   "printVipFreeNote": "مجانًا مع اشتراك VIP الخاص بك 🎁",
@@ -187,7 +192,9 @@
   "printOrderSentMessage": "سيتم طباعة ألبوم « {albumTitle} » وشحنه إلى العنوان المحدد. سنتصل بك هاتفياً للتأكيد.",
   "@printOrderSentMessage": {
     "placeholders": {
-      "albumTitle": {"type": "String"}
+      "albumTitle": {
+        "type": "String"
+      }
     }
   },
   "printEstimatedDelay": "الوقت المتوقع: 7-14 يوم",
@@ -219,7 +226,9 @@
   "milestone_reminder_on": "تذكير في {date}",
   "@milestone_reminder_on": {
     "placeholders": {
-      "date": {"type": "String"}
+      "date": {
+        "type": "String"
+      }
     }
   },
   "milestone_schedule_reminder": "برمجة تذكير",
@@ -227,7 +236,9 @@
   "milestone_error": "خطأ: {error}",
   "@milestone_error": {
     "placeholders": {
-      "error": {"type": "String"}
+      "error": {
+        "type": "String"
+      }
     }
   },
   "milestone_tips": "نصائح",
@@ -248,7 +259,9 @@
   "milestone_reminder_scheduled": "تمت برمجة التذكير في {date} ✓",
   "@milestone_reminder_scheduled": {
     "placeholders": {
-      "date": {"type": "String"}
+      "date": {
+        "type": "String"
+      }
     }
   },
   "milestone_reminder_cancelled": "تم إلغاء التذكير",
@@ -263,7 +276,9 @@
   "albumDefaultTitleForChild": "ألبوم لـ {childName}",
   "@albumDefaultTitleForChild": {
     "placeholders": {
-      "childName": {"type": "String"}
+      "childName": {
+        "type": "String"
+      }
     }
   },
   "albumNewFreeTitle": "ألبوم حر جديد",
@@ -278,32 +293,44 @@
   "albumChooseTemplateFor": "اختر نموذجاً لـ {childName}",
   "@albumChooseTemplateFor": {
     "placeholders": {
-      "childName": {"type": "String"}
+      "childName": {
+        "type": "String"
+      }
     }
   },
   "albumCreateTemplateConfirm": "إنشاء « {templateTitle} » ؟",
   "@albumCreateTemplateConfirm": {
     "placeholders": {
-      "templateTitle": {"type": "String"}
+      "templateTitle": {
+        "type": "String"
+      }
     }
   },
   "albumCreateTemplateDesc": "سيتم إنشاء هذا الألبوم لـ {childName} مع {slotCount} مناسبة لملئها.",
   "@albumCreateTemplateDesc": {
     "placeholders": {
-      "childName": {"type": "String"},
-      "slotCount": {"type": "int"}
+      "childName": {
+        "type": "String"
+      },
+      "slotCount": {
+        "type": "int"
+      }
     }
   },
   "albumTemplateEventCount": "{count} مناسبات",
   "@albumTemplateEventCount": {
     "placeholders": {
-      "count": {"type": "int"}
+      "count": {
+        "type": "int"
+      }
     }
   },
   "albumErrorWithMessage": "خطأ: {error}",
   "@albumErrorWithMessage": {
     "placeholders": {
-      "error": {"type": "String"}
+      "error": {
+        "type": "String"
+      }
     }
   },
   "albumNotFound": "الألبوم غير موجود",
@@ -311,8 +338,12 @@
   "albumEventsFilledProgress": "تم ملء {filled}/{total} مناسبة",
   "@albumEventsFilledProgress": {
     "placeholders": {
-      "filled": {"type": "int"},
-      "total": {"type": "int"}
+      "filled": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
     }
   },
   "albumMemoryAttached": "ذكرى مرفقة",
@@ -321,14 +352,20 @@
   "albumPageCaption": "الصفحة {number}",
   "@albumPageCaption": {
     "placeholders": {
-      "number": {"type": "int"}
+      "number": {
+        "type": "int"
+      }
     }
   },
   "albumPagesFilledDraft": "تم ملء {filled}/{total} صفحة · مسودة",
   "@albumPagesFilledDraft": {
     "placeholders": {
-      "filled": {"type": "int"},
-      "total": {"type": "int"}
+      "filled": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
     }
   },
   "albumRenameTitle": "إعادة تسمية الألبوم",
@@ -376,32 +413,41 @@
   "capsulesRemaining": "{count} متبقية",
   "@capsulesRemaining": {
     "placeholders": {
-      "count": {"type": "int"}
+      "count": {
+        "type": "int"
+      }
     }
   },
   "capsulesQuotaLimitTitle": "تم الوصول إلى الحد",
   "capsulesQuotaLimitMessage": "لقد وصلت إلى حد {limit} كبسولة في الخطة المجانية. انتقلي إلى Premium للتخزين غير المحدود!",
   "@capsulesQuotaLimitMessage": {
     "placeholders": {
-      "limit": {"type": "int"}
+      "limit": {
+        "type": "int"
+      }
     }
   },
   "capsulesUnderstood": "فهمت",
   "capsulesViewPremium": "عرض Premium",
   "capsulesEmptyTitle": "لا توجد كبسولات",
   "capsulesEmptySubtitle": "سجّلي ذكرياتك الأولى\nبالضغط على الزر أدناه",
+  "capsulesCreateFirst": "إنشاء أول ذكرى لي",
   "capsulesLoadErrorSubtitle": "تعذّر تحميل الكبسولات",
   "capsuleSharePreparing": "جاري التحضير للمشاركة…",
   "capsuleShareText": "✨ ذكرى ثمينة عبر Luckymam\n{emotion}",
   "@capsuleShareText": {
     "placeholders": {
-      "emotion": {"type": "String"}
+      "emotion": {
+        "type": "String"
+      }
     }
   },
   "capsuleShareError": "خطأ في المشاركة: {error}",
   "@capsuleShareError": {
     "placeholders": {
-      "error": {"type": "String"}
+      "error": {
+        "type": "String"
+      }
     }
   },
   "capsuleGalleryPermissionDenied": "تم رفض إذن المعرض",
@@ -409,7 +455,9 @@
   "capsuleSaveError": "خطأ في الحفظ: {error}",
   "@capsuleSaveError": {
     "placeholders": {
-      "error": {"type": "String"}
+      "error": {
+        "type": "String"
+      }
     }
   },
   "capsulePremiumFeatureTitle": "ميزة Premium",
@@ -440,12 +488,18 @@
   "capsuleGallery": "المعرض",
   "capsuleCreatedSuccess": "تم إنشاء الكبسولة بنجاح! ✨",
   "capsuleEmotion": "المشاعر",
+  "capsulePrimaryEmotion": "الشعور الرئيسي",
+  "capsuleSecondaryEmotions": "مشاعر إضافية",
+  "capsuleSecondaryEmotionsHint": "اختياري • 3 كحد أقصى",
+  "capsuleNoPhotoPlaceholder": "ذكرى محفوظة",
   "capsuleVoiceMessageOptional": "🎤 رسالة صوتية (اختياري)",
   "capsuleHoldToRecord": "اضغطي مطولاً للتسجيل",
   "capsuleMaxDuration": "الحد الأقصى {seconds} ث",
   "@capsuleMaxDuration": {
     "placeholders": {
-      "seconds": {"type": "int"}
+      "seconds": {
+        "type": "int"
+      }
     }
   },
   "capsuleReleaseToStop": "أفلتي لإيقاف التسجيل",
@@ -453,7 +507,9 @@
   "capsuleDuration": "المدة: {duration}",
   "@capsuleDuration": {
     "placeholders": {
-      "duration": {"type": "String"}
+      "duration": {
+        "type": "String"
+      }
     }
   },
   "healthLoadingError": "خطأ في التحميل",
@@ -468,7 +524,9 @@
   "healthErrorWithDetail": "خطأ: {error}",
   "@healthErrorWithDetail": {
     "placeholders": {
-      "error": {"type": "String"}
+      "error": {
+        "type": "String"
+      }
     }
   },
   "healthWeightChartTitle": "منحنى الوزن",
@@ -503,32 +561,44 @@
   "healthWeightValue": "{value} كغ",
   "@healthWeightValue": {
     "placeholders": {
-      "value": {"type": "String"}
+      "value": {
+        "type": "String"
+      }
     }
   },
   "healthHeightValue": "{value} سم",
   "@healthHeightValue": {
     "placeholders": {
-      "value": {"type": "String"}
+      "value": {
+        "type": "String"
+      }
     }
   },
   "healthChartAxisKg": "{value} كغ",
   "@healthChartAxisKg": {
     "placeholders": {
-      "value": {"type": "String"}
+      "value": {
+        "type": "String"
+      }
     }
   },
   "healthChartAxisMonths": "{value}ش",
   "@healthChartAxisMonths": {
     "placeholders": {
-      "value": {"type": "String"}
+      "value": {
+        "type": "String"
+      }
     }
   },
   "healthChartTooltip": "{weight} كغ\n{months}ش",
   "@healthChartTooltip": {
     "placeholders": {
-      "weight": {"type": "String"},
-      "months": {"type": "String"}
+      "weight": {
+        "type": "String"
+      },
+      "months": {
+        "type": "String"
+      }
     }
   },
   "healthChartEmptyHint": "أضيفي قياساً\nلعرض المنحنى",
@@ -567,20 +637,26 @@
   "paymentConfirmButton": "تأكيد الدفع • {price} د.ج",
   "@paymentConfirmButton": {
     "placeholders": {
-      "price": {"type": "int"}
+      "price": {
+        "type": "int"
+      }
     }
   },
   "paymentPriceDzd": "{price} د.ج",
   "@paymentPriceDzd": {
     "placeholders": {
-      "price": {"type": "int"}
+      "price": {
+        "type": "int"
+      }
     }
   },
   "paymentSuccessTitle": "تم الدفع بنجاح!",
   "paymentSuccessActivePlan": "اشتراك {planTitle} نشط الآن.",
   "@paymentSuccessActivePlan": {
     "placeholders": {
-      "planTitle": {"type": "String"}
+      "planTitle": {
+        "type": "String"
+      }
     }
   },
   "paymentSuccessAlbumPerk": "ألبومك المطبوع المجاني في انتظارك! توجه إلى ملفك الشخصي.",
@@ -636,7 +712,9 @@
   "homeMemoryBookAlbumsCount": "{count, plural, =1{ألبوم واحد مُولَّد تلقائياً} other{{count} ألبومات مُولَّدة تلقائياً}}",
   "@homeMemoryBookAlbumsCount": {
     "placeholders": {
-      "count": {"type": "int"}
+      "count": {
+        "type": "int"
+      }
     }
   },
   "homeMemoryBookEmptySubtitle": "ذكرياتك في ألبومات",
@@ -644,7 +722,9 @@
   "homeChildVaccineLabel": "لقاح: {codes}",
   "@homeChildVaccineLabel": {
     "placeholders": {
-      "codes": {"type": "String"}
+      "codes": {
+        "type": "String"
+      }
     }
   },
   "homeYourChildren": "أطفالك",
@@ -659,7 +739,9 @@
   "homeVaccineCancelMessage": "هل تريدين تحديد \"{ageLabel}\" كغير مُنجَز؟",
   "@homeVaccineCancelMessage": {
     "placeholders": {
-      "ageLabel": {"type": "String"}
+      "ageLabel": {
+        "type": "String"
+      }
     }
   },
   "homeVaccineNo": "لا",
@@ -697,7 +779,9 @@
   "profileCycleDays": "دورة {days} يوم",
   "@profileCycleDays": {
     "placeholders": {
-      "days": {"type": "int"}
+      "days": {
+        "type": "int"
+      }
     }
   },
   "profileFreePlan": "الخطة المجانية",
@@ -736,7 +820,9 @@
   "profileDaysCount": "{count} أيام",
   "@profileDaysCount": {
     "placeholders": {
-      "count": {"type": "int"}
+      "count": {
+        "type": "int"
+      }
     }
   },
   "profileNewCapsule": "كبسولة جديدة",
@@ -746,21 +832,29 @@
   "profileNoCapsulesForChild": "لا توجد كبسولات لـ {name}",
   "@profileNoCapsulesForChild": {
     "placeholders": {
-      "name": {"type": "String"}
+      "name": {
+        "type": "String"
+      }
     }
   },
   "profileCaptureFirstMemory": "وثّقي أول ذكرى!",
   "profileMvpFooter": "MVP - {appName} {year}",
   "@profileMvpFooter": {
     "placeholders": {
-      "appName": {"type": "String"},
-      "year": {"type": "int"}
+      "appName": {
+        "type": "String"
+      },
+      "year": {
+        "type": "int"
+      }
     }
   },
   "profileGestationalWeekValue": "أسبوع {week} / 40",
   "@profileGestationalWeekValue": {
     "placeholders": {
-      "week": {"type": "int"}
+      "week": {
+        "type": "int"
+      }
     }
   },
   "profilePhasePeriod": "الحيض",
@@ -772,14 +866,18 @@
   "errorWithMessage": "خطأ: {error}",
   "@errorWithMessage": {
     "placeholders": {
-      "error": {"type": "String"}
+      "error": {
+        "type": "String"
+      }
     }
   },
   "reelsTitle": "مقاطع توعوية",
   "reelsFiltered": "تصفية: {label}",
   "@reelsFiltered": {
     "placeholders": {
-      "label": {"type": "String"}
+      "label": {
+        "type": "String"
+      }
     }
   },
   "reelsEmptyCategory": "لا توجد مقاطع في هذه الفئة",
@@ -794,7 +892,9 @@
   "adsSponsored": "برعاية · {sponsor}",
   "@adsSponsored": {
     "placeholders": {
-      "sponsor": {"type": "String"}
+      "sponsor": {
+        "type": "String"
+      }
     }
   },
   "authLaw1807LegalRef": "مرجع الامتثال القانوني: القانون الجزائري رقم 18-07 المتعلق بحماية الأشخاص الطبيعيين في مجال معالجة المعطيات ذات الطابع الشخصي.",
@@ -805,7 +905,9 @@
   "timelineLifeBookOf": "لـ {name}",
   "@timelineLifeBookOf": {
     "placeholders": {
-      "name": {"type": "String"}
+      "name": {
+        "type": "String"
+      }
     }
   },
   "timelineNoMilestonesPhase": "لا توجد جالونات لهذه المرحلة",
@@ -819,31 +921,41 @@
   "timelineDueDaysAgo": "منذ {days} ي",
   "@timelineDueDaysAgo": {
     "placeholders": {
-      "days": {"type": "int"}
+      "days": {
+        "type": "int"
+      }
     }
   },
   "timelineDueInDays": "خلال {days} ي",
   "@timelineDueInDays": {
     "placeholders": {
-      "days": {"type": "int"}
+      "days": {
+        "type": "int"
+      }
     }
   },
   "timelineDueInMonths": "خلال {months} أشهر",
   "@timelineDueInMonths": {
     "placeholders": {
-      "months": {"type": "int"}
+      "months": {
+        "type": "int"
+      }
     }
   },
   "timelineDueInYears": "خلال {years} سنوات",
   "@timelineDueInYears": {
     "placeholders": {
-      "years": {"type": "int"}
+      "years": {
+        "type": "int"
+      }
     }
   },
   "timelineDueInYearsSingular": "خلال {years} سنة",
   "@timelineDueInYearsSingular": {
     "placeholders": {
-      "years": {"type": "int"}
+      "years": {
+        "type": "int"
+      }
     }
   },
   "timelinePhaseCurrent": "الحالي",
@@ -853,21 +965,27 @@
   "vaccineDoneOn": "تم في {date}",
   "@vaccineDoneOn": {
     "placeholders": {
-      "date": {"type": "String"}
+      "date": {
+        "type": "String"
+      }
     }
   },
   "vaccineCompleted": "مكتمل",
   "vaccineOverdueDays": "متأخر {days} أيام",
   "@vaccineOverdueDays": {
     "placeholders": {
-      "days": {"type": "int"}
+      "days": {
+        "type": "int"
+      }
     }
   },
   "vaccineDueToday": "مقرر اليوم",
   "vaccineDueInDays": "خلال {days} أيام",
   "@vaccineDueInDays": {
     "placeholders": {
-      "days": {"type": "int"}
+      "days": {
+        "type": "int"
+      }
     }
   },
   "vaccineDone": "مُنجَز",
@@ -903,7 +1021,9 @@
   "vaccineDetailProtectsAgainst": "يحمي من: {disease}",
   "@vaccineDetailProtectsAgainst": {
     "placeholders": {
-      "disease": {"type": "String"}
+      "disease": {
+        "type": "String"
+      }
     }
   },
   "vaccineDetailPurposeTitle": "ما فائدة هذا اللقاح؟",
@@ -921,7 +1041,7 @@
   "vaccineStatusUpcoming": "لقاح مبرمج في الجدول",
   "subscriptionPlanFreeTitle": "مجاني",
   "subscriptionPlanFreeSubtitle": "للبدء",
-  "subscriptionPlanFreeFeatureCapsules": "25 كبسولة كحد أقصى",
+  "subscriptionPlanFreeFeatureCapsules": "38 كبسولة كحد أقصى",
   "subscriptionPlanFreeFeatureChild": "طفل واحد",
   "subscriptionPlanFreeFeatureMilestones": "معالم النمو",
   "subscriptionPlanFreeFeatureVaccines": "التطعيمات",
@@ -957,7 +1077,7 @@
   "subscriptionCompareFeaturePrintedAlbum": "ألبوم ورقي فاخر مطبوع ومُوصَّل للمنزل",
   "subscriptionCompareFeatureSupport": "أولوية خدمة العملاء والمساعدة",
   "subscriptionCompareFeatureAdFree": "تجربة نقية بدون أي إعلانات",
-  "subscriptionCompareValueFreeCapsules": "25 كبسولة",
+  "subscriptionCompareValueFreeCapsules": "حتى 38 كبسولة",
   "subscriptionCompareValueUnlimited": "غير محدود",
   "subscriptionCompareValueOneChild": "طفل واحد",
   "subscriptionCompareValueAllChildren": "كل أطفالكِ",
@@ -987,7 +1107,9 @@
   "subscriptionContinueButton": "المتابعة والاشتراك • {price} دج",
   "@subscriptionContinueButton": {
     "placeholders": {
-      "price": {"type": "int"}
+      "price": {
+        "type": "int"
+      }
     }
   },
   "subscriptionViewDetails": "مقارنة المزايا الكاملة والأسئلة الشائعة",
@@ -995,7 +1117,9 @@
   "subscriptionPlanPricePerMonth": "{price} دج /شهر",
   "@subscriptionPlanPricePerMonth": {
     "placeholders": {
-      "price": {"type": "int"}
+      "price": {
+        "type": "int"
+      }
     }
   },
   "subscriptionVipCardSubtitle": "يشمل طباعة ألبوم ورقي فاخر مجاناً يُشحن لباب بيتكِ",
@@ -1013,20 +1137,26 @@
   "subscriptionPlanPriceDzd": "{price} دج",
   "@subscriptionPlanPriceDzd": {
     "placeholders": {
-      "price": {"type": "int"}
+      "price": {
+        "type": "int"
+      }
     }
   },
   "subscriptionSnackUpgradeSuccess": "تم تفعيل اشتراك {tier}!",
   "@subscriptionSnackUpgradeSuccess": {
     "placeholders": {
-      "tier": {"type": "String"}
+      "tier": {
+        "type": "String"
+      }
     }
   },
   "subscriptionSnackAlbumClaimSuccess": "تم إرسال طلب الألبوم! سنتواصل معك قريباً.",
   "subscriptionSnackError": "خطأ: {details}",
   "@subscriptionSnackError": {
     "placeholders": {
-      "details": {"type": "String"}
+      "details": {
+        "type": "String"
+      }
     }
   },
   "profileSnackPersonalInfoUpdated": "تم تحديث المعلومات",
@@ -1042,14 +1172,18 @@
   "profileSnackError": "خطأ: {details}",
   "@profileSnackError": {
     "placeholders": {
-      "details": {"type": "String"}
+      "details": {
+        "type": "String"
+      }
     }
   },
   "authErrorUnknown": "خطأ غير معروف",
   "authWelcome": "مرحباً {name}!",
   "@authWelcome": {
     "placeholders": {
-      "name": {"type": "String"}
+      "name": {
+        "type": "String"
+      }
     }
   },
   "notifVaccineChannelName": "التطعيمات",
@@ -1061,38 +1195,52 @@
   "notifVaccineReminderTitle": "💉 تذكير لقاح – {childName}",
   "@notifVaccineReminderTitle": {
     "placeholders": {
-      "childName": {"type": "String"}
+      "childName": {
+        "type": "String"
+      }
     }
   },
   "notifVaccineReminderBody": "{vaccineLabel} موعده {date}",
   "@notifVaccineReminderBody": {
     "placeholders": {
-      "vaccineLabel": {"type": "String"},
-      "date": {"type": "String"}
+      "vaccineLabel": {
+        "type": "String"
+      },
+      "date": {
+        "type": "String"
+      }
     }
   },
   "notifMilestoneUpcomingTitle": "⭐ مرحلة قادمة – {childName}",
   "@notifMilestoneUpcomingTitle": {
     "placeholders": {
-      "childName": {"type": "String"}
+      "childName": {
+        "type": "String"
+      }
     }
   },
   "notifMilestoneUpcomingBody": "\"{milestoneTitle}\" خلال 7 أيام",
   "@notifMilestoneUpcomingBody": {
     "placeholders": {
-      "milestoneTitle": {"type": "String"}
+      "milestoneTitle": {
+        "type": "String"
+      }
     }
   },
   "notifMilestoneCustomTitle": "⏰ تذكير – {childName}",
   "@notifMilestoneCustomTitle": {
     "placeholders": {
-      "childName": {"type": "String"}
+      "childName": {
+        "type": "String"
+      }
     }
   },
   "notifMilestoneCustomBody": "\"{milestoneTitle}\" — اضغطي للفتح",
   "@notifMilestoneCustomBody": {
     "placeholders": {
-      "milestoneTitle": {"type": "String"}
+      "milestoneTitle": {
+        "type": "String"
+      }
     }
   },
   "notifCyclePeriodTitle": "🌸 الدورة خلال يومين",
@@ -1102,20 +1250,28 @@
   "profileAgeMonthsOnly": "{count} شهر",
   "@profileAgeMonthsOnly": {
     "placeholders": {
-      "count": {"type": "int"}
+      "count": {
+        "type": "int"
+      }
     }
   },
   "profileAgeYearsOnly": "{count, plural, =1{سنة واحدة} other{{count} سنوات}}",
   "@profileAgeYearsOnly": {
     "placeholders": {
-      "count": {"type": "int"}
+      "count": {
+        "type": "int"
+      }
     }
   },
   "profileAgeYearsAndMonths": "{years, plural, =1{سنة واحدة {months} شهر} other{{years} سنوات {months} شهر}}",
   "@profileAgeYearsAndMonths": {
     "placeholders": {
-      "years": {"type": "int"},
-      "months": {"type": "int"}
+      "years": {
+        "type": "int"
+      },
+      "months": {
+        "type": "int"
+      }
     }
   },
   "signupConsentPrefix": "بإنشاء حساب، تمنحيننا الإذن بتخزين موعد الولادة وتاريخ ميلاد طفلك وأي بيانات أخرى تدخلينها بشكل آمن. بالمتابعة، تقبلين ",
@@ -1137,7 +1293,9 @@
   "childExpectedInWeeks": "الولادة متوقعة بعد {weeks} أسابيع",
   "@childExpectedInWeeks": {
     "placeholders": {
-      "weeks": {"type": "int"}
+      "weeks": {
+        "type": "int"
+      }
     }
   },
   "childDueToday": "الولادة متوقعة اليوم",
@@ -1164,5 +1322,135 @@
   "assistantCardAppointmentCta": "سجل الصحة",
   "assistantCardWeatherTitle": "اقتراح نزهة",
   "assistantShortcutTitle": "تحدثي مع لاكي",
-  "assistantShortcutSubtitle": "نصائح صحية، أفكار ألعاب ونزهات عائلية"
+  "assistantShortcutSubtitle": "نصائح صحية، أفكار ألعاب ونزهات عائلية",
+  "onboardingLanguageTitle": "اختاري لغتكِ المفضلة",
+  "onboardingLanguageSubtitle": "حددي لغة عرض التطبيق المناسبة لكِ. يمكنكِ تغييرها في أي وقت من إعدادات حسابكِ.",
+  "onboardingLanguageFr": "Français",
+  "onboardingLanguageAr": "العربية",
+  "onboardingLanguageEn": "English",
+  "onboardingLanguageFrSubtitle": "الفرنسية (افتراضياً)",
+  "onboardingLanguageArSubtitle": "العربية (من اليمين إلى اليسار)",
+  "onboardingLanguageEnSubtitle": "الإنجليزية (دولياً)",
+  "capsuleAudioListen": "استماع",
+  "capsuleAudioPause": "إيقاف مؤقت",
+  "capsuleAudioResume": "استئناف",
+  "capsuleAudioReRecord": "إعادة التسجيل",
+  "capsuleAudioDelete": "حذف",
+  "capsuleAudioValidate": "تأكيد الصوت",
+  "capsuleAudioValidatedBadge": "تم تأكيد الصوت",
+  "capsuleAudioPendingBadge": "قيد المعاينة",
+  "capsuleAudioValidatedSuccess": "تم تأكيد الصوت للذكرى ✓",
+  "capsuleAudioMicPermissionError": "إذن الميكروفون مطلوب للتسجيل",
+  "capsuleAudioTooShortError": "التسجيل قصير جداً أو فارغ",
+  "albumReplacePhotoTitle": "استبدال الصورة",
+  "albumManagePhotoTitle": "إدارة الصورة",
+  "albumCropPhotoTitle": "قص وتعديل الصورة",
+  "albumPickFromCapsules": "اختيار من ذكرياتي",
+  "albumPickFromCapsulesDesc": "اختيار كبسولة محفوظة لهذا الطفل",
+  "albumPickFromGallery": "اختيار من المعرض",
+  "albumPickFromGalleryDesc": "استيراد صورة جديدة من معرض الهاتف",
+  "albumPickFromCamera": "التقاط صورة جديدة",
+  "albumPickFromCameraDesc": "التقاط صورة مباشرة بواسطة الكاميرا",
+  "albumCropCurrentPhoto": "قص وضبط الصورة الحالية",
+  "albumCropCurrentPhotoDesc": "تكبير، إعادة تموضع أو تدوير الصورة",
+  "albumClearPageTitle": "إزالة من الألبوم",
+  "albumClearPageDesc": "تفريغ هذه الصفحة دون حذف الكبسولة الأصلية",
+  "albumClearPageConfirm": "هل أنتِ متأكدة من إزالة هذه الصورة؟ ستبقى الكبسولة محفوظة في ذكرياتك دون أي تغيير.",
+  "albumRemove": "إزالة",
+  "albumPhotoUpdatedSuccess": "تم تحديث الصورة بنجاح",
+  "albumPhotoCroppedSuccess": "تم قص وتعديل الصورة بنجاح",
+  "albumAspectRatioSquare": "مربع 1:1",
+  "albumAspectRatioPortrait": "عمودي 4:5",
+  "albumAspectRatioClassic": "كلاسيكي 3:4",
+  "albumAspectRatioStory": "شاشة كاملة 9:16",
+  "albumPhotoQuantityTitle": "عدد الصور",
+  "albumPhotoQuantitySubtitle": "سعة الألبوم والسعر",
+  "albumExcludingShipping": "السعر غير شامل مصاريف التوصيل",
+  "albumCopiesCount": "عدد النسخ",
+  "albumFormatA5": "مقاس A5 (15 × 21 سم)",
+  "albumFormatA4": "مقاس A4 (21 × 30 سم)",
+  "albumFormatA3": "مقاس A3 (30 × 42 سم)",
+  "albumFormatA3SingleOnly": "مقاس A3 مخصص فقط لصور البورتريه الفردية",
+  "albumUnitPrice": "سعر النسخة",
+  "albumSubtotal": "المجموع الفرعي",
+  "albumShippingFee": "مصاريف التوصيل",
+  "albumShippingFreeVip": "مجاني (باقة VIP)",
+  "albumTotalToPay": "المجموع الإجمالي",
+  "albumChangeCapacityTitle": "سعة الألبوم",
+  "subscriptionPlansHeaderTitle": "اختاري الباقة التي ترافقك وتناسب عائلتك",
+  "subscriptionPlansHeaderSubtitle": "قارني المزايا واختاري العرض المناسب لعائلتك وذكرياتك.",
+  "subscriptionPlanRecommendedBadge": "موصى بها",
+  "subscriptionVipExclusiveBadge": "حصري",
+  "subscriptionUpgradeToPremium": "الترقية إلى بريميوم",
+  "subscriptionUpgradeToVip": "الترقية إلى VIP السنوي",
+  "subscriptionChooseVipAnnual": "اختيار VIP السنوي",
+  "subscriptionPlanIncludedInVip": "مشمول في باقة VIP الخاصة بك",
+  "subscriptionDisclaimerAvailableOffers": "* في حدود العروض المتاحة.",
+  "subscriptionCompareOffers": "مقارنة الباقات",
+  "subscriptionActionLater": "لاحقاً",
+  "subscriptionCapsuleLimitReachedTitle": "تم بلوغ الحد الأقصى (38 كبسولة)",
+  "subscriptionCapsuleLimitReachedMessage": "لقد وصلتِ إلى الحد الأقصى البالغ 38 كبسولة المشمولة في باقتك المجانية. قومي بالترقية إلى بريميوم لمواصلة إنشاء كبسولات الذكريات بلا حدود.",
+  "subscriptionChildLimitReachedTitle": "تم بلوغ الحد الأقصى للأطفال",
+  "subscriptionChildLimitReachedMessageFree": "الباقة المجانية تتيح إضافة طفل واحد فقط. قومي بالترقية إلى بريميوم لإضافة ومتابعة حتى طفلين!",
+  "subscriptionChildLimitReachedMessagePremium": "باقة بريميوم تتيح متابعة طفلين كحد أقصى. قومي بالترقية إلى VIP السنوي لإضافة عدد غير محدود من الأطفال!",
+  "subscriptionMatrixPrice": "السعر",
+  "subscriptionMatrixCapsules": "كبسولات الذكريات",
+  "subscriptionMatrixChildren": "عدد الأطفال",
+  "subscriptionMatrixVaccines": "متابعة التطعيمات والتحديثات",
+  "subscriptionMatrixReels": "فيديوهات تثقيفية قصيرة",
+  "subscriptionMatrixRecording": "تسجيل كبسولات الذكريات",
+  "subscriptionMatrixSharing": "مشاركة كبسولات الذكريات",
+  "subscriptionMatrixPremiumPerks": "الوصول إلى مزايا بريميوم",
+  "subscriptionMatrixVipPerks": "الوصول إلى مزايا VIP",
+  "subscriptionMatrixGiveaways": "السحوبات والهدايا",
+  "subscriptionMatrixPrintedPhoto": "صورة مطبوعة مجانية توصيل للمنزل",
+  "subscriptionMatrixVipCard": "بطاقة VIP مخصصة",
+  "subscriptionMatrixPartnerPrivileges": "امتيازات خاصة لدى الشركاء",
+  "subscriptionMatrixValueFreeCapsules": "حتى 38 كبسولة",
+  "subscriptionMatrixValueOneChild": "طفل واحد",
+  "subscriptionMatrixValueTwoChildren": "حتى طفلين",
+  "subscriptionMatrixValueUnlimitedChildren": "عدد غير محدود من الأطفال",
+  "subscriptionMatrixValueIncluded": "مشمول",
+  "subscriptionMatrixValueNotIncluded": "غير مشمول",
+  "subscriptionMatrixValueAvailableOffers": "حسب العروض المتاحة*",
+  "subscriptionMatrixValueOnePhotoA3": "صورة مجانية (A3)",
+  "albumLaunchModelsSectionTitle": "النماذج المتاحة للطلب",
+  "albumComingSoonSectionTitle": "قريباً في التطبيق",
+  "albumComingSoonBadge": "قريباً",
+  "albumComingSoonToast": "سيتوفر هذا النموذج قريباً جداً! ✨",
+  "albumPortrait1PhotoBadge": "صورة بورتريه واحدة",
+  "album6PhotosBadge": "٦ صور",
+  "albumStartingPriceFrom": "ابتداءً من {price} د.ج",
+  "@albumStartingPriceFrom": {
+    "placeholders": {
+      "price": {
+        "type": "int"
+      }
+    }
+  },
+  "diaporamaTitle": "ألبوم رقمي (عرض متحرك)",
+  "diaporamaSubtitle": "أنشئي عرضاً متحركاً لأجمل الذكريات",
+  "diaporamaMinPhotosError": "يرجى اختيار 3 صور على الأقل للعرض المتحرك",
+  "diaporamaMaxPhotosError": "الحد الأقصى هو 12 صورة للعرض المتحرك",
+  "diaporamaReorderHint": "اسحبي وأفلتي لإعادة ترتيب تسلسل ظهور الصور",
+  "diaporamaPlay": "تشغيل العرض المتحرك",
+  "diaporamaReplay": "إعادة التشغيل",
+  "diaporamaShare": "مشاركة العرض",
+  "diaporamaOpeningTitle": "ذكريات {childName} الغالية",
+  "@diaporamaOpeningTitle": {
+    "placeholders": {
+      "childName": {
+        "type": "String"
+      }
+    }
+  },
+  "diaporamaClosingTitle": "لحظات ثمينة صُنعت بكل حب على LuckyMam 🍀",
+  "diaporamaShareMessage": "شاهدوا العرض التذكاري لأجمل ذكريات {childName} على تطبيق لاكي مام 🍀",
+  "@diaporamaShareMessage": {
+    "placeholders": {
+      "childName": {
+        "type": "String"
+      }
+    }
+  }
 }

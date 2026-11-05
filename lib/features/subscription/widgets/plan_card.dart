@@ -8,16 +8,18 @@ import '../../../core/theme/app_typography.dart';
 import '../models/subscription_models.dart';
 import '../subscription_plan_l10n.dart';
 
-/// Reusable Luxury Squircle Bento Plan Card with VIP prominence and haptics.
+/// Reusable Luxury Squircle Bento Plan Card with Premium prominence as 'Recommandée' (LM-SUB-001/002).
 class PlanCard extends StatelessWidget {
   final SubscriptionPlan plan;
   final bool isCurrent;
+  final SubscriptionTier currentTier;
   final VoidCallback? onSelect;
 
   const PlanCard({
     super.key,
     required this.plan,
     this.isCurrent = false,
+    this.currentTier = SubscriptionTier.free,
     this.onSelect,
   });
 
@@ -32,11 +34,17 @@ class PlanCard extends StatelessWidget {
     final textColor = isDark ? Colors.white : AppColors.onSurfaceLight;
     final subTextColor =
         isDark ? AppColors.textSecondaryDark : AppColors.textSecondaryLight;
-    final borderColor = isVip
-        ? const Color(0xFFFF8F00)
-        : (isCurrent
-            ? plan.accentColor
-            : (isDark ? AppColors.dividerDark : AppColors.dividerLight));
+
+    final borderColor = isPremium
+        ? AppColors.coral
+        : (isVip
+            ? const Color(0xFFFF8F00)
+            : (isCurrent
+                ? plan.accentColor
+                : (isDark ? AppColors.dividerDark : AppColors.dividerLight)));
+
+    final effectiveCurrent = isCurrent || currentTier == plan.tier;
+    final isDisabled = plan.isActionDisabled(currentTier: currentTier);
 
     return AnimatedContainer(
       duration: const Duration(milliseconds: 250),
@@ -45,26 +53,28 @@ class PlanCard extends StatelessWidget {
         color: cardBg,
         borderRadius: BorderRadius.circular(24),
         border: Border.all(
-          color: borderColor.withValues(alpha: isVip ? 0.8 : (isCurrent ? 1.0 : 0.8)),
-          width: isVip ? 2.0 : (isCurrent ? 2.0 : 1.0),
+          color: borderColor.withValues(
+            alpha: isPremium ? 0.9 : (isVip ? 0.8 : (effectiveCurrent ? 1.0 : 0.7)),
+          ),
+          width: isPremium ? 2.2 : (isVip ? 1.8 : (effectiveCurrent ? 2.0 : 1.0)),
         ),
         boxShadow: [
-          if (isVip)
+          if (isPremium)
             BoxShadow(
-              color: const Color(0xFFFF8F00).withValues(alpha: isDark ? 0.25 : 0.15),
+              color: AppColors.coral.withValues(alpha: isDark ? 0.28 : 0.15),
               blurRadius: 22,
               offset: const Offset(0, 8),
             )
-          else if (isCurrent)
+          else if (isVip)
             BoxShadow(
-              color: plan.accentColor.withValues(alpha: isDark ? 0.25 : 0.12),
+              color: const Color(0xFFFF8F00).withValues(alpha: isDark ? 0.22 : 0.12),
               blurRadius: 18,
               offset: const Offset(0, 6),
             )
           else
             BoxShadow(
               color: Colors.black.withValues(alpha: isDark ? 0.2 : 0.04),
-              blurRadius: 14,
+              blurRadius: 12,
               offset: const Offset(0, 4),
             ),
         ],
@@ -74,32 +84,55 @@ class PlanCard extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Top Badge for VIP (Most Popular)
-            if (isVip)
+            // Top Badge for Premium (Recommandée) - LM-SUB-001
+            if (isPremium)
               Container(
                 width: double.infinity,
                 padding: const EdgeInsets.symmetric(vertical: 6),
                 decoration: const BoxDecoration(
                   gradient: LinearGradient(
                     colors: [
-                      Color(0xFFFF8F00),
-                      Color(0xFFFF6F00),
-                      Color(0xFFE91E63),
+                      Color(0xFFFF7043),
+                      Color(0xFFE85A71),
                     ],
                   ),
                 ),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    const Icon(Icons.diamond_rounded, size: 15, color: Colors.white),
+                    const Icon(Icons.star_rounded, size: 15, color: Colors.white),
                     const SizedBox(width: 6),
                     Text(
-                      l10n.subscriptionVipBadge,
+                      l10n.subscriptionPlanRecommendedBadge,
                       style: AppTypography.fromContext(
                         context,
                         fontSize: 12,
                         fontWeight: FontWeight.w800,
                         color: Colors.white,
+                      ),
+                    ),
+                  ],
+                ),
+              )
+            else if (isVip)
+              Container(
+                width: double.infinity,
+                padding: const EdgeInsets.symmetric(vertical: 5),
+                decoration: BoxDecoration(
+                  color: const Color(0xFFFF8F00).withValues(alpha: isDark ? 0.2 : 0.1),
+                ),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    const Icon(Icons.diamond_rounded, size: 14, color: Color(0xFFFF8F00)),
+                    const SizedBox(width: 5),
+                    Text(
+                      l10n.subscriptionVipExclusiveBadge,
+                      style: AppTypography.fromContext(
+                        context,
+                        fontSize: 11.5,
+                        fontWeight: FontWeight.w800,
+                        color: isDark ? const Color(0xFFFFD54F) : const Color(0xFFE65100),
                       ),
                     ),
                   ],
@@ -115,12 +148,14 @@ class PlanCard extends StatelessWidget {
                     width: 48,
                     height: 48,
                     decoration: BoxDecoration(
-                      gradient: isVip
+                      gradient: isPremium
                           ? const LinearGradient(
-                              colors: [Color(0xFFFFB300), Color(0xFFFF6F00)],
+                              colors: [Color(0xFFFF7043), Color(0xFFE85A71)],
                             )
-                          : (isPremium
-                              ? AppColors.primaryGradient
+                          : (isVip
+                              ? const LinearGradient(
+                                  colors: [Color(0xFFFFB300), Color(0xFFFF8F00)],
+                                )
                               : LinearGradient(
                                   colors: [
                                     plan.accentColor,
@@ -130,9 +165,9 @@ class PlanCard extends StatelessWidget {
                       borderRadius: BorderRadius.circular(16),
                       boxShadow: [
                         BoxShadow(
-                          color: (isVip
-                                  ? const Color(0xFFFF8F00)
-                                  : plan.accentColor)
+                          color: (isPremium
+                                  ? AppColors.coral
+                                  : (isVip ? const Color(0xFFFF8F00) : plan.accentColor))
                               .withValues(alpha: 0.35),
                           blurRadius: 10,
                           offset: const Offset(0, 3),
@@ -157,7 +192,7 @@ class PlanCard extends StatelessWidget {
                                 color: textColor,
                               ),
                             ),
-                            if (isCurrent) ...[
+                            if (effectiveCurrent) ...[
                               const SizedBox(width: 8),
                               Container(
                                 padding: const EdgeInsets.symmetric(
@@ -212,9 +247,11 @@ class PlanCard extends StatelessWidget {
                       context,
                       fontSize: 30,
                       fontWeight: FontWeight.w800,
-                      color: isVip
-                          ? (isDark ? const Color(0xFFFFB74D) : const Color(0xFFE65100))
-                          : (isPremium ? AppColors.coral : plan.accentColor),
+                      color: isPremium
+                          ? AppColors.coral
+                          : (isVip
+                              ? (isDark ? const Color(0xFFFFB74D) : const Color(0xFFE65100))
+                              : plan.accentColor),
                     ),
                   ),
                   if (plan.localizedBillingCycle(l10n).isNotEmpty)
@@ -295,9 +332,9 @@ class PlanCard extends StatelessWidget {
                           padding: const EdgeInsets.only(top: 2),
                           child: Icon(
                             Icons.check_circle_rounded,
-                            color: isVip
-                                ? const Color(0xFFFF8F00)
-                                : (isPremium ? AppColors.coral : plan.accentColor),
+                            color: isPremium
+                                ? AppColors.coral
+                                : (isVip ? const Color(0xFFFF8F00) : plan.accentColor),
                             size: 17,
                           ),
                         ),
@@ -319,13 +356,28 @@ class PlanCard extends StatelessWidget {
               ),
             ),
 
-            // CTA Button
+            // Mandatory disclaimer for available perks
+            if (isPremium || isVip)
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 4),
+                child: Text(
+                  l10n.subscriptionDisclaimerAvailableOffers,
+                  style: AppTypography.fromContext(
+                    context,
+                    fontSize: 11,
+                    fontStyle: FontStyle.italic,
+                    color: subTextColor,
+                  ),
+                ),
+              ),
+
+            // Dynamic Action Button (LM-SUB-001/002)
             Padding(
-              padding: const EdgeInsets.fromLTRB(20, 12, 20, 18),
+              padding: const EdgeInsets.fromLTRB(20, 10, 20, 18),
               child: SizedBox(
                 width: double.infinity,
                 height: 50,
-                child: isCurrent
+                child: isDisabled
                     ? OutlinedButton(
                         onPressed: null,
                         style: OutlinedButton.styleFrom(
@@ -337,7 +389,7 @@ class PlanCard extends StatelessWidget {
                           ),
                         ),
                         child: Text(
-                          l10n.subscriptionPlanCurrentButton,
+                          plan.localizedActionButton(currentTier: currentTier, l10n: l10n),
                           style: AppTypography.fromContext(
                             context,
                             fontSize: 14.5,
@@ -352,22 +404,20 @@ class PlanCard extends StatelessWidget {
                           onSelect?.call();
                         },
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: isVip
-                              ? const Color(0xFFFF6F00)
-                              : (isPremium ? AppColors.coral : plan.accentColor),
+                          backgroundColor: isPremium
+                              ? AppColors.coral
+                              : (isVip ? const Color(0xFFFF6F00) : plan.accentColor),
                           foregroundColor: Colors.white,
-                          elevation: isVip ? 4 : 0,
-                          shadowColor: isVip
-                              ? const Color(0xFFFF6F00).withValues(alpha: 0.5)
+                          elevation: isPremium ? 4 : (isVip ? 3 : 0),
+                          shadowColor: isPremium
+                              ? AppColors.coral.withValues(alpha: 0.5)
                               : Colors.transparent,
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(16),
                           ),
                         ),
                         child: Text(
-                          plan.priceDZD == 0
-                              ? l10n.subscriptionPlanSelect
-                              : l10n.subscriptionPlanChoose,
+                          plan.localizedActionButton(currentTier: currentTier, l10n: l10n),
                           style: AppTypography.fromContext(
                             context,
                             fontSize: 15,

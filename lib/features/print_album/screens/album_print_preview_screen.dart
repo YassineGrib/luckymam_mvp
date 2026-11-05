@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:pdf/pdf.dart';
 import 'package:printing/printing.dart';
 
 import '../../../core/extensions/l10n_extension.dart';
@@ -834,6 +835,36 @@ class _AlbumPrintPreviewScreenState
                       maxLines: 2,
                       overflow: TextOverflow.ellipsis,
                     ),
+
+                  const SizedBox(height: 8),
+
+                  // Discreet LuckyMam clover branding in the safe margin (LM-ALB-003)
+                  Align(
+                    alignment: AlignmentDirectional.bottomEnd,
+                    child: Opacity(
+                      opacity: 0.38,
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Icon(
+                            Icons.eco_rounded,
+                            size: 11,
+                            color: isDark ? Colors.white60 : Colors.black54,
+                          ),
+                          const SizedBox(width: 3),
+                          Text(
+                            'LuckyMam',
+                            style: TextStyle(
+                              fontSize: 9.5,
+                              fontWeight: FontWeight.w700,
+                              color: isDark ? Colors.white60 : Colors.black54,
+                              letterSpacing: 0.5,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
                 ],
               ),
             ),
@@ -852,18 +883,64 @@ class _AlbumPrintPreviewScreenState
             albumTitle: widget.albumTitle,
             childName: widget.childName,
             pages: widget.pages,
+            pageFormat: format,
           ),
       allowPrinting: true,
       allowSharing: true,
-      canChangePageFormat: false,
+      canChangePageFormat: true,
+      pageFormats: {
+        'A4': PdfPageFormat.a4,
+        'A5': PdfPageFormat.a5,
+        'A3': PdfPageFormat.a3,
+      },
       canChangeOrientation: false,
       canDebug: false,
+      onError: (context, error) => Center(
+        child: Padding(
+          padding: const EdgeInsets.all(AppSpacing.lg),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const Icon(Icons.error_outline_rounded,
+                  size: 48, color: AppColors.error),
+              const SizedBox(height: 12),
+              Text(
+                'Impossible de générer le document PDF',
+                style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                  color: textColor,
+                ),
+              ),
+              const SizedBox(height: 6),
+              Text(
+                error.toString(),
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  fontSize: 12,
+                  color: textColor.withValues(alpha: 0.7),
+                ),
+              ),
+              const SizedBox(height: 16),
+              ElevatedButton.icon(
+                onPressed: () => setState(() {}),
+                icon: const Icon(Icons.refresh_rounded),
+                label: const Text('Réessayer'),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: AppColors.primaryLight,
+                  foregroundColor: Colors.white,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
       pdfPreviewPageDecoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(6),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.18),
+            color: Colors.black.withValues(alpha: isDark ? 0.35 : 0.18),
             blurRadius: 10,
             offset: const Offset(0, 4),
           ),

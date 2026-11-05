@@ -12,6 +12,7 @@ abstract final class AppTypography {
     Locale locale, {
     required double fontSize,
     FontWeight fontWeight = FontWeight.normal,
+    FontStyle? fontStyle,
     Color? color,
     double? letterSpacing,
     double? height,
@@ -25,6 +26,7 @@ abstract final class AppTypography {
         fontFamily: AppFonts.arabic,
         fontSize: fontSize,
         fontWeight: fontWeight,
+        fontStyle: fontStyle,
         color: color,
         letterSpacing: spacing,
         height: lineHeight,
@@ -34,6 +36,7 @@ abstract final class AppTypography {
     return GoogleFonts.outfit(
       fontSize: fontSize,
       fontWeight: fontWeight,
+      fontStyle: fontStyle,
       color: color,
       letterSpacing: letterSpacing,
       height: height,
@@ -44,6 +47,7 @@ abstract final class AppTypography {
     BuildContext context, {
     required double fontSize,
     FontWeight fontWeight = FontWeight.normal,
+    FontStyle? fontStyle,
     Color? color,
     double? letterSpacing,
     double? height,
@@ -52,6 +56,7 @@ abstract final class AppTypography {
       Localizations.localeOf(context),
       fontSize: fontSize,
       fontWeight: fontWeight,
+      fontStyle: fontStyle,
       color: color,
       letterSpacing: letterSpacing,
       height: height,

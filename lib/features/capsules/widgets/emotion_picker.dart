@@ -6,36 +6,44 @@ import '../../../core/theme/app_spacing.dart';
 import '../../../core/theme/app_typography.dart';
 import '../models/emotion.dart';
 
-/// Grid picker for selecting an emotion.
+/// Grid picker for selecting a primary emotion and optional secondary emotions.
 class EmotionPicker extends StatelessWidget {
   const EmotionPicker({
     super.key,
     required this.selectedEmotion,
     required this.onEmotionSelected,
+    this.secondaryEmotions = const [],
+    this.onSecondaryEmotionsChanged,
+    this.maxSecondaryEmotions = 3,
   });
 
   final Emotion? selectedEmotion;
   final ValueChanged<Emotion> onEmotionSelected;
+  final List<Emotion> secondaryEmotions;
+  final ValueChanged<List<Emotion>>? onSecondaryEmotionsChanged;
+  final int maxSecondaryEmotions;
 
-  Color _getEmotionColor(Emotion emotion) {
-    switch (emotion) {
-      case Emotion.happy:
-        return const Color(0xFFF59E0B);
-      case Emotion.love:
-        return const Color(0xFFE11D48);
-      case Emotion.tender:
-        return const Color(0xFFFB923C);
-      case Emotion.sad:
-        return const Color(0xFF3B82F6);
-      case Emotion.surprised:
-        return const Color(0xFF06B6D4);
-      case Emotion.sleepy:
-        return const Color(0xFF8B5CF6);
-      case Emotion.proud:
-        return const Color(0xFF10B981);
-      case Emotion.worried:
-        return const Color(0xFF64748B);
+  void _handlePrimarySelected(Emotion emotion) {
+    onEmotionSelected(emotion);
+    // Auto-promotion: remove from secondary if promoted to primary
+    if (onSecondaryEmotionsChanged != null && secondaryEmotions.contains(emotion)) {
+      final updated = List<Emotion>.from(secondaryEmotions)..remove(emotion);
+      onSecondaryEmotionsChanged!(updated);
     }
+  }
+
+  void _toggleSecondaryEmotion(Emotion emotion) {
+    if (onSecondaryEmotionsChanged == null) return;
+    if (emotion == selectedEmotion) return; // Cannot be both primary and secondary
+    final updated = List<Emotion>.from(secondaryEmotions);
+    if (updated.contains(emotion)) {
+      updated.remove(emotion);
+    } else {
+      if (updated.length < maxSecondaryEmotions) {
+        updated.add(emotion);
+      }
+    }
+    onSecondaryEmotionsChanged!(updated);
   }
 
   @override
@@ -51,12 +59,13 @@ class EmotionPicker extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
+        // ── Primary Emotion Header (Mandatory) ─────────────────────────
         Row(
           children: [
             Icon(Icons.mood_rounded, size: 16, color: textColor),
             const SizedBox(width: 6),
             Text(
-              l10n.capsuleEmotion,
+              l10n.capsulePrimaryEmotion,
               style: AppTypography.fromContext(
                 context,
                 fontSize: 14,
@@ -77,6 +86,8 @@ class EmotionPicker extends StatelessWidget {
           ],
         ),
         const SizedBox(height: AppSpacing.sm),
+
+        // ── Primary Emotion Grid ──────────────────────────────────────
         GridView.builder(
           shrinkWrap: true,
           physics: const NeverScrollableScrollPhysics(),
@@ -90,10 +101,10 @@ class EmotionPicker extends StatelessWidget {
           itemBuilder: (context, index) {
             final emotion = Emotion.values[index];
             final isSelected = selectedEmotion == emotion;
-            final emotionColor = _getEmotionColor(emotion);
+            final emotionColor = emotion.color;
 
             return GestureDetector(
-              onTap: () => onEmotionSelected(emotion),
+              onTap: () => _handlePrimarySelected(emotion),
               child: AnimatedContainer(
                 duration: const Duration(milliseconds: 200),
                 padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 6),
@@ -105,7 +116,9 @@ class EmotionPicker extends StatelessWidget {
                             : const Color(0xFFF7F5FA)),
                   borderRadius: BorderRadius.circular(14),
                   border: Border.all(
-                    color: isSelected ? emotionColor : (isDark ? Colors.white10 : const Color(0xFFECEAEF)),
+                    color: isSelected
+                        ? emotionColor
+                        : (isDark ? Colors.white10 : const Color(0xFFECEAEF)),
                     width: isSelected ? 1.8 : 0.8,
                   ),
                   boxShadow: isSelected
@@ -147,6 +160,114 @@ class EmotionPicker extends StatelessWidget {
             );
           },
         ),
+
+        // ── Secondary Emotions Section (LM-CAP-003, Optional, Max 3) ──
+        if (onSecondaryEmotionsChanged != null) ...[
+          const SizedBox(height: AppSpacing.md),
+          Row(
+            children: [
+              Icon(Icons.add_reaction_outlined, size: 15, color: secondaryText),
+              const SizedBox(width: 6),
+              Text(
+                l10n.capsuleSecondaryEmotions,
+                style: AppTypography.fromContext(
+                  context,
+                  fontSize: 13,
+                  fontWeight: FontWeight.w600,
+                  color: textColor,
+                ),
+              ),
+              const SizedBox(width: 6),
+              Text(
+                l10n.capsuleSecondaryEmotionsHint,
+                style: AppTypography.fromContext(
+                  context,
+                  fontSize: 11,
+                  color: secondaryText,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+              const Spacer(),
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 2),
+                decoration: BoxDecoration(
+                  color: isDark ? Colors.white10 : const Color(0xFFECEAEF),
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child: Text(
+                  '${secondaryEmotions.length}/$maxSecondaryEmotions',
+                  style: TextStyle(
+                    fontSize: 11,
+                    fontWeight: FontWeight.w700,
+                    color: secondaryEmotions.length >= maxSecondaryEmotions
+                        ? AppColors.primaryLight
+                        : secondaryText,
+                  ),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: AppSpacing.xs + 2),
+          Wrap(
+            spacing: 8,
+            runSpacing: 8,
+            children: Emotion.values
+                .where((e) => e != selectedEmotion)
+                .map((emotion) {
+              final isSecondary = secondaryEmotions.contains(emotion);
+              final isMaxReached =
+                  secondaryEmotions.length >= maxSecondaryEmotions && !isSecondary;
+              final emotionColor = emotion.color;
+
+              return InkWell(
+                onTap: isMaxReached ? null : () => _toggleSecondaryEmotion(emotion),
+                borderRadius: BorderRadius.circular(12),
+                child: AnimatedContainer(
+                  duration: const Duration(milliseconds: 180),
+                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 7),
+                  decoration: BoxDecoration(
+                    color: isSecondary
+                        ? emotionColor.withValues(alpha: isDark ? 0.22 : 0.12)
+                        : (isDark
+                              ? const Color(0xFF22202A)
+                              : const Color(0xFFF7F5FA)),
+                    borderRadius: BorderRadius.circular(12),
+                    border: Border.all(
+                      color: isSecondary
+                          ? emotionColor
+                          : (isDark ? Colors.white10 : const Color(0xFFECEAEF)),
+                      width: isSecondary ? 1.4 : 0.8,
+                    ),
+                  ),
+                  child: Opacity(
+                    opacity: isMaxReached ? 0.42 : 1.0,
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Text(emotion.emoji, style: const TextStyle(fontSize: 13)),
+                        const SizedBox(width: 5),
+                        Text(
+                          emotion.getLabel(lang),
+                          style: TextStyle(
+                            fontSize: 11.5,
+                            fontWeight: isSecondary ? FontWeight.w700 : FontWeight.w500,
+                            color: isSecondary ? emotionColor : textColor,
+                          ),
+                        ),
+                        const SizedBox(width: 4),
+                        Icon(
+                          isSecondary ? Icons.close_rounded : Icons.add_rounded,
+                          size: 13,
+                          color: isSecondary ? emotionColor : secondaryText,
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              );
+            }).toList(),
+          ),
+        ],
       ],
     );
   }

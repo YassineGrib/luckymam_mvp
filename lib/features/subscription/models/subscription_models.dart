@@ -73,12 +73,39 @@ class SubscriptionPlan {
   });
 
   bool get isUnlimited => capsuleLimit == -1;
+  bool get isUnlimitedChildren => childLimit == -1;
+  bool get isRecommended => tier == SubscriptionTier.premium;
+
+  /// Formats the price with space thousand separator and DA suffix (e.g. "0 DA", "2 490 DA").
+  String get formattedPrice {
+    if (priceDZD == 0) return '0 DA';
+    final formatted = priceDZD.toString().replaceAllMapped(
+      RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'),
+      (m) => '${m[1]} ',
+    );
+    return '$formatted DA';
+  }
+
+  /// Price with annual periodicity (e.g. "0 DA", "2 490 DA / an", "9 890 DA / an").
+  String get formattedPriceWithCycle {
+    if (priceDZD == 0) return '0 DA';
+    return '$formattedPrice / an';
+  }
+
+  /// Feature flags aligned with LM-SUB-002 matrix
+  bool get canShareCapsules => tier != SubscriptionTier.free;
+  bool get canAccessPremiumPerks => tier != SubscriptionTier.free;
+  bool get canAccessVipPerks => tier == SubscriptionTier.vip;
+  bool get hasGiveaways => tier != SubscriptionTier.free;
+  bool get hasPhysicalVipCard => tier == SubscriptionTier.vip;
+  bool get hasFreePrintedPhotoA3 => tier == SubscriptionTier.vip;
+  bool get hasPartnerPrivileges => tier == SubscriptionTier.vip;
 
   static const List<SubscriptionPlan> allPlans = [
     SubscriptionPlan(
       tier: SubscriptionTier.free,
       priceDZD: 0,
-      capsuleLimit: 25,
+      capsuleLimit: 38,
       childLimit: 1,
       accentColor: Color(0xFF78909C),
     ),
@@ -86,7 +113,7 @@ class SubscriptionPlan {
       tier: SubscriptionTier.premium,
       priceDZD: 2490,
       capsuleLimit: -1,
-      childLimit: -1,
+      childLimit: 2,
       accentColor: Color(0xFFE85A71),
     ),
     SubscriptionPlan(
@@ -94,7 +121,7 @@ class SubscriptionPlan {
       priceDZD: 9890,
       capsuleLimit: -1,
       childLimit: -1,
-      accentColor: Color(0xFFFF6F00),
+      accentColor: Color(0xFFFF8F00),
       hasAlbumPerk: true,
     ),
   ];

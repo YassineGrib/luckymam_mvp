@@ -487,8 +487,14 @@ abstract class AppLocalizations {
   /// No description provided for @law1807Checkbox.
   ///
   /// In fr, this message translates to:
-  /// **'J’accepte la Loi 18/07'**
+  /// **'J’accepte les termes de la loi n° 18-07.'**
   String get law1807Checkbox;
+
+  /// No description provided for @law1807ReadFullTerms.
+  ///
+  /// In fr, this message translates to:
+  /// **'Consulter le texte intégral et la politique de confidentialité'**
+  String get law1807ReadFullTerms;
 
   /// No description provided for @law1807Error.
   ///
@@ -853,13 +859,13 @@ abstract class AppLocalizations {
   /// No description provided for @upgradePremiumTitle.
   ///
   /// In fr, this message translates to:
-  /// **'Passez à Premium & VIP'**
+  /// **'Passez à Premium'**
   String get upgradePremiumTitle;
 
   /// No description provided for @upgradePremiumSubtitle.
   ///
   /// In fr, this message translates to:
-  /// **'Capsules illimitées • Zéro publicité • Album imprimé'**
+  /// **'Capsules illimitées • Jusqu\'à 2 enfants • Partage inclus'**
   String get upgradePremiumSubtitle;
 
   /// No description provided for @upgradePromptBadge.
@@ -871,7 +877,7 @@ abstract class AppLocalizations {
   /// No description provided for @upgradePromptCta.
   ///
   /// In fr, this message translates to:
-  /// **'Découvrir les offres'**
+  /// **'Passer à Premium'**
   String get upgradePromptCta;
 
   /// No description provided for @marketplaceTitle.
@@ -1936,6 +1942,12 @@ abstract class AppLocalizations {
   /// **'Capturez vos premiers souvenirs\nen appuyant sur le bouton ci-dessous'**
   String get capsulesEmptySubtitle;
 
+  /// No description provided for @capsulesCreateFirst.
+  ///
+  /// In fr, this message translates to:
+  /// **'Créer mon premier souvenir'**
+  String get capsulesCreateFirst;
+
   /// No description provided for @capsulesLoadErrorSubtitle.
   ///
   /// In fr, this message translates to:
@@ -2145,6 +2157,30 @@ abstract class AppLocalizations {
   /// In fr, this message translates to:
   /// **'Émotion'**
   String get capsuleEmotion;
+
+  /// No description provided for @capsulePrimaryEmotion.
+  ///
+  /// In fr, this message translates to:
+  /// **'Émotion principale'**
+  String get capsulePrimaryEmotion;
+
+  /// No description provided for @capsuleSecondaryEmotions.
+  ///
+  /// In fr, this message translates to:
+  /// **'Émotions secondaires'**
+  String get capsuleSecondaryEmotions;
+
+  /// No description provided for @capsuleSecondaryEmotionsHint.
+  ///
+  /// In fr, this message translates to:
+  /// **'Facultatif • 3 maximum'**
+  String get capsuleSecondaryEmotionsHint;
+
+  /// No description provided for @capsuleNoPhotoPlaceholder.
+  ///
+  /// In fr, this message translates to:
+  /// **'Souvenir mémorisé'**
+  String get capsuleNoPhotoPlaceholder;
 
   /// No description provided for @capsuleVoiceMessageOptional.
   ///
@@ -4063,7 +4099,7 @@ abstract class AppLocalizations {
   /// No description provided for @subscriptionPlanFreeFeatureCapsules.
   ///
   /// In fr, this message translates to:
-  /// **'25 capsules maximum'**
+  /// **'38 capsules maximum'**
   String get subscriptionPlanFreeFeatureCapsules;
 
   /// No description provided for @subscriptionPlanFreeFeatureChild.
@@ -4279,7 +4315,7 @@ abstract class AppLocalizations {
   /// No description provided for @subscriptionCompareValueFreeCapsules.
   ///
   /// In fr, this message translates to:
-  /// **'25 capsules'**
+  /// **'Jusqu\'à 38 capsules'**
   String get subscriptionCompareValueFreeCapsules;
 
   /// No description provided for @subscriptionCompareValueUnlimited.
@@ -5001,6 +5037,660 @@ abstract class AppLocalizations {
   /// In fr, this message translates to:
   /// **'Conseils, albums, sorties et idées cadeaux'**
   String get assistantShortcutSubtitle;
+
+  /// No description provided for @onboardingLanguageTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Choisissez votre langue'**
+  String get onboardingLanguageTitle;
+
+  /// No description provided for @onboardingLanguageSubtitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Sélectionnez votre langue d\'affichage. Vous pourrez la modifier à tout moment dans votre profil.'**
+  String get onboardingLanguageSubtitle;
+
+  /// No description provided for @onboardingLanguageFr.
+  ///
+  /// In fr, this message translates to:
+  /// **'Français'**
+  String get onboardingLanguageFr;
+
+  /// No description provided for @onboardingLanguageAr.
+  ///
+  /// In fr, this message translates to:
+  /// **'العربية'**
+  String get onboardingLanguageAr;
+
+  /// No description provided for @onboardingLanguageEn.
+  ///
+  /// In fr, this message translates to:
+  /// **'English'**
+  String get onboardingLanguageEn;
+
+  /// No description provided for @onboardingLanguageFrSubtitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Français (Par défaut)'**
+  String get onboardingLanguageFrSubtitle;
+
+  /// No description provided for @onboardingLanguageArSubtitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'العربية (من اليمين إلى اليسار)'**
+  String get onboardingLanguageArSubtitle;
+
+  /// No description provided for @onboardingLanguageEnSubtitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'English (International)'**
+  String get onboardingLanguageEnSubtitle;
+
+  /// No description provided for @capsuleAudioListen.
+  ///
+  /// In fr, this message translates to:
+  /// **'Écouter'**
+  String get capsuleAudioListen;
+
+  /// No description provided for @capsuleAudioPause.
+  ///
+  /// In fr, this message translates to:
+  /// **'Pause'**
+  String get capsuleAudioPause;
+
+  /// No description provided for @capsuleAudioResume.
+  ///
+  /// In fr, this message translates to:
+  /// **'Reprendre'**
+  String get capsuleAudioResume;
+
+  /// No description provided for @capsuleAudioReRecord.
+  ///
+  /// In fr, this message translates to:
+  /// **'Recommencer'**
+  String get capsuleAudioReRecord;
+
+  /// No description provided for @capsuleAudioDelete.
+  ///
+  /// In fr, this message translates to:
+  /// **'Supprimer'**
+  String get capsuleAudioDelete;
+
+  /// No description provided for @capsuleAudioValidate.
+  ///
+  /// In fr, this message translates to:
+  /// **'Valider l\'audio'**
+  String get capsuleAudioValidate;
+
+  /// No description provided for @capsuleAudioValidatedBadge.
+  ///
+  /// In fr, this message translates to:
+  /// **'Audio validé'**
+  String get capsuleAudioValidatedBadge;
+
+  /// No description provided for @capsuleAudioPendingBadge.
+  ///
+  /// In fr, this message translates to:
+  /// **'En attente de validation'**
+  String get capsuleAudioPendingBadge;
+
+  /// No description provided for @capsuleAudioValidatedSuccess.
+  ///
+  /// In fr, this message translates to:
+  /// **'Audio validé pour la capsule ✓'**
+  String get capsuleAudioValidatedSuccess;
+
+  /// No description provided for @capsuleAudioMicPermissionError.
+  ///
+  /// In fr, this message translates to:
+  /// **'Permission microphone requise pour enregistrer'**
+  String get capsuleAudioMicPermissionError;
+
+  /// No description provided for @capsuleAudioTooShortError.
+  ///
+  /// In fr, this message translates to:
+  /// **'L\'enregistrement est trop court ou vide'**
+  String get capsuleAudioTooShortError;
+
+  /// No description provided for @albumReplacePhotoTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Remplacer la photo'**
+  String get albumReplacePhotoTitle;
+
+  /// No description provided for @albumManagePhotoTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Gérer la photo'**
+  String get albumManagePhotoTitle;
+
+  /// No description provided for @albumCropPhotoTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Recadrer & Ajuster'**
+  String get albumCropPhotoTitle;
+
+  /// No description provided for @albumPickFromCapsules.
+  ///
+  /// In fr, this message translates to:
+  /// **'Choisir parmi mes souvenirs'**
+  String get albumPickFromCapsules;
+
+  /// No description provided for @albumPickFromCapsulesDesc.
+  ///
+  /// In fr, this message translates to:
+  /// **'Sélectionner une capsule existante de cet enfant'**
+  String get albumPickFromCapsulesDesc;
+
+  /// No description provided for @albumPickFromGallery.
+  ///
+  /// In fr, this message translates to:
+  /// **'Choisir depuis la galerie'**
+  String get albumPickFromGallery;
+
+  /// No description provided for @albumPickFromGalleryDesc.
+  ///
+  /// In fr, this message translates to:
+  /// **'Importer une nouvelle photo depuis votre téléphone'**
+  String get albumPickFromGalleryDesc;
+
+  /// No description provided for @albumPickFromCamera.
+  ///
+  /// In fr, this message translates to:
+  /// **'Prendre une photo'**
+  String get albumPickFromCamera;
+
+  /// No description provided for @albumPickFromCameraDesc.
+  ///
+  /// In fr, this message translates to:
+  /// **'Prendre une photo instantanément avec l\'appareil'**
+  String get albumPickFromCameraDesc;
+
+  /// No description provided for @albumCropCurrentPhoto.
+  ///
+  /// In fr, this message translates to:
+  /// **'Recadrer la photo actuelle'**
+  String get albumCropCurrentPhoto;
+
+  /// No description provided for @albumCropCurrentPhotoDesc.
+  ///
+  /// In fr, this message translates to:
+  /// **'Zoomer, repositionner ou pivoter la photo'**
+  String get albumCropCurrentPhotoDesc;
+
+  /// No description provided for @albumClearPageTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Retirer de l\'album'**
+  String get albumClearPageTitle;
+
+  /// No description provided for @albumClearPageDesc.
+  ///
+  /// In fr, this message translates to:
+  /// **'Vider cette page sans supprimer la capsule originale'**
+  String get albumClearPageDesc;
+
+  /// No description provided for @albumClearPageConfirm.
+  ///
+  /// In fr, this message translates to:
+  /// **'Êtes-vous sûre de vouloir retirer cette photo ? La capsule restera intacte dans vos souvenirs.'**
+  String get albumClearPageConfirm;
+
+  /// No description provided for @albumRemove.
+  ///
+  /// In fr, this message translates to:
+  /// **'Retirer'**
+  String get albumRemove;
+
+  /// No description provided for @albumPhotoUpdatedSuccess.
+  ///
+  /// In fr, this message translates to:
+  /// **'Photo mise à jour avec succès'**
+  String get albumPhotoUpdatedSuccess;
+
+  /// No description provided for @albumPhotoCroppedSuccess.
+  ///
+  /// In fr, this message translates to:
+  /// **'Photo recadrée et ajustée avec succès'**
+  String get albumPhotoCroppedSuccess;
+
+  /// No description provided for @albumAspectRatioSquare.
+  ///
+  /// In fr, this message translates to:
+  /// **'Carré 1:1'**
+  String get albumAspectRatioSquare;
+
+  /// No description provided for @albumAspectRatioPortrait.
+  ///
+  /// In fr, this message translates to:
+  /// **'Portrait 4:5'**
+  String get albumAspectRatioPortrait;
+
+  /// No description provided for @albumAspectRatioClassic.
+  ///
+  /// In fr, this message translates to:
+  /// **'Classique 3:4'**
+  String get albumAspectRatioClassic;
+
+  /// No description provided for @albumAspectRatioStory.
+  ///
+  /// In fr, this message translates to:
+  /// **'Plein écran 9:16'**
+  String get albumAspectRatioStory;
+
+  /// No description provided for @albumPhotoQuantityTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Nombre de photos'**
+  String get albumPhotoQuantityTitle;
+
+  /// No description provided for @albumPhotoQuantitySubtitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Capacité & tarif de l\'album'**
+  String get albumPhotoQuantitySubtitle;
+
+  /// No description provided for @albumExcludingShipping.
+  ///
+  /// In fr, this message translates to:
+  /// **'Prix hors frais de livraison'**
+  String get albumExcludingShipping;
+
+  /// No description provided for @albumCopiesCount.
+  ///
+  /// In fr, this message translates to:
+  /// **'Quantité d\'exemplaires'**
+  String get albumCopiesCount;
+
+  /// No description provided for @albumFormatA5.
+  ///
+  /// In fr, this message translates to:
+  /// **'Format A5 (15 × 21 cm)'**
+  String get albumFormatA5;
+
+  /// No description provided for @albumFormatA4.
+  ///
+  /// In fr, this message translates to:
+  /// **'Format A4 (21 × 30 cm)'**
+  String get albumFormatA4;
+
+  /// No description provided for @albumFormatA3.
+  ///
+  /// In fr, this message translates to:
+  /// **'Format A3 (30 × 42 cm)'**
+  String get albumFormatA3;
+
+  /// No description provided for @albumFormatA3SingleOnly.
+  ///
+  /// In fr, this message translates to:
+  /// **'Format A3 réservé au portrait 1 photo'**
+  String get albumFormatA3SingleOnly;
+
+  /// No description provided for @albumUnitPrice.
+  ///
+  /// In fr, this message translates to:
+  /// **'Prix unitaire'**
+  String get albumUnitPrice;
+
+  /// No description provided for @albumSubtotal.
+  ///
+  /// In fr, this message translates to:
+  /// **'Sous-total'**
+  String get albumSubtotal;
+
+  /// No description provided for @albumShippingFee.
+  ///
+  /// In fr, this message translates to:
+  /// **'Frais de livraison'**
+  String get albumShippingFee;
+
+  /// No description provided for @albumShippingFreeVip.
+  ///
+  /// In fr, this message translates to:
+  /// **'0 DA (Inclus VIP)'**
+  String get albumShippingFreeVip;
+
+  /// No description provided for @albumTotalToPay.
+  ///
+  /// In fr, this message translates to:
+  /// **'Total à régler'**
+  String get albumTotalToPay;
+
+  /// No description provided for @albumChangeCapacityTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Capacité de l\'album'**
+  String get albumChangeCapacityTitle;
+
+  /// No description provided for @subscriptionPlansHeaderTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Choisissez la formule qui vous accompagne'**
+  String get subscriptionPlansHeaderTitle;
+
+  /// No description provided for @subscriptionPlansHeaderSubtitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Comparez les avantages et sélectionnez l’offre adaptée à votre famille et à vos souvenirs.'**
+  String get subscriptionPlansHeaderSubtitle;
+
+  /// No description provided for @subscriptionPlanRecommendedBadge.
+  ///
+  /// In fr, this message translates to:
+  /// **'Recommandée'**
+  String get subscriptionPlanRecommendedBadge;
+
+  /// No description provided for @subscriptionVipExclusiveBadge.
+  ///
+  /// In fr, this message translates to:
+  /// **'Exclusif'**
+  String get subscriptionVipExclusiveBadge;
+
+  /// No description provided for @subscriptionUpgradeToPremium.
+  ///
+  /// In fr, this message translates to:
+  /// **'Passer à Premium'**
+  String get subscriptionUpgradeToPremium;
+
+  /// No description provided for @subscriptionUpgradeToVip.
+  ///
+  /// In fr, this message translates to:
+  /// **'Passer à VIP Annuel'**
+  String get subscriptionUpgradeToVip;
+
+  /// No description provided for @subscriptionChooseVipAnnual.
+  ///
+  /// In fr, this message translates to:
+  /// **'Choisir VIP Annuel'**
+  String get subscriptionChooseVipAnnual;
+
+  /// No description provided for @subscriptionPlanIncludedInVip.
+  ///
+  /// In fr, this message translates to:
+  /// **'Inclus dans votre offre VIP'**
+  String get subscriptionPlanIncludedInVip;
+
+  /// No description provided for @subscriptionDisclaimerAvailableOffers.
+  ///
+  /// In fr, this message translates to:
+  /// **'* Dans la limite des offres disponibles.'**
+  String get subscriptionDisclaimerAvailableOffers;
+
+  /// No description provided for @subscriptionCompareOffers.
+  ///
+  /// In fr, this message translates to:
+  /// **'Comparer les offres'**
+  String get subscriptionCompareOffers;
+
+  /// No description provided for @subscriptionActionLater.
+  ///
+  /// In fr, this message translates to:
+  /// **'Plus tard'**
+  String get subscriptionActionLater;
+
+  /// No description provided for @subscriptionCapsuleLimitReachedTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Limite de 38 capsules atteinte'**
+  String get subscriptionCapsuleLimitReachedTitle;
+
+  /// No description provided for @subscriptionCapsuleLimitReachedMessage.
+  ///
+  /// In fr, this message translates to:
+  /// **'Vous avez atteint la limite de 38 capsules incluse dans votre offre gratuite. Passez à Premium pour continuer à créer des capsules émotionnelles sans limitation.'**
+  String get subscriptionCapsuleLimitReachedMessage;
+
+  /// No description provided for @subscriptionChildLimitReachedTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Limite d\'enfants atteinte'**
+  String get subscriptionChildLimitReachedTitle;
+
+  /// No description provided for @subscriptionChildLimitReachedMessageFree.
+  ///
+  /// In fr, this message translates to:
+  /// **'L\'offre gratuite est limitée à 1 enfant. Passez à Premium pour ajouter et suivre jusqu\'à 2 enfants !'**
+  String get subscriptionChildLimitReachedMessageFree;
+
+  /// No description provided for @subscriptionChildLimitReachedMessagePremium.
+  ///
+  /// In fr, this message translates to:
+  /// **'L\'offre Premium est limitée à 2 enfants. Passez à VIP Annuel pour un nombre illimité d\'enfants !'**
+  String get subscriptionChildLimitReachedMessagePremium;
+
+  /// No description provided for @subscriptionMatrixPrice.
+  ///
+  /// In fr, this message translates to:
+  /// **'Prix'**
+  String get subscriptionMatrixPrice;
+
+  /// No description provided for @subscriptionMatrixCapsules.
+  ///
+  /// In fr, this message translates to:
+  /// **'Capsules émotionnelles'**
+  String get subscriptionMatrixCapsules;
+
+  /// No description provided for @subscriptionMatrixChildren.
+  ///
+  /// In fr, this message translates to:
+  /// **'Nombre d\'enfants'**
+  String get subscriptionMatrixChildren;
+
+  /// No description provided for @subscriptionMatrixVaccines.
+  ///
+  /// In fr, this message translates to:
+  /// **'Suivi de vaccination et mises à jour'**
+  String get subscriptionMatrixVaccines;
+
+  /// No description provided for @subscriptionMatrixReels.
+  ///
+  /// In fr, this message translates to:
+  /// **'Reels éducatifs'**
+  String get subscriptionMatrixReels;
+
+  /// No description provided for @subscriptionMatrixRecording.
+  ///
+  /// In fr, this message translates to:
+  /// **'Enregistrement des capsules'**
+  String get subscriptionMatrixRecording;
+
+  /// No description provided for @subscriptionMatrixSharing.
+  ///
+  /// In fr, this message translates to:
+  /// **'Partage des capsules émotionnelles'**
+  String get subscriptionMatrixSharing;
+
+  /// No description provided for @subscriptionMatrixPremiumPerks.
+  ///
+  /// In fr, this message translates to:
+  /// **'Accès aux avantages Premium'**
+  String get subscriptionMatrixPremiumPerks;
+
+  /// No description provided for @subscriptionMatrixVipPerks.
+  ///
+  /// In fr, this message translates to:
+  /// **'Accès aux avantages VIP'**
+  String get subscriptionMatrixVipPerks;
+
+  /// No description provided for @subscriptionMatrixGiveaways.
+  ///
+  /// In fr, this message translates to:
+  /// **'Tirages au sort et cadeaux'**
+  String get subscriptionMatrixGiveaways;
+
+  /// No description provided for @subscriptionMatrixPrintedPhoto.
+  ///
+  /// In fr, this message translates to:
+  /// **'Photo offerte imprimée livrée à domicile'**
+  String get subscriptionMatrixPrintedPhoto;
+
+  /// No description provided for @subscriptionMatrixVipCard.
+  ///
+  /// In fr, this message translates to:
+  /// **'Carte VIP personnalisée'**
+  String get subscriptionMatrixVipCard;
+
+  /// No description provided for @subscriptionMatrixPartnerPrivileges.
+  ///
+  /// In fr, this message translates to:
+  /// **'Accès aux privilèges partenaires'**
+  String get subscriptionMatrixPartnerPrivileges;
+
+  /// No description provided for @subscriptionMatrixValueFreeCapsules.
+  ///
+  /// In fr, this message translates to:
+  /// **'Jusqu\'à 38 capsules'**
+  String get subscriptionMatrixValueFreeCapsules;
+
+  /// No description provided for @subscriptionMatrixValueOneChild.
+  ///
+  /// In fr, this message translates to:
+  /// **'1 enfant'**
+  String get subscriptionMatrixValueOneChild;
+
+  /// No description provided for @subscriptionMatrixValueTwoChildren.
+  ///
+  /// In fr, this message translates to:
+  /// **'Jusqu\'à 2 enfants'**
+  String get subscriptionMatrixValueTwoChildren;
+
+  /// No description provided for @subscriptionMatrixValueUnlimitedChildren.
+  ///
+  /// In fr, this message translates to:
+  /// **'Nombre illimité d\'enfants'**
+  String get subscriptionMatrixValueUnlimitedChildren;
+
+  /// No description provided for @subscriptionMatrixValueIncluded.
+  ///
+  /// In fr, this message translates to:
+  /// **'Inclus'**
+  String get subscriptionMatrixValueIncluded;
+
+  /// No description provided for @subscriptionMatrixValueNotIncluded.
+  ///
+  /// In fr, this message translates to:
+  /// **'Non inclus'**
+  String get subscriptionMatrixValueNotIncluded;
+
+  /// No description provided for @subscriptionMatrixValueAvailableOffers.
+  ///
+  /// In fr, this message translates to:
+  /// **'Selon les offres disponibles*'**
+  String get subscriptionMatrixValueAvailableOffers;
+
+  /// No description provided for @subscriptionMatrixValueOnePhotoA3.
+  ///
+  /// In fr, this message translates to:
+  /// **'1 photo offerte (A3)'**
+  String get subscriptionMatrixValueOnePhotoA3;
+
+  /// No description provided for @albumLaunchModelsSectionTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Modèles d\'albums disponibles'**
+  String get albumLaunchModelsSectionTitle;
+
+  /// No description provided for @albumComingSoonSectionTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Prochainement disponibles'**
+  String get albumComingSoonSectionTitle;
+
+  /// No description provided for @albumComingSoonBadge.
+  ///
+  /// In fr, this message translates to:
+  /// **'Bientôt disponible'**
+  String get albumComingSoonBadge;
+
+  /// No description provided for @albumComingSoonToast.
+  ///
+  /// In fr, this message translates to:
+  /// **'Ce modèle d\'album sera disponible très prochainement ! ✨'**
+  String get albumComingSoonToast;
+
+  /// No description provided for @albumPortrait1PhotoBadge.
+  ///
+  /// In fr, this message translates to:
+  /// **'1 photo portrait'**
+  String get albumPortrait1PhotoBadge;
+
+  /// No description provided for @album6PhotosBadge.
+  ///
+  /// In fr, this message translates to:
+  /// **'6 photos'**
+  String get album6PhotosBadge;
+
+  /// No description provided for @albumStartingPriceFrom.
+  ///
+  /// In fr, this message translates to:
+  /// **'Dès {price} DA'**
+  String albumStartingPriceFrom(int price);
+
+  /// No description provided for @diaporamaTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Album numérique (Diaporama)'**
+  String get diaporamaTitle;
+
+  /// No description provided for @diaporamaSubtitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Créez un diaporama souvenir animé'**
+  String get diaporamaSubtitle;
+
+  /// No description provided for @diaporamaMinPhotosError.
+  ///
+  /// In fr, this message translates to:
+  /// **'Veuillez sélectionner au moins 3 photos pour le diaporama'**
+  String get diaporamaMinPhotosError;
+
+  /// No description provided for @diaporamaMaxPhotosError.
+  ///
+  /// In fr, this message translates to:
+  /// **'Maximum 12 photos autorisées pour le diaporama'**
+  String get diaporamaMaxPhotosError;
+
+  /// No description provided for @diaporamaReorderHint.
+  ///
+  /// In fr, this message translates to:
+  /// **'Glissez-déposez pour réorganiser l\'ordre d\'apparition'**
+  String get diaporamaReorderHint;
+
+  /// No description provided for @diaporamaPlay.
+  ///
+  /// In fr, this message translates to:
+  /// **'Lancer le diaporama'**
+  String get diaporamaPlay;
+
+  /// No description provided for @diaporamaReplay.
+  ///
+  /// In fr, this message translates to:
+  /// **'Rejouer'**
+  String get diaporamaReplay;
+
+  /// No description provided for @diaporamaShare.
+  ///
+  /// In fr, this message translates to:
+  /// **'Partager le diaporama'**
+  String get diaporamaShare;
+
+  /// No description provided for @diaporamaOpeningTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Les doux souvenirs de {childName}'**
+  String diaporamaOpeningTitle(String childName);
+
+  /// No description provided for @diaporamaClosingTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Moments précieux avec LuckyMam 🍀'**
+  String get diaporamaClosingTitle;
+
+  /// No description provided for @diaporamaShareMessage.
+  ///
+  /// In fr, this message translates to:
+  /// **'Découvrez le diaporama des plus beaux souvenirs de {childName} sur LuckyMam 🍀'**
+  String diaporamaShareMessage(String childName);
 }
 
 class _AppLocalizationsDelegate

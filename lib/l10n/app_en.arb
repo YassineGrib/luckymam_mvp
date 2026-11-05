@@ -64,7 +64,8 @@
   "appVersion": "Version 1.0.0",
   "law1807Title": "Law 18-07 Personal Data Protection",
   "law1807Text": "In accordance with the provisions of Law No. 18-07 of June 10, 2018, relating to the protection of individuals with regard to the processing of personal data, you consent to the collection, processing, and secure storage of your personal data by Luckymam for the sole purpose of providing our services. You can exercise your rights to access, rectify, or delete your data at any time.",
-  "law1807Checkbox": "I accept Law 18/07",
+  "law1807Checkbox": "I accept the terms of Law No. 18-07.",
+  "law1807ReadFullTerms": "Read full legal text and privacy policy",
   "law1807Error": "Acceptance of Law 18/07 is required to continue.",
   "capsule": "Capsule",
   "navHome": "Home",
@@ -125,10 +126,10 @@
   "statusMom": "Mom",
   "dailyTipSectionTitle": "DAILY TIP",
   "dailyTipFooter": "— Luckymam Team 💕",
-  "upgradePremiumTitle": "Upgrade to Premium & VIP",
-  "upgradePremiumSubtitle": "Unlimited capsules • Ad-free experience • Printed album",
+  "upgradePremiumTitle": "Upgrade to Premium",
+  "upgradePremiumSubtitle": "Unlimited capsules • Up to 2 children • Sharing included",
   "upgradePromptBadge": "LuckyMam Membership",
-  "upgradePromptCta": "Explore Plans",
+  "upgradePromptCta": "Upgrade to Premium",
   "marketplaceTitle": "Marketplace",
   "marketplaceSubtitle": "Products from our partners",
   "marketplaceMyOrders": "My orders",
@@ -177,8 +178,12 @@
   "printAlbumSummary": "{pageCount} pages · {childName}",
   "@printAlbumSummary": {
     "placeholders": {
-      "pageCount": {"type": "int"},
-      "childName": {"type": "String"}
+      "pageCount": {
+        "type": "int"
+      },
+      "childName": {
+        "type": "String"
+      }
     }
   },
   "printVipFreeNote": "Free with your VIP subscription 🎁",
@@ -187,7 +192,9 @@
   "printOrderSentMessage": "\"{albumTitle}\" will be printed and shipped to the address provided. We will contact you by phone to confirm.",
   "@printOrderSentMessage": {
     "placeholders": {
-      "albumTitle": {"type": "String"}
+      "albumTitle": {
+        "type": "String"
+      }
     }
   },
   "printEstimatedDelay": "Estimated delay: 7-14 days",
@@ -219,7 +226,9 @@
   "milestone_reminder_on": "Reminder on {date}",
   "@milestone_reminder_on": {
     "placeholders": {
-      "date": {"type": "String"}
+      "date": {
+        "type": "String"
+      }
     }
   },
   "milestone_schedule_reminder": "Schedule a reminder",
@@ -227,7 +236,9 @@
   "milestone_error": "Error: {error}",
   "@milestone_error": {
     "placeholders": {
-      "error": {"type": "String"}
+      "error": {
+        "type": "String"
+      }
     }
   },
   "milestone_tips": "Tips",
@@ -248,7 +259,9 @@
   "milestone_reminder_scheduled": "Reminder scheduled for {date} ✓",
   "@milestone_reminder_scheduled": {
     "placeholders": {
-      "date": {"type": "String"}
+      "date": {
+        "type": "String"
+      }
     }
   },
   "milestone_reminder_cancelled": "Reminder cancelled",
@@ -263,7 +276,9 @@
   "albumDefaultTitleForChild": "Album for {childName}",
   "@albumDefaultTitleForChild": {
     "placeholders": {
-      "childName": {"type": "String"}
+      "childName": {
+        "type": "String"
+      }
     }
   },
   "albumNewFreeTitle": "New Free Album",
@@ -278,32 +293,44 @@
   "albumChooseTemplateFor": "Choose a template for {childName}",
   "@albumChooseTemplateFor": {
     "placeholders": {
-      "childName": {"type": "String"}
+      "childName": {
+        "type": "String"
+      }
     }
   },
   "albumCreateTemplateConfirm": "Create \"{templateTitle}\"?",
   "@albumCreateTemplateConfirm": {
     "placeholders": {
-      "templateTitle": {"type": "String"}
+      "templateTitle": {
+        "type": "String"
+      }
     }
   },
   "albumCreateTemplateDesc": "This album will be created for {childName} with {slotCount} events to fill.",
   "@albumCreateTemplateDesc": {
     "placeholders": {
-      "childName": {"type": "String"},
-      "slotCount": {"type": "int"}
+      "childName": {
+        "type": "String"
+      },
+      "slotCount": {
+        "type": "int"
+      }
     }
   },
   "albumTemplateEventCount": "{count} events",
   "@albumTemplateEventCount": {
     "placeholders": {
-      "count": {"type": "int"}
+      "count": {
+        "type": "int"
+      }
     }
   },
   "albumErrorWithMessage": "Error: {error}",
   "@albumErrorWithMessage": {
     "placeholders": {
-      "error": {"type": "String"}
+      "error": {
+        "type": "String"
+      }
     }
   },
   "albumNotFound": "Album not found",
@@ -311,8 +338,12 @@
   "albumEventsFilledProgress": "{filled}/{total} events completed",
   "@albumEventsFilledProgress": {
     "placeholders": {
-      "filled": {"type": "int"},
-      "total": {"type": "int"}
+      "filled": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
     }
   },
   "albumMemoryAttached": "Memory attached",
@@ -321,14 +352,20 @@
   "albumPageCaption": "Page {number}",
   "@albumPageCaption": {
     "placeholders": {
-      "number": {"type": "int"}
+      "number": {
+        "type": "int"
+      }
     }
   },
   "albumPagesFilledDraft": "{filled}/{total} pages filled · Draft",
   "@albumPagesFilledDraft": {
     "placeholders": {
-      "filled": {"type": "int"},
-      "total": {"type": "int"}
+      "filled": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
     }
   },
   "albumRenameTitle": "Rename Album",
@@ -392,20 +429,26 @@
   "paymentConfirmButton": "Confirm payment • {price} DZD",
   "@paymentConfirmButton": {
     "placeholders": {
-      "price": {"type": "int"}
+      "price": {
+        "type": "int"
+      }
     }
   },
   "paymentPriceDzd": "{price} DZD",
   "@paymentPriceDzd": {
     "placeholders": {
-      "price": {"type": "int"}
+      "price": {
+        "type": "int"
+      }
     }
   },
   "paymentSuccessTitle": "Payment successful!",
   "paymentSuccessActivePlan": "Your {planTitle} subscription is now active.",
   "@paymentSuccessActivePlan": {
     "placeholders": {
-      "planTitle": {"type": "String"}
+      "planTitle": {
+        "type": "String"
+      }
     }
   },
   "paymentSuccessAlbumPerk": "Your free printed album is waiting! Head to your profile.",
@@ -464,32 +507,41 @@
   "capsulesRemaining": "{count} remaining",
   "@capsulesRemaining": {
     "placeholders": {
-      "count": {"type": "int"}
+      "count": {
+        "type": "int"
+      }
     }
   },
   "capsulesQuotaLimitTitle": "Limit reached",
   "capsulesQuotaLimitMessage": "You have reached the limit of {limit} capsules on the free plan. Upgrade to Premium for unlimited storage!",
   "@capsulesQuotaLimitMessage": {
     "placeholders": {
-      "limit": {"type": "int"}
+      "limit": {
+        "type": "int"
+      }
     }
   },
   "capsulesUnderstood": "Got it",
   "capsulesViewPremium": "View Premium",
   "capsulesEmptyTitle": "No capsules",
   "capsulesEmptySubtitle": "Capture your first memories\nby tapping the button below",
+  "capsulesCreateFirst": "Create my first memory",
   "capsulesLoadErrorSubtitle": "Unable to load capsules",
   "capsuleSharePreparing": "Preparing to share…",
   "capsuleShareText": "✨ A precious memory via Luckymam\n{emotion}",
   "@capsuleShareText": {
     "placeholders": {
-      "emotion": {"type": "String"}
+      "emotion": {
+        "type": "String"
+      }
     }
   },
   "capsuleShareError": "Share error: {error}",
   "@capsuleShareError": {
     "placeholders": {
-      "error": {"type": "String"}
+      "error": {
+        "type": "String"
+      }
     }
   },
   "capsuleGalleryPermissionDenied": "Gallery permission denied",
@@ -497,7 +549,9 @@
   "capsuleSaveError": "Save error: {error}",
   "@capsuleSaveError": {
     "placeholders": {
-      "error": {"type": "String"}
+      "error": {
+        "type": "String"
+      }
     }
   },
   "capsulePremiumFeatureTitle": "Premium Feature",
@@ -528,12 +582,18 @@
   "capsuleGallery": "Gallery",
   "capsuleCreatedSuccess": "Capsule created successfully! ✨",
   "capsuleEmotion": "Emotion",
+  "capsulePrimaryEmotion": "Primary emotion",
+  "capsuleSecondaryEmotions": "Secondary emotions",
+  "capsuleSecondaryEmotionsHint": "Optional • Max 3",
+  "capsuleNoPhotoPlaceholder": "Saved memory",
   "capsuleVoiceMessageOptional": "🎤 Voice message (optional)",
   "capsuleHoldToRecord": "Hold to record",
   "capsuleMaxDuration": "Max {seconds}s",
   "@capsuleMaxDuration": {
     "placeholders": {
-      "seconds": {"type": "int"}
+      "seconds": {
+        "type": "int"
+      }
     }
   },
   "capsuleReleaseToStop": "Release to stop recording",
@@ -541,7 +601,9 @@
   "capsuleDuration": "Duration: {duration}",
   "@capsuleDuration": {
     "placeholders": {
-      "duration": {"type": "String"}
+      "duration": {
+        "type": "String"
+      }
     }
   },
   "healthLoadingError": "Loading error",
@@ -556,7 +618,9 @@
   "healthErrorWithDetail": "Error: {error}",
   "@healthErrorWithDetail": {
     "placeholders": {
-      "error": {"type": "String"}
+      "error": {
+        "type": "String"
+      }
     }
   },
   "healthWeightChartTitle": "Weight chart",
@@ -591,32 +655,44 @@
   "healthWeightValue": "{value} kg",
   "@healthWeightValue": {
     "placeholders": {
-      "value": {"type": "String"}
+      "value": {
+        "type": "String"
+      }
     }
   },
   "healthHeightValue": "{value} cm",
   "@healthHeightValue": {
     "placeholders": {
-      "value": {"type": "String"}
+      "value": {
+        "type": "String"
+      }
     }
   },
   "healthChartAxisKg": "{value} kg",
   "@healthChartAxisKg": {
     "placeholders": {
-      "value": {"type": "String"}
+      "value": {
+        "type": "String"
+      }
     }
   },
   "healthChartAxisMonths": "{value}m",
   "@healthChartAxisMonths": {
     "placeholders": {
-      "value": {"type": "String"}
+      "value": {
+        "type": "String"
+      }
     }
   },
   "healthChartTooltip": "{weight} kg\n{months}m",
   "@healthChartTooltip": {
     "placeholders": {
-      "weight": {"type": "String"},
-      "months": {"type": "String"}
+      "weight": {
+        "type": "String"
+      },
+      "months": {
+        "type": "String"
+      }
     }
   },
   "healthChartEmptyHint": "Add a measurement\nto see the chart",
@@ -636,7 +712,9 @@
   "homeMemoryBookAlbumsCount": "{count, plural, =1{1 auto-generated album} other{{count} auto-generated albums}}",
   "@homeMemoryBookAlbumsCount": {
     "placeholders": {
-      "count": {"type": "int"}
+      "count": {
+        "type": "int"
+      }
     }
   },
   "homeMemoryBookEmptySubtitle": "Your memories as albums",
@@ -644,7 +722,9 @@
   "homeChildVaccineLabel": "Vaccine: {codes}",
   "@homeChildVaccineLabel": {
     "placeholders": {
-      "codes": {"type": "String"}
+      "codes": {
+        "type": "String"
+      }
     }
   },
   "homeYourChildren": "Your Children",
@@ -659,7 +739,9 @@
   "homeVaccineCancelMessage": "Do you want to mark \"{ageLabel}\" as not done?",
   "@homeVaccineCancelMessage": {
     "placeholders": {
-      "ageLabel": {"type": "String"}
+      "ageLabel": {
+        "type": "String"
+      }
     }
   },
   "homeVaccineNo": "No",
@@ -697,7 +779,9 @@
   "profileCycleDays": "{days}-day cycle",
   "@profileCycleDays": {
     "placeholders": {
-      "days": {"type": "int"}
+      "days": {
+        "type": "int"
+      }
     }
   },
   "profileFreePlan": "Free plan",
@@ -736,7 +820,9 @@
   "profileDaysCount": "{count} days",
   "@profileDaysCount": {
     "placeholders": {
-      "count": {"type": "int"}
+      "count": {
+        "type": "int"
+      }
     }
   },
   "profileNewCapsule": "New capsule",
@@ -746,21 +832,29 @@
   "profileNoCapsulesForChild": "No capsules for {name}",
   "@profileNoCapsulesForChild": {
     "placeholders": {
-      "name": {"type": "String"}
+      "name": {
+        "type": "String"
+      }
     }
   },
   "profileCaptureFirstMemory": "Capture a first memory!",
   "profileMvpFooter": "MVP - {appName} {year}",
   "@profileMvpFooter": {
     "placeholders": {
-      "appName": {"type": "String"},
-      "year": {"type": "int"}
+      "appName": {
+        "type": "String"
+      },
+      "year": {
+        "type": "int"
+      }
     }
   },
   "profileGestationalWeekValue": "Week {week} / 40",
   "@profileGestationalWeekValue": {
     "placeholders": {
-      "week": {"type": "int"}
+      "week": {
+        "type": "int"
+      }
     }
   },
   "profilePhasePeriod": "Period",
@@ -772,14 +866,18 @@
   "errorWithMessage": "Error: {error}",
   "@errorWithMessage": {
     "placeholders": {
-      "error": {"type": "String"}
+      "error": {
+        "type": "String"
+      }
     }
   },
   "reelsTitle": "Educational Reels",
   "reelsFiltered": "Filtered: {label}",
   "@reelsFiltered": {
     "placeholders": {
-      "label": {"type": "String"}
+      "label": {
+        "type": "String"
+      }
     }
   },
   "reelsEmptyCategory": "No reels in this category",
@@ -794,7 +892,9 @@
   "adsSponsored": "Sponsored · {sponsor}",
   "@adsSponsored": {
     "placeholders": {
-      "sponsor": {"type": "String"}
+      "sponsor": {
+        "type": "String"
+      }
     }
   },
   "authLaw1807LegalRef": "Legal compliance reference: Algerian Law n° 18-07 relative to the protection of physical persons in the treatment of personal data.",
@@ -805,7 +905,9 @@
   "timelineLifeBookOf": "of {name}",
   "@timelineLifeBookOf": {
     "placeholders": {
-      "name": {"type": "String"}
+      "name": {
+        "type": "String"
+      }
     }
   },
   "timelineNoMilestonesPhase": "No milestones for this phase",
@@ -819,31 +921,41 @@
   "timelineDueDaysAgo": "{days}d ago",
   "@timelineDueDaysAgo": {
     "placeholders": {
-      "days": {"type": "int"}
+      "days": {
+        "type": "int"
+      }
     }
   },
   "timelineDueInDays": "in {days}d",
   "@timelineDueInDays": {
     "placeholders": {
-      "days": {"type": "int"}
+      "days": {
+        "type": "int"
+      }
     }
   },
   "timelineDueInMonths": "in {months} months",
   "@timelineDueInMonths": {
     "placeholders": {
-      "months": {"type": "int"}
+      "months": {
+        "type": "int"
+      }
     }
   },
   "timelineDueInYears": "in {years} years",
   "@timelineDueInYears": {
     "placeholders": {
-      "years": {"type": "int"}
+      "years": {
+        "type": "int"
+      }
     }
   },
   "timelineDueInYearsSingular": "in {years} year",
   "@timelineDueInYearsSingular": {
     "placeholders": {
-      "years": {"type": "int"}
+      "years": {
+        "type": "int"
+      }
     }
   },
   "timelinePhaseCurrent": "Current",
@@ -853,21 +965,27 @@
   "vaccineDoneOn": "Done on {date}",
   "@vaccineDoneOn": {
     "placeholders": {
-      "date": {"type": "String"}
+      "date": {
+        "type": "String"
+      }
     }
   },
   "vaccineCompleted": "Completed",
   "vaccineOverdueDays": "{days} days overdue",
   "@vaccineOverdueDays": {
     "placeholders": {
-      "days": {"type": "int"}
+      "days": {
+        "type": "int"
+      }
     }
   },
   "vaccineDueToday": "Due today",
   "vaccineDueInDays": "In {days} days",
   "@vaccineDueInDays": {
     "placeholders": {
-      "days": {"type": "int"}
+      "days": {
+        "type": "int"
+      }
     }
   },
   "vaccineDone": "Done",
@@ -903,7 +1021,9 @@
   "vaccineDetailProtectsAgainst": "Protects against: {disease}",
   "@vaccineDetailProtectsAgainst": {
     "placeholders": {
-      "disease": {"type": "String"}
+      "disease": {
+        "type": "String"
+      }
     }
   },
   "vaccineDetailPurposeTitle": "What is this vaccine for?",
@@ -921,7 +1041,7 @@
   "vaccineStatusUpcoming": "Scheduled on the immunization calendar",
   "subscriptionPlanFreeTitle": "Free",
   "subscriptionPlanFreeSubtitle": "To get started",
-  "subscriptionPlanFreeFeatureCapsules": "Up to 25 capsules",
+  "subscriptionPlanFreeFeatureCapsules": "38 capsules maximum",
   "subscriptionPlanFreeFeatureChild": "1 child",
   "subscriptionPlanFreeFeatureMilestones": "Development milestones",
   "subscriptionPlanFreeFeatureVaccines": "Vaccinations",
@@ -957,7 +1077,7 @@
   "subscriptionCompareFeaturePrintedAlbum": "Free Printed Photo Album Shipped Home",
   "subscriptionCompareFeatureSupport": "Priority Dedicated Support",
   "subscriptionCompareFeatureAdFree": "100% Ad-Free Experience",
-  "subscriptionCompareValueFreeCapsules": "25 capsules",
+  "subscriptionCompareValueFreeCapsules": "Up to 38 capsules",
   "subscriptionCompareValueUnlimited": "Unlimited",
   "subscriptionCompareValueOneChild": "1 child",
   "subscriptionCompareValueAllChildren": "All your children",
@@ -987,7 +1107,9 @@
   "subscriptionContinueButton": "Continue & Subscribe • {price} DZD",
   "@subscriptionContinueButton": {
     "placeholders": {
-      "price": {"type": "int"}
+      "price": {
+        "type": "int"
+      }
     }
   },
   "subscriptionViewDetails": "View full feature comparison & FAQ",
@@ -995,7 +1117,9 @@
   "subscriptionPlanPricePerMonth": "{price} DZD /month",
   "@subscriptionPlanPricePerMonth": {
     "placeholders": {
-      "price": {"type": "int"}
+      "price": {
+        "type": "int"
+      }
     }
   },
   "subscriptionVipCardSubtitle": "Free luxury printed photo album shipped to your door",
@@ -1013,20 +1137,26 @@
   "subscriptionPlanPriceDzd": "{price} DZD",
   "@subscriptionPlanPriceDzd": {
     "placeholders": {
-      "price": {"type": "int"}
+      "price": {
+        "type": "int"
+      }
     }
   },
   "subscriptionSnackUpgradeSuccess": "{tier} subscription activated!",
   "@subscriptionSnackUpgradeSuccess": {
     "placeholders": {
-      "tier": {"type": "String"}
+      "tier": {
+        "type": "String"
+      }
     }
   },
   "subscriptionSnackAlbumClaimSuccess": "Album request sent! We will contact you soon.",
   "subscriptionSnackError": "Error: {details}",
   "@subscriptionSnackError": {
     "placeholders": {
-      "details": {"type": "String"}
+      "details": {
+        "type": "String"
+      }
     }
   },
   "profileSnackPersonalInfoUpdated": "Information updated",
@@ -1042,14 +1172,18 @@
   "profileSnackError": "Error: {details}",
   "@profileSnackError": {
     "placeholders": {
-      "details": {"type": "String"}
+      "details": {
+        "type": "String"
+      }
     }
   },
   "authErrorUnknown": "Unknown error",
   "authWelcome": "Welcome {name}!",
   "@authWelcome": {
     "placeholders": {
-      "name": {"type": "String"}
+      "name": {
+        "type": "String"
+      }
     }
   },
   "notifVaccineChannelName": "Vaccinations",
@@ -1061,38 +1195,52 @@
   "notifVaccineReminderTitle": "💉 Vaccine Reminder – {childName}",
   "@notifVaccineReminderTitle": {
     "placeholders": {
-      "childName": {"type": "String"}
+      "childName": {
+        "type": "String"
+      }
     }
   },
   "notifVaccineReminderBody": "{vaccineLabel} due on {date}",
   "@notifVaccineReminderBody": {
     "placeholders": {
-      "vaccineLabel": {"type": "String"},
-      "date": {"type": "String"}
+      "vaccineLabel": {
+        "type": "String"
+      },
+      "date": {
+        "type": "String"
+      }
     }
   },
   "notifMilestoneUpcomingTitle": "⭐ Upcoming Milestone – {childName}",
   "@notifMilestoneUpcomingTitle": {
     "placeholders": {
-      "childName": {"type": "String"}
+      "childName": {
+        "type": "String"
+      }
     }
   },
   "notifMilestoneUpcomingBody": "\"{milestoneTitle}\" in 7 days",
   "@notifMilestoneUpcomingBody": {
     "placeholders": {
-      "milestoneTitle": {"type": "String"}
+      "milestoneTitle": {
+        "type": "String"
+      }
     }
   },
   "notifMilestoneCustomTitle": "⏰ Reminder – {childName}",
   "@notifMilestoneCustomTitle": {
     "placeholders": {
-      "childName": {"type": "String"}
+      "childName": {
+        "type": "String"
+      }
     }
   },
   "notifMilestoneCustomBody": "\"{milestoneTitle}\" — Tap to open",
   "@notifMilestoneCustomBody": {
     "placeholders": {
-      "milestoneTitle": {"type": "String"}
+      "milestoneTitle": {
+        "type": "String"
+      }
     }
   },
   "notifCyclePeriodTitle": "🌸 Period in 2 days",
@@ -1102,20 +1250,28 @@
   "profileAgeMonthsOnly": "{count} months",
   "@profileAgeMonthsOnly": {
     "placeholders": {
-      "count": {"type": "int"}
+      "count": {
+        "type": "int"
+      }
     }
   },
   "profileAgeYearsOnly": "{count, plural, =1{1 year} other{{count} years}}",
   "@profileAgeYearsOnly": {
     "placeholders": {
-      "count": {"type": "int"}
+      "count": {
+        "type": "int"
+      }
     }
   },
   "profileAgeYearsAndMonths": "{years, plural, =1{1 year {months} months} other{{years} years {months} months}}",
   "@profileAgeYearsAndMonths": {
     "placeholders": {
-      "years": {"type": "int"},
-      "months": {"type": "int"}
+      "years": {
+        "type": "int"
+      },
+      "months": {
+        "type": "int"
+      }
     }
   },
   "signupConsentPrefix": "By creating an account, you give us permission to securely store your due date, your baby's date of birth, and any other data you enter. By continuing, you accept the ",
@@ -1137,7 +1293,9 @@
   "childExpectedInWeeks": "Due in {weeks} weeks",
   "@childExpectedInWeeks": {
     "placeholders": {
-      "weeks": {"type": "int"}
+      "weeks": {
+        "type": "int"
+      }
     }
   },
   "childDueToday": "Due today",
@@ -1164,5 +1322,135 @@
   "assistantCardAppointmentCta": "Open health",
   "assistantCardWeatherTitle": "Outing idea",
   "assistantShortcutTitle": "Talk to Lucky",
-  "assistantShortcutSubtitle": "Health tips, albums, outings and gift ideas"
+  "assistantShortcutSubtitle": "Health tips, albums, outings and gift ideas",
+  "onboardingLanguageTitle": "Choose your language",
+  "onboardingLanguageSubtitle": "Select your preferred display language. You can change this anytime in your profile settings.",
+  "onboardingLanguageFr": "Français",
+  "onboardingLanguageAr": "العربية",
+  "onboardingLanguageEn": "English",
+  "onboardingLanguageFrSubtitle": "French (Default)",
+  "onboardingLanguageArSubtitle": "Arabic (RTL - Right to Left)",
+  "onboardingLanguageEnSubtitle": "English (International)",
+  "capsuleAudioListen": "Listen",
+  "capsuleAudioPause": "Pause",
+  "capsuleAudioResume": "Resume",
+  "capsuleAudioReRecord": "Re-record",
+  "capsuleAudioDelete": "Delete",
+  "capsuleAudioValidate": "Confirm audio",
+  "capsuleAudioValidatedBadge": "Audio confirmed",
+  "capsuleAudioPendingBadge": "Pending confirmation",
+  "capsuleAudioValidatedSuccess": "Audio confirmed for capsule ✓",
+  "capsuleAudioMicPermissionError": "Microphone permission required to record",
+  "capsuleAudioTooShortError": "Recording is too short or empty",
+  "albumReplacePhotoTitle": "Replace photo",
+  "albumManagePhotoTitle": "Manage photo",
+  "albumCropPhotoTitle": "Crop & Adjust",
+  "albumPickFromCapsules": "Choose from memories",
+  "albumPickFromCapsulesDesc": "Select an existing capsule for this child",
+  "albumPickFromGallery": "Choose from gallery",
+  "albumPickFromGalleryDesc": "Import a new photo from your phone",
+  "albumPickFromCamera": "Take a photo",
+  "albumPickFromCameraDesc": "Take a new photo with the camera",
+  "albumCropCurrentPhoto": "Crop current photo",
+  "albumCropCurrentPhotoDesc": "Zoom, reposition or rotate the photo",
+  "albumClearPageTitle": "Remove from album",
+  "albumClearPageDesc": "Clear this page without deleting the original capsule",
+  "albumClearPageConfirm": "Are you sure you want to remove this photo? The capsule will remain intact in your memories.",
+  "albumRemove": "Remove",
+  "albumPhotoUpdatedSuccess": "Photo updated successfully",
+  "albumPhotoCroppedSuccess": "Photo cropped and adjusted successfully",
+  "albumAspectRatioSquare": "Square 1:1",
+  "albumAspectRatioPortrait": "Portrait 4:5",
+  "albumAspectRatioClassic": "Classic 3:4",
+  "albumAspectRatioStory": "Full screen 9:16",
+  "albumPhotoQuantityTitle": "Photo quantity",
+  "albumPhotoQuantitySubtitle": "Album capacity & pricing",
+  "albumExcludingShipping": "Price excluding delivery",
+  "albumCopiesCount": "Copies quantity",
+  "albumFormatA5": "Format A5 (15 × 21 cm)",
+  "albumFormatA4": "Format A4 (21 × 30 cm)",
+  "albumFormatA3": "Format A3 (30 × 42 cm)",
+  "albumFormatA3SingleOnly": "Format A3 reserved for 1 photo portrait",
+  "albumUnitPrice": "Unit price",
+  "albumSubtotal": "Subtotal",
+  "albumShippingFee": "Delivery fee",
+  "albumShippingFreeVip": "0 DA (VIP Included)",
+  "albumTotalToPay": "Total order",
+  "albumChangeCapacityTitle": "Album capacity",
+  "subscriptionPlansHeaderTitle": "Choose the plan that suits you best",
+  "subscriptionPlansHeaderSubtitle": "Compare features and select the plan that fits your family and memories.",
+  "subscriptionPlanRecommendedBadge": "Recommended",
+  "subscriptionVipExclusiveBadge": "Exclusive",
+  "subscriptionUpgradeToPremium": "Upgrade to Premium",
+  "subscriptionUpgradeToVip": "Upgrade to Annual VIP",
+  "subscriptionChooseVipAnnual": "Choose Annual VIP",
+  "subscriptionPlanIncludedInVip": "Included in your VIP plan",
+  "subscriptionDisclaimerAvailableOffers": "* Subject to available offers.",
+  "subscriptionCompareOffers": "Compare plans",
+  "subscriptionActionLater": "Later",
+  "subscriptionCapsuleLimitReachedTitle": "38 capsules limit reached",
+  "subscriptionCapsuleLimitReachedMessage": "You have reached the 38 capsules limit included in your free plan. Upgrade to Premium to keep creating emotional capsules without limitation.",
+  "subscriptionChildLimitReachedTitle": "Child limit reached",
+  "subscriptionChildLimitReachedMessageFree": "The free plan is limited to 1 child. Upgrade to Premium to add and track up to 2 children!",
+  "subscriptionChildLimitReachedMessagePremium": "The Premium plan is limited to 2 children. Upgrade to Annual VIP for unlimited children!",
+  "subscriptionMatrixPrice": "Price",
+  "subscriptionMatrixCapsules": "Emotional capsules",
+  "subscriptionMatrixChildren": "Number of children",
+  "subscriptionMatrixVaccines": "Vaccination tracking & updates",
+  "subscriptionMatrixReels": "Educational reels",
+  "subscriptionMatrixRecording": "Capsule recording",
+  "subscriptionMatrixSharing": "Emotional capsule sharing",
+  "subscriptionMatrixPremiumPerks": "Access to Premium benefits",
+  "subscriptionMatrixVipPerks": "Access to VIP benefits",
+  "subscriptionMatrixGiveaways": "Giveaways & prize draws",
+  "subscriptionMatrixPrintedPhoto": "Free printed photo delivered home",
+  "subscriptionMatrixVipCard": "Personalized VIP card",
+  "subscriptionMatrixPartnerPrivileges": "Partner privileges",
+  "subscriptionMatrixValueFreeCapsules": "Up to 38 capsules",
+  "subscriptionMatrixValueOneChild": "1 child",
+  "subscriptionMatrixValueTwoChildren": "Up to 2 children",
+  "subscriptionMatrixValueUnlimitedChildren": "Unlimited children",
+  "subscriptionMatrixValueIncluded": "Included",
+  "subscriptionMatrixValueNotIncluded": "Not included",
+  "subscriptionMatrixValueAvailableOffers": "Subject to available offers*",
+  "subscriptionMatrixValueOnePhotoA3": "1 free photo (A3)",
+  "albumLaunchModelsSectionTitle": "Available photobook models",
+  "albumComingSoonSectionTitle": "Coming soon",
+  "albumComingSoonBadge": "Coming soon",
+  "albumComingSoonToast": "This photobook template will be available very soon! ✨",
+  "albumPortrait1PhotoBadge": "1 portrait photo",
+  "album6PhotosBadge": "6 photos",
+  "albumStartingPriceFrom": "From {price} DA",
+  "@albumStartingPriceFrom": {
+    "placeholders": {
+      "price": {
+        "type": "int"
+      }
+    }
+  },
+  "diaporamaTitle": "Digital Album (Slideshow)",
+  "diaporamaSubtitle": "Create an animated keepsake slideshow",
+  "diaporamaMinPhotosError": "Please select at least 3 photos for the slideshow",
+  "diaporamaMaxPhotosError": "Maximum 12 photos allowed for the slideshow",
+  "diaporamaReorderHint": "Drag and drop to reorder the slide sequence",
+  "diaporamaPlay": "Play Slideshow",
+  "diaporamaReplay": "Replay",
+  "diaporamaShare": "Share Slideshow",
+  "diaporamaOpeningTitle": "Sweet memories of {childName}",
+  "@diaporamaOpeningTitle": {
+    "placeholders": {
+      "childName": {
+        "type": "String"
+      }
+    }
+  },
+  "diaporamaClosingTitle": "Precious moments made with love on LuckyMam 🍀",
+  "diaporamaShareMessage": "Watch the slideshow of {childName}'s best memories on LuckyMam 🍀",
+  "@diaporamaShareMessage": {
+    "placeholders": {
+      "childName": {
+        "type": "String"
+      }
+    }
+  }
 }

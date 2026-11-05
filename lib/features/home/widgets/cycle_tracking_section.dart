@@ -8,6 +8,7 @@ import '../../../l10n/app_localizations.dart';
 import '../../profile/models/profile_models.dart';
 import '../../profile/profile_screen.dart';
 import '../../profile/providers/profile_providers.dart';
+import '../../../shared/widgets/navigation/app_bottom_nav.dart';
 
 /// Visual cycle tracker section for the dashboard.
 class CycleTrackingSection extends ConsumerStatefulWidget {
@@ -246,9 +247,7 @@ class _CycleTrackingSectionState extends ConsumerState<CycleTrackingSection> {
             const SizedBox(height: 16),
             ElevatedButton(
               onPressed: () {
-                Navigator.of(context).push(
-                  MaterialPageRoute(builder: (_) => const ProfileScreen()),
-                );
+                ref.read(homeNavigationIndexProvider.notifier).state = 4;
               },
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.white,

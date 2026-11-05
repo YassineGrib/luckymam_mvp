@@ -4,7 +4,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../core/extensions/l10n_extension.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../profile/child_profile_screen.dart';
+import '../../profile/edit_child_screen.dart';
 import '../../profile/profile_screen.dart';
+import '../../../shared/widgets/navigation/app_bottom_nav.dart';
 import '../providers/home_providers.dart';
 import 'child_summary_card.dart';
 
@@ -38,7 +40,11 @@ class ChildrenOverview extends ConsumerWidget {
                 itemCount: summaries.length + 1, // +1 for Add button
                 itemBuilder: (context, index) {
                   if (index == summaries.length) {
-                    return _buildAddButton(context);
+                    return _buildAddButton(
+                      context,
+                      ref,
+                      isOnlyItem: summaries.isEmpty,
+                    );
                   }
 
                   final summary = summaries[index];
@@ -80,7 +86,11 @@ class ChildrenOverview extends ConsumerWidget {
     );
   }
 
-  Widget _buildAddButton(BuildContext context) {
+  Widget _buildAddButton(
+    BuildContext context,
+    WidgetRef ref, {
+    bool isOnlyItem = false,
+  }) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final primaryColor = isDark
         ? AppColors.primaryDark
@@ -94,12 +104,14 @@ class ChildrenOverview extends ConsumerWidget {
 
     return GestureDetector(
       onTap: () {
-        Navigator.of(
-          context,
-        ).push(MaterialPageRoute(builder: (_) => const ProfileScreen()));
+        Navigator.of(context).push(
+          MaterialPageRoute(
+            builder: (_) => const EditChildScreen(),
+          ),
+        );
       },
       child: Container(
-        width: 152,
+        width: isOnlyItem ? 220 : 152,
         margin: const EdgeInsetsDirectional.only(end: 20),
         decoration: BoxDecoration(
           color: bg,
@@ -157,19 +169,36 @@ class ChildrenOverview extends ConsumerWidget {
                     ),
                     const SizedBox(height: 12),
                     Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 8),
+                      padding: const EdgeInsets.symmetric(horizontal: 10),
                       child: Text(
                         l10n.addChild,
                         textAlign: TextAlign.center,
-                        maxLines: 2,
+                        maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                         style: TextStyle(
-                          fontSize: 12.5,
+                          fontSize: 13,
                           fontWeight: FontWeight.w800,
                           color: isDark ? Colors.white : const Color(0xFF241C1A),
                         ),
                       ),
                     ),
+                    if (isOnlyItem) ...[
+                      const SizedBox(height: 4),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 12),
+                        child: Text(
+                          l10n.timelineAddChildHint,
+                          textAlign: TextAlign.center,
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
+                          style: TextStyle(
+                            fontSize: 11,
+                            fontWeight: FontWeight.w500,
+                            color: isDark ? Colors.white60 : Colors.black54,
+                          ),
+                        ),
+                      ),
+                    ],
                   ],
                 ),
               ),
