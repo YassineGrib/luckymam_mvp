@@ -1183,7 +1183,7 @@ class MilestoneDetailScreen extends ConsumerWidget {
             ),
             const SizedBox(width: 8),
             Text(
-              'Ce jalon a été complété avec succès 🎉',
+              'Ce jalon a été complété avec succès ',
               style: AppTypography.fromContext(
                 context,
                 fontSize: 14,

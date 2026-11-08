@@ -43,7 +43,7 @@ abstract final class HomeTipsData {
     'Tenez un journal de votre cycle — chaque donnée compte.',
     "L'acide folique est essentiel dès maintenant. Parlez-en à votre médecin.",
     'Votre chemin est unique. Célébrez chaque étape, aussi petite soit-elle.',
-    'La patience est une force. Votre moment viendra 💜',
+    'La patience est une force. Votre moment viendra ',
   ];
 
   static const _tipsPregnantFr = [
@@ -51,7 +51,7 @@ abstract final class HomeTipsData {
     'Une promenade quotidienne de 20 minutes est bénéfique pour vous deux.',
     'Hydratez-vous bien — votre corps travaille double en ce moment.',
     "Notez vos ressentis aujourd'hui. Ce journal sera précieux plus tard.",
-    'Chaque coup de pied est un message d\'amour 🩷',
+    'Chaque coup de pied est un message d\'amour ',
     'Reposez-vous sans culpabilité. C\'est du travail, accoucher !',
   ];
 
@@ -74,7 +74,7 @@ abstract final class HomeTipsData {
     'دوّني دورتك — كل معلومة مهمة.',
     'حمض الفوليك أساسي من الآن. تحدثي مع طبيبك.',
     'رحلتك فريدة. احتفلي بكل خطوة، مهما كانت صغيرة.',
-    'الصبر قوة. لحظتك ستأتي 💜',
+    'الصبر قوة. لحظتك ستأتي ',
   ];
 
   static const _tipsPregnantAr = [
@@ -82,7 +82,7 @@ abstract final class HomeTipsData {
     'المشي 20 دقيقة يومياً مفيد لك ولطفلك.',
     'اشربي الماء جيداً — جسمك يعمل بجهد مضاعف الآن.',
     'سجّلي مشاعرك اليوم. سيكون هذا اليوميات ثميناً لاحقاً.',
-    'كل ركلة هي رسالة حب 🩷',
+    'كل ركلة هي رسالة حب ',
     'استريحي دون ذنب. الولادة عمل شاق!',
   ];
 
@@ -105,7 +105,7 @@ abstract final class HomeTipsData {
     'Keep a cycle journal — every data point matters.',
     'Folic acid is essential now. Talk to your doctor.',
     'Your path is unique. Celebrate every step, however small.',
-    'Patience is strength. Your moment will come 💜',
+    'Patience is strength. Your moment will come ',
   ];
 
   static const _tipsPregnantEn = [
@@ -113,7 +113,7 @@ abstract final class HomeTipsData {
     'A daily 20-minute walk benefits you both.',
     'Stay hydrated — your body is working overtime.',
     'Note how you feel today. This journal will be precious later.',
-    'Every kick is a message of love 🩷',
+    'Every kick is a message of love ',
     'Rest without guilt. Giving birth is hard work!',
   ];
 

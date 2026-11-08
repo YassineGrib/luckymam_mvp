@@ -40,9 +40,13 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
           placeholderName: l10n.childExpectedDefaultName,
         );
         await capsuleService.migrateCapsuleSubjects();
-      } catch (e, st) {
+      } catch (e) {
         try {
-          FirebaseCrashlytics.instance.recordError(e, st);
+          FirebaseCrashlytics.instance.recordError(
+            Exception(e.runtimeType.toString()),
+            StackTrace.empty,
+            reason: 'home_profile_migration',
+          );
         } catch (_) {}
       }
     });

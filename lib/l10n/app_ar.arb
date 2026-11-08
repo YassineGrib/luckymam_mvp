@@ -86,9 +86,9 @@
   "dashboardSeeAll": "عرض الكل",
   "dashboardSeeAllCapsules": "عرض جميع الكبسولات",
   "dashboardPartnerShop": "متجر الشركاء",
-  "dashboardHopeBannerTitle": "رحلتك تبدأ من هنا 💜",
+  "dashboardHopeBannerTitle": "رحلتك تبدأ من هنا ",
   "dashboardHopeBannerSubtitle": "تابعي دورتك واعتني بنفسك.\nستظهر أقسام أطفالك هنا بمجرد وصول طفلك.",
-  "dashboardPregnantBannerTitle": "طفلك ينمو 🩷",
+  "dashboardPregnantBannerTitle": "طفلك ينمو ",
   "dashboardPregnantBannerSubtitle": "سيكون قسم أطفالي متاحاً\nبعد ولادة طفلك.",
   "cycleTrackingTitle": "متابعة الدورة",
   "cycleActivateTracking": "تفعيل المتابعة",
@@ -125,7 +125,7 @@
   "statusHope": "في انتظار الحمل",
   "statusMom": "أم",
   "dailyTipSectionTitle": "نصيحة اليوم",
-  "dailyTipFooter": "— فريق Luckymam 💕",
+  "dailyTipFooter": "— فريق Luckymam ",
   "upgradePremiumTitle": "الترقية إلى بريميوم",
   "upgradePremiumSubtitle": "كبسولات غير محدودة • حتى طفلين • مشاركة مشمولة",
   "upgradePromptBadge": "عضوية لاكي مام المميزة",
@@ -186,7 +186,7 @@
       }
     }
   },
-  "printVipFreeNote": "مجانًا مع اشتراك VIP الخاص بك 🎁",
+  "printVipFreeNote": "مجانًا مع اشتراك VIP الخاص بك ",
   "printPricingNote": "سيتواصل معك فريقنا لتأكيد تكلفة الطباعة والتسليم.",
   "printOrderSentTitle": "تم إرسال الطلب!",
   "printOrderSentMessage": "سيتم طباعة ألبوم « {albumTitle} » وشحنه إلى العنوان المحدد. سنتصل بك هاتفياً للتأكيد.",
@@ -209,7 +209,7 @@
   "timeline_mark_milestone": "تحديد جلون",
   "timeline_mark_milestone_subtitle": "افتحي جلوناً من المرحلة الحالية",
   "timeline_upcoming_milestones": "الجالونات القادمة",
-  "timeline_all_milestones_have_memory": "كل جالونات هذه المرحلة لديها ذكرى بالفعل ✓",
+  "timeline_all_milestones_have_memory": "كل جالونات هذه المرحلة لديها ذكرى بالفعل ",
   "timeline_add": "إضافة",
   "milestone_capture": "توثيق",
   "milestone_memory": "ذكرى",
@@ -232,7 +232,7 @@
     }
   },
   "milestone_schedule_reminder": "برمجة تذكير",
-  "milestone_marked_complete": "تم تحديد الجالون كمكتمل ✓",
+  "milestone_marked_complete": "تم تحديد الجالون كمكتمل ",
   "milestone_error": "خطأ: {error}",
   "@milestone_error": {
     "placeholders": {
@@ -256,7 +256,7 @@
   "milestone_reminder_cancel_subtitle": "حذف التذكير المبرمج",
   "milestone_reminder_future_date_required": "يرجى اختيار تاريخ في المستقبل",
   "milestone_reminder_enable_notifications": "يرجى تفعيل تنبيهات الجالونات في الإعدادات > الإشعارات",
-  "milestone_reminder_scheduled": "تمت برمجة التذكير في {date} ✓",
+  "milestone_reminder_scheduled": "تمت برمجة التذكير في {date} ",
   "@milestone_reminder_scheduled": {
     "placeholders": {
       "date": {
@@ -434,7 +434,7 @@
   "capsulesCreateFirst": "إنشاء أول ذكرى لي",
   "capsulesLoadErrorSubtitle": "تعذّر تحميل الكبسولات",
   "capsuleSharePreparing": "جاري التحضير للمشاركة…",
-  "capsuleShareText": "✨ ذكرى ثمينة عبر Luckymam\n{emotion}",
+  "capsuleShareText": " ذكرى ثمينة عبر Luckymam\n{emotion}",
   "@capsuleShareText": {
     "placeholders": {
       "emotion": {
@@ -451,7 +451,7 @@
     }
   },
   "capsuleGalleryPermissionDenied": "تم رفض إذن المعرض",
-  "capsuleSavedToGallery": "تم الحفظ في ألبوم Luckymam 📸",
+  "capsuleSavedToGallery": "تم الحفظ في ألبوم Luckymam ",
   "capsuleSaveError": "خطأ في الحفظ: {error}",
   "@capsuleSaveError": {
     "placeholders": {
@@ -462,7 +462,7 @@
   },
   "capsulePremiumFeatureTitle": "ميزة Premium",
   "capsulePremiumFeatureDesc": "مشاركة وحفظ الكبسولات\nمخصصة لمشتركي Premium و VIP.",
-  "capsulePremiumUpgradeCta": "🌟 الانتقال إلى Premium — 2 490 د.ج/سنة",
+  "capsulePremiumUpgradeCta": " الانتقال إلى Premium — 2 490 د.ج/سنة",
   "capsuleDeleteTitle": "حذف الكبسولة؟",
   "capsuleDeleteMessage": "هذا الإجراء لا رجعة فيه. سيتم حذف الذكرى نهائياً.",
   "capsuleNewTitle": "كبسولة جديدة",
@@ -486,13 +486,13 @@
   "capsuleChooseSource": "اختر المصدر",
   "capsuleCamera": "الكاميرا",
   "capsuleGallery": "المعرض",
-  "capsuleCreatedSuccess": "تم إنشاء الكبسولة بنجاح! ✨",
+  "capsuleCreatedSuccess": "تم إنشاء الكبسولة بنجاح! ",
   "capsuleEmotion": "المشاعر",
   "capsulePrimaryEmotion": "الشعور الرئيسي",
   "capsuleSecondaryEmotions": "مشاعر إضافية",
   "capsuleSecondaryEmotionsHint": "اختياري • 3 كحد أقصى",
   "capsuleNoPhotoPlaceholder": "ذكرى محفوظة",
-  "capsuleVoiceMessageOptional": "🎤 رسالة صوتية (اختياري)",
+  "capsuleVoiceMessageOptional": " رسالة صوتية (اختياري)",
   "capsuleHoldToRecord": "اضغطي مطولاً للتسجيل",
   "capsuleMaxDuration": "الحد الأقصى {seconds} ث",
   "@capsuleMaxDuration": {
@@ -542,7 +542,7 @@
   "healthWeightKg": "الوزن (كغ)",
   "healthHeightCm": "الطول (سم)",
   "healthNotesOptional": "ملاحظات (اختياري)",
-  "healthMeasurementSaved": "تم حفظ القياس ✓",
+  "healthMeasurementSaved": "تم حفظ القياس ",
   "healthSave": "حفظ",
   "healthAppointmentFab": "موعد",
   "healthNoAppointmentsTitle": "لا توجد مواعيد",
@@ -556,7 +556,7 @@
   "healthAttachPdfFile": "PDF / ملف",
   "healthUploadingFiles": "جاري رفع الملفات…",
   "healthSaving": "جاري الحفظ…",
-  "healthAppointmentSaved": "تم حفظ الموعد ✓",
+  "healthAppointmentSaved": "تم حفظ الموعد ",
   "healthSaveError": "خطأ أثناء الحفظ",
   "healthWeightValue": "{value} كغ",
   "@healthWeightValue": {
@@ -661,7 +661,7 @@
   },
   "paymentSuccessAlbumPerk": "ألبومك المطبوع المجاني في انتظارك! توجه إلى ملفك الشخصي.",
   "subscriptionAlbumClaimTitle": "ألبوم مطبوع مجاني",
-  "subscriptionAlbumClaimSubtitle": "هدية VIP 🎁",
+  "subscriptionAlbumClaimSubtitle": "هدية VIP ",
   "subscriptionAlbumClaimInfo": "كعضو VIP، تحصلين على ألبوم صور مطبوع لأجمل ذكرياتك. املئي النموذج أدناه.",
   "subscriptionAlbumClaimSubmit": "إرسال طلبي",
   "subscriptionAlbumClaimSubmittedTitle": "تم إرسال الطلب!",
@@ -734,7 +734,7 @@
   "homeVaccineMarkComplete": "تحديد كمُنجَز",
   "homeVaccineDateLabel": "تاريخ التطعيم",
   "homeVaccineNotesHint": "مثال: د. مارتن، العيادة...",
-  "homeVaccineMarkedComplete": "تم تحديد اللقاح كمُنجَز ✓",
+  "homeVaccineMarkedComplete": "تم تحديد اللقاح كمُنجَز ",
   "homeVaccineCancelTitle": "إلغاء اللقاح؟",
   "homeVaccineCancelMessage": "هل تريدين تحديد \"{ageLabel}\" كغير مُنجَز؟",
   "@homeVaccineCancelMessage": {
@@ -786,8 +786,8 @@
   },
   "profileFreePlan": "الخطة المجانية",
   "profileManage": "إدارة",
-  "profileAlbumClaimSent": "تم إرسال طلب الألبوم ✓",
-  "profileClaimFreeAlbum": "اطلبي ألبومك المطبوع المجاني 🎁",
+  "profileAlbumClaimSent": "تم إرسال طلب الألبوم ",
+  "profileClaimFreeAlbum": "اطلبي ألبومك المطبوع المجاني ",
   "profileDarkTheme": "المظهر الداكن",
   "profileLanguage": "اللغة",
   "profileNotifications": "الإشعارات",
@@ -914,7 +914,7 @@
   "timelineMilestonesAppear": "ستظهر الجالونات في الوقت المناسب",
   "timelineAddChildTitle": "أضيفي طفلاً",
   "timelineAddChildHint": "لعرض خطه الزمني المخصص",
-  "timelineStatusCompleted": "✓ مُنجَز",
+  "timelineStatusCompleted": " مُنجَز",
   "timelineStatusOverdue": "يجب اللحاق",
   "timelineStatusNow": "الآن",
   "timelineDueToday": "اليوم",
@@ -1192,7 +1192,7 @@
   "notifMilestoneChannelDesc": "تنبيهات مراحل التطور",
   "notifCycleChannelName": "الدورة النسائية",
   "notifCycleChannelDesc": "تذكيرات الدورة",
-  "notifVaccineReminderTitle": "💉 تذكير لقاح – {childName}",
+  "notifVaccineReminderTitle": " تذكير لقاح – {childName}",
   "@notifVaccineReminderTitle": {
     "placeholders": {
       "childName": {
@@ -1243,9 +1243,9 @@
       }
     }
   },
-  "notifCyclePeriodTitle": "🌸 الدورة خلال يومين",
+  "notifCyclePeriodTitle": " الدورة خلال يومين",
   "notifCyclePeriodBody": "استعدي لدورتك القادمة.",
-  "notifCycleOvulationTitle": "🌿 مرحلة الإباضة غداً",
+  "notifCycleOvulationTitle": " مرحلة الإباضة غداً",
   "notifCycleOvulationBody": "تبدأ فترة الخصوبة القصوى غداً.",
   "profileAgeMonthsOnly": "{count} شهر",
   "@profileAgeMonthsOnly": {
@@ -1281,9 +1281,9 @@
   "profileDeleteAccountAction": "حذف الحساب نهائياً",
   "profileDeleteAccountTitle": "حذف الحساب نهائياً",
   "profileDeleteAccountWarning": "سيتم حذف حسابك وجميع بياناتك بشكل نهائي وغير قابل للتراجع، بما في ذلك:",
-  "profileDeleteAccountBulletMemories": "✦ صور وكبسولات الذكريات",
-  "profileDeleteAccountBulletHealth": "✦ معلومات الأطفال والصحة",
-  "profileDeleteAccountBulletOrders": "✦ سجل الاشتراكات والطلبات",
+  "profileDeleteAccountBulletMemories": " صور وكبسولات الذكريات",
+  "profileDeleteAccountBulletHealth": " معلومات الأطفال والصحة",
+  "profileDeleteAccountBulletOrders": " سجل الاشتراكات والطلبات",
   "profileDeleteAccountUnderstand": "أفهم أن هذا الإجراء لا يمكن التراجع عنه",
   "profileDeleteAccountCancel": "إلغاء",
   "profileDeleteAccountConfirm": "حذف الحساب",
@@ -1339,7 +1339,7 @@
   "capsuleAudioValidate": "تأكيد الصوت",
   "capsuleAudioValidatedBadge": "تم تأكيد الصوت",
   "capsuleAudioPendingBadge": "قيد المعاينة",
-  "capsuleAudioValidatedSuccess": "تم تأكيد الصوت للذكرى ✓",
+  "capsuleAudioValidatedSuccess": "تم تأكيد الصوت للذكرى ",
   "capsuleAudioMicPermissionError": "إذن الميكروفون مطلوب للتسجيل",
   "capsuleAudioTooShortError": "التسجيل قصير جداً أو فارغ",
   "albumReplacePhotoTitle": "استبدال الصورة",
@@ -1417,7 +1417,7 @@
   "albumLaunchModelsSectionTitle": "النماذج المتاحة للطلب",
   "albumComingSoonSectionTitle": "قريباً في التطبيق",
   "albumComingSoonBadge": "قريباً",
-  "albumComingSoonToast": "سيتوفر هذا النموذج قريباً جداً! ✨",
+  "albumComingSoonToast": "سيتوفر هذا النموذج قريباً جداً! ",
   "albumPortrait1PhotoBadge": "صورة بورتريه واحدة",
   "album6PhotosBadge": "٦ صور",
   "albumStartingPriceFrom": "ابتداءً من {price} د.ج",
@@ -1444,8 +1444,8 @@
       }
     }
   },
-  "diaporamaClosingTitle": "لحظات ثمينة صُنعت بكل حب على LuckyMam 🍀",
-  "diaporamaShareMessage": "شاهدوا العرض التذكاري لأجمل ذكريات {childName} على تطبيق لاكي مام 🍀",
+  "diaporamaClosingTitle": "لحظات ثمينة صُنعت بكل حب على LuckyMam ",
+  "diaporamaShareMessage": "شاهدوا العرض التذكاري لأجمل ذكريات {childName} على تطبيق لاكي مام ",
   "@diaporamaShareMessage": {
     "placeholders": {
       "childName": {

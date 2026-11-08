@@ -1,4 +1,4 @@
-import 'package:flutter/foundation.dart';
+import '../../../core/services/safe_log.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/providers/locale_provider.dart';
@@ -56,8 +56,8 @@ final childrenSummaryProvider = FutureProvider<List<ChildSummary>>((ref) async {
               ..sort((a, b) => a.expectedDate.compareTo(b.expectedDate));
 
         nextVaccine = pendingVaccines.firstOrNull;
-      } catch (e, stack) {
-        debugPrint('Error getting vaccines for child ${child.id}: $e\n$stack');
+      } catch (e) {
+        safeDebugPrint('Error getting vaccines for child [REDACTED]: ${e.runtimeType}\n[REDACTED]');
       }
 
       MilestoneWithDueDate? nextMilestone;
@@ -66,8 +66,8 @@ final childrenSummaryProvider = FutureProvider<List<ChildSummary>>((ref) async {
           upcomingMilestonesProvider(child.id).future,
         );
         nextMilestone = milestones.firstOrNull;
-      } catch (e, stack) {
-        debugPrint('Error getting milestones for child ${child.id}: $e\n$stack');
+      } catch (e) {
+        safeDebugPrint('Error getting milestones for child [REDACTED]: ${e.runtimeType}\n[REDACTED]');
       }
 
       summaries.add(
@@ -80,8 +80,8 @@ final childrenSummaryProvider = FutureProvider<List<ChildSummary>>((ref) async {
     }
 
     return summaries;
-  } catch (e, stack) {
-    debugPrint('Error in childrenSummaryProvider: $e\n$stack');
+  } catch (e) {
+    safeDebugPrint('Error in childrenSummaryProvider: ${e.runtimeType}\n[REDACTED]');
     rethrow;
   }
 });

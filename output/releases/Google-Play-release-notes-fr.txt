@@ -1,0 +1,5 @@
+Amélioration du choix des émotions (1 à 3) avec des cartes compactes.
+Correction des enregistrements audio, de la lecture vidéo, du partage et de la sauvegarde.
+Amélioration des albums, des couvertures et du parcours de commande.
+Clarification du statut Maman et harmonisation des textes de l’interface.
+Rétablissement de l’assistant IA et ajout du lien de l’application au partage du diaporama.

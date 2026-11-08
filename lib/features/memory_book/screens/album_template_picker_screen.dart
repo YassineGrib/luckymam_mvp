@@ -154,14 +154,16 @@ class _AlbumTemplatePickerScreenState
                                     : Colors.white.withValues(alpha: 0.92),
                                 borderRadius: BorderRadius.circular(20),
                                 border: Border.all(
-                                  color: const Color(0xFFFF8F00).withValues(alpha: 0.35),
+                                  color: const Color(
+                                    0xFFFF8F00,
+                                  ).withValues(alpha: 0.35),
                                   width: 1,
                                 ),
                                 boxShadow: [
                                   BoxShadow(
-                                    color: const Color(0xFFFF8F00).withValues(
-                                      alpha: isDark ? 0.15 : 0.06,
-                                    ),
+                                    color: const Color(
+                                      0xFFFF8F00,
+                                    ).withValues(alpha: isDark ? 0.15 : 0.06),
                                     blurRadius: 8,
                                     offset: const Offset(0, 2),
                                   ),
@@ -180,8 +182,8 @@ class _AlbumTemplatePickerScreenState
                                     lang == 'ar'
                                         ? 'قوالب الألبومات'
                                         : (lang == 'fr'
-                                            ? 'Modèles d\'albums'
-                                            : 'Photobook Templates'),
+                                              ? 'Modèles d\'albums'
+                                              : 'Photobook Templates'),
                                     style: AppTypography.fromContext(
                                       context,
                                       fontSize: 12,
@@ -237,8 +239,8 @@ class _AlbumTemplatePickerScreenState
                                 lang == 'ar'
                                     ? 'اختاري طفلكِ للألبوم:'
                                     : (lang == 'fr'
-                                        ? 'Choisir l\'enfant :'
-                                        : 'Select child for photobook:'),
+                                          ? 'Choisir l\'enfant :'
+                                          : 'Select child for photobook:'),
                                 style: AppTypography.fromContext(
                                   context,
                                   fontSize: 12.5,
@@ -259,8 +261,7 @@ class _AlbumTemplatePickerScreenState
                                   const SizedBox(width: 10),
                               itemBuilder: (context, index) {
                                 final child = children[index];
-                                final isSelected =
-                                    child.id == _selectedChildId;
+                                final isSelected = child.id == _selectedChildId;
                                 return GestureDetector(
                                   onTap: () {
                                     HapticFeedback.selectionClick();
@@ -270,8 +271,7 @@ class _AlbumTemplatePickerScreenState
                                     });
                                   },
                                   child: AnimatedContainer(
-                                    duration:
-                                        const Duration(milliseconds: 200),
+                                    duration: const Duration(milliseconds: 200),
                                     padding: const EdgeInsets.symmetric(
                                       horizontal: 12,
                                       vertical: 6,
@@ -282,25 +282,25 @@ class _AlbumTemplatePickerScreenState
                                               alpha: isDark ? 0.22 : 0.12,
                                             )
                                           : (isDark
-                                              ? Colors.white.withValues(
-                                                  alpha: 0.05,
-                                                )
-                                              : Colors.white),
-                                      borderRadius:
-                                          BorderRadius.circular(20),
+                                                ? Colors.white.withValues(
+                                                    alpha: 0.05,
+                                                  )
+                                                : Colors.white),
+                                      borderRadius: BorderRadius.circular(20),
                                       border: Border.all(
                                         color: isSelected
                                             ? AppColors.coral
                                             : (isDark
-                                                ? Colors.white12
-                                                : const Color(0xFFE5E7EB)),
+                                                  ? Colors.white12
+                                                  : const Color(0xFFE5E7EB)),
                                         width: isSelected ? 1.8 : 1.0,
                                       ),
                                       boxShadow: [
                                         if (isSelected)
                                           BoxShadow(
-                                            color: AppColors.coral
-                                                .withValues(alpha: 0.22),
+                                            color: AppColors.coral.withValues(
+                                              alpha: 0.22,
+                                            ),
                                             blurRadius: 8,
                                             offset: const Offset(0, 2),
                                           ),
@@ -313,8 +313,9 @@ class _AlbumTemplatePickerScreenState
                                             child.photoUrl!.isNotEmpty)
                                           CircleAvatar(
                                             radius: 16,
-                                            backgroundImage:
-                                                NetworkImage(child.photoUrl!),
+                                            backgroundImage: NetworkImage(
+                                              child.photoUrl!,
+                                            ),
                                           )
                                         else
                                           Container(
@@ -341,8 +342,8 @@ class _AlbumTemplatePickerScreenState
                                                 : FontWeight.w600,
                                             color: isSelected
                                                 ? (isDark
-                                                    ? Colors.white
-                                                    : AppColors.coral)
+                                                      ? Colors.white
+                                                      : AppColors.coral)
                                                 : textColor,
                                           ),
                                         ),
@@ -367,9 +368,7 @@ class _AlbumTemplatePickerScreenState
                   ),
                 ),
 
-                const SliverToBoxAdapter(
-                  child: SizedBox(height: 14),
-                ),
+                const SliverToBoxAdapter(child: SizedBox(height: 14)),
 
                 // 2. Section Header: Modèles disponibles (LM-ALB-007)
                 SliverToBoxAdapter(
@@ -409,11 +408,11 @@ class _AlbumTemplatePickerScreenState
                   sliver: SliverGrid(
                     gridDelegate:
                         const SliverGridDelegateWithFixedCrossAxisCount(
-                      crossAxisCount: 2,
-                      crossAxisSpacing: 16,
-                      mainAxisSpacing: 20,
-                      childAspectRatio: 0.62,
-                    ),
+                          crossAxisCount: 2,
+                          crossAxisSpacing: 16,
+                          mainAxisSpacing: 20,
+                          childAspectRatio: 0.62,
+                        ),
                     delegate: SliverChildBuilderDelegate(
                       (context, index) {
                         final launchTemplates = albumTemplates
@@ -488,11 +487,11 @@ class _AlbumTemplatePickerScreenState
                   sliver: SliverGrid(
                     gridDelegate:
                         const SliverGridDelegateWithFixedCrossAxisCount(
-                      crossAxisCount: 2,
-                      crossAxisSpacing: 16,
-                      mainAxisSpacing: 20,
-                      childAspectRatio: 0.62,
-                    ),
+                          crossAxisCount: 2,
+                          crossAxisSpacing: 16,
+                          mainAxisSpacing: 20,
+                          childAspectRatio: 0.62,
+                        ),
                     delegate: SliverChildBuilderDelegate(
                       (context, index) {
                         final comingSoonTemplates = albumTemplates
@@ -638,43 +637,23 @@ class _AlbumTemplatePickerScreenState
                       ],
                     ),
                   ),
-                  Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 10,
-                      vertical: 5,
-                    ),
-                    decoration: BoxDecoration(
-                      color: primaryColor.withValues(alpha: 0.12),
-                      borderRadius: BorderRadius.circular(12),
-                      border: Border.all(
-                        color: primaryColor.withValues(alpha: 0.28),
-                      ),
-                    ),
-                    child: Text(
-                      existingAlbum != null
-                          ? '${existingAlbum.filledCount}/${template.slotCount} ${lang == 'ar' ? 'صفحة مكتملة' : (lang == 'fr' ? 'pages complétées' : 'pages completed')}'
-                          : l10n.albumTemplateEventCount(template.slotCount),
-                      style: AppTypography.fromContext(
-                        context,
-                        fontSize: 11.5,
-                        fontWeight: FontWeight.w700,
-                        color: primaryColor,
-                      ),
-                    ),
-                  ),
                 ],
               ),
 
               const SizedBox(height: 18),
               Divider(
-                color: isDark ? Colors.white10 : Colors.black.withValues(alpha: 0.06),
+                color: isDark
+                    ? Colors.white10
+                    : Colors.black.withValues(alpha: 0.06),
                 height: 1,
               ),
               const SizedBox(height: 14),
 
               // Included Milestones Title
               Text(
-                lang == 'ar' ? 'المحطات المضمنة في هذا الكتاب:' : 'Étapes incluses dans cet album :',
+                lang == 'ar'
+                    ? 'المحطات المضمنة في هذا الكتاب:'
+                    : 'Étapes incluses dans cet album :',
                 style: AppTypography.fromContext(
                   context,
                   fontSize: 13,
@@ -760,8 +739,8 @@ class _AlbumTemplatePickerScreenState
                 lang == 'ar'
                     ? 'المقاسات والأسعار المتاحة:'
                     : (lang == 'fr'
-                        ? 'Formats d\'impression et tarifs :'
-                        : 'Print formats & pricing:'),
+                          ? 'Formats d\'impression et tarifs :'
+                          : 'Print formats & pricing:'),
                 style: AppTypography.fromContext(
                   context,
                   fontSize: 12.5,
@@ -846,8 +825,8 @@ class _AlbumTemplatePickerScreenState
                       lang == 'ar'
                           ? 'علامة مائية رقيقة لشعار LuckyMam مدمجة في هامش الألبوم'
                           : (lang == 'fr'
-                              ? 'Filigrane discret du trèfle LuckyMam intégré dans la marge'
-                              : 'Discreet LuckyMam clover watermark integrated in the margin'),
+                                ? 'Filigrane discret du trèfle LuckyMam intégré dans la marge'
+                                : 'Discreet LuckyMam clover watermark integrated in the margin'),
                       style: TextStyle(
                         fontSize: 11,
                         fontWeight: FontWeight.w500,
@@ -894,19 +873,22 @@ class _AlbumTemplatePickerScreenState
                       _createAlbum(context, ref, template);
                     }
                   },
-                  icon: const Icon(Icons.auto_stories_rounded, color: Colors.white),
+                  icon: const Icon(
+                    Icons.auto_stories_rounded,
+                    color: Colors.white,
+                  ),
                   label: Text(
                     existingAlbum != null
                         ? (lang == 'ar'
-                            ? 'متابعة كتاب الذكريات لـ $_selectedChildName'
-                            : (lang == 'fr'
-                                ? 'Continuer cet album pour $_selectedChildName'
-                                : 'Continue photobook for $_selectedChildName'))
+                              ? 'متابعة كتاب الذكريات لـ $_selectedChildName'
+                              : (lang == 'fr'
+                                    ? 'Continuer cet album pour $_selectedChildName'
+                                    : 'Continue photobook for $_selectedChildName'))
                         : (lang == 'ar'
-                            ? 'إنشاء كتاب الذكريات لـ $_selectedChildName'
-                            : (lang == 'fr'
-                                ? 'Créer cet album pour $_selectedChildName'
-                                : 'Create this photobook for $_selectedChildName')),
+                              ? 'إنشاء كتاب الذكريات لـ $_selectedChildName'
+                              : (lang == 'fr'
+                                    ? 'Créer cet album pour $_selectedChildName'
+                                    : 'Create this photobook for $_selectedChildName')),
                     style: AppTypography.fromContext(
                       context,
                       fontSize: 15,
@@ -1178,26 +1160,26 @@ class _BookCoverCardState extends State<_BookCoverCard> {
                                 widget.existingAlbum != null
                                     ? Icons.check_circle_rounded
                                     : (template.isComingSoon
-                                        ? Icons.schedule_rounded
-                                        : (template.isSinglePortraitPhoto
-                                            ? Icons.portrait_rounded
-                                            : Icons.auto_stories_rounded)),
+                                          ? Icons.schedule_rounded
+                                          : (template.isSinglePortraitPhoto
+                                                ? Icons.portrait_rounded
+                                                : Icons.auto_stories_rounded)),
                                 size: 11,
                                 color: widget.existingAlbum != null
                                     ? const Color(0xFF69F0AE)
                                     : (template.isComingSoon
-                                        ? const Color(0xFFFFD54F)
-                                        : Colors.white),
+                                          ? const Color(0xFFFFD54F)
+                                          : Colors.white),
                               ),
                               const SizedBox(width: 4),
                               Text(
                                 widget.existingAlbum != null
                                     ? '${widget.existingAlbum!.filledCount}/${template.slotCount}'
                                     : (template.isComingSoon
-                                        ? l10n.albumComingSoonBadge
-                                        : (template.isSinglePortraitPhoto
-                                            ? l10n.albumPortrait1PhotoBadge
-                                            : l10n.album6PhotosBadge)),
+                                          ? l10n.albumComingSoonBadge
+                                          : (template.isSinglePortraitPhoto
+                                                ? l10n.albumPortrait1PhotoBadge
+                                                : l10n.album6PhotosBadge)),
                                 style: const TextStyle(
                                   fontSize: 10,
                                   fontWeight: FontWeight.w800,

@@ -17,7 +17,7 @@ class AlbumPricingService {
   static const int standardShippingFee = 500;
 
   /// Official Price Table in DZD (DA) - Exclusive of shipping fees.
-  /// Map<photoCount, Map<format, priceInDA>>
+  /// `Map<photoCount, Map<format, priceInDA>>`
   static const Map<int, Map<String, int>> _officialPriceGrid = {
     1: {'A5': 440, 'A4': 690, 'A3': 990},
     2: {'A5': 830, 'A4': 1280},
@@ -82,7 +82,7 @@ class AlbumPricingService {
   static String formatDinar(int amount, {String? locale}) {
     final isAr = locale == 'ar';
     final formatter = NumberFormat('#,###', isAr ? 'ar_DZ' : 'fr_FR');
-    final formatted = formatter.format(amount).replaceAll('\u00A0', ' ');
+    final formatted = formatter.format(amount).replaceAll('\u00A0', ' ').replaceAll('\u202F', ' ');
     return '$formatted ${isAr ? 'د.ج' : 'DA'}';
   }
 

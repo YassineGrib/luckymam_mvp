@@ -619,7 +619,7 @@ abstract class AppLocalizations {
   /// No description provided for @dashboardHopeBannerTitle.
   ///
   /// In fr, this message translates to:
-  /// **'Votre parcours commence ici 💜'**
+  /// **'Votre parcours commence ici '**
   String get dashboardHopeBannerTitle;
 
   /// No description provided for @dashboardHopeBannerSubtitle.
@@ -631,7 +631,7 @@ abstract class AppLocalizations {
   /// No description provided for @dashboardPregnantBannerTitle.
   ///
   /// In fr, this message translates to:
-  /// **'Votre bébé grandit 🩷'**
+  /// **'Votre bébé grandit '**
   String get dashboardPregnantBannerTitle;
 
   /// No description provided for @dashboardPregnantBannerSubtitle.
@@ -853,7 +853,7 @@ abstract class AppLocalizations {
   /// No description provided for @dailyTipFooter.
   ///
   /// In fr, this message translates to:
-  /// **'— Luckymam Team 💕'**
+  /// **'— Luckymam Team '**
   String get dailyTipFooter;
 
   /// No description provided for @upgradePremiumTitle.
@@ -1159,7 +1159,7 @@ abstract class AppLocalizations {
   /// No description provided for @printVipFreeNote.
   ///
   /// In fr, this message translates to:
-  /// **'Offert avec votre abonnement VIP 🎁'**
+  /// **'Offert avec votre abonnement VIP '**
   String get printVipFreeNote;
 
   /// No description provided for @printPricingNote.
@@ -1483,7 +1483,7 @@ abstract class AppLocalizations {
   /// No description provided for @timeline_all_milestones_have_memory.
   ///
   /// In fr, this message translates to:
-  /// **'Tous les jalons de cette phase ont déjà un souvenir ✓'**
+  /// **'Tous les jalons de cette phase ont déjà un souvenir '**
   String get timeline_all_milestones_have_memory;
 
   /// No description provided for @timeline_add.
@@ -1579,7 +1579,7 @@ abstract class AppLocalizations {
   /// No description provided for @milestone_marked_complete.
   ///
   /// In fr, this message translates to:
-  /// **'Jalon marqué comme terminé ✓'**
+  /// **'Jalon marqué comme terminé '**
   String get milestone_marked_complete;
 
   /// No description provided for @milestone_error.
@@ -1681,7 +1681,7 @@ abstract class AppLocalizations {
   /// No description provided for @milestone_reminder_scheduled.
   ///
   /// In fr, this message translates to:
-  /// **'Rappel programmé le {date} ✓'**
+  /// **'Rappel programmé le {date} '**
   String milestone_reminder_scheduled(String date);
 
   /// No description provided for @milestone_reminder_cancelled.
@@ -1963,7 +1963,7 @@ abstract class AppLocalizations {
   /// No description provided for @capsuleShareText.
   ///
   /// In fr, this message translates to:
-  /// **'✨ Un souvenir précieux via Luckymam\n{emotion}'**
+  /// **' Un souvenir précieux via Luckymam\n{emotion}'**
   String capsuleShareText(String emotion);
 
   /// No description provided for @capsuleShareError.
@@ -1981,7 +1981,7 @@ abstract class AppLocalizations {
   /// No description provided for @capsuleSavedToGallery.
   ///
   /// In fr, this message translates to:
-  /// **'Enregistré dans l\'album Luckymam 📸'**
+  /// **'Enregistré dans l\'album Luckymam '**
   String get capsuleSavedToGallery;
 
   /// No description provided for @capsuleSaveError.
@@ -2005,7 +2005,7 @@ abstract class AppLocalizations {
   /// No description provided for @capsulePremiumUpgradeCta.
   ///
   /// In fr, this message translates to:
-  /// **'🌟 Passer à Premium — 2 490 DA/an'**
+  /// **' Passer à Premium — 2 490 DA/an'**
   String get capsulePremiumUpgradeCta;
 
   /// No description provided for @capsuleDeleteTitle.
@@ -2149,7 +2149,7 @@ abstract class AppLocalizations {
   /// No description provided for @capsuleCreatedSuccess.
   ///
   /// In fr, this message translates to:
-  /// **'Capsule créée avec succès ! ✨'**
+  /// **'Capsule créée avec succès ! '**
   String get capsuleCreatedSuccess;
 
   /// No description provided for @capsuleEmotion.
@@ -2185,7 +2185,7 @@ abstract class AppLocalizations {
   /// No description provided for @capsuleVoiceMessageOptional.
   ///
   /// In fr, this message translates to:
-  /// **'🎤 Message vocal (optionnel)'**
+  /// **' Message vocal (optionnel)'**
   String get capsuleVoiceMessageOptional;
 
   /// No description provided for @capsuleHoldToRecord.
@@ -2359,7 +2359,7 @@ abstract class AppLocalizations {
   /// No description provided for @healthMeasurementSaved.
   ///
   /// In fr, this message translates to:
-  /// **'Mesure enregistrée ✓'**
+  /// **'Mesure enregistrée '**
   String get healthMeasurementSaved;
 
   /// No description provided for @healthSave.
@@ -2443,7 +2443,7 @@ abstract class AppLocalizations {
   /// No description provided for @healthAppointmentSaved.
   ///
   /// In fr, this message translates to:
-  /// **'Rendez-vous enregistré ✓'**
+  /// **'Rendez-vous enregistré '**
   String get healthAppointmentSaved;
 
   /// No description provided for @healthSaveError.
@@ -2719,7 +2719,7 @@ abstract class AppLocalizations {
   /// No description provided for @subscriptionAlbumClaimSubtitle.
   ///
   /// In fr, this message translates to:
-  /// **'Votre cadeau VIP 🎁'**
+  /// **'Votre cadeau VIP '**
   String get subscriptionAlbumClaimSubtitle;
 
   /// No description provided for @subscriptionAlbumClaimInfo.
@@ -3073,7 +3073,7 @@ abstract class AppLocalizations {
   /// No description provided for @homeVaccineMarkedComplete.
   ///
   /// In fr, this message translates to:
-  /// **'Vaccin marqué comme fait ✓'**
+  /// **'Vaccin marqué comme fait '**
   String get homeVaccineMarkedComplete;
 
   /// No description provided for @homeVaccineCancelTitle.
@@ -3301,13 +3301,13 @@ abstract class AppLocalizations {
   /// No description provided for @profileAlbumClaimSent.
   ///
   /// In fr, this message translates to:
-  /// **'Demande d\'album envoyée ✓'**
+  /// **'Demande d\'album envoyée '**
   String get profileAlbumClaimSent;
 
   /// No description provided for @profileClaimFreeAlbum.
   ///
   /// In fr, this message translates to:
-  /// **'Réclamer votre album imprimé gratuit 🎁'**
+  /// **'Réclamer votre album imprimé gratuit '**
   String get profileClaimFreeAlbum;
 
   /// No description provided for @profileDarkTheme.
@@ -3715,7 +3715,7 @@ abstract class AppLocalizations {
   /// No description provided for @timelineStatusCompleted.
   ///
   /// In fr, this message translates to:
-  /// **'✓ Réalisé'**
+  /// **' Réalisé'**
   String get timelineStatusCompleted;
 
   /// No description provided for @timelineStatusOverdue.
@@ -4711,7 +4711,7 @@ abstract class AppLocalizations {
   /// No description provided for @notifVaccineReminderTitle.
   ///
   /// In fr, this message translates to:
-  /// **'💉 Rappel Vaccin – {childName}'**
+  /// **' Rappel Vaccin – {childName}'**
   String notifVaccineReminderTitle(String childName);
 
   /// No description provided for @notifVaccineReminderBody.
@@ -4747,7 +4747,7 @@ abstract class AppLocalizations {
   /// No description provided for @notifCyclePeriodTitle.
   ///
   /// In fr, this message translates to:
-  /// **'🌸 Règles dans 2 jours'**
+  /// **' Règles dans 2 jours'**
   String get notifCyclePeriodTitle;
 
   /// No description provided for @notifCyclePeriodBody.
@@ -4759,7 +4759,7 @@ abstract class AppLocalizations {
   /// No description provided for @notifCycleOvulationTitle.
   ///
   /// In fr, this message translates to:
-  /// **'🌿 Phase Ovulatoire demain'**
+  /// **' Phase Ovulatoire demain'**
   String get notifCycleOvulationTitle;
 
   /// No description provided for @notifCycleOvulationBody.
@@ -4831,19 +4831,19 @@ abstract class AppLocalizations {
   /// No description provided for @profileDeleteAccountBulletMemories.
   ///
   /// In fr, this message translates to:
-  /// **'✦ Souvenirs et photos des capsules'**
+  /// **' Souvenirs et photos des capsules'**
   String get profileDeleteAccountBulletMemories;
 
   /// No description provided for @profileDeleteAccountBulletHealth.
   ///
   /// In fr, this message translates to:
-  /// **'✦ Suivi de santé et profils des enfants'**
+  /// **' Suivi de santé et profils des enfants'**
   String get profileDeleteAccountBulletHealth;
 
   /// No description provided for @profileDeleteAccountBulletOrders.
   ///
   /// In fr, this message translates to:
-  /// **'✦ Historique des abonnements et commandes'**
+  /// **' Historique des abonnements et commandes'**
   String get profileDeleteAccountBulletOrders;
 
   /// No description provided for @profileDeleteAccountUnderstand.
@@ -5137,7 +5137,7 @@ abstract class AppLocalizations {
   /// No description provided for @capsuleAudioValidatedSuccess.
   ///
   /// In fr, this message translates to:
-  /// **'Audio validé pour la capsule ✓'**
+  /// **'Audio validé pour la capsule '**
   String get capsuleAudioValidatedSuccess;
 
   /// No description provided for @capsuleAudioMicPermissionError.
@@ -5605,7 +5605,7 @@ abstract class AppLocalizations {
   /// No description provided for @albumComingSoonToast.
   ///
   /// In fr, this message translates to:
-  /// **'Ce modèle d\'album sera disponible très prochainement ! ✨'**
+  /// **'Ce modèle d\'album sera disponible très prochainement ! '**
   String get albumComingSoonToast;
 
   /// No description provided for @albumPortrait1PhotoBadge.
@@ -5671,7 +5671,7 @@ abstract class AppLocalizations {
   /// No description provided for @diaporamaShare.
   ///
   /// In fr, this message translates to:
-  /// **'Partager le diaporama'**
+  /// **'Partager'**
   String get diaporamaShare;
 
   /// No description provided for @diaporamaOpeningTitle.
@@ -5683,13 +5683,13 @@ abstract class AppLocalizations {
   /// No description provided for @diaporamaClosingTitle.
   ///
   /// In fr, this message translates to:
-  /// **'Moments précieux avec LuckyMam 🍀'**
+  /// **'Moments précieux avec LuckyMam '**
   String get diaporamaClosingTitle;
 
   /// No description provided for @diaporamaShareMessage.
   ///
   /// In fr, this message translates to:
-  /// **'Découvrez le diaporama des plus beaux souvenirs de {childName} sur LuckyMam 🍀'**
+  /// **'Découvrez le diaporama des plus beaux souvenirs de {childName} sur LuckyMam '**
   String diaporamaShareMessage(String childName);
 }
 

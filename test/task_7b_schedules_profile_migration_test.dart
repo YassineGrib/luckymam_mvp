@@ -12,6 +12,7 @@ import 'package:lukymam_mvp/features/home/providers/home_providers.dart';
 import 'package:lukymam_mvp/features/home/tabs/vaccinations_tab.dart';
 import 'package:lukymam_mvp/features/notifications/providers/notifications_providers.dart';
 import 'package:lukymam_mvp/features/profile/edit_mother_profile_screen.dart';
+import 'package:lukymam_mvp/features/profile/profile_screen.dart';
 import 'package:lukymam_mvp/features/profile/models/mother_stage.dart';
 import 'package:lukymam_mvp/features/profile/models/pregnancy.dart';
 import 'package:lukymam_mvp/features/profile/models/profile_models.dart';
@@ -39,7 +40,8 @@ class _FakeFirebaseFirestore implements FirebaseFirestore {
   dynamic noSuchMethod(Invocation invocation) => null;
 }
 
-class _FakeMilestoneNotificationService implements MilestoneNotificationService {
+class _FakeMilestoneNotificationService
+    implements MilestoneNotificationService {
   int scheduleCount = 0;
 
   @override
@@ -86,6 +88,10 @@ class _FakeVaccineService implements VaccineService {
 }
 
 class _FakeProfileService implements ProfileService {
+  @override
+  Future<UserProfile> ensureMamProfileCreated({String? defaultName}) async =>
+      _userProfile();
+
   DateTime? declaredLmp;
   String? declaredPlaceholder;
   bool? ttcValue;
@@ -195,9 +201,7 @@ UserProfile _userProfile({
 
 Widget _wrapWithApp(Widget child, {List<dynamic> overrides = const []}) {
   return ProviderScope(
-    overrides: [
-      ...overrides,
-    ],
+    overrides: [...overrides],
     child: MaterialApp(
       localizationsDelegates: const [
         AppLocalizations.delegate,
@@ -205,11 +209,7 @@ Widget _wrapWithApp(Widget child, {List<dynamic> overrides = const []}) {
         GlobalWidgetsLocalizations.delegate,
         GlobalCupertinoLocalizations.delegate,
       ],
-      supportedLocales: const [
-        Locale('fr'),
-        Locale('ar'),
-        Locale('en'),
-      ],
+      supportedLocales: const [Locale('fr'), Locale('ar'), Locale('en')],
       locale: const Locale('fr'),
       home: child,
     ),
@@ -222,24 +222,102 @@ void main() {
     SharedPreferences.setMockInitialValues({});
   });
 
+  for (final withExpectedChild in [false, true]) {
+    testWidgets(
+      'Profile Maman explains born-child requirement (expected: $withExpectedChild)',
+      (tester) async {
+        await tester.binding.setSurfaceSize(const Size(430, 1800));
+        addTearDown(() => tester.binding.setSurfaceSize(null));
+        final service = _FakeProfileService();
+        await tester.pumpWidget(
+          _wrapWithApp(
+            const ProfileScreen(),
+            overrides: [
+              profileServiceProvider.overrideWithValue(service),
+              profileProvider.overrideWith(
+                (ref) => Stream.value(_userProfile(status: UserStatus.hope)),
+              ),
+              childrenProvider.overrideWith(
+                (ref) => Stream.value(
+                  withExpectedChild ? [_expectedChild()] : <Child>[],
+                ),
+              ),
+              pregnanciesProvider.overrideWith(
+                (ref) => Stream.value(<Pregnancy>[]),
+              ),
+              cycleNotificationServiceProvider.overrideWithValue(
+                CycleNotificationService(_FakeNotificationService()),
+              ),
+              currentTierProvider.overrideWith(
+                (ref) => Stream.value(SubscriptionTier.free),
+              ),
+              albumClaimedProvider.overrideWith((ref) => Stream.value(false)),
+            ],
+          ),
+        );
+        await tester.pumpAndSettle();
+        final context = tester.element(find.byType(ProfileScreen));
+        final l10n = AppLocalizations.of(context)!;
+        await tester.tap(find.text(l10n.profileCurrentStatus));
+        await tester.pumpAndSettle();
+        expect(find.textContaining('enfant né'), findsOneWidget);
+        await tester.tap(find.byIcon(Icons.child_friendly_rounded).first);
+        await tester.pumpAndSettle();
+        expect(find.byType(AlertDialog), findsOneWidget);
+        expect(
+          find.descendant(
+            of: find.byType(AlertDialog),
+            matching: find.textContaining('enfant né'),
+          ),
+          findsOneWidget,
+        );
+        expect(
+          find.descendant(
+            of: find.byType(AlertDialog),
+            matching: find.text(l10n.addChild),
+          ),
+          findsOneWidget,
+        );
+        expect(service.ttcValue, isNull);
+        expect(find.byType(SnackBar), findsNothing);
+        await tester.tap(
+          find.text(MaterialLocalizations.of(context).cancelButtonLabel),
+        );
+        await tester.pumpAndSettle();
+        expect(find.byType(AlertDialog), findsNothing);
+        expect(service.ttcValue, isNull);
+        expect(tester.takeException(), isNull);
+      },
+    );
+  }
+
   group('Task 7b: Schedule generators skip expected children', () {
-    test('home_providers childrenSummaryProvider skips expected children', () async {
-      final born = _bornChild(id: 'born_1');
-      final expected = _expectedChild(id: 'expected_1');
+    test(
+      'home_providers childrenSummaryProvider skips expected children',
+      () async {
+        final born = _bornChild(id: 'born_1');
+        final expected = _expectedChild(id: 'expected_1');
 
-      final container = ProviderContainer(
-        overrides: [
-          childrenProvider.overrideWith((ref) => Stream.value([born, expected])),
-          vaccineGroupsWithStatusProvider((childId: born.id, birthDate: born.birthDate))
-              .overrideWith((ref) => Future.value([])),
-          upcomingMilestonesProvider(born.id).overrideWith((ref) => Future.value([])),
-        ],
-      );
+        final container = ProviderContainer(
+          overrides: [
+            childrenProvider.overrideWith(
+              (ref) => Stream.value([born, expected]),
+            ),
+            vaccineGroupsWithStatusProvider((
+              childId: born.id,
+              birthDate: born.birthDate,
+            )).overrideWith((ref) => Future.value([])),
+            upcomingMilestonesProvider(
+              born.id,
+            ).overrideWith((ref) => Future.value([])),
+          ],
+        );
 
-      final summaries = await container.read(childrenSummaryProvider.future);
-      expect(summaries.length, 1);
-      expect(summaries.first.child.id, 'born_1');
-    });
+        final summaries = await container.read(childrenSummaryProvider.future);
+        expect(summaries.length, 1);
+        expect(summaries.first.child.id, 'born_1');
+      },
+    );
 
     test('vaccineSchedulerProvider skips expected children', () async {
       final fakeVaccineService = _FakeVaccineService();
@@ -249,126 +327,168 @@ void main() {
       final container = ProviderContainer(
         overrides: [
           vaccineServiceProvider.overrideWithValue(fakeVaccineService),
-          childrenProvider.overrideWith((ref) => Stream.value([born, expected])),
+          childrenProvider.overrideWith(
+            (ref) => Stream.value([born, expected]),
+          ),
         ],
       );
 
       await container.read(vaccineSchedulerProvider.future);
       expect(fakeVaccineService.scheduledChildIds, ['born_1']);
-      expect(fakeVaccineService.scheduledChildIds.contains('expected_1'), false);
-    });
-
-    test('TimelineService.getMilestonesForChild returns empty list for expected child', () {
-      final service = TimelineService(_FakeFirebaseFirestore());
-      final expected = _expectedChild();
-      final milestones = service.getMilestonesForChild(expected);
-      expect(milestones, isEmpty);
-    });
-
-    test('childMilestonesProvider returns empty list for expected child', () async {
-      final expected = _expectedChild(id: 'expected_1');
-
-      final container = ProviderContainer(
-        overrides: [
-          childrenProvider.overrideWith((ref) => Stream.value([expected])),
-          milestoneProgressStreamProvider('expected_1').overrideWith((ref) => Stream.value([])),
-          profileProvider.overrideWith((ref) => Stream.value(_userProfile())),
-        ],
+      expect(
+        fakeVaccineService.scheduledChildIds.contains('expected_1'),
+        false,
       );
-
-      final milestones = await container.read(childMilestonesProvider('expected_1').future);
-      expect(milestones, isEmpty);
     });
 
-    test('milestoneRemindersProvider skips scheduling for expected child', () async {
-      final fakeNotif = _FakeMilestoneNotificationService();
-      final expected = _expectedChild(id: 'expected_1');
+    test(
+      'TimelineService.getMilestonesForChild returns empty list for expected child',
+      () {
+        final service = TimelineService(_FakeFirebaseFirestore());
+        final expected = _expectedChild();
+        final milestones = service.getMilestonesForChild(expected);
+        expect(milestones, isEmpty);
+      },
+    );
 
-      final container = ProviderContainer(
-        overrides: [
-          childrenProvider.overrideWith((ref) => Stream.value([expected])),
-          milestoneNotificationServiceProvider.overrideWithValue(fakeNotif),
-          childMilestonesProvider('expected_1').overrideWith((ref) => Future.value([])),
-        ],
-      );
+    test(
+      'childMilestonesProvider returns empty list for expected child',
+      () async {
+        final expected = _expectedChild(id: 'expected_1');
 
-      await container.read(milestoneRemindersProvider('expected_1').future);
-      expect(fakeNotif.scheduleCount, 0);
-    });
+        final container = ProviderContainer(
+          overrides: [
+            childrenProvider.overrideWith((ref) => Stream.value([expected])),
+            milestoneProgressStreamProvider(
+              'expected_1',
+            ).overrideWith((ref) => Stream.value([])),
+            profileProvider.overrideWith((ref) => Stream.value(_userProfile())),
+          ],
+        );
+
+        final milestones = await container.read(
+          childMilestonesProvider('expected_1').future,
+        );
+        expect(milestones, isEmpty);
+      },
+    );
+
+    test(
+      'milestoneRemindersProvider skips scheduling for expected child',
+      () async {
+        final fakeNotif = _FakeMilestoneNotificationService();
+        final expected = _expectedChild(id: 'expected_1');
+
+        final container = ProviderContainer(
+          overrides: [
+            childrenProvider.overrideWith((ref) => Stream.value([expected])),
+            milestoneNotificationServiceProvider.overrideWithValue(fakeNotif),
+            childMilestonesProvider(
+              'expected_1',
+            ).overrideWith((ref) => Future.value([])),
+          ],
+        );
+
+        await container.read(milestoneRemindersProvider('expected_1').future);
+        expect(fakeNotif.scheduleCount, 0);
+      },
+    );
   });
 
   group('Task 7b: scheduleStartsAtBirth empty state in tabs', () {
-    testWidgets('VaccinationsTab displays scheduleStartsAtBirth for expected child', (tester) async {
-      final expected = _expectedChild(id: 'expected_1', name: 'Mon Bébé');
+    testWidgets(
+      'VaccinationsTab displays scheduleStartsAtBirth for expected child',
+      (tester) async {
+        final expected = _expectedChild(id: 'expected_1', name: 'Mon Bébé');
 
-      await tester.pumpWidget(
-        _wrapWithApp(
-          const VaccinationsTab(),
-          overrides: [
-            childrenProvider.overrideWith((ref) => Stream.value([expected])),
-            vaccineSchedulerProvider.overrideWith((ref) => Future.value()),
-          ],
-        ),
-      );
+        await tester.pumpWidget(
+          _wrapWithApp(
+            const VaccinationsTab(),
+            overrides: [
+              childrenProvider.overrideWith((ref) => Stream.value([expected])),
+              vaccineSchedulerProvider.overrideWith((ref) => Future.value()),
+            ],
+          ),
+        );
 
-      await tester.pumpAndSettle();
+        await tester.pumpAndSettle();
 
-      expect(find.text('Le calendrier démarre à la naissance'), findsOneWidget);
-      expect(find.byIcon(Icons.child_care_rounded), findsOneWidget);
-    });
+        expect(
+          find.text('Le calendrier démarre à la naissance'),
+          findsOneWidget,
+        );
+        expect(find.byIcon(Icons.child_care_rounded), findsOneWidget);
+      },
+    );
 
-    testWidgets('TimelineScreen displays scheduleStartsAtBirth for expected child', (tester) async {
-      final expected = _expectedChild(id: 'expected_1', name: 'Mon Bébé');
+    testWidgets(
+      'TimelineScreen displays scheduleStartsAtBirth for expected child',
+      (tester) async {
+        final expected = _expectedChild(id: 'expected_1', name: 'Mon Bébé');
 
-      await tester.pumpWidget(
-        _wrapWithApp(
-          const TimelineScreen(),
-          overrides: [
-            childrenProvider.overrideWith((ref) => Stream.value([expected])),
-            childMilestonesProvider('expected_1').overrideWith((ref) => Future.value([])),
-          ],
-        ),
-      );
+        await tester.pumpWidget(
+          _wrapWithApp(
+            const TimelineScreen(),
+            overrides: [
+              childrenProvider.overrideWith((ref) => Stream.value([expected])),
+              childMilestonesProvider(
+                'expected_1',
+              ).overrideWith((ref) => Future.value([])),
+            ],
+          ),
+        );
 
-      await tester.pumpAndSettle();
+        await tester.pumpAndSettle();
 
-      expect(find.text('Le calendrier démarre à la naissance'), findsOneWidget);
-      expect(find.byIcon(Icons.child_care_rounded), findsOneWidget);
-    });
+        expect(
+          find.text('Le calendrier démarre à la naissance'),
+          findsOneWidget,
+        );
+        expect(find.byIcon(Icons.child_care_rounded), findsOneWidget);
+      },
+    );
   });
 
   group('Task 7b: edit_mother_profile_screen save wiring', () {
-    testWidgets('saves pregnant status -> calls declarePregnancy when no active pregnancy', (tester) async {
-      final fakeProfileService = _FakeProfileService();
-      final lmp = DateTime(2026, 3, 15);
-      final profile = _userProfile(status: UserStatus.pregnant, pregnancyDate: lmp);
+    testWidgets(
+      'saves pregnant status -> calls declarePregnancy when no active pregnancy',
+      (tester) async {
+        final fakeProfileService = _FakeProfileService();
+        final lmp = DateTime(2026, 3, 15);
+        final profile = _userProfile(
+          status: UserStatus.pregnant,
+          pregnancyDate: lmp,
+        );
 
-      await tester.pumpWidget(
-        _wrapWithApp(
-          EditMotherProfileScreen(profile: profile),
-          overrides: [
-            profileServiceProvider.overrideWithValue(fakeProfileService),
-            activePregnancyProvider.overrideWithValue(null),
-            cycleNotificationServiceProvider.overrideWithValue(
-              CycleNotificationService(_FakeNotificationService()),
-            ),
-          ],
-        ),
-      );
+        await tester.pumpWidget(
+          _wrapWithApp(
+            EditMotherProfileScreen(profile: profile),
+            overrides: [
+              profileServiceProvider.overrideWithValue(fakeProfileService),
+              activePregnancyProvider.overrideWithValue(null),
+              cycleNotificationServiceProvider.overrideWithValue(
+                CycleNotificationService(_FakeNotificationService()),
+              ),
+            ],
+          ),
+        );
 
-      await tester.pumpAndSettle();
+        await tester.pumpAndSettle();
 
-      // Tap save button (trailing action in AppBar or bottom)
-      final saveButton = find.text('Enregistrer les modifications');
-      expect(saveButton, findsOneWidget);
-      await tester.tap(saveButton);
-      await tester.pumpAndSettle();
+        // Tap save button (trailing action in AppBar or bottom)
+        final saveButton = find.text('Enregistrer les modifications');
+        expect(saveButton, findsOneWidget);
+        await tester.tap(saveButton);
+        await tester.pumpAndSettle();
 
-      expect(fakeProfileService.declaredLmp, lmp);
-      expect(fakeProfileService.declaredPlaceholder, 'Bébé');
-    });
+        expect(fakeProfileService.declaredLmp, lmp);
+        expect(fakeProfileService.declaredPlaceholder, 'Bébé');
+      },
+    );
 
-    testWidgets('saves hope status -> calls setTryingToConceive(true)', (tester) async {
+    testWidgets('saves hope status -> calls setTryingToConceive(true)', (
+      tester,
+    ) async {
       final fakeProfileService = _FakeProfileService();
       final profile = _userProfile(status: UserStatus.hope);
 
@@ -393,7 +513,9 @@ void main() {
       expect(fakeProfileService.ttcValue, isTrue);
     });
 
-    testWidgets('saves mom status -> calls setTryingToConceive(false)', (tester) async {
+    testWidgets('saves mom status -> calls setTryingToConceive(false)', (
+      tester,
+    ) async {
       final fakeProfileService = _FakeProfileService();
       final profile = _userProfile(status: UserStatus.mom);
 
@@ -402,6 +524,14 @@ void main() {
           EditMotherProfileScreen(profile: profile),
           overrides: [
             profileServiceProvider.overrideWithValue(fakeProfileService),
+            bornChildrenProvider.overrideWithValue([
+              Child(
+                id: 'born',
+                name: 'Lina',
+                birthDate: DateTime(2025, 1, 1),
+                gender: ChildGender.girl,
+              ),
+            ]),
             cycleNotificationServiceProvider.overrideWithValue(
               CycleNotificationService(_FakeNotificationService()),
             ),
@@ -420,38 +550,49 @@ void main() {
   });
 
   group('Task 7b: HomeScreen startup migration', () {
-    testWidgets('initState calls runProfileMigrationIfNeeded and migrateCapsuleSubjects', (tester) async {
-      final fakeProfileService = _FakeProfileService();
-      final fakeCapsuleService = _FakeCapsuleService();
+    testWidgets(
+      'initState calls runProfileMigrationIfNeeded and migrateCapsuleSubjects',
+      (tester) async {
+        final fakeProfileService = _FakeProfileService();
+        final fakeCapsuleService = _FakeCapsuleService();
 
-      await tester.pumpWidget(
-        _wrapWithApp(
-          const HomeScreen(),
-          overrides: [
-            profileServiceProvider.overrideWithValue(fakeProfileService),
-            capsuleServiceProvider.overrideWithValue(fakeCapsuleService),
-            notificationServiceProvider.overrideWithValue(_FakeNotificationService()),
-            // dependencies for child tabs
-            childrenProvider.overrideWith((ref) => Stream.value([])),
-            profileProvider.overrideWith((ref) => Stream.value(_userProfile())),
-            motherStageProvider.overrideWithValue(MotherStage.mom),
-            hasBornChildrenProvider.overrideWithValue(false),
-            isPregnantProvider.overrideWithValue(false),
-            activePregnancyProvider.overrideWithValue(null),
-            capsulesProvider.overrideWith((ref) => Stream.value([])),
-            vaccineSchedulerProvider.overrideWith((ref) => Future.value()),
-            notificationsStreamProvider.overrideWith((ref) => Stream.value([])),
-            unreadNotificationsCountProvider.overrideWithValue(0),
-            currentTierProvider.overrideWith((ref) => Stream.value(SubscriptionTier.free)),
-          ],
-        ),
-      );
+        await tester.pumpWidget(
+          _wrapWithApp(
+            const HomeScreen(),
+            overrides: [
+              profileServiceProvider.overrideWithValue(fakeProfileService),
+              capsuleServiceProvider.overrideWithValue(fakeCapsuleService),
+              notificationServiceProvider.overrideWithValue(
+                _FakeNotificationService(),
+              ),
+              // dependencies for child tabs
+              childrenProvider.overrideWith((ref) => Stream.value([])),
+              profileProvider.overrideWith(
+                (ref) => Stream.value(_userProfile()),
+              ),
+              motherStageProvider.overrideWithValue(MotherStage.mom),
+              hasBornChildrenProvider.overrideWithValue(false),
+              isPregnantProvider.overrideWithValue(false),
+              activePregnancyProvider.overrideWithValue(null),
+              capsulesProvider.overrideWith((ref) => Stream.value([])),
+              vaccineSchedulerProvider.overrideWith((ref) => Future.value()),
+              notificationsStreamProvider.overrideWith(
+                (ref) => Stream.value([]),
+              ),
+              unreadNotificationsCountProvider.overrideWithValue(0),
+              currentTierProvider.overrideWith(
+                (ref) => Stream.value(SubscriptionTier.free),
+              ),
+            ],
+          ),
+        );
 
-      await tester.pumpAndSettle();
+        await tester.pumpAndSettle();
 
-      expect(fakeProfileService.migrationCallCount, 1);
-      expect(fakeProfileService.migrationPlaceholder, 'Bébé');
-      expect(fakeCapsuleService.migrateCallCount, 1);
-    });
+        expect(fakeProfileService.migrationCallCount, 1);
+        expect(fakeProfileService.migrationPlaceholder, 'Bébé');
+        expect(fakeCapsuleService.migrateCallCount, 1);
+      },
+    );
   });
 }

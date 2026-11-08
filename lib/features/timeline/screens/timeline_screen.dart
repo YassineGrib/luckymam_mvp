@@ -309,7 +309,7 @@ class _TimelineScreenState extends ConsumerState<TimelineScreen> {
         : (lang == 'en' ? 'Milestones & Memories' : 'Jalons & Souvenirs');
 
     final badgeText = capsulesCount > 0
-        ? '$completedCount / $totalCount  •  +$capsulesCount 📸'
+        ? '$completedCount / $totalCount  •  +$capsulesCount '
         : '$completedCount / $totalCount';
 
     return Padding(

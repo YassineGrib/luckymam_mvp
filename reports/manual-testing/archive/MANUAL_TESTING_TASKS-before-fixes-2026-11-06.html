@@ -1,0 +1,496 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>&#128241; LuckyMam — Guide de Recette &amp; T&#226;ches de Test Manuel</title>
+<style>body{font-family:'Noto Sans KR','Malgun Gothic','Microsoft YaHei',sans-serif;max-width:860px;margin:2rem auto;line-height:1.7;padding:0 1rem}table{border-collapse:collapse}td,th{border:1px solid #ccc;padding:4px 8px}pre,code{background:#f4f3f8;border-radius:4px}pre{padding:.6rem .8rem;overflow:auto}img{max-width:100%}blockquote{margin-left:0;padding-left:1rem;border-left:3px solid #ccc;color:#555}</style>
+</head>
+<body>
+<h1 id="luckymam-guide-de-recette-taches-de-test-manuel">📱 LuckyMam — Guide de Recette &amp; Tâches de Test Manuel</h1>
+<blockquote>
+<p><strong>Document de vérification pas-à-pas pour tester l'application sur appareil réel (Android / iOS) ou émulateur.</strong><br />
+<strong>Dernière mise à jour :</strong> 05 novembre 2026 — Couvre l'intégralité des 31 tickets des Sprints 1, 2, 3 et 4.</p>
+</blockquote>
+<hr />
+<h2 id="instructions-de-demarrage-rapide">🛠️ Instructions de Démarrage Rapide</h2>
+<ol>
+<li><strong>Lancement de l'application :</strong>
+<pre><code class="language-bash">flutter run
+</code></pre>
+</li>
+<li><strong>Basculement de Langue (Arabe RTL / Français / Anglais) :</strong>
+<ul>
+<li>Soit depuis l'écran de sélection de langue à l'onboarding.</li>
+<li>Soit depuis l'onglet <strong>Profil ➔ Langue de l'application</strong>.</li>
+<li>Soit en changeant la langue système du téléphone (Paramètres ➔ Système ➔ Langues).</li>
+</ul>
+</li>
+<li><strong>Méthode de Recette :</strong>
+<ul>
+<li>Cochez chaque case <code>[ ]</code> ➔ <code>[x]</code> après vérification sur votre écran.</li>
+<li>Si un point ne correspond pas, notez le numéro de tâche et le comportement observé.</li>
+</ul>
+</li>
+</ol>
+<hr />
+<h2 id="etape-1-onboarding-consentement-profils">🟢 ÉTAPE 1 : Onboarding, Consentement &amp; Profils</h2>
+<h3 id="tache-1.1-zone-tactile-de-consentement-loi-18-07-lm-onb-002-lm-onb-001">📋 Tâche 1.1 — Zone tactile de consentement Loi 18-07 (<code>LM-ONB-002</code>, <code>LM-ONB-001</code>)</h3>
+<ul class="contains-task-list">
+<li class="task-list-item"><input disabled="disabled" type="checkbox" /> <strong>Action :</strong> Ouvrir l'application en mode premier lancement ou depuis l'écran de consentement.</li>
+<li class="task-list-item"><input disabled="disabled" type="checkbox" /> <strong>Vérification Libellé :</strong> Le texte affiché est exactement : <em>« J’accepte les termes de la loi n° 18-07. »</em> (ou en arabe : <em>« أوافق على شروط القانون رقم 18-07. »</em>).</li>
+<li class="task-list-item"><input disabled="disabled" type="checkbox" /> <strong>Vérification Tactile :</strong> Touchez <strong>le texte</strong> ou <strong>la case à cocher</strong> :
+<ul>
+<li>La case doit se cocher immédiatement au premier toucher (aucun double-clic nécessaire).</li>
+<li>La zone tactile est large et confortable.</li>
+<li>Le scroll de la page n'est jamais bloqué.</li>
+</ul>
+</li>
+<li class="task-list-item"><input disabled="disabled" type="checkbox" /> <strong>Validation :</strong> Le bouton « Continuer » s'active instantanément.</li>
+</ul>
+<h3 id="tache-1.2-selection-de-la-langue-juste-apres-le-consentement-lm-onb-003">📋 Tâche 1.2 — Sélection de la langue juste après le consentement (<code>LM-ONB-003</code>)</h3>
+<ul class="contains-task-list">
+<li class="task-list-item"><input disabled="disabled" type="checkbox" /> <strong>Action :</strong> Valider le consentement à la loi 18-07.</li>
+<li class="task-list-item"><input disabled="disabled" type="checkbox" /> <strong>Vérification :</strong> L'écran de sélection de langue apparaît immédiatement avec les 3 options :
+<ol>
+<li>🇫🇷 Français</li>
+<li>🇩🇿 العربية (RTL)</li>
+<li>🇬🇧 English</li>
+</ol>
+</li>
+<li class="task-list-item"><input disabled="disabled" type="checkbox" /> <strong>Validation :</strong> Choisir <strong>العربية</strong> ➔ Toute l'interface bascule instantanément de droite à gauche (RTL) de manière fluide.</li>
+</ul>
+<h3 id="tache-1.3-generation-automatique-du-profil-mam-lm-onb-004">📋 Tâche 1.3 — Génération automatique du profil « MAM » (<code>LM-ONB-004</code>)</h3>
+<ul class="contains-task-list">
+<li class="task-list-item"><input disabled="disabled" type="checkbox" /> <strong>Action :</strong> Terminer la création de compte ou l'onboarding.</li>
+<li class="task-list-item"><input disabled="disabled" type="checkbox" /> <strong>Vérification :</strong> Dans le sélecteur de profil en haut ou dans le Profil :
+<ul>
+<li>Un profil principal intitulé <strong>« MAM »</strong> (ou « مَام ») est automatiquement créé et sélectionné.</li>
+<li>Ce profil permet d'enregistrer des capsules pour la maman elle-même avant ou en parallèle de ses enfants.</li>
+</ul>
+</li>
+</ul>
+<h3 id="tache-1.4-ajout-denfants-pour-tous-les-statuts-lm-onb-005">📋 Tâche 1.4 — Ajout d'enfants pour tous les statuts (<code>LM-ONB-005</code>)</h3>
+<ul class="contains-task-list">
+<li class="task-list-item"><input disabled="disabled" type="checkbox" /> <strong>Action :</strong> Tester l'ajout d'enfant depuis le profil en mode <em>Espoir</em>, <em>Enceinte</em>, ou <em>Maman</em>.</li>
+<li class="task-list-item"><input disabled="disabled" type="checkbox" /> <strong>Vérification :</strong> Le bouton « Ajouter un enfant » est débloqué et accessible pour tous les profils sans aucune restriction liée au statut initial.</li>
+</ul>
+<hr />
+<h2 id="etape-2-capsules-emotionnelles-audio-timeline">🟢 ÉTAPE 2 : Capsules Émotionnelles, Audio &amp; Timeline</h2>
+<h3 id="tache-2.1-enregistrement-et-modification-de-memo-vocal-lm-cap-004">📋 Tâche 2.1 — Enregistrement et modification de mémo vocal (<code>LM-CAP-004</code>)</h3>
+<ul class="contains-task-list">
+<li class="task-list-item"><input disabled="disabled" type="checkbox" /> <strong>Action :</strong> Créer une nouvelle capsule ➔ Appuyer sur l'icône microphone pour enregistrer un message vocal.</li>
+<li class="task-list-item"><input disabled="disabled" type="checkbox" /> <strong>Vérification Lecteur Audio Intégré :</strong>
+<ul>
+<li>Un lecteur audio s'affiche avec la durée exacte du mémo.</li>
+<li>Bouton <strong>Écouter</strong> (Play) ➔ La barre de progression avance et le son se fait entendre.</li>
+<li>Bouton <strong>Pause</strong> / <strong>Reprendre</strong> ➔ Fonctionne instantanément.</li>
+<li>Bouton <strong>Réenregistrer</strong> ➔ Supprime le mémo précédent et relance l'enregistrement proprement.</li>
+</ul>
+</li>
+</ul>
+<h3 id="tache-2.2-selecteur-multi-emotions-lm-cap-003">📋 Tâche 2.2 — Sélecteur multi-émotions (<code>LM-CAP-003</code>)</h3>
+<ul class="contains-task-list">
+<li class="task-list-item"><input disabled="disabled" type="checkbox" /> <strong>Action :</strong> Dans le formulaire de capsule, ouvrir la section « Émotions ».</li>
+<li class="task-list-item"><input disabled="disabled" type="checkbox" /> <strong>Vérification :</strong>
+<ul>
+<li>Choisir une émotion principale obligatoire (ex. <em>Joie</em> ou <em>Amour</em>).</li>
+<li>Ajouter jusqu'à 3 émotions secondaires complémentaires.</li>
+<li><strong>Zéro doublon :</strong> Une émotion déjà sélectionnée ne peut pas être choisie deux fois.</li>
+<li>Cliquer sur une émotion secondaire pour la promouvoir en émotion principale : le basculement est immédiat.</li>
+</ul>
+</li>
+</ul>
+<h3 id="tache-2.3-enregistrement-fiable-placement-immediat-sur-la-timeline-lm-cap-001-lm-cap-005">📋 Tâche 2.3 — Enregistrement fiable &amp; Placement immédiat sur la Timeline (<code>LM-CAP-001</code>, <code>LM-CAP-005</code>)</h3>
+<ul class="contains-task-list">
+<li class="task-list-item"><input disabled="disabled" type="checkbox" /> <strong>Action :</strong> Valider la création d'une capsule avec photo, audio et texte.</li>
+<li class="task-list-item"><input disabled="disabled" type="checkbox" /> <strong>Vérification :</strong>
+<ul>
+<li>Le bouton de validation affiche un indicateur de chargement et est temporairement verrouillé (empêche le double-clic).</li>
+<li>Dès validation, la capsule apparaît <strong>instantanément</strong> sur la Timeline chronologique sous le bon enfant et la bonne date.</li>
+</ul>
+</li>
+</ul>
+<h3 id="tache-2.4-miniatures-sur-la-timeline-placeholders-pastel-lm-cap-002">📋 Tâche 2.4 — Miniatures sur la Timeline &amp; Placeholders Pastel (<code>LM-CAP-002</code>)</h3>
+<ul class="contains-task-list">
+<li class="task-list-item"><input disabled="disabled" type="checkbox" /> <strong>Action :</strong> Consulter la Timeline.</li>
+<li class="task-list-item"><input disabled="disabled" type="checkbox" /> <strong>Vérification Capsule AVEC photo :</strong>
+<ul>
+<li>La carte affiche une miniature soignée aux coins arrondis (<em>squircle</em>), non déformée (<code>BoxFit.cover</code>).</li>
+<li>Le défilement de la Timeline reste parfaitement fluide à 60 fps (pas de saccade mémoire).</li>
+</ul>
+</li>
+<li class="task-list-item"><input disabled="disabled" type="checkbox" /> <strong>Vérification Capsule SANS photo (texte ou vocal seul) :</strong>
+<ul>
+<li>Un conteneur pastel élégant s'affiche avec l'icône de l'étape de vie (ex. 🌱 Pré-gestation, 🤰 Grossesse, 👶 Bébé) et un badge micro si un audio est attaché.</li>
+<li>Aucun vide visuel inesthétique.</li>
+</ul>
+</li>
+</ul>
+<hr />
+<h2 id="etape-3-ecran-daccueil-navigation-acces-rapide">🟢 ÉTAPE 3 : Écran d'Accueil, Navigation &amp; Accès Rapide</h2>
+<h3 id="tache-3.1-persistance-de-la-barre-de-navigation-inferieure-lm-nav-001">📋 Tâche 3.1 — Persistance de la barre de navigation inférieure (<code>LM-NAV-001</code>)</h3>
+<ul class="contains-task-list">
+<li class="task-list-item"><input disabled="disabled" type="checkbox" /> <strong>Action :</strong> Naviguer entre l'Accueil, les Capsules, la Timeline, les Notifications et le Profil.</li>
+<li class="task-list-item"><input disabled="disabled" type="checkbox" /> <strong>Vérification :</strong> La barre de navigation inférieure reste toujours visible, stable et ancrée au bas de l'écran sans clignotement ni disparition inopinée.</li>
+</ul>
+<h3 id="tache-3.2-consultation-de-mes-souvenirs-voir-tout-lm-mem-001-lm-mem-002">📋 Tâche 3.2 — Consultation de « Mes souvenirs » &amp; « Voir tout » (<code>LM-MEM-001</code>, <code>LM-MEM-002</code>)</h3>
+<ul class="contains-task-list">
+<li class="task-list-item"><input disabled="disabled" type="checkbox" /> <strong>Action :</strong> Sur l'écran d'accueil, appuyer sur le bouton <strong>« Mes souvenirs »</strong>.</li>
+<li class="task-list-item"><input disabled="disabled" type="checkbox" /> <strong>Vérification :</strong>
+<ul>
+<li>Ouvre la galerie de <strong>consultation</strong> des souvenirs existants (et NON le formulaire d'ajout direct).</li>
+<li>Appuyer sur <strong>« Voir tout »</strong> ➔ Charge la collection intégrale avec filtres par enfant/profil, affichage de loader et gestion de liste vide si aucun souvenir.</li>
+</ul>
+</li>
+</ul>
+<h3 id="tache-3.3-reorganisation-asymetrique-de-la-grille-bento-lm-home-002">📋 Tâche 3.3 — Réorganisation asymétrique de la grille Bento (<code>LM-HOME-002</code>)</h3>
+<ul class="contains-task-list">
+<li class="task-list-item"><input disabled="disabled" type="checkbox" /> <strong>Action :</strong> Regarder la section « Accès rapide » sur l'écran d'accueil.</li>
+<li class="task-list-item"><input disabled="disabled" type="checkbox" /> <strong>Vérification de la disposition :</strong>
+<ul>
+<li><strong>En haut à gauche :</strong> Carte <em>Reels éducatifs</em> (avec filigrane corail LuckyMam, zéro violet).</li>
+<li><strong>En bas à gauche :</strong> Carte <em>Mes souvenirs</em>.</li>
+<li><strong>À droite (pleine hauteur) :</strong> Carte haute <em>Santé Enfant</em> (alignée avec les deux cartes de gauche).</li>
+</ul>
+</li>
+<li class="task-list-item"><input disabled="disabled" type="checkbox" /> <strong>Vérification RTL (Arabe) :</strong> En arabe, les colonnes s'inversent naturellement de droite à gauche avec alignement parfait des filigranes.</li>
+</ul>
+<h3 id="tache-3.4-libelle-calendrier-vaccinal-complet-lm-home-001">📋 Tâche 3.4 — Libellé « Calendrier vaccinal complet » (<code>LM-HOME-001</code>)</h3>
+<ul class="contains-task-list">
+<li class="task-list-item"><input disabled="disabled" type="checkbox" /> <strong>Action :</strong> Regarder le bandeau hebdomadaire au-dessus de la grille d'accueil.</li>
+<li class="task-list-item"><input disabled="disabled" type="checkbox" /> <strong>Vérification du texte :</strong>
+<ul>
+<li>En français : <strong>« Calendrier vaccinal complet › »</strong> (et non plus « Calendrier complet »).</li>
+<li>En arabe : <strong>« جدول التطعيمات الكامل › »</strong>.</li>
+<li>En anglais : <strong>« Full vaccine calendar › »</strong>.</li>
+</ul>
+</li>
+</ul>
+<hr />
+<h2 id="etape-4-albums-photos-modeles-impression-haute-definition">🟢 ÉTAPE 4 : Albums Photos, Modèles &amp; Impression Haute Définition</h2>
+<h3 id="tache-4.1-selection-des-modeles-dalbums-simplifiee-lm-alb-007">📋 Tâche 4.1 — Sélection des modèles d'albums simplifiée (<code>LM-ALB-007</code>)</h3>
+<ul class="contains-task-list">
+<li class="task-list-item"><input disabled="disabled" type="checkbox" /> <strong>Action :</strong> Aller dans <em>Livres de souvenirs</em> ➔ Choisir un enfant ➔ Ouvrir le catalogue des modèles prédéfinis.</li>
+<li class="task-list-item"><input disabled="disabled" type="checkbox" /> <strong>Vérification :</strong>
+<ul>
+<li><strong>Section 1 « Modèles d'albums disponibles » :</strong> Met exclusivement en avant les 2 modèles officiels de lancement :
+<ol>
+<li><em>Album de naissance</em> (6 photos — A5: 1 980 DA, A4: 3 030 DA).</li>
+<li><em>Portrait souvenir</em> (1 photo — A5: 440 DA, A4: 690 DA, A3: 990 DA).</li>
+</ol>
+</li>
+<li><strong>Section 2 « Prochainement disponibles » :</strong> Affiche les modèles futurs (<em>Première Année</em>, <em>Traditions &amp; Fêtes</em>) avec un badge doré « Bientôt disponible ».</li>
+<li>Cliquer sur un modèle à venir ➔ Affiche une notification bienveillante (<em>« Ce modèle d'album sera disponible très prochainement ! ✨ »</em>) sans aucun plantage.</li>
+</ul>
+</li>
+</ul>
+<h3 id="tache-4.2-modele-portrait-souvenir-1-photo-format-a3-lm-alb-002">📋 Tâche 4.2 — Modèle « Portrait souvenir 1 photo » &amp; Format A3 (<code>LM-ALB-002</code>)</h3>
+<ul class="contains-task-list">
+<li class="task-list-item"><input disabled="disabled" type="checkbox" /> <strong>Action :</strong> Sélectionner le modèle <em>Portrait souvenir 1 photo</em>.</li>
+<li class="task-list-item"><input disabled="disabled" type="checkbox" /> <strong>Vérification :</strong>
+<ul>
+<li>Propose 1 seul jalon pour la photo préférée de l'enfant.</li>
+<li>Dans la prévisualisation et la commande, les 3 formats sont disponibles :
+<ul>
+<li>A5 : 440 DA</li>
+<li>A4 : 690 DA</li>
+<li><strong>A3 (30 × 42 cm) : 990 DA</strong> (disponible exclusivement pour ce modèle 1 photo).</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h3 id="tache-4.3-rendu-3d-des-couvertures-filigrane-trefle-discret-lm-alb-001-lm-alb-003">📋 Tâche 4.3 — Rendu 3D des couvertures &amp; Filigrane trèfle discret (<code>LM-ALB-001</code>, <code>LM-ALB-003</code>)</h3>
+<ul class="contains-task-list">
+<li class="task-list-item"><input disabled="disabled" type="checkbox" /> <strong>Action :</strong> Observer les cartes d'albums dans le sélecteur et l'aperçu avant impression (<code>AlbumPrintPreviewScreen</code>).</li>
+<li class="task-list-item"><input disabled="disabled" type="checkbox" /> <strong>Vérification Design 3D :</strong>
+<ul>
+<li>Effet livre cartonné avec tranche de reliure, dos en cuir/tissu, reflet de lumière supérieur et tranche de pages blanches.</li>
+<li>Micro-animation au toucher (effet d'enfoncement tactile).</li>
+</ul>
+</li>
+<li class="task-list-item"><input disabled="disabled" type="checkbox" /> <strong>Vérification Filigrane LuckyMam :</strong>
+<ul>
+<li>Dans l'aperçu et dans les pages de l'album, le trèfle à 4 feuilles LuckyMam apparaît discrètement dans la <strong>marge inférieure de sécurité</strong> avec une opacité douce de <strong>38 %</strong>.</li>
+<li>Il ne coupe ni ne masque aucun visage.</li>
+</ul>
+</li>
+</ul>
+<h3 id="tache-4.4-remplacement-et-recadrage-dune-photo-dalbum-lm-alb-004">📋 Tâche 4.4 — Remplacement et recadrage d'une photo d'album (<code>LM-ALB-004</code>)</h3>
+<ul class="contains-task-list">
+<li class="task-list-item"><input disabled="disabled" type="checkbox" /> <strong>Action :</strong> Dans un album en cours de remplissage, appuyer sur une photo déjà attachée.</li>
+<li class="task-list-item"><input disabled="disabled" type="checkbox" /> <strong>Vérification :</strong>
+<ul>
+<li>Une feuille d'actions s'ouvre : <em>Remplacer</em>, <em>Recadrer</em>, <em>Retirer de l'album</em>.</li>
+<li>Choisir <em>Recadrer</em> ➔ Ouvre l'outil de cadrage interactif avec ratios carrés et portrait.</li>
+<li>Valider ➔ La photo est mise à jour immédiatement dans la page sans affecter le reste de l'album.</li>
+</ul>
+</li>
+</ul>
+<h3 id="tache-4.5-album-libre-choix-du-nombre-de-photos-tarification-officielle-lm-free-001-lm-ord-001">📋 Tâche 4.5 — Album libre, choix du nombre de photos &amp; Tarification officielle (<code>LM-FREE-001</code>, <code>LM-ORD-001</code>)</h3>
+<ul class="contains-task-list">
+<li class="task-list-item"><input disabled="disabled" type="checkbox" /> <strong>Action :</strong> Créer un <em>Album libre</em> depuis l'accueil des albums.</li>
+<li class="task-list-item"><input disabled="disabled" type="checkbox" /> <strong>Vérification Capacité :</strong> Propose les choix exacts : <strong>1, 2, 4, 6, 8, 10 ou 12 photos</strong>.</li>
+<li class="task-list-item"><input disabled="disabled" type="checkbox" /> <strong>Vérification Tarifs Algériens (Dinar Algérien DA) :</strong>
+<ul>
+<li>1 photo : A5 = 440 DA | A4 = 690 DA | A3 = 990 DA</li>
+<li>6 photos : A5 = 1 980 DA | A4 = 3 030 DA</li>
+<li>12 photos : A5 = 4 290 DA | A4 = 6 540 DA</li>
+</ul>
+</li>
+<li class="task-list-item"><input disabled="disabled" type="checkbox" /> <strong>Frais de livraison séparés :</strong> Les frais de livraison (500 DA standard, 0 DA pour les membres VIP) sont affichés sur une ligne séparée avec la mention légale : <em>« Prix hors frais de livraison »</em>.</li>
+</ul>
+<h3 id="tache-4.6-generation-et-export-pdf-sans-numerotation-visible-lm-alb-006-lm-alb-005">📋 Tâche 4.6 — Génération et export PDF sans numérotation visible (<code>LM-ALB-006</code>, <code>LM-ALB-005</code>)</h3>
+<ul class="contains-task-list">
+<li class="task-list-item"><input disabled="disabled" type="checkbox" /> <strong>Action :</strong> Générer le PDF de prévisualisation d'un album rempli.</li>
+<li class="task-list-item"><input disabled="disabled" type="checkbox" /> <strong>Vérification :</strong>
+<ul>
+<li>Le document se génère rapidement avec barre de progression.</li>
+<li>Les textes arabes sont parfaitement formés (ligatures RTL impeccables, aucune inversion de lettres).</li>
+<li><strong>Zéro numérotation visible :</strong> Les pages ne comportent aucun numéro visible imprimé (aspect livre d'art pur).</li>
+</ul>
+</li>
+</ul>
+<hr />
+<h2 id="etape-5-album-numerique-sous-forme-de-diaporama-anime-lm-dig-001">🟢 ÉTAPE 5 : Album Numérique sous forme de Diaporama Animé (<code>LM-DIG-001</code>)</h2>
+<h3 id="tache-5.1-acces-et-composition-du-diaporama">📋 Tâche 5.1 — Accès et composition du diaporama</h3>
+<ul class="contains-task-list">
+<li class="task-list-item"><input disabled="disabled" type="checkbox" /> <strong>Action :</strong> Aller dans <em>Livres de souvenirs</em> ➔ Appuyer sur la bannière <strong>« Album numérique (Diaporama) »</strong> (ou sur le bouton « عرض / Diaporama » dans un album).</li>
+<li class="task-list-item"><input disabled="disabled" type="checkbox" /> <strong>Vérification Sélection :</strong>
+<ul>
+<li>La liste des photos de l'enfant s'affiche avec le compteur <code>X / 12</code>.</li>
+<li>Si moins de 3 photos sont sélectionnées ➔ Le bouton est désactivé avec message : <em>« Veuillez sélectionner au moins 3 photos pour le diaporama »</em>.</li>
+<li>Maximum 12 photos autorisées.</li>
+</ul>
+</li>
+</ul>
+<h3 id="tache-5.2-reorganisation-par-glisser-deposer-drag-drop">📋 Tâche 5.2 — Réorganisation par glisser-déposer (<em>Drag &amp; Drop</em>)</h3>
+<ul class="contains-task-list">
+<li class="task-list-item"><input disabled="disabled" type="checkbox" /> <strong>Action :</strong> Sur l'écran de création du diaporama, maintenir enfoncée la poignée d'une photo et la déplacer vers le haut ou vers le bas.</li>
+<li class="task-list-item"><input disabled="disabled" type="checkbox" /> <strong>Vérification :</strong>
+<ul>
+<li>L'ordre se réorganise instantanément avec retour haptique.</li>
+<li>Le numéro d'ordre <code>#1, #2...</code> se met à jour en temps réel.</li>
+</ul>
+</li>
+</ul>
+<h3 id="tache-5.3-lecture-plein-ecran-controles">📋 Tâche 5.3 — Lecture plein écran &amp; Contrôles</h3>
+<ul class="contains-task-list">
+<li class="task-list-item"><input disabled="disabled" type="checkbox" /> <strong>Action :</strong> Appuyer sur <strong>« Lancer le diaporama »</strong>.</li>
+<li class="task-list-item"><input disabled="disabled" type="checkbox" /> <strong>Vérification Slide 0 (Ouverture) :</strong> Affiche un carton élégant personnalisé : <em>« Les doux souvenirs de [Prénom] »</em> avec le logo trèfle LuckyMam.</li>
+<li class="task-list-item"><input disabled="disabled" type="checkbox" /> <strong>Vérification Défilement (3,5 s par photo) :</strong>
+<ul>
+<li>Les photos défilent automatiquement toutes les 3,5 secondes avec une transition fluide en fondu enchaîné.</li>
+<li>La jauge segmentée en haut indique l'avancement.</li>
+<li>Le filigrane discret LuckyMam (38% opacité) est présent en bas.</li>
+</ul>
+</li>
+<li class="task-list-item"><input disabled="disabled" type="checkbox" /> <strong>Contrôles tactiles :</strong>
+<ul>
+<li>Toucher à gauche ➔ Revient à la photo précédente.</li>
+<li>Toucher à droite ➔ Passe à la photo suivante.</li>
+<li>Toucher au centre ou maintenir ➔ Met en pause avec indicateur « Pause ». Toucher à nouveau ➔ Reprend la lecture.</li>
+</ul>
+</li>
+</ul>
+<h3 id="tache-5.4-carton-de-fin-partage-natif">📋 Tâche 5.4 — Carton de fin &amp; Partage natif</h3>
+<ul class="contains-task-list">
+<li class="task-list-item"><input disabled="disabled" type="checkbox" /> <strong>Vérification Slide Finale :</strong> Affiche le message chaleureux : <em>« Moments précieux avec LuckyMam 🍀 »</em>.</li>
+<li class="task-list-item"><input disabled="disabled" type="checkbox" /> <strong>Action Bouton Rejouer :</strong> Redémarre le diaporama depuis le début.</li>
+<li class="task-list-item"><input disabled="disabled" type="checkbox" /> <strong>Action Bouton Partager :</strong> Ouvre la feuille de partage native du téléphone (<code>share_plus</code>) avec un texte pré-rempli pour WhatsApp, Facebook, Instagram ou SMS.</li>
+</ul>
+<hr />
+<h2 id="etape-6-offre-commerciale-abonnements-transverses">🟢 ÉTAPE 6 : Offre Commerciale, Abonnements &amp; Transverses</h2>
+<h3 id="tache-6.1-mise-en-avant-de-loffre-premium-lm-sub-001">📋 Tâche 6.1 — Mise en avant de l'offre « Premium » (<code>LM-SUB-001</code>)</h3>
+<ul class="contains-task-list">
+<li class="task-list-item"><input disabled="disabled" type="checkbox" /> <strong>Action :</strong> Ouvrir l'écran des abonnements (depuis le profil ou une bannière d'invitation).</li>
+<li class="task-list-item"><input disabled="disabled" type="checkbox" /> <strong>Vérification :</strong>
+<ul>
+<li>La formule <strong>Premium (2 490 DA/an)</strong> est mise en avant par défaut avec le badge <em>« Recommandée »</em>.</li>
+<li>L'action principale propose « Passer à Premium ».</li>
+<li>L'offre VIP Annuel reste disponible comme palier supérieur prestigieux.</li>
+</ul>
+</li>
+</ul>
+<h3 id="tache-6.2-tableau-comparatif-des-3-offres-lm-sub-002">📋 Tâche 6.2 — Tableau comparatif des 3 offres (<code>LM-SUB-002</code>)</h3>
+<ul class="contains-task-list">
+<li class="task-list-item"><input disabled="disabled" type="checkbox" /> <strong>Action :</strong> Faire défiler la page des abonnements jusqu'au tableau comparatif.</li>
+<li class="task-list-item"><input disabled="disabled" type="checkbox" /> <strong>Vérification des colonnes et plafonds :</strong>
+<ol>
+<li><strong>Gratuit (0 DA) :</strong> 38 capsules maximum, 1 enfant max, vaccins inclus, sans partage.</li>
+<li><strong>Premium (2 490 DA/an) :</strong> Capsules illimitées, 2 enfants max, partage inclus, tirages au sort.</li>
+<li><strong>VIP Annuel (9 890 DA/an) :</strong> Illimité enfants &amp; capsules, 1 photo A3 imprimée offerte livrée en Algérie sous 2 semaines, carte physique VIP membre avec QR code, privilèges partenaires.</li>
+</ol>
+</li>
+<li class="task-list-item"><input disabled="disabled" type="checkbox" /> <strong>Gestion de plafond :</strong> Vérifier que lorsqu'un utilisateur gratuit approche de 38 capsules, une alerte l'invite courtoisement à passer à Premium sans blocage brutal.</li>
+</ul>
+<h3 id="tache-6.3-gestion-uniforme-des-etats-lm-cross-001">📋 Tâche 6.3 — Gestion uniforme des états (<code>LM-CROSS-001</code>)</h3>
+<ul class="contains-task-list">
+<li class="task-list-item"><input disabled="disabled" type="checkbox" /> <strong>Action :</strong> Tester l'application en mode hors-ligne (mode avion temporaire) ou sur un écran vide.</li>
+<li class="task-list-item"><input disabled="disabled" type="checkbox" /> <strong>Vérification :</strong>
+<ul>
+<li><strong>Zéro écran blanc :</strong> Un message compréhensible et bienveillant s'affiche (<em>« Une petite pause réseau... Vos données restent en sécurité »</em>).</li>
+<li>Un bouton <strong>« Réessayer »</strong> bien visible permet de recharger la vue dès le rétablissement de la connexion.</li>
+</ul>
+</li>
+</ul>
+<h3 id="tache-6.4-uniformisation-terminologique-arabe-rtl-lm-cross-002">📋 Tâche 6.4 — Uniformisation terminologique &amp; Arabe RTL (<code>LM-CROSS-002</code>)</h3>
+<ul class="contains-task-list">
+<li class="task-list-item"><input disabled="disabled" type="checkbox" /> <strong>Action :</strong> Naviguer dans l'application avec la langue système en <strong>Arabe</strong>.</li>
+<li class="task-list-item"><input disabled="disabled" type="checkbox" /> <strong>Vérification :</strong>
+<ul>
+<li>Tous les textes sont traduits sans mélange de français/anglais.</li>
+<li>L'alignement est rigoureusement inversé de droite à gauche (RTL) : icônes, flèches de retour, jauges de progression et tiroirs latéraux.</li>
+<li>Les termes officiels sont respectés : <em>« ذكرياتي »</em>, <em>« عرض الكل »</em>, <em>« جدول التطعيمات الكامل »</em>, <em>« كبسولة مشاعر »</em>.</li>
+</ul>
+</li>
+</ul>
+<h3 id="tache-6.5-tracabilite-sans-donnees-sensibles-lm-cross-003">📋 Tâche 6.5 — Traçabilité sans données sensibles (<code>LM-CROSS-003</code>)</h3>
+<ul class="contains-task-list">
+<li class="task-list-item"><input disabled="disabled" type="checkbox" /> <strong>Vérification de sécurité (Code &amp; Logs) :</strong> Les journaux d'erreurs techniques enregistrent uniquement le type d'erreur, l'étape et l'OS, et caviardent systématiquement toute adresse email, numéro de téléphone algérien ou URL privée, conformément à la loi 18-07.</li>
+</ul>
+<hr />
+<h2 id="grille-de-synthese-des-tests">📊 Grille de Synthèse des Tests</h2>
+<table>
+<thead>
+<tr>
+<th style="text-align: center;">N°</th>
+<th style="text-align: left;">Domaine de Test</th>
+<th style="text-align: center;">Statut Recette</th>
+<th style="text-align: left;">Remarques / Observations</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: center;">1</td>
+<td style="text-align: left;">Onboarding &amp; Loi 18-07</td>
+<td style="text-align: center;"><code>[ ]</code></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr>
+<td style="text-align: center;">2</td>
+<td style="text-align: left;">Sélection Langue (AR / FR / EN)</td>
+<td style="text-align: center;"><code>[ ]</code></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr>
+<td style="text-align: center;">3</td>
+<td style="text-align: left;">Profil MAM &amp; Ajout Enfant</td>
+<td style="text-align: center;"><code>[ ]</code></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr>
+<td style="text-align: center;">4</td>
+<td style="text-align: left;">Capsules &amp; Enregistreur Audio</td>
+<td style="text-align: center;"><code>[ ]</code></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr>
+<td style="text-align: center;">5</td>
+<td style="text-align: left;">Multi-émotions (sans doublon)</td>
+<td style="text-align: center;"><code>[ ]</code></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr>
+<td style="text-align: center;">6</td>
+<td style="text-align: left;">Timeline &amp; Miniatures Pastel</td>
+<td style="text-align: center;"><code>[ ]</code></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr>
+<td style="text-align: center;">7</td>
+<td style="text-align: left;">Bottom Navigation Bar permanente</td>
+<td style="text-align: center;"><code>[ ]</code></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr>
+<td style="text-align: center;">8</td>
+<td style="text-align: left;">Mes souvenirs &amp; Voir tout</td>
+<td style="text-align: center;"><code>[ ]</code></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr>
+<td style="text-align: center;">9</td>
+<td style="text-align: left;">Grille Bento Accès Rapide</td>
+<td style="text-align: center;"><code>[ ]</code></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr>
+<td style="text-align: center;">10</td>
+<td style="text-align: left;">Libellé Calendrier vaccinal</td>
+<td style="text-align: center;"><code>[ ]</code></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr>
+<td style="text-align: center;">11</td>
+<td style="text-align: left;">2 Modèles d'albums de lancement</td>
+<td style="text-align: center;"><code>[ ]</code></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr>
+<td style="text-align: center;">12</td>
+<td style="text-align: left;">Modèle Portrait 1 photo (A3)</td>
+<td style="text-align: center;"><code>[ ]</code></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr>
+<td style="text-align: center;">13</td>
+<td style="text-align: left;">Couvertures 3D &amp; Filigrane 38%</td>
+<td style="text-align: center;"><code>[ ]</code></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr>
+<td style="text-align: center;">14</td>
+<td style="text-align: left;">Recadrage &amp; Remplacement photo</td>
+<td style="text-align: center;"><code>[ ]</code></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr>
+<td style="text-align: center;">15</td>
+<td style="text-align: left;">Album libre (1 à 12 photos)</td>
+<td style="text-align: center;"><code>[ ]</code></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr>
+<td style="text-align: center;">16</td>
+<td style="text-align: left;">Export PDF &amp; Zéro numérotation</td>
+<td style="text-align: center;"><code>[ ]</code></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr>
+<td style="text-align: center;">17</td>
+<td style="text-align: left;">Diaporama animé &amp; Réorganisation</td>
+<td style="text-align: center;"><code>[ ]</code></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr>
+<td style="text-align: center;">18</td>
+<td style="text-align: left;">Partage natif du Diaporama</td>
+<td style="text-align: center;"><code>[ ]</code></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr>
+<td style="text-align: center;">19</td>
+<td style="text-align: left;">Abonnements (Premium &amp; VIP)</td>
+<td style="text-align: center;"><code>[ ]</code></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr>
+<td style="text-align: center;">20</td>
+<td style="text-align: left;">États de chargement &amp; Erreur</td>
+<td style="text-align: center;"><code>[ ]</code></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr>
+<td style="text-align: center;">21</td>
+<td style="text-align: left;">Mode Arabe RTL intégral</td>
+<td style="text-align: center;"><code>[ ]</code></td>
+<td style="text-align: left;"></td>
+</tr>
+</tbody>
+</table>
+<hr />
+<p><em>Ce guide de test manuel vous permet de valider de bout en bout l'expérience utilisateur de LuckyMam sur votre appareil.</em></p>
+
+</body>
+</html>

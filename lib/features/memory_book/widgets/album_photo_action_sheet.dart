@@ -95,235 +95,237 @@ class AlbumPhotoActionSheet extends StatelessWidget {
         top: false,
         child: Padding(
           padding: const EdgeInsets.fromLTRB(20, 12, 20, 16),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              // Top Drag Handle
-              Center(
-                child: Container(
-                  width: 44,
-                  height: 4.5,
-                  decoration: BoxDecoration(
-                    color: isDark ? Colors.white24 : Colors.black12,
-                    borderRadius: BorderRadius.circular(3),
+          child: SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                // Top Drag Handle
+                Center(
+                  child: Container(
+                    width: 44,
+                    height: 4.5,
+                    decoration: BoxDecoration(
+                      color: isDark ? Colors.white24 : Colors.black12,
+                      borderRadius: BorderRadius.circular(3),
+                    ),
                   ),
                 ),
-              ),
-              const SizedBox(height: 16),
+                const SizedBox(height: 16),
 
-              // Sheet Header
-              Row(
-                children: [
-                  Container(
-                    width: 42,
-                    height: 42,
-                    decoration: BoxDecoration(
-                      color: accentColor.withValues(alpha: 0.15),
-                      borderRadius: BorderRadius.circular(14),
+                // Sheet Header
+                Row(
+                  children: [
+                    Container(
+                      width: 42,
+                      height: 42,
+                      decoration: BoxDecoration(
+                        color: accentColor.withValues(alpha: 0.15),
+                        borderRadius: BorderRadius.circular(14),
+                      ),
+                      child: Icon(
+                        hasPhoto
+                            ? Icons.photo_filter_rounded
+                            : Icons.add_photo_alternate_rounded,
+                        color: accentColor,
+                        size: 22,
+                      ),
                     ),
-                    child: Icon(
-                      hasPhoto
-                          ? Icons.photo_filter_rounded
-                          : Icons.add_photo_alternate_rounded,
-                      color: accentColor,
-                      size: 22,
-                    ),
-                  ),
-                  const SizedBox(width: 14),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          title,
-                          style: AppTypography.fromContext(
-                            context,
-                            fontSize: 16.5,
-                            fontWeight: FontWeight.w800,
-                            color: textColor,
+                    const SizedBox(width: 14),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            title,
+                            style: AppTypography.fromContext(
+                              context,
+                              fontSize: 16.5,
+                              fontWeight: FontWeight.w800,
+                              color: textColor,
+                            ),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
                           ),
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                        const SizedBox(height: 2),
-                        Text(
-                          subtitle ??
-                              (hasPhoto
-                                  ? (isAr
-                                      ? 'استبدال، تعديل أو قص الصورة'
-                                      : (isFr
-                                          ? 'Remplacer, recadrer ou ajuster la photo'
-                                          : 'Replace, crop or adjust photo'))
-                                  : (isAr
-                                      ? 'إضافة صورة لهذه الصفحة'
-                                      : (isFr
-                                          ? 'Ajouter une photo à cette page'
-                                          : 'Add a photo to this page'))),
-                          style: AppTypography.fromContext(
-                            context,
-                            fontSize: 12,
-                            fontWeight: FontWeight.w500,
-                            color: secondaryColor,
+                          const SizedBox(height: 2),
+                          Text(
+                            subtitle ??
+                                (hasPhoto
+                                    ? (isAr
+                                          ? 'استبدال، تعديل أو قص الصورة'
+                                          : (isFr
+                                                ? 'Remplacer, recadrer ou ajuster la photo'
+                                                : 'Replace, crop or adjust photo'))
+                                    : (isAr
+                                          ? 'إضافة صورة لهذه الصفحة'
+                                          : (isFr
+                                                ? 'Ajouter une photo à cette page'
+                                                : 'Add a photo to this page'))),
+                            style: AppTypography.fromContext(
+                              context,
+                              fontSize: 12,
+                              fontWeight: FontWeight.w500,
+                              color: secondaryColor,
+                            ),
                           ),
-                        ),
-                      ],
+                        ],
+                      ),
                     ),
-                  ),
-                  IconButton(
-                    icon: Icon(
-                      Icons.close_rounded,
-                      color: secondaryColor,
-                      size: 20,
+                    IconButton(
+                      icon: Icon(
+                        Icons.close_rounded,
+                        color: secondaryColor,
+                        size: 20,
+                      ),
+                      onPressed: () => Navigator.pop(context),
                     ),
-                    onPressed: () => Navigator.pop(context),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 16),
-              Divider(
-                height: 1,
-                color: isDark
-                    ? Colors.white.withValues(alpha: 0.08)
-                    : Colors.black.withValues(alpha: 0.06),
-              ),
-              const SizedBox(height: 10),
+                  ],
+                ),
+                const SizedBox(height: 16),
+                Divider(
+                  height: 1,
+                  color: isDark
+                      ? Colors.white.withValues(alpha: 0.08)
+                      : Colors.black.withValues(alpha: 0.06),
+                ),
+                const SizedBox(height: 10),
 
-              // Option 1: Pick from existing capsules
-              _buildActionTile(
-                context: context,
-                icon: Icons.collections_bookmark_outlined,
-                iconColor: accentColor,
-                title: isAr
-                    ? 'اختيار من ذكرياتي'
-                    : (isFr
-                        ? 'Choisir parmi mes souvenirs'
-                        : 'Choose from my memories'),
-                subtitle: isAr
-                    ? 'ربط كبسولة موجودة مسبقاً لهذا الطفل'
-                    : (isFr
-                        ? 'Sélectionner une capsule existante'
-                        : 'Select an existing memory capsule'),
-                onTap: () {
-                  Navigator.pop(context);
-                  onPickFromMemories();
-                },
-                isDark: isDark,
-              ),
-
-              // Option 2: Take photo with camera
-              _buildActionTile(
-                context: context,
-                icon: Icons.camera_alt_outlined,
-                iconColor: AppColors.success,
-                title: isAr
-                    ? 'التقاط صورة جديدة'
-                    : (isFr ? 'Prendre une photo' : 'Take a photo'),
-                subtitle: isAr
-                    ? 'فتح الكاميرا والتقاط صورة فورية'
-                    : (isFr
-                        ? 'Ouvrir l\'appareil photo instantanément'
-                        : 'Open camera and capture now'),
-                onTap: () {
-                  Navigator.pop(context);
-                  onTakePhoto();
-                },
-                isDark: isDark,
-              ),
-
-              // Option 3: Choose from gallery
-              _buildActionTile(
-                context: context,
-                icon: Icons.photo_library_outlined,
-                iconColor: const Color(0xFFD97706), // warm amber, no purple
-                title: isAr
-                    ? 'اختيار من معرض الصور'
-                    : (isFr
-                        ? 'Choisir depuis la galerie'
-                        : 'Choose from gallery'),
-                subtitle: isAr
-                    ? 'استيراد صورة من ذاكرة الهاتف'
-                    : (isFr
-                        ? 'Importer une photo de votre téléphone'
-                        : 'Import a photo from phone storage'),
-                onTap: () {
-                  Navigator.pop(context);
-                  onPickFromGallery();
-                },
-                isDark: isDark,
-              ),
-
-              // Option 4: Crop & Adjust current photo (if has photo)
-              if (hasPhoto && onCrop != null) ...[
+                // Option 1: Pick from existing capsules
                 _buildActionTile(
                   context: context,
-                  icon: Icons.crop_rotate_rounded,
+                  icon: Icons.collections_bookmark_outlined,
                   iconColor: accentColor,
                   title: isAr
-                      ? 'قص وتعديل وضبط الصورة'
-                      : (isFr ? 'Recadrer & Ajuster' : 'Crop & Adjust photo'),
-                  subtitle: isAr
-                      ? 'التقريب، التدوير، وضبط التمركز'
+                      ? 'اختيار من ذكرياتي'
                       : (isFr
-                          ? 'Zoomer, repositionner ou pivoter'
-                          : 'Zoom, pan, reposition or rotate'),
+                            ? 'Choisir parmi mes souvenirs'
+                            : 'Choose from my memories'),
+                  subtitle: isAr
+                      ? 'ربط كبسولة موجودة مسبقاً لهذا الطفل'
+                      : (isFr
+                            ? 'Sélectionner une capsule existante'
+                            : 'Select an existing memory capsule'),
                   onTap: () {
                     Navigator.pop(context);
-                    onCrop!();
+                    onPickFromMemories();
                   },
                   isDark: isDark,
                 ),
-              ],
 
-              // Option 5: Clear photo from page/slot (if has photo)
-              if (hasPhoto && onClear != null) ...[
+                // Option 2: Take photo with camera
                 _buildActionTile(
                   context: context,
-                  icon: Icons.delete_outline_rounded,
-                  iconColor: AppColors.error,
+                  icon: Icons.camera_alt_outlined,
+                  iconColor: AppColors.success,
                   title: isAr
-                      ? 'إزالة من الألبوم'
-                      : (isFr ? 'Retirer de la page' : 'Remove from page'),
+                      ? 'التقاط صورة جديدة'
+                      : (isFr ? 'Prendre une photo' : 'Take a photo'),
                   subtitle: isAr
-                      ? 'تفريغ الصفحة دون حذف الكبسولة الأصلية'
+                      ? 'فتح الكاميرا والتقاط صورة فورية'
                       : (isFr
-                          ? 'Garde la capsule intacte dans vos souvenirs'
-                          : 'Keeps the original capsule in your timeline'),
+                            ? 'Ouvrir l\'appareil photo instantanément'
+                            : 'Open camera and capture now'),
                   onTap: () {
                     Navigator.pop(context);
-                    onClear!();
+                    onTakePhoto();
                   },
-                  isDestructive: true,
                   isDark: isDark,
                 ),
+
+                // Option 3: Choose from gallery
+                _buildActionTile(
+                  context: context,
+                  icon: Icons.photo_library_outlined,
+                  iconColor: const Color(0xFFD97706), // warm amber, no purple
+                  title: isAr
+                      ? 'اختيار من معرض الصور'
+                      : (isFr
+                            ? 'Choisir depuis la galerie'
+                            : 'Choose from gallery'),
+                  subtitle: isAr
+                      ? 'استيراد صورة من ذاكرة الهاتف'
+                      : (isFr
+                            ? 'Importer une photo de votre téléphone'
+                            : 'Import a photo from phone storage'),
+                  onTap: () {
+                    Navigator.pop(context);
+                    onPickFromGallery();
+                  },
+                  isDark: isDark,
+                ),
+
+                // Option 4: Crop & Adjust current photo (if has photo)
+                if (hasPhoto && onCrop != null) ...[
+                  _buildActionTile(
+                    context: context,
+                    icon: Icons.crop_rotate_rounded,
+                    iconColor: accentColor,
+                    title: isAr
+                        ? 'قص وتعديل وضبط الصورة'
+                        : (isFr ? 'Recadrer & Ajuster' : 'Crop & Adjust photo'),
+                    subtitle: isAr
+                        ? 'التقريب، التدوير، وضبط التمركز'
+                        : (isFr
+                              ? 'Zoomer, repositionner ou pivoter'
+                              : 'Zoom, pan, reposition or rotate'),
+                    onTap: () {
+                      Navigator.pop(context);
+                      onCrop!();
+                    },
+                    isDark: isDark,
+                  ),
+                ],
+
+                // Option 5: Clear photo from page/slot (if has photo)
+                if (hasPhoto && onClear != null) ...[
+                  _buildActionTile(
+                    context: context,
+                    icon: Icons.delete_outline_rounded,
+                    iconColor: AppColors.error,
+                    title: isAr
+                        ? 'إزالة من الألبوم'
+                        : (isFr ? 'Retirer de la page' : 'Remove from page'),
+                    subtitle: isAr
+                        ? 'تفريغ الصفحة دون حذف الكبسولة الأصلية'
+                        : (isFr
+                              ? 'Garde la capsule intacte dans vos souvenirs'
+                              : 'Keeps the original capsule in your timeline'),
+                    onTap: () {
+                      Navigator.pop(context);
+                      onClear!();
+                    },
+                    isDestructive: true,
+                    isDark: isDark,
+                  ),
+                ],
+
+                const SizedBox(height: 12),
+
+                // Cancel button
+                OutlinedButton(
+                  onPressed: () => Navigator.pop(context),
+                  style: OutlinedButton.styleFrom(
+                    padding: const EdgeInsets.symmetric(vertical: 13),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(16),
+                    ),
+                    side: BorderSide(
+                      color: isDark
+                          ? Colors.white.withValues(alpha: 0.15)
+                          : Colors.black.withValues(alpha: 0.12),
+                    ),
+                  ),
+                  child: Text(
+                    l10n.albumCancel,
+                    style: TextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.w600,
+                      color: textColor,
+                    ),
+                  ),
+                ),
               ],
-
-              const SizedBox(height: 12),
-
-              // Cancel button
-              OutlinedButton(
-                onPressed: () => Navigator.pop(context),
-                style: OutlinedButton.styleFrom(
-                  padding: const EdgeInsets.symmetric(vertical: 13),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(16),
-                  ),
-                  side: BorderSide(
-                    color: isDark
-                        ? Colors.white.withValues(alpha: 0.15)
-                        : Colors.black.withValues(alpha: 0.12),
-                  ),
-                ),
-                child: Text(
-                  l10n.albumCancel,
-                  style: TextStyle(
-                    fontSize: 14,
-                    fontWeight: FontWeight.w600,
-                    color: textColor,
-                  ),
-                ),
-              ),
-            ],
+            ),
           ),
         ),
       ),
@@ -346,60 +348,66 @@ class AlbumPhotoActionSheet extends StatelessWidget {
         color: isDestructive
             ? AppColors.error.withValues(alpha: isDark ? 0.12 : 0.06)
             : isDark
-                ? Colors.white.withValues(alpha: 0.04)
-                : Colors.black.withValues(alpha: 0.025),
+            ? Colors.white.withValues(alpha: 0.04)
+            : Colors.black.withValues(alpha: 0.025),
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
           color: isDestructive
               ? AppColors.error.withValues(alpha: 0.25)
               : isDark
-                  ? Colors.white.withValues(alpha: 0.06)
-                  : Colors.black.withValues(alpha: 0.05),
+              ? Colors.white.withValues(alpha: 0.06)
+              : Colors.black.withValues(alpha: 0.05),
         ),
       ),
-      child: ListTile(
-        onTap: onTap,
-        contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 2),
-        leading: Container(
-          width: 38,
-          height: 38,
-          decoration: BoxDecoration(
-            color: iconColor.withValues(alpha: isDark ? 0.2 : 0.12),
-            borderRadius: BorderRadius.circular(12),
+      child: Material(
+        color: Colors.transparent,
+        borderRadius: BorderRadius.circular(16),
+        child: ListTile(
+          onTap: onTap,
+          contentPadding: const EdgeInsets.symmetric(
+            horizontal: 14,
+            vertical: 2,
           ),
-          child: Icon(icon, color: iconColor, size: 20),
-        ),
-        title: Text(
-          title,
-          style: AppTypography.fromContext(
-            context,
-            fontSize: 14,
-            fontWeight: FontWeight.w700,
-            color: isDestructive
-                ? AppColors.error
-                : (isDark ? Colors.white : AppColors.onSurfaceLight),
+          leading: Container(
+            width: 38,
+            height: 38,
+            decoration: BoxDecoration(
+              color: iconColor.withValues(alpha: isDark ? 0.2 : 0.12),
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: Icon(icon, color: iconColor, size: 20),
           ),
-        ),
-        subtitle: Text(
-          subtitle,
-          style: AppTypography.fromContext(
-            context,
-            fontSize: 11.5,
-            fontWeight: FontWeight.w500,
-            color: isDestructive
-                ? AppColors.error.withValues(alpha: 0.8)
-                : (isDark
-                    ? AppColors.textSecondaryDark
-                    : AppColors.textSecondaryLight),
+          title: Text(
+            title,
+            style: AppTypography.fromContext(
+              context,
+              fontSize: 14,
+              fontWeight: FontWeight.w700,
+              color: isDestructive
+                  ? AppColors.error
+                  : (isDark ? Colors.white : AppColors.onSurfaceLight),
+            ),
           ),
-        ),
-        trailing: Icon(
-          Icons.chevron_right_rounded,
-          size: 18,
-          color: isDark ? Colors.white30 : Colors.black26,
+          subtitle: Text(
+            subtitle,
+            style: AppTypography.fromContext(
+              context,
+              fontSize: 11.5,
+              fontWeight: FontWeight.w500,
+              color: isDestructive
+                  ? AppColors.error.withValues(alpha: 0.8)
+                  : (isDark
+                        ? AppColors.textSecondaryDark
+                        : AppColors.textSecondaryLight),
+            ),
+          ),
+          trailing: Icon(
+            Icons.chevron_right_rounded,
+            size: 18,
+            color: isDark ? Colors.white30 : Colors.black26,
+          ),
         ),
       ),
     );
   }
 }
-

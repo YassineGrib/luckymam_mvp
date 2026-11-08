@@ -23,12 +23,14 @@ const STALE_REEL_IDS = ["reel_4", "reel_5", "reel_6"];
 const REELS = [
   {
     id: "reel_1",
+    titleEn: "Baby care",
+    descriptionEn: "Essential daily care for your newborn.",
     storageFile: "reel_baby_care_tips.mp4",
     title: "Soins de bébé",
     titleAr: "العناية بالرضيع",
     description:
       "Les gestes essentiels pour prendre soin de votre nouveau-né au quotidien.",
-    descriptionAr: "الخطوات الأساسية للعناية اليومية بطفلك حديث الولادة 👶",
+    descriptionAr: "الخطوات الأساسية للعناية اليومية بطفلك حديث الولادة ",
     author: "Dr. Amina",
     authorAr: "د. أمينة",
     category: "soinsQuotidiens",
@@ -42,12 +44,14 @@ const REELS = [
   },
   {
     id: "reel_2",
+    titleEn: "Nutrition guide",
+    descriptionEn: "Balanced nutrition for mother and baby — advice from a nutritionist.",
     storageFile: "reel_nutrition_guide.mp4",
     title: "Guide Nutrition",
     titleAr: "دليل التغذية السليمة",
     description:
       "Alimentation équilibrée pour maman et bébé — conseils d'une nutritionniste.",
-    descriptionAr: "التغذية المتوازنة للأم والطفل — نصائح أخصائي تغذية 🥗",
+    descriptionAr: "التغذية المتوازنة للأم والطفل — نصائح أخصائي تغذية ",
     author: "Nadia K.",
     authorAr: "نادية ك.",
     category: "nutrition",
@@ -61,12 +65,14 @@ const REELS = [
   },
   {
     id: "reel_3",
+    titleEn: "First steps",
+    descriptionEn: "How to support your child as they learn to walk.",
     storageFile: "reel_first_steps.mp4",
     title: "Premiers Pas",
     titleAr: "الخطوات الأولى",
     description:
       "Comment accompagner votre enfant dans l'apprentissage de la marche.",
-    descriptionAr: "كيفية دعم طفلك في تعلم المشي والموازنة 🚶",
+    descriptionAr: "كيفية دعم طفلك في تعلم المشي والموازنة ",
     author: "Meriem B.",
     authorAr: "مريم ب.",
     category: "soutienEnfants",
@@ -80,6 +86,8 @@ const REELS = [
   },
   {
     id: "reel_app",
+    titleEn: "Discover LuckyMam",
+    descriptionEn: "Discover the LuckyMam app for Algerian mothers.",
     storageFile: "app.mp4",
     title: "Découvrir Luckymam",
     titleAr: "اكتشفي Luckymam",
@@ -155,8 +163,14 @@ async function run() {
     const assetPath = urlCache.get(reel.storageFile);
     const author = reel.authorAr ?? reel.author;
     const doc = {
-      title: reel.titleAr ?? reel.title,
-      description: reel.descriptionAr ?? reel.description,
+      title: reel.title,
+      titleFr: reel.title,
+      titleAr: reel.titleAr ?? reel.title,
+      titleEn: reel.titleEn ?? reel.title,
+      description: reel.description,
+      descriptionFr: reel.description,
+      descriptionAr: reel.descriptionAr ?? reel.description,
+      descriptionEn: reel.descriptionEn ?? reel.description,
       author,
       creator: creatorFromAuthor(author),
       assetPath,
@@ -176,15 +190,15 @@ async function run() {
     };
 
     await db.collection("reels").doc(reel.id).set(doc, { merge: true });
-    console.log(`✓ reels/${reel.id} → ${doc.title}`);
+    console.log(` reels/${reel.id} → ${doc.title}`);
   }
 
   for (const staleId of STALE_REEL_IDS) {
     await db.collection("reels").doc(staleId).delete();
-    console.log(`✗ removed stale reels/${staleId}`);
+    console.log(` removed stale reels/${staleId}`);
   }
 
-  console.log("\n✓ Firestore reels synced from Storage.");
+  console.log("\n Firestore reels synced from Storage.");
 }
 
 run().catch((err) => {

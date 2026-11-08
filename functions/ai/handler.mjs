@@ -153,7 +153,8 @@ export async function handleChat({
       }
 
       contents.push({
-        role: 'function',
+        // Gemini functionResponse parts belong to a user-role message.
+        role: 'user',
         parts: functionResponses,
       });
     }

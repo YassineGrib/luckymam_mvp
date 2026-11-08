@@ -6,14 +6,9 @@ import '../models/assistant_models.dart';
 import '../services/assistant_backend.dart';
 import '../services/fake_assistant_backend.dart';
 import '../services/gemini_assistant_backend.dart';
-import '../services/gemini_direct_backend.dart';
 
 /// Conversation phase of the assistant.
-enum AssistantPhase {
-  idle,
-  thinking,
-  speaking,
-}
+enum AssistantPhase { idle, thinking, speaking }
 
 /// State of the assistant chat session.
 class AssistantState {
@@ -50,8 +45,8 @@ class AssistantController extends StateNotifier<AssistantState> {
     this._backend, {
     required this.locale,
     Duration Function(String)? speakingDuration,
-  })  : _speakingDuration = speakingDuration ?? _defaultSpeakingDuration,
-        super(const AssistantState());
+  }) : _speakingDuration = speakingDuration ?? _defaultSpeakingDuration,
+       super(const AssistantState());
 
   final AssistantBackend _backend;
   final String locale;
@@ -219,18 +214,16 @@ final assistantBackendProvider = Provider<AssistantBackend>((ref) {
   if (isFake) {
     return FakeAssistantBackend();
   }
-  const isCallable = bool.fromEnvironment('ASSISTANT_CALLABLE', defaultValue: false);
-  if (isCallable) {
-    return GeminiAssistantBackend();
-  }
-  // Default to GeminiDirectBackend using the Google AI Studio key from docs/ai.md
-  return GeminiDirectBackend();
+  // Provider credentials belong in Firebase Secret Manager, never in the APK.
+  return GeminiAssistantBackend();
 });
 
 /// Auto-disposed StateNotifierProvider for AssistantController.
 final assistantControllerProvider =
-    StateNotifierProvider.autoDispose<AssistantController, AssistantState>((ref) {
-  final backend = ref.watch(assistantBackendProvider);
-  final locale = ref.watch(localeProvider).languageCode;
-  return AssistantController(backend, locale: locale);
-});
+    StateNotifierProvider.autoDispose<AssistantController, AssistantState>((
+      ref,
+    ) {
+      final backend = ref.watch(assistantBackendProvider);
+      final locale = ref.watch(localeProvider).languageCode;
+      return AssistantController(backend, locale: locale);
+    });

@@ -1,3 +1,4 @@
+import 'safe_log.dart';
 import 'dart:convert';
 
 import 'package:flutter/foundation.dart';
@@ -66,7 +67,7 @@ class NotificationService {
     await _plugin.initialize(
       initSettings,
       onDidReceiveNotificationResponse: (details) {
-        debugPrint('[Notif] tapped payload=${details.payload}');
+        safeDebugPrint('[Notif] tapped payload=[REDACTED]');
         onNotificationTapped.value = details.payload;
       },
     );
@@ -305,7 +306,7 @@ class NotificationService {
     // cannot be enumerated here. Toggling off prevents NEW reminders;
     // existing ones are cancelled automatically when the next schedule
     // call is skipped (guarded by the prefs check in the services).
-    debugPrint('[Notif] cancelNotificationsByChannel: $channelTag');
+    safeDebugPrint('[Notif] cancelNotificationsByChannel: $channelTag');
   }
 
   // ─── Private helpers ──────────────────────────────────────────────────────────
@@ -331,7 +332,7 @@ class NotificationService {
     String? payload,
   }) async {
     if (kIsWeb) {
-      debugPrint('[Notif-Web] simulated schedule id=$id "$title" at $scheduledDate');
+      safeDebugPrint('[Notif-Web] simulated schedule id=$id [REDACTED] at $scheduledDate');
       return;
     }
     try {
@@ -356,9 +357,9 @@ class NotificationService {
             UILocalNotificationDateInterpretation.absoluteTime,
         payload: payload,
       );
-      debugPrint('[Notif] scheduled id=$id "$title" at $scheduledDate');
+      safeDebugPrint('[Notif] scheduled id=$id [REDACTED] at $scheduledDate');
     } catch (e) {
-      debugPrint('[Notif] ERROR scheduling id=$id: $e');
+      safeDebugPrint('[Notif] ERROR scheduling id=$id: ${e.runtimeType}');
     }
   }
 }

@@ -127,3 +127,4 @@ Le code source a été consolidé, testé et figé sur la branche `feat/ai-assis
 1. Exécution des scénarios du cahier de recette sur une flotte diversifiée de smartphones Android (Samsung, Xiaomi, Pixel).
 2. Déploiement sur le canal de test interne Google Play Console.
 3. Raccordement des webhooks de notification de commande d'impression vers l'imprimerie partenaire.
+

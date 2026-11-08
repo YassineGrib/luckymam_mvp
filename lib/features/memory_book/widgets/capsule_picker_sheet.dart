@@ -40,9 +40,7 @@ class CapsulePickerSheet extends ConsumerWidget {
         return Container(
           decoration: BoxDecoration(
             color: bgColor,
-            borderRadius: const BorderRadius.vertical(
-              top: Radius.circular(24),
-            ),
+            borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
           ),
           child: Column(
             children: [
@@ -67,10 +65,11 @@ class CapsulePickerSheet extends ConsumerWidget {
                     Expanded(
                       child: Text(
                         l10n.albumChooseCapsule,
-                        style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                          fontWeight: FontWeight.bold,
-                          color: textColor,
-                        ),
+                        style: Theme.of(context).textTheme.titleMedium
+                            ?.copyWith(
+                              fontWeight: FontWeight.bold,
+                              color: textColor,
+                            ),
                       ),
                     ),
                     IconButton(
@@ -88,9 +87,9 @@ class CapsulePickerSheet extends ConsumerWidget {
                   error: (e, _) => Center(
                     child: Text(
                       l10n.albumLoadingError,
-                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                        color: secondaryColor,
-                      ),
+                      style: Theme.of(
+                        context,
+                      ).textTheme.bodyMedium?.copyWith(color: secondaryColor),
                     ),
                   ),
                   data: (capsules) {
@@ -101,9 +100,8 @@ class CapsulePickerSheet extends ConsumerWidget {
                           child: Text(
                             l10n.albumNoCapsulesForChild,
                             textAlign: TextAlign.center,
-                            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                              color: secondaryColor,
-                            ),
+                            style: Theme.of(context).textTheme.bodyMedium
+                                ?.copyWith(color: secondaryColor),
                           ),
                         ),
                       );
@@ -131,15 +129,16 @@ class CapsulePickerSheet extends ConsumerWidget {
                             child: Image.network(
                               capsule.photoUrl,
                               fit: BoxFit.cover,
-                              errorBuilder: (context, error, stackTrace) => Container(
-                                color: isDark
-                                    ? Colors.grey[800]
-                                    : Colors.grey[200],
-                                child: const Icon(
-                                  Icons.broken_image_rounded,
-                                  color: Colors.grey,
-                                ),
-                              ),
+                              errorBuilder: (context, error, stackTrace) =>
+                                  Container(
+                                    color: isDark
+                                        ? Colors.grey[800]
+                                        : Colors.grey[200],
+                                    child: const Icon(
+                                      Icons.broken_image_rounded,
+                                      color: Colors.grey,
+                                    ),
+                                  ),
                             ),
                           ),
                         );
@@ -153,5 +152,73 @@ class CapsulePickerSheet extends ConsumerWidget {
         );
       },
     );
+  }
+}
+
+/// Single selection list, shared by the editor and its existing-photo sheet.
+class AlbumExistingPhotoList extends ConsumerWidget {
+  const AlbumExistingPhotoList({
+    super.key,
+    required this.childId,
+    required this.onSelected,
+  });
+  final String childId;
+  final ValueChanged<Capsule> onSelected;
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    return ref
+        .watch(capsulesByChildProvider(childId))
+        .when(
+          loading: () => const Center(child: CircularProgressIndicator()),
+          error: (_, _) => Center(child: Text(context.l10n.albumLoadingError)),
+          data: (items) {
+            final photos = items
+                .where((item) => item.photoUrl.isNotEmpty)
+                .toList();
+            if (photos.isEmpty) {
+              return Center(
+                child: Text(
+                  context.l10n.albumNoCapsulesForChild,
+                  textAlign: TextAlign.center,
+                ),
+              );
+            }
+            return ListView.separated(
+              padding: const EdgeInsets.all(12),
+              itemCount: photos.length,
+              separatorBuilder: (_, _) => const SizedBox(height: 10),
+              itemBuilder: (context, index) => Material(
+                clipBehavior: Clip.antiAlias,
+                borderRadius: BorderRadius.circular(12),
+                child: InkWell(
+                  onTap: () => onSelected(photos[index]),
+                  child: SizedBox(
+                    height: 150,
+                    width: double.infinity,
+                    child: Stack(
+                      fit: StackFit.expand,
+                      children: [
+                        Image.network(
+                          photos[index].photoUrl,
+                          fit: BoxFit.cover,
+                          errorBuilder: (_, _, _) =>
+                              const Icon(Icons.broken_image_outlined),
+                        ),
+                        const Positioned(
+                          right: 12,
+                          top: 12,
+                          child: Icon(
+                            Icons.radio_button_unchecked,
+                            color: Colors.white,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+            );
+          },
+        );
   }
 }

@@ -577,8 +577,8 @@ class _ForgotPasswordScreenState extends ConsumerState<ForgotPasswordScreen> {
         // Success Title
         Text(
           isAr
-              ? 'تم إرسال الرابط بنجاح! 💌'
-              : (isEn ? 'Email Sent Successfully! 💌' : 'E-mail envoyé avec succès ! 💌'),
+              ? 'تم إرسال الرابط بنجاح! '
+              : (isEn ? 'Email Sent Successfully! ' : 'E-mail envoyé avec succès ! '),
           textAlign: TextAlign.center,
           style: AppTypography.fromContext(
             context,

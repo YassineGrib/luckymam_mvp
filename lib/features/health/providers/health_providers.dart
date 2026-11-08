@@ -1,6 +1,6 @@
+import '../../../core/services/safe_log.dart';
 import 'dart:io';
 
-import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/providers/auth_provider.dart';
@@ -82,7 +82,7 @@ class GrowthActionsNotifier extends StateNotifier<GrowthActionsState> {
       return true;
     } catch (e) {
       state = state.copyWith(isLoading: false, error: e.toString());
-      debugPrint('[GrowthActions] addEntry error: $e');
+      safeDebugPrint('[GrowthActions] addEntry error: ${e.runtimeType}');
       return false;
     }
   }
@@ -171,7 +171,7 @@ class AppointmentActionsNotifier
       return true;
     } catch (e) {
       state = state.copyWith(isLoading: false, error: e.toString());
-      debugPrint('[AppointmentActions] addAppointment error: $e');
+      safeDebugPrint('[AppointmentActions] addAppointment error: ${e.runtimeType}');
       return false;
     }
   }

@@ -136,169 +136,176 @@ class _ReelsScreenState extends ConsumerState<ReelsScreen> {
           extendBodyBehindAppBar: true,
           body: Stack(
             children: [
-            // ── Vertical page view ────────────────────────────────────
-            displayItems.isEmpty
-                ? _buildEmptyState(context)
-                : PageView.builder(
-                    controller: _pageController,
-                    scrollDirection: Axis.vertical,
-                    itemCount: displayItems.length,
-                    onPageChanged: (index) {
-                      ref.read(currentReelIndexProvider.notifier).state = index;
-                      final item = displayItems[index];
-                      if (item is ReelItem) _logReelViewFromVax(item);
-                    },
-                    itemBuilder: (context, index) {
-                      final item = displayItems[index];
-                      if (item is HouseAd) {
-                        return ReelAdItem(
-                          ad: item,
-                          isActive: currentIndex == index,
-                        );
-                      }
-                      final reel = item as ReelItem;
-                      return Stack(
-                        fit: StackFit.expand,
-                        children: [
-                          ReelPlayer(
-                            key: ValueKey(reel.id),
-                            assetPath: reel.assetPath,
+              // ── Vertical page view ────────────────────────────────────
+              displayItems.isEmpty
+                  ? _buildEmptyState(context)
+                  : PageView.builder(
+                      controller: _pageController,
+                      scrollDirection: Axis.vertical,
+                      itemCount: displayItems.length,
+                      onPageChanged: (index) {
+                        ref.read(currentReelIndexProvider.notifier).state =
+                            index;
+                        final item = displayItems[index];
+                        if (item is ReelItem) _logReelViewFromVax(item);
+                      },
+                      itemBuilder: (context, index) {
+                        final item = displayItems[index];
+                        if (item is HouseAd) {
+                          return ReelAdItem(
+                            ad: item,
                             isActive: currentIndex == index,
-                          ),
-                          ReelOverlay(reel: reel),
-                        ],
-                      );
-                    },
-                  ),
-
-            // ── Top bar ───────────────────────────────────────────────
-            SafeArea(
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  // Title row
-                  Padding(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 8,
-                      vertical: 8,
+                          );
+                        }
+                        final reel = item as ReelItem;
+                        return Stack(
+                          fit: StackFit.expand,
+                          children: [
+                            ReelPlayer(
+                              key: ValueKey(reel.id),
+                              assetPath: reel.assetPath,
+                              isActive: currentIndex == index,
+                            ),
+                            ReelOverlay(reel: reel),
+                          ],
+                        );
+                      },
                     ),
-                    child: Row(
-                      children: [
-                        // Back button
-                        GestureDetector(
-                          onTap: () => Navigator.of(context).pop(),
-                          behavior: HitTestBehavior.opaque,
-                          child: Container(
-                            width: 44,
-                            height: 44,
-                            decoration: BoxDecoration(
-                              color: Colors.black.withValues(alpha: 0.35),
-                              shape: BoxShape.circle,
-                            ),
-                            child: const Icon(
-                              Icons.arrow_back_rounded,
-                              color: Colors.white,
-                              size: 22,
-                            ),
-                          ),
-                        ),
-                        const SizedBox(width: 12),
-                        Text(
-                          l10n.reelsTitle,
-                          style: AppTypography.fromContext(context,
-                            fontSize: 18,
-                            fontWeight: FontWeight.w600,
-                            color: Colors.white,
-                          ),
-                        ),
-                        const Spacer(),
-                        // Reel counter badge
-                        if (displayItems.isNotEmpty)
-                          Container(
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 12,
-                              vertical: 6,
-                            ),
-                            decoration: BoxDecoration(
-                              color: AppColors.magentaPink.withValues(
-                                alpha: 0.7,
-                              ),
-                              borderRadius: BorderRadius.circular(16),
-                            ),
-                            child: Text(
-                              '${currentIndex + 1}/${displayItems.length}',
-                              style: AppTypography.fromContext(context,
-                                fontSize: 12,
-                                fontWeight: FontWeight.w600,
-                                color: Colors.white,
-                              ),
-                            ),
-                          ),
-                      ],
-                    ),
-                  ),
 
-                  // ── Category filter chips ─────────────────────────────
-                  _CategoryFilterBar(
-                    selected: selectedCategory,
-                    onSelected: _onCategoryChanged,
-                  ),
-
-                  // ── Vaccine filter badge (deep-link from a vaccine's fiche) ──
-                  if (vaccineFilterActive && widget.initialVaccineLabel != null)
+              // ── Top bar ───────────────────────────────────────────────
+              SafeArea(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    // Title row
                     Padding(
-                      padding: const EdgeInsets.fromLTRB(8, 8, 8, 0),
-                      child: Align(
-                        alignment: Alignment.centerLeft,
-                        child: GestureDetector(
-                          onTap: _clearVaccineFilter,
-                          child: Container(
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 12,
-                              vertical: 6,
-                            ),
-                            decoration: BoxDecoration(
-                              color: AppColors.magentaPink.withValues(
-                                alpha: 0.85,
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 8,
+                        vertical: 8,
+                      ),
+                      child: Row(
+                        children: [
+                          // Back button
+                          GestureDetector(
+                            onTap: () => Navigator.of(context).pop(),
+                            behavior: HitTestBehavior.opaque,
+                            child: Container(
+                              width: 44,
+                              height: 44,
+                              decoration: BoxDecoration(
+                                color: Colors.black.withValues(alpha: 0.35),
+                                shape: BoxShape.circle,
                               ),
-                              borderRadius: BorderRadius.circular(16),
+                              child: const Icon(
+                                Icons.arrow_back_rounded,
+                                color: Colors.white,
+                                size: 22,
+                              ),
                             ),
-                            child: Row(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                const Icon(
-                                  Icons.vaccines_rounded,
-                                  size: 14,
+                          ),
+                          const SizedBox(width: 12),
+                          Text(
+                            l10n.reelsTitle,
+                            style: AppTypography.fromContext(
+                              context,
+                              fontSize: 18,
+                              fontWeight: FontWeight.w600,
+                              color: Colors.white,
+                            ),
+                          ),
+                          const Spacer(),
+                          // Reel counter badge
+                          if (displayItems.isNotEmpty)
+                            Container(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 12,
+                                vertical: 6,
+                              ),
+                              decoration: BoxDecoration(
+                                color: AppColors.magentaPink.withValues(
+                                  alpha: 0.7,
+                                ),
+                                borderRadius: BorderRadius.circular(16),
+                              ),
+                              child: Text(
+                                '${currentIndex + 1}/${displayItems.length}',
+                                style: AppTypography.fromContext(
+                                  context,
+                                  fontSize: 12,
+                                  fontWeight: FontWeight.w600,
                                   color: Colors.white,
                                 ),
-                                const SizedBox(width: 6),
-                                Text(
-                                  l10n.reelsFiltered(widget.initialVaccineLabel!),
-                                  style: AppTypography.fromContext(context,
-                                    fontSize: 12,
-                                    fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                        ],
+                      ),
+                    ),
+
+                    // ── Category filter chips ─────────────────────────────
+                    _CategoryFilterBar(
+                      selected: selectedCategory,
+                      onSelected: _onCategoryChanged,
+                    ),
+
+                    // ── Vaccine filter badge (deep-link from a vaccine's fiche) ──
+                    if (vaccineFilterActive &&
+                        widget.initialVaccineLabel != null)
+                      Padding(
+                        padding: const EdgeInsets.fromLTRB(8, 8, 8, 0),
+                        child: Align(
+                          alignment: Alignment.centerLeft,
+                          child: GestureDetector(
+                            onTap: _clearVaccineFilter,
+                            child: Container(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 12,
+                                vertical: 6,
+                              ),
+                              decoration: BoxDecoration(
+                                color: AppColors.magentaPink.withValues(
+                                  alpha: 0.85,
+                                ),
+                                borderRadius: BorderRadius.circular(16),
+                              ),
+                              child: Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  const Icon(
+                                    Icons.vaccines_rounded,
+                                    size: 14,
                                     color: Colors.white,
                                   ),
-                                ),
-                                const SizedBox(width: 6),
-                                const Icon(
-                                  Icons.close_rounded,
-                                  size: 14,
-                                  color: Colors.white,
-                                ),
-                              ],
+                                  const SizedBox(width: 6),
+                                  Text(
+                                    l10n.reelsFiltered(
+                                      widget.initialVaccineLabel!,
+                                    ),
+                                    style: AppTypography.fromContext(
+                                      context,
+                                      fontSize: 12,
+                                      fontWeight: FontWeight.w600,
+                                      color: Colors.white,
+                                    ),
+                                  ),
+                                  const SizedBox(width: 6),
+                                  const Icon(
+                                    Icons.close_rounded,
+                                    size: 14,
+                                    color: Colors.white,
+                                  ),
+                                ],
+                              ),
                             ),
                           ),
                         ),
                       ),
-                    ),
-                ],
+                  ],
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
-    ),
     );
   }
 
@@ -316,7 +323,8 @@ class _ReelsScreenState extends ConsumerState<ReelsScreen> {
           const SizedBox(height: 16),
           Text(
             l10n.reelsEmptyCategory,
-            style: AppTypography.fromContext(context,
+            style: AppTypography.fromContext(
+              context,
               color: Colors.white60,
               fontSize: 16,
               fontWeight: FontWeight.w500,
@@ -419,7 +427,8 @@ class _CategoryChip extends StatelessWidget {
             const SizedBox(width: 5),
             Text(
               label,
-              style: AppTypography.fromContext(context,
+              style: AppTypography.fromContext(
+                context,
                 fontSize: 12,
                 fontWeight: isSelected ? FontWeight.w700 : FontWeight.w500,
                 color: Colors.white,

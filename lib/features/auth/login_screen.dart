@@ -1,3 +1,4 @@
+import '../../core/services/safe_log.dart';
 import 'package:flutter/material.dart';
 import 'package:lukymam_mvp/l10n/app_localizations.dart';
 import 'package:go_router/go_router.dart';
@@ -92,7 +93,7 @@ class _LoginScreenState extends State<LoginScreen> {
           destination = '/home';
         }
       } catch (e) {
-        debugPrint('Error checking compliance / MAM profile on login: $e');
+        safeDebugPrint('Error checking compliance / MAM profile on login: ${e.runtimeType}');
       }
 
       if (!mounted) return;
@@ -135,7 +136,7 @@ class _LoginScreenState extends State<LoginScreen> {
           destination = '/home';
         }
       } catch (e) {
-        debugPrint('Error checking compliance / MAM profile on Google login: $e');
+        safeDebugPrint('Error checking compliance / MAM profile on Google login: ${e.runtimeType}');
       }
 
       if (!mounted) return;

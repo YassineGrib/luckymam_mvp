@@ -1,3 +1,4 @@
+import '../../../core/services/safe_log.dart';
 import 'dart:async';
 import 'dart:io';
 import 'dart:math' as math;
@@ -11,6 +12,10 @@ import 'package:record/record.dart';
 import '../../../core/extensions/l10n_extension.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_typography.dart';
+
+/// A completed recording is saveable based on its file, without a UI confirmation.
+bool isSaveableCapsuleAudio(File file) =>
+    file.existsSync() && file.lengthSync() > 0;
 
 /// Hold-to-record audio widget with live pulsating waveform animation.
 class AudioRecorderWidget extends StatefulWidget {
@@ -33,6 +38,9 @@ class _AudioRecorderWidgetState extends State<AudioRecorderWidget>
     with SingleTickerProviderStateMixin {
   final AudioRecorder _recorder = AudioRecorder();
   bool _isRecording = false;
+  bool _isStarting = false;
+  bool _releaseRequested = false;
+  bool _isStopping = false;
   int _recordingSeconds = 0;
   Timer? _timer;
   late AnimationController _pulseController;
@@ -55,6 +63,9 @@ class _AudioRecorderWidgetState extends State<AudioRecorderWidget>
   }
 
   Future<void> _startRecording() async {
+    if (_isStarting || _isRecording || _isStopping) return;
+    _isStarting = true;
+    _releaseRequested = false;
     try {
       final hasPermission = await _recorder.hasPermission();
       if (!hasPermission) {
@@ -75,12 +86,20 @@ class _AudioRecorderWidgetState extends State<AudioRecorderWidget>
         path: path,
       );
 
+      if (!mounted) {
+        await _recorder.stop();
+        return;
+      }
       setState(() {
         _isRecording = true;
         _recordingSeconds = 0;
       });
 
       _pulseController.repeat(reverse: true);
+      if (_releaseRequested) {
+        await _stopRecording();
+        return;
+      }
 
       _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
         setState(() {
@@ -95,10 +114,15 @@ class _AudioRecorderWidgetState extends State<AudioRecorderWidget>
       if (mounted) {
         widget.onError?.call(e.toString());
       }
+    } finally {
+      _isStarting = false;
     }
   }
 
   Future<void> _stopRecording() async {
+    _releaseRequested = true;
+    if (!_isRecording || _isStopping) return;
+    _isStopping = true;
     _timer?.cancel();
     _pulseController.stop();
     _pulseController.reset();
@@ -112,7 +136,7 @@ class _AudioRecorderWidgetState extends State<AudioRecorderWidget>
         final length = exists ? await file.length() : 0;
         if (exists && length > 0 && _recordingSeconds >= 1) {
           HapticFeedback.lightImpact();
-          widget.onRecordingComplete(file, _recordingSeconds);
+          if (mounted) widget.onRecordingComplete(file, _recordingSeconds);
         } else {
           if (exists) {
             try {
@@ -129,6 +153,7 @@ class _AudioRecorderWidgetState extends State<AudioRecorderWidget>
         widget.onError?.call(e.toString());
       }
     } finally {
+      _isStopping = false;
       if (mounted) {
         setState(() {
           _isRecording = false;
@@ -170,12 +195,8 @@ class _AudioRecorderWidgetState extends State<AudioRecorderWidget>
               gradient: _isRecording
                   ? LinearGradient(
                       colors: [
-                        AppColors.error.withValues(
-                          alpha: isDark ? 0.22 : 0.12,
-                        ),
-                        AppColors.coral.withValues(
-                          alpha: isDark ? 0.15 : 0.08,
-                        ),
+                        AppColors.error.withValues(alpha: isDark ? 0.22 : 0.12),
+                        AppColors.coral.withValues(alpha: isDark ? 0.15 : 0.08),
                       ],
                     )
                   : LinearGradient(
@@ -190,8 +211,8 @@ class _AudioRecorderWidgetState extends State<AudioRecorderWidget>
                         alpha: 0.6 + (_pulseController.value * 0.35),
                       )
                     : (isDark
-                        ? AppColors.dividerDark
-                        : AppColors.primaryLight.withValues(alpha: 0.18)),
+                          ? AppColors.dividerDark
+                          : AppColors.primaryLight.withValues(alpha: 0.18)),
                 width: _isRecording ? 1.8 : 1.0,
               ),
               boxShadow: [
@@ -238,11 +259,7 @@ class _AudioRecorderWidgetState extends State<AudioRecorderWidget>
             ],
           ),
           child: const Center(
-            child: Icon(
-              Icons.mic_rounded,
-              color: Colors.white,
-              size: 22,
-            ),
+            child: Icon(Icons.mic_rounded, color: Colors.white, size: 22),
           ),
         ),
         const SizedBox(width: 14),
@@ -340,9 +357,9 @@ class _AudioRecorderWidgetState extends State<AudioRecorderWidget>
             children: List.generate(15, (index) {
               // Sine wave with phase shift for organic fluid motion
               final phase = index * 0.48;
-              final factor = (math.sin(
-                (_pulseController.value * 2 * math.pi) + phase,
-              ).abs());
+              final factor = (math
+                  .sin((_pulseController.value * 2 * math.pi) + phase)
+                  .abs());
               final barHeight = 6.0 + (factor * 26.0);
 
               return Container(
@@ -394,7 +411,7 @@ class RecordedAudioPreview extends StatefulWidget {
     required this.onDelete,
     this.onReRecord,
     this.onValidate,
-    this.isValidated = false,
+    this.isValidated = true,
   });
 
   final File? audioFile;
@@ -462,7 +479,7 @@ class _RecordedAudioPreviewState extends State<RecordedAudioPreview> {
           await _player.resume();
         }
       } catch (e) {
-        debugPrint('Audio playback error: $e');
+        safeDebugPrint('Audio playback error: ${e.runtimeType}');
       } finally {
         if (mounted) setState(() => _isLoading = false);
       }
@@ -493,7 +510,10 @@ class _RecordedAudioPreviewState extends State<RecordedAudioPreview> {
 
     final totalDuration = Duration(seconds: math.max(widget.duration, 1));
     final progress = (totalDuration.inMilliseconds > 0)
-        ? (_position.inMilliseconds / totalDuration.inMilliseconds).clamp(0.0, 1.0)
+        ? (_position.inMilliseconds / totalDuration.inMilliseconds).clamp(
+            0.0,
+            1.0,
+          )
         : 0.0;
 
     return Container(
@@ -534,7 +554,9 @@ class _RecordedAudioPreviewState extends State<RecordedAudioPreview> {
                       size: 13,
                       color: widget.isValidated
                           ? AppColors.success
-                          : (isDark ? Colors.amberAccent : Colors.orange.shade800),
+                          : (isDark
+                                ? Colors.amberAccent
+                                : Colors.orange.shade800),
                     ),
                     const SizedBox(width: 4),
                     Text(
@@ -546,7 +568,9 @@ class _RecordedAudioPreviewState extends State<RecordedAudioPreview> {
                         fontWeight: FontWeight.w700,
                         color: widget.isValidated
                             ? AppColors.success
-                            : (isDark ? Colors.amberAccent : Colors.orange.shade800),
+                            : (isDark
+                                  ? Colors.amberAccent
+                                  : Colors.orange.shade800),
                       ),
                     ),
                   ],
@@ -610,10 +634,16 @@ class _RecordedAudioPreviewState extends State<RecordedAudioPreview> {
                 child: SliderTheme(
                   data: SliderTheme.of(context).copyWith(
                     trackHeight: 4,
-                    thumbShape: const RoundSliderThumbShape(enabledThumbRadius: 6),
-                    overlayShape: const RoundSliderOverlayShape(overlayRadius: 12),
+                    thumbShape: const RoundSliderThumbShape(
+                      enabledThumbRadius: 6,
+                    ),
+                    overlayShape: const RoundSliderOverlayShape(
+                      overlayRadius: 12,
+                    ),
                     activeTrackColor: primary,
-                    inactiveTrackColor: isDark ? Colors.white12 : Colors.black12,
+                    inactiveTrackColor: isDark
+                        ? Colors.white12
+                        : Colors.black12,
                     thumbColor: primary,
                   ),
                   child: Slider(
@@ -628,20 +658,30 @@ class _RecordedAudioPreviewState extends State<RecordedAudioPreview> {
           const SizedBox(height: 12),
 
           // ── Action Buttons Row ──
-          Row(
+          Wrap(
+            spacing: 8,
+            runSpacing: 8,
+            crossAxisAlignment: WrapCrossAlignment.center,
             children: [
               // Recommencer
               OutlinedButton.icon(
                 onPressed: () async {
-                  await _player.stop();
+                  if (_isPlaying || _position > Duration.zero) {
+                    await _player.stop();
+                  }
                   widget.onReRecord?.call();
                 },
                 icon: const Icon(Icons.refresh_rounded, size: 15),
                 label: Text(l10n.capsuleAudioReRecord),
                 style: OutlinedButton.styleFrom(
                   visualDensity: VisualDensity.compact,
-                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 10,
+                    vertical: 8,
+                  ),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10),
+                  ),
                   side: BorderSide(
                     color: isDark ? Colors.white24 : Colors.black12,
                   ),
@@ -652,17 +692,20 @@ class _RecordedAudioPreviewState extends State<RecordedAudioPreview> {
               const SizedBox(width: 8),
 
               // Supprimer
-              IconButton(
+              TextButton.icon(
                 onPressed: () async {
-                  await _player.stop();
+                  if (_isPlaying || _position > Duration.zero) {
+                    await _player.stop();
+                  }
                   widget.onDelete();
                 },
-                icon: const Icon(Icons.delete_outline_rounded, color: AppColors.error, size: 20),
-                tooltip: l10n.capsuleAudioDelete,
-                style: IconButton.styleFrom(visualDensity: VisualDensity.compact),
+                icon: const Icon(
+                  Icons.delete_outline_rounded,
+                  color: AppColors.error,
+                  size: 20,
+                ),
+                label: Text(l10n.capsuleAudioDelete),
               ),
-
-              const Spacer(),
 
               // Valider Button (if not already validated)
               if (!widget.isValidated && widget.onValidate != null)
@@ -676,8 +719,13 @@ class _RecordedAudioPreviewState extends State<RecordedAudioPreview> {
                     backgroundColor: AppColors.success,
                     foregroundColor: Colors.white,
                     visualDensity: VisualDensity.compact,
-                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 12,
+                      vertical: 8,
+                    ),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10),
+                    ),
                   ),
                 ),
             ],

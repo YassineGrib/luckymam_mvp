@@ -34,13 +34,11 @@ class StandardAlbumService {
   /// Watch all standard albums for the current user.
   Stream<List<StandardAlbum>> watchAllAlbums() {
     if (_userId == null) return Stream.value([]);
-    return _albumsRef
-        .snapshots()
-        .map(
-          (snap) =>
-              snap.docs.map(StandardAlbum.fromFirestore).toList()
-                ..sort((a, b) => b.updatedAt.compareTo(a.updatedAt)),
-        );
+    return _albumsRef.snapshots().map(
+      (snap) =>
+          snap.docs.map(StandardAlbum.fromFirestore).toList()
+            ..sort((a, b) => b.updatedAt.compareTo(a.updatedAt)),
+    );
   }
 
   /// Watch a single standard album by id.
@@ -57,6 +55,7 @@ class StandardAlbumService {
     required String title,
     int pageCount = StandardAlbum.defaultPageCount,
   }) async {
+    StandardAlbum.validatePageCount(pageCount);
     if (_userId == null) throw Exception('User not authenticated');
 
     final docRef = _albumsRef.doc();
@@ -79,6 +78,7 @@ class StandardAlbumService {
     required String albumId,
     required int pageCount,
   }) async {
+    StandardAlbum.validatePageCount(pageCount);
     await _albumsRef.doc(albumId).update({
       'pageCount': pageCount,
       'updatedAt': Timestamp.fromDate(DateTime.now()),
@@ -110,9 +110,17 @@ class StandardAlbumService {
 
   /// Append one more blank page to the album.
   Future<void> addPage(String albumId) async {
-    await _albumsRef.doc(albumId).update({
-      'pageCount': FieldValue.increment(1),
-      'updatedAt': Timestamp.fromDate(DateTime.now()),
+    final doc = _albumsRef.doc(albumId);
+    await _firestore.runTransaction((transaction) async {
+      final snapshot = await transaction.get(doc);
+      final count =
+          (snapshot.data()?['pageCount'] as num?)?.toInt() ??
+          StandardAlbum.defaultPageCount;
+      StandardAlbum.validatePageCount(count + 1);
+      transaction.update(doc, {
+        'pageCount': count + 1,
+        'updatedAt': Timestamp.fromDate(DateTime.now()),
+      });
     });
   }
 

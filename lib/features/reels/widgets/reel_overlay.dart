@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
+import '../services/reel_actions.dart';
+import '../reel_messages.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../core/theme/app_typography.dart';
 import '../../../core/extensions/l10n_extension.dart';
@@ -7,14 +10,57 @@ import '../models/reel_item.dart';
 import '../providers/reels_provider.dart';
 
 /// TikTok-style overlay on top of the video with title, description, and action buttons.
-class ReelOverlay extends ConsumerWidget {
+class ReelOverlay extends ConsumerStatefulWidget {
   const ReelOverlay({super.key, required this.reel});
 
   final ReelItem reel;
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<ReelOverlay> createState() => _ReelOverlayState();
+}
+
+class _ReelOverlayState extends ConsumerState<ReelOverlay> {
+  bool _busy = false;
+  bool _saving = false;
+  ReelItem get reel => widget.reel;
+
+  Future<void> _perform(bool save) async {
+    if (_busy) return;
+    setState(() {
+      _busy = true;
+      _saving = save;
+    });
+    final language = Localizations.localeOf(context).languageCode;
+    try {
+      final actions = ReelActions();
+      if (save) {
+        await actions.save(reel.assetPath);
+      } else {
+        await actions.share(
+          reel.assetPath,
+          '${reel.titleFor(language)}\n${reel.descriptionFor(language)}',
+        );
+      }
+      if (mounted && save) {
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text(reelMessage(language, 'saved'))));
+      }
+    } catch (_) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(reelMessage(language, 'actionError'))),
+        );
+      }
+    } finally {
+      if (mounted) setState(() => _busy = false);
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
     final l10n = context.l10n;
+    final language = Localizations.localeOf(context).languageCode;
     return Stack(
       children: [
         // Bottom gradient scrim
@@ -29,6 +75,27 @@ class ReelOverlay extends ConsumerWidget {
                 begin: Alignment.topCenter,
                 end: Alignment.bottomCenter,
                 colors: [Colors.transparent, Colors.black87],
+              ),
+            ),
+          ),
+        ),
+
+        // Brand sits above the scrim, physically bottom-left in every locale.
+        Positioned(
+          left: 16,
+          bottom: 196,
+          child: IgnorePointer(
+            child: Opacity(
+              key: const ValueKey('reel-brand-opacity'),
+              opacity: 0.5,
+              child: SvgPicture.asset(
+                'assets/logo/logo svg.svg',
+                width: 76,
+                height: 76,
+                colorFilter: const ColorFilter.mode(
+                  Colors.white,
+                  BlendMode.srcIn,
+                ),
               ),
             ),
           ),
@@ -52,17 +119,19 @@ class ReelOverlay extends ConsumerWidget {
               ),
               const SizedBox(height: 24),
               _ActionButton(
-                icon: Icons.bookmark_border_rounded,
+                icon: Icons.download_rounded,
+                busy: _busy && _saving,
                 label: l10n.reelsSave,
                 color: Colors.white,
-                onTap: () {},
+                onTap: () => _perform(true),
               ),
               const SizedBox(height: 24),
               _ActionButton(
                 icon: Icons.share_rounded,
+                busy: _busy && !_saving,
                 label: l10n.share,
                 color: Colors.white,
-                onTap: () {},
+                onTap: () => _perform(false),
               ),
             ],
           ),
@@ -100,7 +169,8 @@ class ReelOverlay extends ConsumerWidget {
                   const SizedBox(width: 10),
                   Text(
                     reel.author,
-                    style: AppTypography.fromContext(context,
+                    style: AppTypography.fromContext(
+                      context,
                       fontSize: 15,
                       fontWeight: FontWeight.w600,
                       color: Colors.white,
@@ -112,8 +182,9 @@ class ReelOverlay extends ConsumerWidget {
 
               // Title
               Text(
-                reel.title,
-                style: AppTypography.fromContext(context,
+                reel.titleFor(language),
+                style: AppTypography.fromContext(
+                  context,
                   fontSize: 18,
                   fontWeight: FontWeight.bold,
                   color: Colors.white,
@@ -123,10 +194,11 @@ class ReelOverlay extends ConsumerWidget {
 
               // Description
               Text(
-                reel.description,
+                reel.descriptionFor(language),
                 maxLines: 2,
                 overflow: TextOverflow.ellipsis,
-                style: AppTypography.fromContext(context,
+                style: AppTypography.fromContext(
+                  context,
                   fontSize: 13,
                   color: Colors.white.withValues(alpha: 0.85),
                   height: 1.4,
@@ -147,28 +219,41 @@ class _ActionButton extends StatelessWidget {
     required this.label,
     required this.color,
     required this.onTap,
+    this.busy = false,
   });
 
   final IconData icon;
   final String label;
   final Color color;
   final VoidCallback onTap;
+  final bool busy;
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: onTap,
+      onTap: busy ? null : onTap,
       behavior: HitTestBehavior.opaque,
       child: SizedBox(
         width: 56,
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Icon(icon, color: color, size: 32),
+            if (busy)
+              const SizedBox(
+                width: 32,
+                height: 32,
+                child: CircularProgressIndicator(
+                  color: Colors.white,
+                  strokeWidth: 2,
+                ),
+              )
+            else
+              Icon(icon, color: color, size: 32),
             const SizedBox(height: 4),
             Text(
               label,
-              style: AppTypography.fromContext(context,
+              style: AppTypography.fromContext(
+                context,
                 fontSize: 11,
                 fontWeight: FontWeight.w500,
                 color: Colors.white.withValues(alpha: 0.9),

@@ -25,9 +25,6 @@ import '../../capsules/widgets/image_crop_screen.dart';
 import '../widgets/album_photo_action_sheet.dart';
 
 import 'album_template_picker_screen.dart';
-import '../../digital_album/models/digital_slideshow_model.dart';
-import '../../digital_album/screens/digital_slideshow_creator_screen.dart';
-import '../../digital_album/screens/digital_slideshow_player_screen.dart';
 
 /// Redesigned flagship Predefined Album Detail Screen for LuckyMam.
 /// Features a Dual-Mode Experience:
@@ -83,9 +80,8 @@ class _PredefinedAlbumDetailScreenState
         loading: () => const Center(
           child: CircularProgressIndicator(color: AppColors.coral),
         ),
-        error: (e, _) => Center(
-          child: Text(l10n.albumErrorWithMessage(e.toString())),
-        ),
+        error: (e, _) =>
+            Center(child: Text(l10n.albumErrorWithMessage(e.toString()))),
         data: (album) {
           if (album == null) {
             return Center(child: Text(l10n.albumNotFound));
@@ -136,7 +132,10 @@ class _PredefinedAlbumDetailScreenState
         final capsule = capsuleList.where((c) => c.id == capsuleId).firstOrNull;
         if (capsule == null) continue;
         printPages.add(
-          AlbumPdfPage(imageUrl: capsule.photoUrl, caption: slot.getTitle(lang)),
+          AlbumPdfPage(
+            imageUrl: capsule.photoUrl,
+            caption: slot.getTitle(lang),
+          ),
         );
       }
     }
@@ -207,7 +206,9 @@ class _PredefinedAlbumDetailScreenState
                               : Colors.white.withValues(alpha: 0.9),
                           borderRadius: BorderRadius.circular(14),
                           border: Border.all(
-                            color: isDark ? Colors.white12 : const Color(0xFFE8E0E4),
+                            color: isDark
+                                ? Colors.white12
+                                : const Color(0xFFE8E0E4),
                             width: 1,
                           ),
                           boxShadow: [
@@ -251,13 +252,15 @@ class _PredefinedAlbumDetailScreenState
                           const SizedBox(height: 2),
                           Row(
                             children: [
-                              Text(
-                                '$filledCount / $totalCount ${lang == 'ar' ? 'صفحات مكتملة' : (lang == 'fr' ? 'pages complétées' : 'pages completed')}',
-                                style: AppTypography.fromContext(
-                                  context,
-                                  fontSize: 11.5,
-                                  fontWeight: FontWeight.w600,
-                                  color: secondaryText,
+                              Flexible(
+                                child: Text(
+                                  '$filledCount / $totalCount ${lang == 'ar' ? 'صفحات مكتملة' : (lang == 'fr' ? 'pages complétées' : 'pages completed')}',
+                                  style: AppTypography.fromContext(
+                                    context,
+                                    fontSize: 11.5,
+                                    fontWeight: FontWeight.w600,
+                                    color: secondaryText,
+                                  ),
                                 ),
                               ),
                               const SizedBox(width: 6),
@@ -294,7 +297,9 @@ class _PredefinedAlbumDetailScreenState
                             : Colors.white.withValues(alpha: 0.9),
                         borderRadius: BorderRadius.circular(14),
                         border: Border.all(
-                          color: isDark ? Colors.white12 : const Color(0xFFE8E0E4),
+                          color: isDark
+                              ? Colors.white12
+                              : const Color(0xFFE8E0E4),
                         ),
                       ),
                       child: Row(
@@ -326,58 +331,6 @@ class _PredefinedAlbumDetailScreenState
                             },
                           ),
                         ],
-                      ),
-                    ),
-
-                    const SizedBox(width: 8),
-
-                    // Diaporama Action Button (LM-DIG-001)
-                    GestureDetector(
-                      onTap: () => _openDiaporama(
-                        context,
-                        album,
-                        template,
-                        capsulesAsync,
-                        childName ?? '',
-                        lang,
-                      ),
-                      child: Container(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 10,
-                          vertical: 7,
-                        ),
-                        decoration: BoxDecoration(
-                          gradient: const LinearGradient(
-                            colors: [AppColors.coral, Color(0xFFFF8F00)],
-                          ),
-                          borderRadius: BorderRadius.circular(14),
-                          boxShadow: [
-                            BoxShadow(
-                              color: AppColors.coral.withValues(alpha: 0.35),
-                              blurRadius: 8,
-                              offset: const Offset(0, 2),
-                            ),
-                          ],
-                        ),
-                        child: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            const Icon(
-                              Icons.play_arrow_rounded,
-                              size: 16,
-                              color: Colors.white,
-                            ),
-                            const SizedBox(width: 4),
-                            Text(
-                              lang == 'ar' ? 'عرض' : 'Diaporama',
-                              style: const TextStyle(
-                                fontSize: 11.5,
-                                fontWeight: FontWeight.w800,
-                                color: Colors.white,
-                              ),
-                            ),
-                          ],
-                        ),
                       ),
                     ),
                   ],
@@ -476,66 +429,6 @@ class _PredefinedAlbumDetailScreenState
     );
   }
 
-  void _openDiaporama(
-    BuildContext context,
-    PredefinedAlbum album,
-    AlbumTemplate template,
-    AsyncValue<List<Capsule>> capsulesAsync,
-    String childName,
-    String lang,
-  ) {
-    HapticFeedback.mediumImpact();
-    final slides = <DigitalSlide>[];
-    if (capsulesAsync.hasValue) {
-      final capsuleList = capsulesAsync.value!;
-      final sortedSlots = [...template.slots]
-        ..sort((a, b) => a.order.compareTo(b.order));
-      for (final slot in sortedSlots) {
-        final capsuleId = album.slotCapsules[slot.id];
-        if (capsuleId == null) continue;
-        final capsule =
-            capsuleList.where((c) => c.id == capsuleId).firstOrNull;
-        if (capsule == null || capsule.photoUrl.isEmpty) continue;
-        slides.add(
-          DigitalSlide(
-            id: capsule.id,
-            photoUrl: capsule.photoUrl,
-            title: slot.getTitle(lang),
-            date: capsule.createdAt,
-            order: slides.length + 1,
-          ),
-        );
-      }
-    }
-
-    if (slides.length >= DigitalSlideshow.minPhotos) {
-      final slideshow = DigitalSlideshow(
-        childId: album.childId,
-        childName: childName,
-        title: template.getTitle(lang),
-        slides: slides,
-      );
-      Navigator.of(context).push(
-        MaterialPageRoute(
-          builder: (_) => DigitalSlideshowPlayerScreen(slideshow: slideshow),
-        ),
-      );
-    } else {
-      Navigator.of(context).push(
-        MaterialPageRoute(
-          builder: (_) => DigitalSlideshowCreatorScreen(
-            childId: album.childId,
-            childName: childName,
-            initialSlides: slides,
-          ),
-        ),
-      );
-    }
-  }
-
-  // ───────────────────────────────────────────────────────────────────────────
-  // MODE 1: REALISTIC BOOK FLIP READER
-  // ───────────────────────────────────────────────────────────────────────────
   Widget _buildBookFlipView({
     required BuildContext context,
     required PredefinedAlbum album,
@@ -585,13 +478,28 @@ class _PredefinedAlbumDetailScreenState
                 isDark: isDark,
                 lang: lang,
                 isRtl: isRtl,
+                childId: album.childId,
+                onSelectExisting: (capsule) => ref
+                    .read(predefinedAlbumActionsProvider.notifier)
+                    .attachCapsuleToSlot(
+                      albumId: album.id,
+                      slotId: slot.id,
+                      capsuleId: capsule.id,
+                      templateId: template.id,
+                      method: 'existing',
+                    ),
                 onPickExisting: () =>
                     _pickExistingCapsule(context, album, template, slot),
                 onReplace: () =>
                     _replaceSlotPhoto(context, album, template, slot, capsule),
                 onCrop: capsule != null
-                    ? () =>
-                        _cropSlotPhoto(context, album, template, slot, capsule!)
+                    ? () => _cropSlotPhoto(
+                        context,
+                        album,
+                        template,
+                        slot,
+                        capsule!,
+                      )
                     : null,
                 onClearSlot: () => _clearSlot(context, album, slot),
                 onCreateNew: () => _createNewCapsule(context, album, slot),
@@ -604,7 +512,9 @@ class _PredefinedAlbumDetailScreenState
 
         // Thumbnail Navigation Dots / Strip
         Padding(
-          padding: const EdgeInsets.symmetric(horizontal: AppSpacing.screenPaddingH),
+          padding: const EdgeInsets.symmetric(
+            horizontal: AppSpacing.screenPaddingH,
+          ),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: List.generate(sortedSlots.length, (i) {
@@ -630,10 +540,10 @@ class _PredefinedAlbumDetailScreenState
                     color: isCurrent
                         ? primaryColor
                         : isFilled
-                            ? AppColors.success.withValues(alpha: 0.6)
-                            : isDark
-                                ? Colors.white24
-                                : Colors.black12,
+                        ? AppColors.success.withValues(alpha: 0.6)
+                        : isDark
+                        ? Colors.white24
+                        : Colors.black12,
                   ),
                 ),
               );
@@ -707,8 +617,8 @@ class _PredefinedAlbumDetailScreenState
                 color: isFilled
                     ? AppColors.success.withValues(alpha: 0.4)
                     : isDark
-                        ? Colors.white12
-                        : const Color(0xFFEBE6EA),
+                    ? Colors.white12
+                    : const Color(0xFFEBE6EA),
                 width: isFilled ? 1.5 : 1,
               ),
               boxShadow: [
@@ -730,7 +640,10 @@ class _PredefinedAlbumDetailScreenState
                       fit: BoxFit.cover,
                       errorBuilder: (_, _, _) => Container(
                         color: isDark ? Colors.grey[900] : Colors.grey[200],
-                        child: const Icon(Icons.photo_rounded, color: Colors.grey),
+                        child: const Icon(
+                          Icons.photo_rounded,
+                          color: Colors.grey,
+                        ),
                       ),
                     )
                   else
@@ -747,11 +660,17 @@ class _PredefinedAlbumDetailScreenState
                                 color: primaryColor.withValues(alpha: 0.12),
                                 shape: BoxShape.circle,
                               ),
-                              child: Icon(slot.icon, size: 22, color: primaryColor),
+                              child: Icon(
+                                slot.icon,
+                                size: 22,
+                                color: primaryColor,
+                              ),
                             ),
                             const SizedBox(height: 8),
                             Text(
-                              lang == 'ar' ? '+ إضافة' : (lang == 'fr' ? '+ Ajouter' : '+ Add'),
+                              lang == 'ar'
+                                  ? '+ إضافة'
+                                  : (lang == 'fr' ? '+ Ajouter' : '+ Add'),
                               style: AppTypography.fromContext(
                                 context,
                                 fontSize: 12,
@@ -775,7 +694,9 @@ class _PredefinedAlbumDetailScreenState
                         gradient: LinearGradient(
                           colors: [
                             Colors.transparent,
-                            Colors.black.withValues(alpha: isFilled ? 0.85 : 0.05),
+                            Colors.black.withValues(
+                              alpha: isFilled ? 0.85 : 0.05,
+                            ),
                           ],
                           begin: Alignment.topCenter,
                           end: Alignment.bottomCenter,
@@ -797,14 +718,14 @@ class _PredefinedAlbumDetailScreenState
                             overflow: TextOverflow.ellipsis,
                           ),
                           Text(
-                            lang == 'ar' ? 'صفحة ${slot.order}' : 'Page ${slot.order}',
+                            lang == 'ar'
+                                ? 'صفحة ${slot.order}'
+                                : 'Page ${slot.order}',
                             style: AppTypography.fromContext(
                               context,
                               fontSize: 10.5,
                               fontWeight: FontWeight.w500,
-                              color: isFilled
-                                  ? Colors.white70
-                                  : secondaryText,
+                              color: isFilled ? Colors.white70 : secondaryText,
                             ),
                           ),
                         ],
@@ -825,9 +746,7 @@ class _PredefinedAlbumDetailScreenState
                         shape: BoxShape.circle,
                       ),
                       child: Icon(
-                        isFilled
-                            ? Icons.check_rounded
-                            : Icons.add_rounded,
+                        isFilled ? Icons.check_rounded : Icons.add_rounded,
                         size: 12,
                         color: Colors.white,
                       ),
@@ -862,12 +781,16 @@ class _PredefinedAlbumDetailScreenState
       onPickFromMemories: () =>
           _pickExistingCapsule(context, album, template, slot),
       onPickFromGallery: () => _pickFromGalleryForSlot(
-          context, album, template, slot, currentCapsule),
+        context,
+        album,
+        template,
+        slot,
+        currentCapsule,
+      ),
       onTakePhoto: () =>
           _takePhotoForSlot(context, album, template, slot, currentCapsule),
       onCrop: currentCapsule != null
-          ? () =>
-              _cropSlotPhoto(context, album, template, slot, currentCapsule)
+          ? () => _cropSlotPhoto(context, album, template, slot, currentCapsule)
           : null,
       onClear: currentCapsule != null
           ? () => _clearSlot(context, album, slot)
@@ -926,16 +849,18 @@ class _PredefinedAlbumDetailScreenState
         ),
       );
 
-      final newCapsule = await ref.read(capsuleServiceProvider).createCapsule(
-        photoFile: croppedFile,
-        childId: album.childId,
-        emotion: capsule.emotion,
-        category: capsule.category,
-        tags: capsule.tags,
-        albumId: album.id,
-        albumSlotId: slot.id,
-        albumType: 'predefined',
-      );
+      final newCapsule = await ref
+          .read(capsuleServiceProvider)
+          .createCapsule(
+            photoFile: croppedFile,
+            childId: album.childId,
+            emotion: capsule.emotion,
+            category: capsule.category,
+            tags: capsule.tags,
+            albumId: album.id,
+            albumSlotId: slot.id,
+            albumType: 'predefined',
+          );
 
       await ref
           .read(predefinedAlbumActionsProvider.notifier)
@@ -1071,16 +996,18 @@ class _PredefinedAlbumDetailScreenState
         ),
       );
 
-      final newCapsule = await ref.read(capsuleServiceProvider).createCapsule(
-        photoFile: croppedFile,
-        childId: album.childId,
-        emotion: currentCapsule?.emotion ?? Emotion.happy,
-        category: currentCapsule?.category,
-        tags: currentCapsule?.tags ?? const [],
-        albumId: album.id,
-        albumSlotId: slot.id,
-        albumType: 'predefined',
-      );
+      final newCapsule = await ref
+          .read(capsuleServiceProvider)
+          .createCapsule(
+            photoFile: croppedFile,
+            childId: album.childId,
+            emotion: currentCapsule?.emotion ?? Emotion.happy,
+            category: currentCapsule?.category,
+            tags: currentCapsule?.tags ?? const [],
+            albumId: album.id,
+            albumSlotId: slot.id,
+            albumType: 'predefined',
+          );
 
       await ref
           .read(predefinedAlbumActionsProvider.notifier)
@@ -1108,9 +1035,7 @@ class _PredefinedAlbumDetailScreenState
       if (context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text(
-              lang == 'ar' ? 'حدث خطأ: $e' : 'Erreur : $e',
-            ),
+            content: Text(lang == 'ar' ? 'حدث خطأ: $e' : 'Erreur : $e'),
             backgroundColor: AppColors.error,
           ),
         );
@@ -1141,10 +1066,9 @@ class _PredefinedAlbumDetailScreenState
           FilledButton(
             style: FilledButton.styleFrom(backgroundColor: AppColors.error),
             onPressed: () {
-              ref.read(predefinedAlbumActionsProvider.notifier).clearSlot(
-                    albumId: album.id,
-                    slotId: slot.id,
-                  );
+              ref
+                  .read(predefinedAlbumActionsProvider.notifier)
+                  .clearSlot(albumId: album.id, slotId: slot.id);
               Navigator.pop(ctx);
             },
             child: Text(lang == 'ar' ? 'إزالة' : 'Remove'),
@@ -1215,6 +1139,8 @@ class _PhotobookPage extends StatelessWidget {
     required this.lang,
     required this.isRtl,
     required this.onPickExisting,
+    required this.childId,
+    required this.onSelectExisting,
     required this.onReplace,
     this.onCrop,
     required this.onClearSlot,
@@ -1234,6 +1160,8 @@ class _PhotobookPage extends StatelessWidget {
   final String lang;
   final bool isRtl;
   final VoidCallback onPickExisting;
+  final String childId;
+  final ValueChanged<Capsule> onSelectExisting;
   final VoidCallback onReplace;
   final VoidCallback? onCrop;
   final VoidCallback onClearSlot;
@@ -1390,7 +1318,10 @@ class _PhotobookPage extends StatelessWidget {
                               ),
                               padding: const EdgeInsets.symmetric(vertical: 9),
                             ),
-                            icon: const Icon(Icons.swap_horiz_rounded, size: 16),
+                            icon: const Icon(
+                              Icons.swap_horiz_rounded,
+                              size: 16,
+                            ),
                             label: Text(
                               lang == 'ar'
                                   ? 'استبدال'
@@ -1415,9 +1346,14 @@ class _PhotobookPage extends StatelessWidget {
                                 shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(12),
                                 ),
-                                padding: const EdgeInsets.symmetric(vertical: 9),
+                                padding: const EdgeInsets.symmetric(
+                                  vertical: 9,
+                                ),
                               ),
-                              icon: const Icon(Icons.crop_rotate_rounded, size: 16),
+                              icon: const Icon(
+                                Icons.crop_rotate_rounded,
+                                size: 16,
+                              ),
                               label: Text(
                                 lang == 'ar'
                                     ? 'قص وضبط'
@@ -1435,8 +1371,9 @@ class _PhotobookPage extends StatelessWidget {
                           onPressed: onClearSlot,
                           tooltip: lang == 'ar' ? 'إفراغ الصفحة' : 'Clear',
                           style: IconButton.styleFrom(
-                            backgroundColor:
-                                AppColors.error.withValues(alpha: 0.1),
+                            backgroundColor: AppColors.error.withValues(
+                              alpha: 0.1,
+                            ),
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(12),
                             ),
@@ -1490,7 +1427,11 @@ class _PhotobookPage extends StatelessWidget {
                 fit: BoxFit.cover,
                 errorBuilder: (_, _, _) => Container(
                   color: isDark ? Colors.grey[800] : Colors.grey[200],
-                  child: const Icon(Icons.broken_image_rounded, size: 40, color: Colors.grey),
+                  child: const Icon(
+                    Icons.broken_image_rounded,
+                    size: 40,
+                    color: Colors.grey,
+                  ),
                 ),
               ),
 
@@ -1567,10 +1508,16 @@ class _PhotobookPage extends StatelessWidget {
                         child: Row(
                           mainAxisSize: MainAxisSize.min,
                           children: [
-                            const Icon(Icons.check_rounded, size: 12, color: Colors.white),
+                            const Icon(
+                              Icons.check_rounded,
+                              size: 12,
+                              color: Colors.white,
+                            ),
                             const SizedBox(width: 4),
                             Text(
-                              lang == 'ar' ? 'تم الحفظ' : (lang == 'fr' ? 'Enregistré' : 'Saved'),
+                              lang == 'ar'
+                                  ? 'تم الحفظ'
+                                  : (lang == 'fr' ? 'Enregistré' : 'Saved'),
                               style: const TextStyle(
                                 fontSize: 11,
                                 fontWeight: FontWeight.bold,
@@ -1598,124 +1545,37 @@ class _PhotobookPage extends StatelessWidget {
   }
 
   Widget _buildEmptyPageCanvas(BuildContext context) {
-    return Container(
-      width: double.infinity,
-      decoration: BoxDecoration(
-        color: isDark
-            ? Colors.white.withValues(alpha: 0.03)
-            : const Color(0xFFFBF9FC),
-        borderRadius: BorderRadius.circular(20),
-        border: Border.all(
-          color: primaryColor.withValues(alpha: 0.25),
-          width: 1.5,
-          style: BorderStyle.solid,
+    return Column(
+      children: [
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+          child: Row(
+            children: [
+              Expanded(
+                child: Text(
+                  context.l10n.albumChooseCapsule,
+                  style: const TextStyle(fontWeight: FontWeight.w700),
+                ),
+              ),
+              IconButton(
+                onPressed: onCreateNew,
+                tooltip: lang == 'ar'
+                    ? 'التقاط صورة'
+                    : lang == 'fr'
+                    ? 'Capturer'
+                    : 'Capture',
+                icon: const Icon(Icons.add_a_photo_outlined),
+              ),
+            ],
+          ),
         ),
-      ),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Container(
-            width: 62,
-            height: 62,
-            decoration: BoxDecoration(
-              color: primaryColor.withValues(alpha: 0.1),
-              shape: BoxShape.circle,
-            ),
-            child: Icon(
-              Icons.add_a_photo_outlined,
-              size: 28,
-              color: primaryColor,
-            ),
+        Expanded(
+          child: AlbumExistingPhotoList(
+            childId: childId,
+            onSelected: onSelectExisting,
           ),
-          const SizedBox(height: 12),
-          Text(
-            lang == 'ar' ? 'أضيفي صورة هذه اللحظة' : 'Ajoutez la photo de cet instant',
-            style: AppTypography.fromContext(
-              context,
-              fontSize: 14,
-              fontWeight: FontWeight.w700,
-              color: textColor,
-            ),
-          ),
-          const SizedBox(height: 4),
-          Text(
-            lang == 'ar' ? 'لتكتمل صفحة كتاب الذكريات' : 'Pour compléter cette page',
-            style: AppTypography.fromContext(
-              context,
-              fontSize: 11.5,
-              fontWeight: FontWeight.w500,
-              color: secondaryText,
-            ),
-          ),
-          const SizedBox(height: 20),
-
-          // Two Boutique Action Buttons
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 20),
-            child: Row(
-              children: [
-                Expanded(
-                  child: OutlinedButton.icon(
-                    onPressed: onPickExisting,
-                    icon: Icon(
-                      Icons.photo_library_outlined,
-                      size: 15,
-                      color: primaryColor,
-                    ),
-                    label: Text(
-                      lang == 'ar'
-                          ? 'من الكبسولات'
-                          : (lang == 'fr' ? 'Existant' : 'From capsules'),
-                      style: AppTypography.fromContext(
-                        context,
-                        fontSize: 12,
-                        fontWeight: FontWeight.w700,
-                      ),
-                    ),
-                    style: OutlinedButton.styleFrom(
-                      foregroundColor: primaryColor,
-                      side: BorderSide(color: primaryColor.withValues(alpha: 0.35)),
-                      padding: const EdgeInsets.symmetric(vertical: 10),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                    ),
-                  ),
-                ),
-                const SizedBox(width: 8),
-                Expanded(
-                  child: ElevatedButton.icon(
-                    onPressed: onCreateNew,
-                    icon: const Icon(
-                      Icons.camera_alt_rounded,
-                      size: 15,
-                      color: Colors.white,
-                    ),
-                    label: Text(
-                      lang == 'ar'
-                          ? 'التقاط الآن'
-                          : (lang == 'fr' ? 'Capturer' : 'Capture now'),
-                      style: AppTypography.fromContext(
-                        context,
-                        fontSize: 12,
-                        fontWeight: FontWeight.w700,
-                        color: Colors.white,
-                      ),
-                    ),
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: primaryColor,
-                      padding: const EdgeInsets.symmetric(vertical: 10),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 }

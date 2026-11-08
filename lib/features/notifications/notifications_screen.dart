@@ -1,3 +1,4 @@
+import '../../core/services/safe_log.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -106,12 +107,12 @@ enum _FilterCategory {
         return lang == 'ar' ? 'الكل' : (lang == 'fr' ? 'Tous' : 'All');
       case _FilterCategory.vaccines:
         return lang == 'ar'
-            ? '🩺 اللقاحات والصحة'
-            : (lang == 'fr' ? '🩺 Santé & Vaccins' : '🩺 Health & Vaccines');
+            ? ' اللقاحات والصحة'
+            : (lang == 'fr' ? ' Santé & Vaccins' : ' Health & Vaccines');
       case _FilterCategory.memories:
         return lang == 'ar'
-            ? '👑 الألبوم والذكريات'
-            : (lang == 'fr' ? '👑 Livre & Souvenirs' : '👑 Albums & Memories');
+            ? ' الألبوم والذكريات'
+            : (lang == 'fr' ? ' Livre & Souvenirs' : ' Albums & Memories');
       case _FilterCategory.milestones:
         return lang == 'ar'
             ? '⭐ معالم النمو والنصائح'
@@ -469,10 +470,10 @@ class _NotificationsScreenState extends ConsumerState<NotificationsScreen> {
                                   await FcmService.instance
                                       .sendTestLocalNotification(
                                     title: lang == 'ar'
-                                        ? 'تنبيه تجريبي: صحة طفلكِ أولاً 🩺'
+                                        ? 'تنبيه تجريبي: صحة طفلكِ أولاً '
                                         : (lang == 'fr'
-                                            ? 'Alerte test : Santé de bébé 🩺'
-                                            : 'Test Alert: Baby\'s Health First 🩺'),
+                                            ? 'Alerte test : Santé de bébé '
+                                            : 'Test Alert: Baby\'s Health First '),
                                     body: lang == 'ar'
                                         ? 'تم تأكيد وصول الإشعار السحابي بنجاح إلى هاتفكِ!'
                                         : (lang == 'fr'
@@ -1173,10 +1174,10 @@ class _EmptyNotificationsView extends StatelessWidget {
             const SizedBox(height: 16),
             Text(
               lang == 'ar'
-                  ? 'صندوق التنبيهات هادئ ومريح ✨'
+                  ? 'صندوق التنبيهات هادئ ومريح '
                   : (lang == 'fr'
-                      ? 'Aucune notification ✨'
-                      : 'No notifications here ✨'),
+                      ? 'Aucune notification '
+                      : 'No notifications here '),
               style: TextStyle(
                 fontSize: 16,
                 fontWeight: FontWeight.w800,
@@ -1368,7 +1369,7 @@ class _NotificationSettingsSheet extends ConsumerWidget {
                   await const MethodChannel('luckymam/settings')
                       .invokeMethod('openNotificationSettings');
                 } catch (e) {
-                  debugPrint('openNotificationSettings: $e');
+                  safeDebugPrint('openNotificationSettings: ${e.runtimeType}');
                 }
               },
               icon: const Icon(Icons.settings_outlined, size: 18),

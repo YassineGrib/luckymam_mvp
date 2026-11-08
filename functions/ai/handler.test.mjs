@@ -149,7 +149,7 @@ test('handler - tool loop executes functionCall and returns cards', async () => 
     deps: {
       apiKey: 'k',
       makeTools: () => fakeTools,
-      generate: async () => {
+      generate: async ({ contents }) => {
         turns++;
         if (turns === 1) {
           return {
@@ -157,6 +157,10 @@ test('handler - tool loop executes functionCall and returns cards', async () => 
             parts: [{ functionCall: { name: 'get_weather', args: {} } }],
           };
         }
+        const toolResponse = contents.at(-1);
+        assert.equal(toolResponse.role, 'user', 'Gemini requires tool responses in user-role content');
+        assert.equal(toolResponse.parts[0].functionResponse.name, 'get_weather');
+        assert.equal(toolResponse.parts[0].functionResponse.response.tempC, 22);
         return {
           role: 'model',
           parts: [{ text: 'Il fait 22°C et grand soleil !' }],

@@ -1341,10 +1341,7 @@ class _CapsuleCardState extends State<_CapsuleCard> {
                         child: Row(
                           mainAxisSize: MainAxisSize.min,
                           children: [
-                            Text(
-                              capsule.emotion.emoji,
-                              style: const TextStyle(fontSize: 11),
-                            ),
+                            Icon(capsule.emotion.icon, size: 14, color: capsule.emotion.color),
                             const SizedBox(width: 3.5),
                             Text(
                               capsule.emotion.getLabel(lang),
@@ -1374,10 +1371,7 @@ class _CapsuleCardState extends State<_CapsuleCard> {
                             children: [
                               ...capsule.secondaryEmotions.take(2).map((sec) => Padding(
                                     padding: const EdgeInsets.symmetric(horizontal: 1),
-                                    child: Text(
-                                      sec.emoji,
-                                      style: const TextStyle(fontSize: 10.5),
-                                    ),
+                                    child: Icon(sec.icon, size: 13, color: sec.color),
                                   )),
                               if (capsule.secondaryEmotions.length > 2)
                                 Text(

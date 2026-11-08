@@ -788,7 +788,6 @@ class _EditChildScreenState extends ConsumerState<EditChildScreen> {
                 child: _GenderOptionCard(
                   title: lang == 'ar' ? 'أمير (ولد)' : (lang == 'en' ? 'Prince (Boy)' : 'Garçon'),
                   icon: Icons.male_rounded,
-                  badgeText: '🌟',
                   isSelected: _gender == ChildGender.boy,
                   activeColor: const Color(0xFF00B0FF),
                   isDark: isDark,
@@ -803,7 +802,6 @@ class _EditChildScreenState extends ConsumerState<EditChildScreen> {
                 child: _GenderOptionCard(
                   title: lang == 'ar' ? 'أميرة (بنت)' : (lang == 'en' ? 'Princess (Girl)' : 'Fille'),
                   icon: Icons.female_rounded,
-                  badgeText: '👑',
                   isSelected: _gender == ChildGender.girl,
                   activeColor: const Color(0xFFFF5252),
                   isDark: isDark,
@@ -1299,7 +1297,6 @@ class _GenderOptionCard extends StatelessWidget {
   const _GenderOptionCard({
     required this.title,
     required this.icon,
-    required this.badgeText,
     required this.isSelected,
     required this.activeColor,
     required this.isDark,
@@ -1308,7 +1305,6 @@ class _GenderOptionCard extends StatelessWidget {
 
   final String title;
   final IconData icon;
-  final String badgeText;
   final bool isSelected;
   final Color activeColor;
   final bool isDark;

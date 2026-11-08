@@ -1,0 +1,127 @@
+{
+  "status": "success",
+  "result": [
+    {
+      "platform": "gcfv2",
+      "id": "adminSsr",
+      "project": "luckymam-app-dv",
+      "region": "us-central1",
+      "httpsTrigger": {},
+      "entryPoint": "adminSsr",
+      "runtime": "nodejs20",
+      "source": {
+        "storageSource": {
+          "bucket": "gcf-v2-sources-834179717761-us-central1",
+          "object": "adminSsr/function-source.zip",
+          "generation": "1791547137680770"
+        }
+      },
+      "ingressSettings": "ALLOW_ALL",
+      "environmentVariables": {
+        "FIREBASE_CONFIG": "{\"projectId\":\"luckymam-app-dv\",\"storageBucket\":\"luckymam-app-dv.firebasestorage.app\"}",
+        "GCLOUD_PROJECT": "luckymam-app-dv",
+        "EVENTARC_CLOUD_EVENT_SOURCE": "projects/luckymam-app-dv/locations/us-central1/services/adminSsr",
+        "FUNCTION_TARGET": "adminSsr",
+        "LOG_EXECUTION_ID": "true",
+        "FUNCTION_REGION": "us-central1"
+      },
+      "timeoutSeconds": 60,
+      "uri": "https://us-central1-luckymam-app-dv.cloudfunctions.net/adminSsr",
+      "serviceAccount": "834179717761-compute@developer.gserviceaccount.com",
+      "availableMemoryMb": 512,
+      "cpu": 1,
+      "maxInstances": 10,
+      "concurrency": 80,
+      "labels": {
+        "deployment-tool": "cli-firebase",
+        "firebase-functions-codebase": "admin",
+        "firebase-functions-hash": "6f57c8bdcdb041c60e41f4f25216da0f966f23ee"
+      },
+      "runServiceId": "adminssr",
+      "codebase": "admin",
+      "hash": "6f57c8bdcdb041c60e41f4f25216da0f966f23ee",
+      "state": "ACTIVE"
+    },
+    {
+      "platform": "gcfv2",
+      "id": "chargilyWebhook",
+      "project": "luckymam-app-dv",
+      "region": "us-central1",
+      "httpsTrigger": {},
+      "entryPoint": "chargilyWebhook",
+      "runtime": "nodejs20",
+      "source": {
+        "storageSource": {
+          "bucket": "gcf-v2-sources-834179717761-us-central1",
+          "object": "chargilyWebhook/function-source.zip",
+          "generation": "1791547137663529"
+        }
+      },
+      "ingressSettings": "ALLOW_ALL",
+      "environmentVariables": {
+        "FIREBASE_CONFIG": "{\"projectId\":\"luckymam-app-dv\",\"storageBucket\":\"luckymam-app-dv.firebasestorage.app\"}",
+        "GCLOUD_PROJECT": "luckymam-app-dv",
+        "EVENTARC_CLOUD_EVENT_SOURCE": "projects/luckymam-app-dv/locations/us-central1/services/chargilyWebhook",
+        "FUNCTION_REGION": "us-central1",
+        "FUNCTION_TARGET": "chargilyWebhook",
+        "LOG_EXECUTION_ID": "true"
+      },
+      "timeoutSeconds": 60,
+      "uri": "https://us-central1-luckymam-app-dv.cloudfunctions.net/chargilyWebhook",
+      "serviceAccount": "834179717761-compute@developer.gserviceaccount.com",
+      "availableMemoryMb": 256,
+      "cpu": 1,
+      "concurrency": 80,
+      "labels": {
+        "deployment-tool": "cli-firebase",
+        "firebase-functions-codebase": "admin",
+        "firebase-functions-hash": "6f57c8bdcdb041c60e41f4f25216da0f966f23ee"
+      },
+      "runServiceId": "chargilywebhook",
+      "codebase": "admin",
+      "hash": "6f57c8bdcdb041c60e41f4f25216da0f966f23ee",
+      "state": "ACTIVE"
+    },
+    {
+      "platform": "gcfv2",
+      "id": "createChargilyCheckout",
+      "project": "luckymam-app-dv",
+      "region": "us-central1",
+      "httpsTrigger": {},
+      "entryPoint": "createChargilyCheckout",
+      "runtime": "nodejs20",
+      "source": {
+        "storageSource": {
+          "bucket": "gcf-v2-sources-834179717761-us-central1",
+          "object": "createChargilyCheckout/function-source.zip",
+          "generation": "1791547191356647"
+        }
+      },
+      "ingressSettings": "ALLOW_ALL",
+      "environmentVariables": {
+        "FIREBASE_CONFIG": "{\"projectId\":\"luckymam-app-dv\",\"storageBucket\":\"luckymam-app-dv.firebasestorage.app\"}",
+        "GCLOUD_PROJECT": "luckymam-app-dv",
+        "EVENTARC_CLOUD_EVENT_SOURCE": "projects/luckymam-app-dv/locations/us-central1/services/createChargilyCheckout",
+        "FUNCTION_REGION": "us-central1",
+        "FUNCTION_TARGET": "createChargilyCheckout",
+        "LOG_EXECUTION_ID": "true",
+        "FUNCTION_SIGNATURE_TYPE": "http"
+      },
+      "timeoutSeconds": 60,
+      "uri": "https://us-central1-luckymam-app-dv.cloudfunctions.net/createChargilyCheckout",
+      "serviceAccount": "834179717761-compute@developer.gserviceaccount.com",
+      "availableMemoryMb": 256,
+      "cpu": 1,
+      "concurrency": 80,
+      "labels": {
+        "deployment-tool": "cli-firebase",
+        "firebase-functions-codebase": "admin",
+        "firebase-functions-hash": "6f57c8bdcdb041c60e41f4f25216da0f966f23ee"
+      },
+      "runServiceId": "createchargilycheckout",
+      "codebase": "admin",
+      "hash": "6f57c8bdcdb041c60e41f4f25216da0f966f23ee",
+      "state": "ACTIVE"
+    }
+  ]
+}

@@ -1,0 +1,3697 @@
+diff --git a/lib/features/capsules/screens/create_capsule_screen.dart b/lib/features/capsules/screens/create_capsule_screen.dart
+index b5aeb9a..e3bb810 100644
+--- a/lib/features/capsules/screens/create_capsule_screen.dart
++++ b/lib/features/capsules/screens/create_capsule_screen.dart
+@@ -2,7 +2,6 @@ import 'dart:io';
+ 
+ import 'package:cached_network_image/cached_network_image.dart';
+ import 'package:flutter/material.dart';
+-import 'package:flutter/services.dart';
+ import 'package:flutter_riverpod/flutter_riverpod.dart';
+ import 'package:image_picker/image_picker.dart';
+ import 'package:intl/intl.dart';
+@@ -114,7 +113,7 @@ class _CreateCapsuleScreenState extends ConsumerState<CreateCapsuleScreen> {
+   @override
+   void dispose() {
+     _tagController.dispose();
+-    if (_recordedAudio != null && !_isAudioValidated) {
++    if (_recordedAudio != null && !_isLoading) {
+       try {
+         if (_recordedAudio!.existsSync()) {
+           _recordedAudio!.deleteSync();
+@@ -169,7 +168,13 @@ class _CreateCapsuleScreenState extends ConsumerState<CreateCapsuleScreen> {
+                   const SizedBox(height: 18),
+ 
+                   // 📸 Section 1: Photo Hero Card
+-                  _buildPhotoSection(context, isDark, primary, textColor, secondaryText),
++                  _buildPhotoSection(
++                    context,
++                    isDark,
++                    primary,
++                    textColor,
++                    secondaryText,
++                  ),
+                   const SizedBox(height: AppSpacing.md),
+ 
+                   // 📂 Section 2: Essential Info (Category & Capture Date)
+@@ -196,7 +201,9 @@ class _CreateCapsuleScreenState extends ConsumerState<CreateCapsuleScreen> {
+                         padding: const EdgeInsets.symmetric(vertical: 12),
+                         child: Divider(
+                           height: 1,
+-                          color: isDark ? Colors.white10 : const Color(0xFFF0EBF4),
++                          color: isDark
++                              ? Colors.white10
++                              : const Color(0xFFF0EBF4),
+                         ),
+                       ),
+                       _buildDateSection(
+@@ -239,21 +246,20 @@ class _CreateCapsuleScreenState extends ConsumerState<CreateCapsuleScreen> {
+                         padding: const EdgeInsets.symmetric(vertical: 12),
+                         child: Divider(
+                           height: 1,
+-                          color: isDark ? Colors.white10 : const Color(0xFFEFEAF6),
++                          color: isDark
++                              ? Colors.white10
++                              : const Color(0xFFEFEAF6),
+                         ),
+                       ),
+                       EmotionPicker(
+-                        selectedEmotion: _selectedEmotion,
+-                        secondaryEmotions: _secondaryEmotions,
+-                        onEmotionSelected: (emotion) {
+-                          setState(() {
+-                            _selectedEmotion = emotion;
+-                            _secondaryEmotions.remove(emotion);
+-                          });
+-                        },
+-                        onSecondaryEmotionsChanged: (emotions) {
+-                          setState(() => _secondaryEmotions = emotions);
+-                        },
++                        selectedEmotions: [
++                          ?_selectedEmotion,
++                          ..._secondaryEmotions,
++                        ],
++                        onChanged: (emotions) => setState(() {
++                          _selectedEmotion = emotions.firstOrNull;
++                          _secondaryEmotions = emotions.skip(1).toList();
++                        }),
+                       ),
+                     ],
+                   ),
+@@ -291,11 +297,17 @@ class _CreateCapsuleScreenState extends ConsumerState<CreateCapsuleScreen> {
+                               color: primary.withValues(alpha: 0.12),
+                               borderRadius: BorderRadius.circular(8),
+                             ),
+-                            child: Icon(Icons.mic_rounded, size: 16, color: primary),
++                            child: Icon(
++                              Icons.mic_rounded,
++                              size: 16,
++                              color: primary,
++                            ),
+                           ),
+                           const SizedBox(width: 8),
+                           Text(
+-                            l10n.capsuleVoiceMessageOptional.replaceAll('🎤', '').trim(),
++                            l10n.capsuleVoiceMessageOptional
++                                .replaceAll('🎤', '')
++                                .trim(),
+                             style: AppTypography.fromContext(
+                               context,
+                               fontSize: 14,
+@@ -310,7 +322,8 @@ class _CreateCapsuleScreenState extends ConsumerState<CreateCapsuleScreen> {
+                           (_existingAudioUrl == null || _removeAudio))
+                         AudioRecorderWidget(
+                           onRecordingComplete: (file, duration) async {
+-                            if (_recordedAudio != null && _recordedAudio!.path != file.path) {
++                            if (_recordedAudio != null &&
++                                _recordedAudio!.path != file.path) {
+                               try {
+                                 if (await _recordedAudio!.exists()) {
+                                   await _recordedAudio!.delete();
+@@ -321,7 +334,7 @@ class _CreateCapsuleScreenState extends ConsumerState<CreateCapsuleScreen> {
+                               _recordedAudio = file;
+                               _audioDuration = duration;
+                               _removeAudio = false;
+-                              _isAudioValidated = false;
++                              _isAudioValidated = true;
+                             });
+                           },
+                           onError: (error) {
+@@ -340,19 +353,6 @@ class _CreateCapsuleScreenState extends ConsumerState<CreateCapsuleScreen> {
+                           audioUrl: _existingAudioUrl,
+                           duration: _audioDuration ?? 0,
+                           isValidated: _isAudioValidated,
+-                          onValidate: () {
+-                            setState(() {
+-                              _isAudioValidated = true;
+-                            });
+-                            HapticFeedback.lightImpact();
+-                            ScaffoldMessenger.of(context).showSnackBar(
+-                              SnackBar(
+-                                content: Text(context.l10n.capsuleAudioValidatedSuccess),
+-                                backgroundColor: AppColors.success,
+-                                duration: const Duration(seconds: 1),
+-                              ),
+-                            );
+-                          },
+                           onReRecord: () async {
+                             if (_recordedAudio != null) {
+                               try {
+@@ -392,7 +392,9 @@ class _CreateCapsuleScreenState extends ConsumerState<CreateCapsuleScreen> {
+                         padding: const EdgeInsets.symmetric(vertical: 12),
+                         child: Divider(
+                           height: 1,
+-                          color: isDark ? Colors.white10 : const Color(0xFFEBF2F0),
++                          color: isDark
++                              ? Colors.white10
++                              : const Color(0xFFEBF2F0),
+                         ),
+                       ),
+                       _buildTagsSection(
+@@ -421,11 +423,12 @@ class _CreateCapsuleScreenState extends ConsumerState<CreateCapsuleScreen> {
+   }
+ 
+   bool get _canSave {
+-    final hasPhoto = _selectedPhoto != null ||
++    final hasPhoto =
++        _selectedPhoto != null ||
+         (_existingPhotoUrl != null && _existingPhotoUrl!.isNotEmpty);
+     return hasPhoto &&
+         (_selectedChild != null || _withMother) &&
+-        _selectedEmotion != null &&
++        {?_selectedEmotion, ..._secondaryEmotions}.length >= 3 &&
+         _selectedCategory != null &&
+         !_isLoading;
+   }
+@@ -496,8 +499,10 @@ class _CreateCapsuleScreenState extends ConsumerState<CreateCapsuleScreen> {
+               Text(
+                 widget.existingCapsule != null
+                     ? (lang == 'ar'
+-                        ? 'تعديل الذكرى'
+-                        : (lang == 'en' ? 'Edit Memory' : 'Modifier le souvenir'))
++                          ? 'تعديل الذكرى'
++                          : (lang == 'en'
++                                ? 'Edit Memory'
++                                : 'Modifier le souvenir'))
+                     : l10n.capsuleNewTitle,
+                 style: AppTypography.fromContext(
+                   context,
+@@ -511,10 +516,10 @@ class _CreateCapsuleScreenState extends ConsumerState<CreateCapsuleScreen> {
+               Text(
+                 widget.existingCapsule != null
+                     ? (lang == 'ar'
+-                        ? 'تحديث بيانات ومحتوى الكبسولة'
+-                        : (lang == 'en'
+-                            ? 'Update capsule media and information'
+-                            : 'Mettre à jour les informations et médias'))
++                          ? 'تحديث بيانات ومحتوى الكبسولة'
++                          : (lang == 'en'
++                                ? 'Update capsule media and information'
++                                : 'Mettre à jour les informations et médias'))
+                     : l10n.milestone_capture_this_moment,
+                 maxLines: 1,
+                 overflow: TextOverflow.ellipsis,
+@@ -541,9 +546,10 @@ class _CreateCapsuleScreenState extends ConsumerState<CreateCapsuleScreen> {
+     Color? borderColor,
+     IconData? watermarkIcon,
+   }) {
+-    final bg = backgroundColor ??
+-        (isDark ? const Color(0xFF221F28) : Colors.white);
+-    final border = borderColor ??
++    final bg =
++        backgroundColor ?? (isDark ? const Color(0xFF221F28) : Colors.white);
++    final border =
++        borderColor ??
+         (isDark ? AppColors.dividerDark : const Color(0xFFECEBF0));
+ 
+     return Container(
+@@ -608,13 +614,13 @@ class _CreateCapsuleScreenState extends ConsumerState<CreateCapsuleScreen> {
+     final sectionTitle = isArabic
+         ? 'المعلم المرتبط في خط الحياة (Timeline)'
+         : (lang == 'en'
+-            ? 'Linked Timeline Milestone'
+-            : 'Jalon associé (Timeline)');
++              ? 'Linked Timeline Milestone'
++              : 'Jalon associé (Timeline)');
+     final sectionSubtitle = isArabic
+         ? 'لتوثيق الكبسولة فوراً ضمن محطات مسار نمو الطفل'
+         : (lang == 'en'
+-            ? 'To display this capsule directly on child life timeline'
+-            : 'Pour afficher ce souvenir directement sur la Timeline');
++              ? 'To display this capsule directly on child life timeline'
++              : 'Pour afficher ce souvenir directement sur la Timeline');
+ 
+     return _buildSectionCard(
+       context: context,
+@@ -676,9 +682,7 @@ class _CreateCapsuleScreenState extends ConsumerState<CreateCapsuleScreen> {
+           Container(
+             padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+             decoration: BoxDecoration(
+-              color: isDark
+-                  ? const Color(0xFF131D24)
+-                  : const Color(0xFFEBF6FA),
++              color: isDark ? const Color(0xFF131D24) : const Color(0xFFEBF6FA),
+               borderRadius: BorderRadius.circular(14),
+               border: Border.all(
+                 color: const Color(0xFF0EA5E9).withValues(alpha: 0.4),
+@@ -725,8 +729,9 @@ class _CreateCapsuleScreenState extends ConsumerState<CreateCapsuleScreen> {
+                               vertical: 2,
+                             ),
+                             decoration: BoxDecoration(
+-                              color: currentMilestone.phase.color
+-                                  .withValues(alpha: 0.15),
++                              color: currentMilestone.phase.color.withValues(
++                                alpha: 0.15,
++                              ),
+                               borderRadius: BorderRadius.circular(6),
+                             ),
+                             child: Text(
+@@ -811,8 +816,8 @@ class _CreateCapsuleScreenState extends ConsumerState<CreateCapsuleScreen> {
+                       isArabic
+                           ? 'اختيار معلم زمني (Timeline) لهذا التوثيق'
+                           : (lang == 'en'
+-                              ? 'Choose a timeline milestone for this capsule'
+-                              : 'Choisir un jalon de la Timeline pour ce souvenir'),
++                                ? 'Choose a timeline milestone for this capsule'
++                                : 'Choisir un jalon de la Timeline pour ce souvenir'),
+                       style: AppTypography.fromContext(
+                         context,
+                         fontSize: 13,
+@@ -855,7 +860,9 @@ class _CreateCapsuleScreenState extends ConsumerState<CreateCapsuleScreen> {
+       ),
+       builder: (bottomSheetContext) {
+         // Filter milestones: keep those with actionType capsule/mixed
+-        final milestones = allMilestones.where((m) => m.canHaveCapsule).toList();
++        final milestones = allMilestones
++            .where((m) => m.canHaveCapsule)
++            .toList();
+ 
+         return DraggableScrollableSheet(
+           initialChildSize: 0.65,
+@@ -905,7 +912,10 @@ class _CreateCapsuleScreenState extends ConsumerState<CreateCapsuleScreen> {
+                 Expanded(
+                   child: ListView.separated(
+                     controller: scrollController,
+-                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
++                    padding: const EdgeInsets.symmetric(
++                      horizontal: 16,
++                      vertical: 12,
++                    ),
+                     itemCount: milestones.length + 1,
+                     separatorBuilder: (_, _) => const SizedBox(height: 8),
+                     itemBuilder: (context, index) {
+@@ -918,20 +928,31 @@ class _CreateCapsuleScreenState extends ConsumerState<CreateCapsuleScreen> {
+                           },
+                           borderRadius: BorderRadius.circular(14),
+                           child: Container(
+-                            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
++                            padding: const EdgeInsets.symmetric(
++                              horizontal: 14,
++                              vertical: 12,
++                            ),
+                             decoration: BoxDecoration(
+                               color: isNoneSelected
+                                   ? primary.withValues(alpha: 0.12)
+-                                  : (isDark ? const Color(0xFF221F28) : const Color(0xFFF7F5FA)),
++                                  : (isDark
++                                        ? const Color(0xFF221F28)
++                                        : const Color(0xFFF7F5FA)),
+                               borderRadius: BorderRadius.circular(14),
+                               border: Border.all(
+-                                color: isNoneSelected ? primary : Colors.transparent,
++                                color: isNoneSelected
++                                    ? primary
++                                    : Colors.transparent,
+                                 width: 1.2,
+                               ),
+                             ),
+                             child: Row(
+                               children: [
+-                                Icon(Icons.bookmark_border_rounded, size: 20, color: secondaryText),
++                                Icon(
++                                  Icons.bookmark_border_rounded,
++                                  size: 20,
++                                  color: secondaryText,
++                                ),
+                                 const SizedBox(width: 10),
+                                 Expanded(
+                                   child: Text(
+@@ -939,14 +960,22 @@ class _CreateCapsuleScreenState extends ConsumerState<CreateCapsuleScreen> {
+                                         ? 'بدون معلم محدد (ذكرى حرة)'
+                                         : 'Sans jalon spécifique (Souvenir libre)',
+                                     style: TextStyle(
+-                                      fontWeight: isNoneSelected ? FontWeight.w700 : FontWeight.w500,
+-                                      color: isNoneSelected ? primary : textColor,
++                                      fontWeight: isNoneSelected
++                                          ? FontWeight.w700
++                                          : FontWeight.w500,
++                                      color: isNoneSelected
++                                          ? primary
++                                          : textColor,
+                                       fontSize: 13.5,
+                                     ),
+                                   ),
+                                 ),
+                                 if (isNoneSelected)
+-                                  Icon(Icons.check_circle_rounded, size: 18, color: primary),
++                                  Icon(
++                                    Icons.check_circle_rounded,
++                                    size: 18,
++                                    color: primary,
++                                  ),
+                               ],
+                             ),
+                           ),
+@@ -972,14 +1001,23 @@ class _CreateCapsuleScreenState extends ConsumerState<CreateCapsuleScreen> {
+                         },
+                         borderRadius: BorderRadius.circular(14),
+                         child: Container(
+-                          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
++                          padding: const EdgeInsets.symmetric(
++                            horizontal: 14,
++                            vertical: 12,
++                          ),
+                           decoration: BoxDecoration(
+                             color: isSelected
+-                                ? const Color(0xFF0EA5E9).withValues(alpha: 0.14)
+-                                : (isDark ? const Color(0xFF221F28) : const Color(0xFFF7F5FA)),
++                                ? const Color(
++                                    0xFF0EA5E9,
++                                  ).withValues(alpha: 0.14)
++                                : (isDark
++                                      ? const Color(0xFF221F28)
++                                      : const Color(0xFFF7F5FA)),
+                             borderRadius: BorderRadius.circular(14),
+                             border: Border.all(
+-                              color: isSelected ? const Color(0xFF0EA5E9) : Colors.transparent,
++                              color: isSelected
++                                  ? const Color(0xFF0EA5E9)
++                                  : Colors.transparent,
+                               width: 1.2,
+                             ),
+                           ),
+@@ -989,10 +1027,16 @@ class _CreateCapsuleScreenState extends ConsumerState<CreateCapsuleScreen> {
+                                 width: 34,
+                                 height: 34,
+                                 decoration: BoxDecoration(
+-                                  color: m.category.color.withValues(alpha: 0.15),
++                                  color: m.category.color.withValues(
++                                    alpha: 0.15,
++                                  ),
+                                   borderRadius: BorderRadius.circular(10),
+                                 ),
+-                                child: Icon(m.category.icon, size: 18, color: m.category.color),
++                                child: Icon(
++                                  m.category.icon,
++                                  size: 18,
++                                  color: m.category.color,
++                                ),
+                               ),
+                               const SizedBox(width: 10),
+                               Expanded(
+@@ -1002,8 +1046,12 @@ class _CreateCapsuleScreenState extends ConsumerState<CreateCapsuleScreen> {
+                                     Text(
+                                       m.getTitle(lang),
+                                       style: TextStyle(
+-                                        fontWeight: isSelected ? FontWeight.w700 : FontWeight.w600,
+-                                        color: isSelected ? const Color(0xFF0EA5E9) : textColor,
++                                        fontWeight: isSelected
++                                            ? FontWeight.w700
++                                            : FontWeight.w600,
++                                        color: isSelected
++                                            ? const Color(0xFF0EA5E9)
++                                            : textColor,
+                                         fontSize: 13.5,
+                                       ),
+                                     ),
+@@ -1019,7 +1067,11 @@ class _CreateCapsuleScreenState extends ConsumerState<CreateCapsuleScreen> {
+                                 ),
+                               ),
+                               if (isSelected)
+-                                const Icon(Icons.check_circle_rounded, size: 18, color: Color(0xFF0EA5E9)),
++                                const Icon(
++                                  Icons.check_circle_rounded,
++                                  size: 18,
++                                  color: Color(0xFF0EA5E9),
++                                ),
+                             ],
+                           ),
+                         ),
+@@ -1063,10 +1115,7 @@ class _CreateCapsuleScreenState extends ConsumerState<CreateCapsuleScreen> {
+           child: Stack(
+             fit: StackFit.expand,
+             children: [
+-              Image.file(
+-                _selectedPhoto!,
+-                fit: BoxFit.cover,
+-              ),
++              Image.file(_selectedPhoto!, fit: BoxFit.cover),
+               // Top Action Overlay Pill Buttons
+               PositionedDirectional(
+                 top: 10,
+@@ -1136,9 +1185,7 @@ class _CreateCapsuleScreenState extends ConsumerState<CreateCapsuleScreen> {
+                 fit: BoxFit.cover,
+                 placeholder: (context, url) => Container(
+                   color: isDark ? Colors.white10 : Colors.black12,
+-                  child: const Center(
+-                    child: CircularProgressIndicator(),
+-                  ),
++                  child: const Center(child: CircularProgressIndicator()),
+                 ),
+                 errorWidget: (context, url, error) => Container(
+                   color: isDark ? Colors.white10 : Colors.black12,
+@@ -1370,7 +1417,9 @@ class _CreateCapsuleScreenState extends ConsumerState<CreateCapsuleScreen> {
+                             : const Color(0xFFF7F5FA)),
+                   borderRadius: BorderRadius.circular(14),
+                   border: Border.all(
+-                    color: isSelected ? catColor : (isDark ? Colors.white10 : const Color(0xFFECEAEF)),
++                    color: isSelected
++                        ? catColor
++                        : (isDark ? Colors.white10 : const Color(0xFFECEAEF)),
+                     width: isSelected ? 1.8 : 0.8,
+                   ),
+                   boxShadow: isSelected
+@@ -1478,7 +1527,9 @@ class _CreateCapsuleScreenState extends ConsumerState<CreateCapsuleScreen> {
+                     style: AppTypography.fromContext(
+                       context,
+                       fontSize: 13.5,
+-                      fontWeight: _capturedAt != null ? FontWeight.w600 : FontWeight.w400,
++                      fontWeight: _capturedAt != null
++                          ? FontWeight.w600
++                          : FontWeight.w400,
+                       color: _capturedAt != null ? textColor : secondaryText,
+                     ),
+                   ),
+@@ -1523,7 +1574,8 @@ class _CreateCapsuleScreenState extends ConsumerState<CreateCapsuleScreen> {
+       if (children.isEmpty) {
+         _withMother = true;
+       } else {
+-        final preferredChildId = widget.existingCapsule?.childId ??
++        final preferredChildId =
++            widget.existingCapsule?.childId ??
+             (widget.existingCapsule?.childIds.isNotEmpty == true
+                 ? widget.existingCapsule!.childIds.first
+                 : widget.preselectedChildId);
+@@ -1577,7 +1629,9 @@ class _CreateCapsuleScreenState extends ConsumerState<CreateCapsuleScreen> {
+                 child: GestureDetector(
+                   onTap: () => setState(() {
+                     _withMother = !_withMother;
+-                    if (!_withMother && _selectedChild == null && children.isNotEmpty) {
++                    if (!_withMother &&
++                        _selectedChild == null &&
++                        children.isNotEmpty) {
+                       _selectedChild = children.first;
+                     }
+                   }),
+@@ -1594,7 +1648,9 @@ class _CreateCapsuleScreenState extends ConsumerState<CreateCapsuleScreen> {
+                       border: Border.all(
+                         color: _withMother
+                             ? primary
+-                            : (isDark ? Colors.white12 : const Color(0xFFE6E2EC)),
++                            : (isDark
++                                  ? Colors.white12
++                                  : const Color(0xFFE6E2EC)),
+                         width: _withMother ? 1.8 : 1.0,
+                       ),
+                       boxShadow: _withMother
+@@ -1615,7 +1671,9 @@ class _CreateCapsuleScreenState extends ConsumerState<CreateCapsuleScreen> {
+                           height: 36,
+                           decoration: BoxDecoration(
+                             shape: BoxShape.circle,
+-                            color: _withMother ? primary : AppColors.magentaPink.withValues(alpha: 0.2),
++                            color: _withMother
++                                ? primary
++                                : AppColors.magentaPink.withValues(alpha: 0.2),
+                             border: Border.all(
+                               color: _withMother ? primary : Colors.white,
+                               width: 1.5,
+@@ -1625,7 +1683,9 @@ class _CreateCapsuleScreenState extends ConsumerState<CreateCapsuleScreen> {
+                             child: Icon(
+                               Icons.favorite_rounded,
+                               size: 18,
+-                              color: _withMother ? Colors.white : AppColors.magentaPink,
++                              color: _withMother
++                                  ? Colors.white
++                                  : AppColors.magentaPink,
+                             ),
+                           ),
+                         ),
+@@ -1658,7 +1718,8 @@ class _CreateCapsuleScreenState extends ConsumerState<CreateCapsuleScreen> {
+               // 2. Children Chips
+               ...children.map((child) {
+                 final isSelected = _selectedChild?.id == child.id;
+-                final hasPhoto = child.photoUrl != null && child.photoUrl!.isNotEmpty;
++                final hasPhoto =
++                    child.photoUrl != null && child.photoUrl!.isNotEmpty;
+ 
+                 return Padding(
+                   padding: const EdgeInsetsDirectional.only(end: 10),
+@@ -1674,7 +1735,12 @@ class _CreateCapsuleScreenState extends ConsumerState<CreateCapsuleScreen> {
+                     }),
+                     child: AnimatedContainer(
+                       duration: const Duration(milliseconds: 200),
+-                      padding: const EdgeInsetsDirectional.fromSTEB(6, 5, 14, 5),
++                      padding: const EdgeInsetsDirectional.fromSTEB(
++                        6,
++                        5,
++                        14,
++                        5,
++                      ),
+                       decoration: BoxDecoration(
+                         color: isSelected
+                             ? primary.withValues(alpha: isDark ? 0.22 : 0.12)
+@@ -1685,7 +1751,9 @@ class _CreateCapsuleScreenState extends ConsumerState<CreateCapsuleScreen> {
+                         border: Border.all(
+                           color: isSelected
+                               ? primary
+-                              : (isDark ? Colors.white12 : const Color(0xFFE6E2EC)),
++                              : (isDark
++                                    ? Colors.white12
++                                    : const Color(0xFFE6E2EC)),
+                           width: isSelected ? 1.8 : 1.0,
+                         ),
+                         boxShadow: isSelected
+@@ -1723,12 +1791,13 @@ class _CreateCapsuleScreenState extends ConsumerState<CreateCapsuleScreen> {
+                                   ? Image.network(
+                                       child.photoUrl!,
+                                       fit: BoxFit.cover,
+-                                      errorBuilder: (_, _, _) => _buildChildInitials(
+-                                        child,
+-                                        isSelected,
+-                                        primary,
+-                                        secondaryText,
+-                                      ),
++                                      errorBuilder: (_, _, _) =>
++                                          _buildChildInitials(
++                                            child,
++                                            isSelected,
++                                            primary,
++                                            secondaryText,
++                                          ),
+                                     )
+                                   : _buildChildInitials(
+                                       child,
+@@ -1779,7 +1848,9 @@ class _CreateCapsuleScreenState extends ConsumerState<CreateCapsuleScreen> {
+                   child: Container(
+                     padding: const EdgeInsetsDirectional.fromSTEB(8, 6, 12, 6),
+                     decoration: BoxDecoration(
+-                      color: isDark ? Colors.white.withValues(alpha: 0.05) : Colors.black.withValues(alpha: 0.04),
++                      color: isDark
++                          ? Colors.white.withValues(alpha: 0.05)
++                          : Colors.black.withValues(alpha: 0.04),
+                       borderRadius: BorderRadius.circular(18),
+                       border: Border.all(
+                         color: isDark ? Colors.white12 : Colors.black12,
+@@ -1796,7 +1867,11 @@ class _CreateCapsuleScreenState extends ConsumerState<CreateCapsuleScreen> {
+                             shape: BoxShape.circle,
+                             color: primary.withValues(alpha: 0.15),
+                           ),
+-                          child: Icon(Icons.add_rounded, size: 18, color: primary),
++                          child: Icon(
++                            Icons.add_rounded,
++                            size: 18,
++                            color: primary,
++                          ),
+                         ),
+                         const SizedBox(width: 6),
+                         Text(
+@@ -1869,7 +1944,11 @@ class _CreateCapsuleScreenState extends ConsumerState<CreateCapsuleScreen> {
+         const SizedBox(height: AppSpacing.sm),
+         TextField(
+           controller: _tagController,
+-          style: AppTypography.fromContext(context, fontSize: 13.5, color: textColor),
++          style: AppTypography.fromContext(
++            context,
++            fontSize: 13.5,
++            color: textColor,
++          ),
+           decoration: InputDecoration(
+             hintText: l10n.capsuleAddTagHint,
+             hintStyle: TextStyle(color: secondaryText, fontSize: 13),
+@@ -1877,7 +1956,10 @@ class _CreateCapsuleScreenState extends ConsumerState<CreateCapsuleScreen> {
+             fillColor: isDark
+                 ? AppColors.inputBackgroundDark
+                 : AppColors.inputBackgroundLight,
+-            contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
++            contentPadding: const EdgeInsets.symmetric(
++              horizontal: 14,
++              vertical: 12,
++            ),
+             prefixIcon: Icon(Icons.tag_rounded, size: 18, color: secondaryText),
+             border: OutlineInputBorder(
+               borderRadius: BorderRadius.circular(14),
+@@ -1897,14 +1979,19 @@ class _CreateCapsuleScreenState extends ConsumerState<CreateCapsuleScreen> {
+             runSpacing: AppSpacing.xs,
+             children: _tags.map((tag) {
+               return Container(
+-                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
++                padding: const EdgeInsets.symmetric(
++                  horizontal: 10,
++                  vertical: 5,
++                ),
+                 decoration: BoxDecoration(
+                   color: isDark
+                       ? AppColors.surfaceContainerDark
+                       : AppColors.surfaceContainerLight,
+                   borderRadius: BorderRadius.circular(12),
+                   border: Border.all(
+-                    color: isDark ? AppColors.dividerDark : AppColors.dividerLight,
++                    color: isDark
++                        ? AppColors.dividerDark
++                        : AppColors.dividerLight,
+                   ),
+                 ),
+                 child: Row(
+@@ -1976,7 +2063,9 @@ class _CreateCapsuleScreenState extends ConsumerState<CreateCapsuleScreen> {
+         child: ElevatedButton(
+           onPressed: (!_canSave || _isLoading) ? null : _saveCapsule,
+           style: ElevatedButton.styleFrom(
+-            backgroundColor: _canSave ? primary : (isDark ? Colors.white12 : Colors.black12),
++            backgroundColor: _canSave
++                ? primary
++                : (isDark ? Colors.white12 : Colors.black12),
+             foregroundColor: Colors.white,
+             elevation: _canSave ? 4 : 0,
+             shadowColor: primary.withValues(alpha: 0.4),
+@@ -2007,10 +2096,10 @@ class _CreateCapsuleScreenState extends ConsumerState<CreateCapsuleScreen> {
+                     Text(
+                       widget.existingCapsule != null
+                           ? (lang == 'ar'
+-                              ? 'حفظ التعديلات'
+-                              : (lang == 'en'
+-                                  ? 'Save Changes'
+-                                  : 'Enregistrer les modifications'))
++                                ? 'حفظ التعديلات'
++                                : (lang == 'en'
++                                      ? 'Save Changes'
++                                      : 'Enregistrer les modifications'))
+                           : l10n.capsuleCreateCTA,
+                       style: TextStyle(
+                         fontSize: 16,
+@@ -2170,9 +2259,7 @@ class _CreateCapsuleScreenState extends ConsumerState<CreateCapsuleScreen> {
+ 
+   Future<void> _openCropScreen(File file) async {
+     final cropped = await Navigator.of(context).push<File>(
+-      MaterialPageRoute(
+-        builder: (_) => ImageCropScreen(imageFile: file),
+-      ),
++      MaterialPageRoute(builder: (_) => ImageCropScreen(imageFile: file)),
+     );
+     if (cropped != null && mounted) {
+       setState(() {
+@@ -2183,8 +2270,9 @@ class _CreateCapsuleScreenState extends ConsumerState<CreateCapsuleScreen> {
+ 
+   Future<void> _processPickedPhoto(File originalFile) async {
+     // Check if the image is already vertical and close to the 9:16 Story ratio (0.5625)
+-    final isCloseToStory =
+-        await ImageCropScreen.isCloseToStoryRatio(originalFile);
++    final isCloseToStory = await ImageCropScreen.isCloseToStoryRatio(
++      originalFile,
++    );
+ 
+     if (isCloseToStory) {
+       // Image is already vertical portrait! Auto-crop center to exact 9:16 (zero black bars)
+@@ -2199,8 +2287,8 @@ class _CreateCapsuleScreenState extends ConsumerState<CreateCapsuleScreen> {
+         final message = lang == 'ar'
+             ? 'تم ضبط الصورة تلقائياً كـ ستوري ملء الشاشة'
+             : (lang == 'fr'
+-                ? 'Photo ajustée au format Story plein écran'
+-                : 'Photo auto-fitted to full-screen story');
++                  ? 'Photo ajustée au format Story plein écran'
++                  : 'Photo auto-fitted to full-screen story');
+ 
+         ScaffoldMessenger.of(context).showSnackBar(
+           SnackBar(
+@@ -2268,28 +2356,36 @@ class _CreateCapsuleScreenState extends ConsumerState<CreateCapsuleScreen> {
+     try {
+       Capsule? result;
+       final effectiveChildId = _selectedChild?.id ?? '';
+-      final effectiveChildIds = _selectedChild != null ? [_selectedChild!.id] : const <String>[];
++      final effectiveChildIds = _selectedChild != null
++          ? [_selectedChild!.id]
++          : const <String>[];
+ 
+-      // Spec LM-CAP-004: Only associate audio if validated, non-empty and non-corrupted
++      // Associate every valid recording without a separate confirmation.
+       File? effectiveAudio;
+       int? effectiveAudioDuration;
+-      if (_recordedAudio != null && _isAudioValidated) {
+-        if (_recordedAudio!.existsSync() && _recordedAudio!.lengthSync() > 0) {
++      if (_recordedAudio != null) {
++        if (isSaveableCapsuleAudio(_recordedAudio!)) {
+           effectiveAudio = _recordedAudio;
+           effectiveAudioDuration = _audioDuration;
++        } else {
++          throw StateError(context.l10n.capsuleAudioTooShortError);
+         }
+       }
+ 
+       if (widget.existingCapsule != null) {
+-        result = await ref.read(capsuleActionsProvider.notifier).updateCapsule(
++        result = await ref
++            .read(capsuleActionsProvider.notifier)
++            .updateCapsule(
+               capsuleId: widget.existingCapsule!.id,
+               childId: effectiveChildId,
+               childIds: effectiveChildIds,
+               withMother: _withMother,
+               newPhotoFile: _selectedPhoto,
+               newAudioFile: effectiveAudio,
+-              removeAudio: _removeAudio || (_recordedAudio != null && !_isAudioValidated),
+-              audioDuration: effectiveAudio != null ? effectiveAudioDuration : (_removeAudio ? null : _audioDuration),
++              removeAudio: _removeAudio,
++              audioDuration: effectiveAudio != null
++                  ? effectiveAudioDuration
++                  : (_removeAudio ? null : _audioDuration),
+               emotion: _selectedEmotion!,
+               secondaryEmotions: _secondaryEmotions,
+               milestoneId: _selectedMilestoneId,
+@@ -2299,7 +2395,9 @@ class _CreateCapsuleScreenState extends ConsumerState<CreateCapsuleScreen> {
+               category: _selectedCategory,
+             );
+       } else {
+-        result = await ref.read(capsuleActionsProvider.notifier).createCapsule(
++        result = await ref
++            .read(capsuleActionsProvider.notifier)
++            .createCapsule(
+               childId: effectiveChildId,
+               childIds: effectiveChildIds,
+               withMother: _withMother,
+@@ -2332,10 +2430,10 @@ class _CreateCapsuleScreenState extends ConsumerState<CreateCapsuleScreen> {
+         final lang = Localizations.localeOf(context).languageCode;
+         final successMsg = widget.existingCapsule != null
+             ? (lang == 'ar'
+-                ? 'تم تحديث الذكرى بنجاح'
+-                : (lang == 'en'
+-                    ? 'Memory updated successfully'
+-                    : 'Souvenir mis à jour avec succès'))
++                  ? 'تم تحديث الذكرى بنجاح'
++                  : (lang == 'en'
++                        ? 'Memory updated successfully'
++                        : 'Souvenir mis à jour avec succès'))
+             : context.l10n.capsuleCreatedSuccess;
+ 
+         ScaffoldMessenger.of(context).showSnackBar(
+diff --git a/lib/features/capsules/widgets/audio_recorder.dart b/lib/features/capsules/widgets/audio_recorder.dart
+index b417f45..a2876d1 100644
+--- a/lib/features/capsules/widgets/audio_recorder.dart
++++ b/lib/features/capsules/widgets/audio_recorder.dart
+@@ -1,3 +1,4 @@
++import '../../../core/services/safe_log.dart';
+ import 'dart:async';
+ import 'dart:io';
+ import 'dart:math' as math;
+@@ -12,6 +13,10 @@ import '../../../core/extensions/l10n_extension.dart';
+ import '../../../core/theme/app_colors.dart';
+ import '../../../core/theme/app_typography.dart';
+ 
++/// A completed recording is saveable based on its file, without a UI confirmation.
++bool isSaveableCapsuleAudio(File file) =>
++    file.existsSync() && file.lengthSync() > 0;
++
+ /// Hold-to-record audio widget with live pulsating waveform animation.
+ class AudioRecorderWidget extends StatefulWidget {
+   const AudioRecorderWidget({
+@@ -33,6 +38,9 @@ class _AudioRecorderWidgetState extends State<AudioRecorderWidget>
+     with SingleTickerProviderStateMixin {
+   final AudioRecorder _recorder = AudioRecorder();
+   bool _isRecording = false;
++  bool _isStarting = false;
++  bool _releaseRequested = false;
++  bool _isStopping = false;
+   int _recordingSeconds = 0;
+   Timer? _timer;
+   late AnimationController _pulseController;
+@@ -55,6 +63,9 @@ class _AudioRecorderWidgetState extends State<AudioRecorderWidget>
+   }
+ 
+   Future<void> _startRecording() async {
++    if (_isStarting || _isRecording || _isStopping) return;
++    _isStarting = true;
++    _releaseRequested = false;
+     try {
+       final hasPermission = await _recorder.hasPermission();
+       if (!hasPermission) {
+@@ -75,12 +86,20 @@ class _AudioRecorderWidgetState extends State<AudioRecorderWidget>
+         path: path,
+       );
+ 
++      if (!mounted) {
++        await _recorder.stop();
++        return;
++      }
+       setState(() {
+         _isRecording = true;
+         _recordingSeconds = 0;
+       });
+ 
+       _pulseController.repeat(reverse: true);
++      if (_releaseRequested) {
++        await _stopRecording();
++        return;
++      }
+ 
+       _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
+         setState(() {
+@@ -95,10 +114,15 @@ class _AudioRecorderWidgetState extends State<AudioRecorderWidget>
+       if (mounted) {
+         widget.onError?.call(e.toString());
+       }
++    } finally {
++      _isStarting = false;
+     }
+   }
+ 
+   Future<void> _stopRecording() async {
++    _releaseRequested = true;
++    if (!_isRecording || _isStopping) return;
++    _isStopping = true;
+     _timer?.cancel();
+     _pulseController.stop();
+     _pulseController.reset();
+@@ -112,7 +136,7 @@ class _AudioRecorderWidgetState extends State<AudioRecorderWidget>
+         final length = exists ? await file.length() : 0;
+         if (exists && length > 0 && _recordingSeconds >= 1) {
+           HapticFeedback.lightImpact();
+-          widget.onRecordingComplete(file, _recordingSeconds);
++          if (mounted) widget.onRecordingComplete(file, _recordingSeconds);
+         } else {
+           if (exists) {
+             try {
+@@ -129,6 +153,7 @@ class _AudioRecorderWidgetState extends State<AudioRecorderWidget>
+         widget.onError?.call(e.toString());
+       }
+     } finally {
++      _isStopping = false;
+       if (mounted) {
+         setState(() {
+           _isRecording = false;
+@@ -170,12 +195,8 @@ class _AudioRecorderWidgetState extends State<AudioRecorderWidget>
+               gradient: _isRecording
+                   ? LinearGradient(
+                       colors: [
+-                        AppColors.error.withValues(
+-                          alpha: isDark ? 0.22 : 0.12,
+-                        ),
+-                        AppColors.coral.withValues(
+-                          alpha: isDark ? 0.15 : 0.08,
+-                        ),
++                        AppColors.error.withValues(alpha: isDark ? 0.22 : 0.12),
++                        AppColors.coral.withValues(alpha: isDark ? 0.15 : 0.08),
+                       ],
+                     )
+                   : LinearGradient(
+@@ -190,8 +211,8 @@ class _AudioRecorderWidgetState extends State<AudioRecorderWidget>
+                         alpha: 0.6 + (_pulseController.value * 0.35),
+                       )
+                     : (isDark
+-                        ? AppColors.dividerDark
+-                        : AppColors.primaryLight.withValues(alpha: 0.18)),
++                          ? AppColors.dividerDark
++                          : AppColors.primaryLight.withValues(alpha: 0.18)),
+                 width: _isRecording ? 1.8 : 1.0,
+               ),
+               boxShadow: [
+@@ -238,11 +259,7 @@ class _AudioRecorderWidgetState extends State<AudioRecorderWidget>
+             ],
+           ),
+           child: const Center(
+-            child: Icon(
+-              Icons.mic_rounded,
+-              color: Colors.white,
+-              size: 22,
+-            ),
++            child: Icon(Icons.mic_rounded, color: Colors.white, size: 22),
+           ),
+         ),
+         const SizedBox(width: 14),
+@@ -340,9 +357,9 @@ class _AudioRecorderWidgetState extends State<AudioRecorderWidget>
+             children: List.generate(15, (index) {
+               // Sine wave with phase shift for organic fluid motion
+               final phase = index * 0.48;
+-              final factor = (math.sin(
+-                (_pulseController.value * 2 * math.pi) + phase,
+-              ).abs());
++              final factor = (math
++                  .sin((_pulseController.value * 2 * math.pi) + phase)
++                  .abs());
+               final barHeight = 6.0 + (factor * 26.0);
+ 
+               return Container(
+@@ -394,7 +411,7 @@ class RecordedAudioPreview extends StatefulWidget {
+     required this.onDelete,
+     this.onReRecord,
+     this.onValidate,
+-    this.isValidated = false,
++    this.isValidated = true,
+   });
+ 
+   final File? audioFile;
+@@ -462,7 +479,7 @@ class _RecordedAudioPreviewState extends State<RecordedAudioPreview> {
+           await _player.resume();
+         }
+       } catch (e) {
+-        debugPrint('Audio playback error: $e');
++        safeDebugPrint('Audio playback error: ${e.runtimeType}');
+       } finally {
+         if (mounted) setState(() => _isLoading = false);
+       }
+@@ -493,7 +510,10 @@ class _RecordedAudioPreviewState extends State<RecordedAudioPreview> {
+ 
+     final totalDuration = Duration(seconds: math.max(widget.duration, 1));
+     final progress = (totalDuration.inMilliseconds > 0)
+-        ? (_position.inMilliseconds / totalDuration.inMilliseconds).clamp(0.0, 1.0)
++        ? (_position.inMilliseconds / totalDuration.inMilliseconds).clamp(
++            0.0,
++            1.0,
++          )
+         : 0.0;
+ 
+     return Container(
+@@ -534,7 +554,9 @@ class _RecordedAudioPreviewState extends State<RecordedAudioPreview> {
+                       size: 13,
+                       color: widget.isValidated
+                           ? AppColors.success
+-                          : (isDark ? Colors.amberAccent : Colors.orange.shade800),
++                          : (isDark
++                                ? Colors.amberAccent
++                                : Colors.orange.shade800),
+                     ),
+                     const SizedBox(width: 4),
+                     Text(
+@@ -546,7 +568,9 @@ class _RecordedAudioPreviewState extends State<RecordedAudioPreview> {
+                         fontWeight: FontWeight.w700,
+                         color: widget.isValidated
+                             ? AppColors.success
+-                            : (isDark ? Colors.amberAccent : Colors.orange.shade800),
++                            : (isDark
++                                  ? Colors.amberAccent
++                                  : Colors.orange.shade800),
+                       ),
+                     ),
+                   ],
+@@ -610,10 +634,16 @@ class _RecordedAudioPreviewState extends State<RecordedAudioPreview> {
+                 child: SliderTheme(
+                   data: SliderTheme.of(context).copyWith(
+                     trackHeight: 4,
+-                    thumbShape: const RoundSliderThumbShape(enabledThumbRadius: 6),
+-                    overlayShape: const RoundSliderOverlayShape(overlayRadius: 12),
++                    thumbShape: const RoundSliderThumbShape(
++                      enabledThumbRadius: 6,
++                    ),
++                    overlayShape: const RoundSliderOverlayShape(
++                      overlayRadius: 12,
++                    ),
+                     activeTrackColor: primary,
+-                    inactiveTrackColor: isDark ? Colors.white12 : Colors.black12,
++                    inactiveTrackColor: isDark
++                        ? Colors.white12
++                        : Colors.black12,
+                     thumbColor: primary,
+                   ),
+                   child: Slider(
+@@ -628,20 +658,30 @@ class _RecordedAudioPreviewState extends State<RecordedAudioPreview> {
+           const SizedBox(height: 12),
+ 
+           // ── Action Buttons Row ──
+-          Row(
++          Wrap(
++            spacing: 8,
++            runSpacing: 8,
++            crossAxisAlignment: WrapCrossAlignment.center,
+             children: [
+               // Recommencer
+               OutlinedButton.icon(
+                 onPressed: () async {
+-                  await _player.stop();
++                  if (_isPlaying || _position > Duration.zero) {
++                    await _player.stop();
++                  }
+                   widget.onReRecord?.call();
+                 },
+                 icon: const Icon(Icons.refresh_rounded, size: 15),
+                 label: Text(l10n.capsuleAudioReRecord),
+                 style: OutlinedButton.styleFrom(
+                   visualDensity: VisualDensity.compact,
+-                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
++                  padding: const EdgeInsets.symmetric(
++                    horizontal: 10,
++                    vertical: 8,
++                  ),
++                  shape: RoundedRectangleBorder(
++                    borderRadius: BorderRadius.circular(10),
++                  ),
+                   side: BorderSide(
+                     color: isDark ? Colors.white24 : Colors.black12,
+                   ),
+@@ -652,18 +692,21 @@ class _RecordedAudioPreviewState extends State<RecordedAudioPreview> {
+               const SizedBox(width: 8),
+ 
+               // Supprimer
+-              IconButton(
++              TextButton.icon(
+                 onPressed: () async {
+-                  await _player.stop();
++                  if (_isPlaying || _position > Duration.zero) {
++                    await _player.stop();
++                  }
+                   widget.onDelete();
+                 },
+-                icon: const Icon(Icons.delete_outline_rounded, color: AppColors.error, size: 20),
+-                tooltip: l10n.capsuleAudioDelete,
+-                style: IconButton.styleFrom(visualDensity: VisualDensity.compact),
++                icon: const Icon(
++                  Icons.delete_outline_rounded,
++                  color: AppColors.error,
++                  size: 20,
++                ),
++                label: Text(l10n.capsuleAudioDelete),
+               ),
+ 
+-              const Spacer(),
+-
+               // Valider Button (if not already validated)
+               if (!widget.isValidated && widget.onValidate != null)
+                 ElevatedButton.icon(
+@@ -676,8 +719,13 @@ class _RecordedAudioPreviewState extends State<RecordedAudioPreview> {
+                     backgroundColor: AppColors.success,
+                     foregroundColor: Colors.white,
+                     visualDensity: VisualDensity.compact,
+-                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
++                    padding: const EdgeInsets.symmetric(
++                      horizontal: 12,
++                      vertical: 8,
++                    ),
++                    shape: RoundedRectangleBorder(
++                      borderRadius: BorderRadius.circular(10),
++                    ),
+                   ),
+                 ),
+             ],
+diff --git a/lib/features/capsules/widgets/emotion_picker.dart b/lib/features/capsules/widgets/emotion_picker.dart
+index 8b2e239..c454343 100644
+--- a/lib/features/capsules/widgets/emotion_picker.dart
++++ b/lib/features/capsules/widgets/emotion_picker.dart
+@@ -1,273 +1,54 @@
+ import 'package:flutter/material.dart';
+-
+ import '../../../core/extensions/l10n_extension.dart';
+ import '../../../core/theme/app_colors.dart';
+ import '../../../core/theme/app_spacing.dart';
+-import '../../../core/theme/app_typography.dart';
+ import '../models/emotion.dart';
+ 
+-/// Grid picker for selecting a primary emotion and optional secondary emotions.
+ class EmotionPicker extends StatelessWidget {
+   const EmotionPicker({
+     super.key,
+-    required this.selectedEmotion,
+-    required this.onEmotionSelected,
+-    this.secondaryEmotions = const [],
+-    this.onSecondaryEmotionsChanged,
+-    this.maxSecondaryEmotions = 3,
++    required this.selectedEmotions,
++    required this.onChanged,
+   });
+-
+-  final Emotion? selectedEmotion;
+-  final ValueChanged<Emotion> onEmotionSelected;
+-  final List<Emotion> secondaryEmotions;
+-  final ValueChanged<List<Emotion>>? onSecondaryEmotionsChanged;
+-  final int maxSecondaryEmotions;
+-
+-  void _handlePrimarySelected(Emotion emotion) {
+-    onEmotionSelected(emotion);
+-    // Auto-promotion: remove from secondary if promoted to primary
+-    if (onSecondaryEmotionsChanged != null && secondaryEmotions.contains(emotion)) {
+-      final updated = List<Emotion>.from(secondaryEmotions)..remove(emotion);
+-      onSecondaryEmotionsChanged!(updated);
+-    }
+-  }
+-
+-  void _toggleSecondaryEmotion(Emotion emotion) {
+-    if (onSecondaryEmotionsChanged == null) return;
+-    if (emotion == selectedEmotion) return; // Cannot be both primary and secondary
+-    final updated = List<Emotion>.from(secondaryEmotions);
+-    if (updated.contains(emotion)) {
+-      updated.remove(emotion);
+-    } else {
+-      if (updated.length < maxSecondaryEmotions) {
+-        updated.add(emotion);
+-      }
+-    }
+-    onSecondaryEmotionsChanged!(updated);
+-  }
+-
++  final List<Emotion> selectedEmotions;
++  final ValueChanged<List<Emotion>> onChanged;
+   @override
+   Widget build(BuildContext context) {
+-    final l10n = context.l10n;
+     final lang = Localizations.localeOf(context).languageCode;
+-    final isDark = Theme.of(context).brightness == Brightness.dark;
+-    final textColor = isDark ? Colors.white : AppColors.onSurfaceLight;
+-    final secondaryText = isDark
+-        ? AppColors.textSecondaryDark
+-        : AppColors.textSecondaryLight;
+-
++    final hint = lang == 'ar'
++        ? 'اختاري ثلاثة مشاعر على الأقل'
++        : lang == 'en'
++        ? 'Choose at least three emotions'
++        : 'Choisissez au moins trois émotions';
+     return Column(
+       crossAxisAlignment: CrossAxisAlignment.start,
+       children: [
+-        // ── Primary Emotion Header (Mandatory) ─────────────────────────
+-        Row(
+-          children: [
+-            Icon(Icons.mood_rounded, size: 16, color: textColor),
+-            const SizedBox(width: 6),
+-            Text(
+-              l10n.capsulePrimaryEmotion,
+-              style: AppTypography.fromContext(
+-                context,
+-                fontSize: 14,
+-                fontWeight: FontWeight.w600,
+-                color: textColor,
+-              ),
+-            ),
+-            const SizedBox(width: 4),
+-            Text(
+-              l10n.capsuleRequired,
+-              style: AppTypography.fromContext(
+-                context,
+-                fontSize: 11,
+-                color: AppColors.error,
+-                fontWeight: FontWeight.w600,
+-              ),
+-            ),
+-          ],
+-        ),
+-        const SizedBox(height: AppSpacing.sm),
+-
+-        // ── Primary Emotion Grid ──────────────────────────────────────
+-        GridView.builder(
+-          shrinkWrap: true,
+-          physics: const NeverScrollableScrollPhysics(),
+-          itemCount: Emotion.values.length,
+-          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+-            crossAxisCount: 4,
+-            crossAxisSpacing: 8,
+-            mainAxisSpacing: 8,
+-            childAspectRatio: 0.95,
+-          ),
+-          itemBuilder: (context, index) {
+-            final emotion = Emotion.values[index];
+-            final isSelected = selectedEmotion == emotion;
+-            final emotionColor = emotion.color;
+-
+-            return GestureDetector(
+-              onTap: () => _handlePrimarySelected(emotion),
+-              child: AnimatedContainer(
+-                duration: const Duration(milliseconds: 200),
+-                padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 6),
+-                decoration: BoxDecoration(
+-                  color: isSelected
+-                      ? emotionColor.withValues(alpha: isDark ? 0.22 : 0.12)
+-                      : (isDark
+-                            ? const Color(0xFF22202A)
+-                            : const Color(0xFFF7F5FA)),
+-                  borderRadius: BorderRadius.circular(14),
+-                  border: Border.all(
+-                    color: isSelected
+-                        ? emotionColor
+-                        : (isDark ? Colors.white10 : const Color(0xFFECEAEF)),
+-                    width: isSelected ? 1.8 : 0.8,
+-                  ),
+-                  boxShadow: isSelected
+-                      ? [
+-                          BoxShadow(
+-                            color: emotionColor.withValues(alpha: 0.25),
+-                            blurRadius: 8,
+-                            offset: const Offset(0, 2),
+-                          ),
+-                        ]
+-                      : null,
+-                ),
+-                child: Column(
+-                  mainAxisAlignment: MainAxisAlignment.center,
+-                  children: [
+-                    Icon(
+-                      emotion.icon,
+-                      size: 22,
+-                      color: isSelected ? emotionColor : secondaryText,
+-                    ),
+-                    const SizedBox(height: 4),
+-                    Text(
+-                      emotion.getLabel(lang),
+-                      textAlign: TextAlign.center,
+-                      maxLines: 1,
+-                      overflow: TextOverflow.ellipsis,
+-                      style: AppTypography.fromContext(
+-                        context,
+-                        fontSize: 11,
+-                        fontWeight: isSelected
+-                            ? FontWeight.w700
+-                            : FontWeight.w500,
+-                        color: isSelected ? emotionColor : textColor,
+-                      ),
+-                    ),
+-                  ],
+-                ),
+-              ),
++        Text(hint, style: Theme.of(context).textTheme.titleSmall),
++        const SizedBox(height: 8),
++        Wrap(
++          spacing: 8,
++          runSpacing: 8,
++          children: Emotion.values.map((emotion) {
++            return FilterChip(
++              selected: selectedEmotions.contains(emotion),
++              avatar: Icon(emotion.icon, size: 18, color: emotion.color),
++              label: Text(emotion.getLabel(lang)),
++              onSelected:
++                  !selectedEmotions.contains(emotion) &&
++                      selectedEmotions.length >= 4
++                  ? null
++                  : (value) {
++                      final updated = List<Emotion>.from(selectedEmotions);
++                      if (value) {
++                        updated.add(emotion);
++                      } else {
++                        updated.remove(emotion);
++                      }
++                      onChanged(updated);
++                    },
+             );
+-          },
++          }).toList(),
+         ),
+-
+-        // ── Secondary Emotions Section (LM-CAP-003, Optional, Max 3) ──
+-        if (onSecondaryEmotionsChanged != null) ...[
+-          const SizedBox(height: AppSpacing.md),
+-          Row(
+-            children: [
+-              Icon(Icons.add_reaction_outlined, size: 15, color: secondaryText),
+-              const SizedBox(width: 6),
+-              Text(
+-                l10n.capsuleSecondaryEmotions,
+-                style: AppTypography.fromContext(
+-                  context,
+-                  fontSize: 13,
+-                  fontWeight: FontWeight.w600,
+-                  color: textColor,
+-                ),
+-              ),
+-              const SizedBox(width: 6),
+-              Text(
+-                l10n.capsuleSecondaryEmotionsHint,
+-                style: AppTypography.fromContext(
+-                  context,
+-                  fontSize: 11,
+-                  color: secondaryText,
+-                  fontWeight: FontWeight.w500,
+-                ),
+-              ),
+-              const Spacer(),
+-              Container(
+-                padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 2),
+-                decoration: BoxDecoration(
+-                  color: isDark ? Colors.white10 : const Color(0xFFECEAEF),
+-                  borderRadius: BorderRadius.circular(10),
+-                ),
+-                child: Text(
+-                  '${secondaryEmotions.length}/$maxSecondaryEmotions',
+-                  style: TextStyle(
+-                    fontSize: 11,
+-                    fontWeight: FontWeight.w700,
+-                    color: secondaryEmotions.length >= maxSecondaryEmotions
+-                        ? AppColors.primaryLight
+-                        : secondaryText,
+-                  ),
+-                ),
+-              ),
+-            ],
+-          ),
+-          const SizedBox(height: AppSpacing.xs + 2),
+-          Wrap(
+-            spacing: 8,
+-            runSpacing: 8,
+-            children: Emotion.values
+-                .where((e) => e != selectedEmotion)
+-                .map((emotion) {
+-              final isSecondary = secondaryEmotions.contains(emotion);
+-              final isMaxReached =
+-                  secondaryEmotions.length >= maxSecondaryEmotions && !isSecondary;
+-              final emotionColor = emotion.color;
+-
+-              return InkWell(
+-                onTap: isMaxReached ? null : () => _toggleSecondaryEmotion(emotion),
+-                borderRadius: BorderRadius.circular(12),
+-                child: AnimatedContainer(
+-                  duration: const Duration(milliseconds: 180),
+-                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 7),
+-                  decoration: BoxDecoration(
+-                    color: isSecondary
+-                        ? emotionColor.withValues(alpha: isDark ? 0.22 : 0.12)
+-                        : (isDark
+-                              ? const Color(0xFF22202A)
+-                              : const Color(0xFFF7F5FA)),
+-                    borderRadius: BorderRadius.circular(12),
+-                    border: Border.all(
+-                      color: isSecondary
+-                          ? emotionColor
+-                          : (isDark ? Colors.white10 : const Color(0xFFECEAEF)),
+-                      width: isSecondary ? 1.4 : 0.8,
+-                    ),
+-                  ),
+-                  child: Opacity(
+-                    opacity: isMaxReached ? 0.42 : 1.0,
+-                    child: Row(
+-                      mainAxisSize: MainAxisSize.min,
+-                      children: [
+-                        Text(emotion.emoji, style: const TextStyle(fontSize: 13)),
+-                        const SizedBox(width: 5),
+-                        Text(
+-                          emotion.getLabel(lang),
+-                          style: TextStyle(
+-                            fontSize: 11.5,
+-                            fontWeight: isSecondary ? FontWeight.w700 : FontWeight.w500,
+-                            color: isSecondary ? emotionColor : textColor,
+-                          ),
+-                        ),
+-                        const SizedBox(width: 4),
+-                        Icon(
+-                          isSecondary ? Icons.close_rounded : Icons.add_rounded,
+-                          size: 13,
+-                          color: isSecondary ? emotionColor : secondaryText,
+-                        ),
+-                      ],
+-                    ),
+-                  ),
+-                ),
+-              );
+-            }).toList(),
+-          ),
+-        ],
+       ],
+     );
+   }
+diff --git a/lib/features/onboarding/language_selection_screen.dart b/lib/features/onboarding/language_selection_screen.dart
+index d313f50..7f70a1c 100644
+--- a/lib/features/onboarding/language_selection_screen.dart
++++ b/lib/features/onboarding/language_selection_screen.dart
+@@ -1,3 +1,4 @@
++import '../../core/services/safe_log.dart';
+ import 'package:flutter/material.dart';
+ import 'package:flutter/services.dart';
+ import 'package:flutter_riverpod/flutter_riverpod.dart';
+@@ -30,10 +31,7 @@ class _LanguageOption {
+ /// Allows the user to select between French, Arabic (RTL), and English.
+ /// Changes the locale reactively and persistently across the entire app.
+ class LanguageSelectionScreen extends ConsumerStatefulWidget {
+-  const LanguageSelectionScreen({
+-    super.key,
+-    this.isModal = false,
+-  });
++  const LanguageSelectionScreen({super.key, this.isModal = false});
+ 
+   /// If true, tapping continue pops the screen instead of navigating to /home.
+   final bool isModal;
+@@ -48,21 +46,9 @@ class _LanguageSelectionScreenState
+   bool _isSubmitting = false;
+ 
+   static const List<_LanguageOption> _options = [
+-    _LanguageOption(
+-      code: 'fr',
+-      nativeName: 'Français',
+-      badge: 'FR',
+-    ),
+-    _LanguageOption(
+-      code: 'ar',
+-      nativeName: 'العربية',
+-      badge: 'عربي',
+-    ),
+-    _LanguageOption(
+-      code: 'en',
+-      nativeName: 'English',
+-      badge: 'EN',
+-    ),
++    _LanguageOption(code: 'fr', nativeName: 'Français', badge: 'FR'),
++    _LanguageOption(code: 'ar', nativeName: 'العربية', badge: 'عربي'),
++    _LanguageOption(code: 'en', nativeName: 'English', badge: 'EN'),
+   ];
+ 
+   Future<void> _handleContinue(String selectedCode) async {
+@@ -79,13 +65,14 @@ class _LanguageSelectionScreenState
+       );
+ 
+       // LM-ONB-004: Automatically generate primary "MAM" profile at the end of onboarding
++      if (!mounted) return;
+       final l10n = AppLocalizations.of(context)!;
+       try {
+-        await ref.read(profileServiceProvider).ensureMamProfileCreated(
+-              defaultName: l10n.defaultMotherName,
+-            );
++        await ref
++            .read(profileServiceProvider)
++            .ensureMamProfileCreated(defaultName: l10n.defaultMotherName);
+       } catch (e) {
+-        debugPrint('Error ensuring MAM profile: $e');
++        safeDebugPrint('Error ensuring MAM profile: ${e.runtimeType}');
+       }
+ 
+       if (!mounted) return;
+@@ -111,8 +98,9 @@ class _LanguageSelectionScreenState
+     final isRtl = context.isRtl;
+ 
+     final titleColor = isDark ? Colors.white : AppColors.onSurfaceLight;
+-    final secondaryTextColor =
+-        isDark ? AppColors.textSecondaryDark : AppColors.textSecondaryLight;
++    final secondaryTextColor = isDark
++        ? AppColors.textSecondaryDark
++        : AppColors.textSecondaryLight;
+     final brandAccent = isDark ? AppColors.magentaPink : AppColors.coral;
+ 
+     final cardBgColor = isDark
+@@ -123,15 +111,13 @@ class _LanguageSelectionScreenState
+         : AppColors.dividerLight.withValues(alpha: 0.80);
+ 
+     return Scaffold(
+-      backgroundColor:
+-          isDark ? AppColors.backgroundDark : AppColors.backgroundLight,
++      backgroundColor: isDark
++          ? AppColors.backgroundDark
++          : AppColors.backgroundLight,
+       body: Stack(
+         children: [
+           // Ambient soft background glow & watermark
+-          const AuthLogoBackground(
+-            lightOpacity: 0.06,
+-            darkOpacity: 0.04,
+-          ),
++          const AuthLogoBackground(lightOpacity: 0.06, darkOpacity: 0.04),
+ 
+           SafeArea(
+             child: Padding(
+@@ -175,7 +161,12 @@ class _LanguageSelectionScreenState
+                             ),
+                             const SizedBox(height: 3),
+                             Text(
+-                              'Étape 2 / 2 • Langue',
++                              _options
++                                  .firstWhere(
++                                    (option) => option.code == selectedCode,
++                                    orElse: () => _options.first,
++                                  )
++                                  .nativeName,
+                               style: TextStyle(
+                                 fontSize: 12,
+                                 fontWeight: FontWeight.w600,
+@@ -201,10 +192,10 @@ class _LanguageSelectionScreenState
+                     child: Text(
+                       l10n.onboardingLanguageSubtitle,
+                       style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+-                            color: secondaryTextColor,
+-                            height: 1.5,
+-                            fontSize: 13.5,
+-                          ),
++                        color: secondaryTextColor,
++                        height: 1.5,
++                        fontSize: 13.5,
++                      ),
+                     ),
+                   ),
+ 
+@@ -230,141 +221,151 @@ class _LanguageSelectionScreenState
+                           subtitle = l10n.onboardingLanguageFrSubtitle;
+                         }
+ 
+-                        return GestureDetector(
+-                          onTap: () {
+-                            HapticFeedback.selectionClick();
+-                            ref
+-                                .read(localeProvider.notifier)
+-                                .setLocale(Locale(option.code));
+-                          },
+-                          behavior: HitTestBehavior.opaque,
+-                          child: AnimatedContainer(
+-                            duration: const Duration(milliseconds: 220),
+-                            curve: Curves.easeOutCubic,
+-                            padding: const EdgeInsets.symmetric(
+-                              horizontal: 18,
+-                              vertical: 16,
+-                            ),
+-                            decoration: BoxDecoration(
+-                              color: isSelected
+-                                  ? brandAccent.withValues(
+-                                      alpha: isDark ? 0.16 : 0.08,
+-                                    )
+-                                  : cardBgColor,
+-                              borderRadius: BorderRadius.circular(18),
+-                              border: Border.all(
+-                                color: isSelected
+-                                    ? brandAccent
+-                                    : cardBorderColor,
+-                                width: isSelected ? 2 : 1,
++                        return Semantics(
++                          selected: isSelected,
++                          button: true,
++                          child: GestureDetector(
++                            onTap: () {
++                              HapticFeedback.selectionClick();
++                              ref
++                                  .read(localeProvider.notifier)
++                                  .setLocale(Locale(option.code));
++                            },
++                            behavior: HitTestBehavior.opaque,
++                            child: AnimatedContainer(
++                              duration: const Duration(milliseconds: 220),
++                              curve: Curves.easeOutCubic,
++                              padding: const EdgeInsets.symmetric(
++                                horizontal: 18,
++                                vertical: 16,
+                               ),
+-                              boxShadow: isSelected
+-                                  ? [
+-                                      BoxShadow(
+-                                        color: brandAccent.withValues(
+-                                          alpha: 0.18,
++                              decoration: BoxDecoration(
++                                color: isSelected
++                                    ? brandAccent.withValues(
++                                        alpha: isDark ? 0.16 : 0.08,
++                                      )
++                                    : cardBgColor,
++                                borderRadius: BorderRadius.circular(18),
++                                border: Border.all(
++                                  color: isSelected
++                                      ? brandAccent
++                                      : cardBorderColor,
++                                  width: isSelected ? 2 : 1,
++                                ),
++                                boxShadow: isSelected
++                                    ? [
++                                        BoxShadow(
++                                          color: brandAccent.withValues(
++                                            alpha: 0.18,
++                                          ),
++                                          blurRadius: 14,
++                                          offset: const Offset(0, 4),
+                                         ),
+-                                        blurRadius: 14,
+-                                        offset: const Offset(0, 4),
+-                                      ),
+-                                    ]
+-                                  : [
+-                                      BoxShadow(
+-                                        color: Colors.black.withValues(
+-                                          alpha: isDark ? 0.15 : 0.02,
++                                      ]
++                                    : [
++                                        BoxShadow(
++                                          color: Colors.black.withValues(
++                                            alpha: isDark ? 0.15 : 0.02,
++                                          ),
++                                          blurRadius: 8,
++                                          offset: const Offset(0, 2),
+                                         ),
+-                                        blurRadius: 8,
+-                                        offset: const Offset(0, 2),
++                                      ],
++                              ),
++                              child: Row(
++                                children: [
++                                  // Language Badge / Flag abbreviation
++                                  Container(
++                                    width: 44,
++                                    height: 44,
++                                    alignment: Alignment.center,
++                                    decoration: BoxDecoration(
++                                      color: isSelected
++                                          ? brandAccent.withValues(alpha: 0.20)
++                                          : (isDark
++                                                ? Colors.white.withValues(
++                                                    alpha: 0.08,
++                                                  )
++                                                : Colors.black.withValues(
++                                                    alpha: 0.05,
++                                                  )),
++                                      borderRadius: BorderRadius.circular(12),
++                                    ),
++                                    child: Text(
++                                      option.badge,
++                                      style: TextStyle(
++                                        fontWeight: FontWeight.w800,
++                                        fontSize: 14,
++                                        color: isSelected
++                                            ? brandAccent
++                                            : titleColor,
+                                       ),
+-                                    ],
+-                            ),
+-                            child: Row(
+-                              children: [
+-                                // Language Badge / Flag abbreviation
+-                                Container(
+-                                  width: 44,
+-                                  height: 44,
+-                                  alignment: Alignment.center,
+-                                  decoration: BoxDecoration(
+-                                    color: isSelected
+-                                        ? brandAccent.withValues(alpha: 0.20)
+-                                        : (isDark
+-                                            ? Colors.white.withValues(alpha: 0.08)
+-                                            : Colors.black.withValues(alpha: 0.05)),
+-                                    borderRadius: BorderRadius.circular(12),
+-                                  ),
+-                                  child: Text(
+-                                    option.badge,
+-                                    style: TextStyle(
+-                                      fontWeight: FontWeight.w800,
+-                                      fontSize: 14,
+-                                      color: isSelected ? brandAccent : titleColor,
+                                     ),
+                                   ),
+-                                ),
+ 
+-                                const SizedBox(width: 16),
+-
+-                                // Title & Subtitle
+-                                Expanded(
+-                                  child: Column(
+-                                    crossAxisAlignment:
+-                                        CrossAxisAlignment.start,
+-                                    children: [
+-                                      Text(
+-                                        option.nativeName,
+-                                        style: AppTypography.fromContext(
+-                                          context,
+-                                          fontSize: 16,
+-                                          fontWeight: isSelected
+-                                              ? FontWeight.bold
+-                                              : FontWeight.w600,
+-                                          color: titleColor,
++                                  const SizedBox(width: 16),
++
++                                  // Title & Subtitle
++                                  Expanded(
++                                    child: Column(
++                                      crossAxisAlignment:
++                                          CrossAxisAlignment.start,
++                                      children: [
++                                        Text(
++                                          option.nativeName,
++                                          style: AppTypography.fromContext(
++                                            context,
++                                            fontSize: 16,
++                                            fontWeight: isSelected
++                                                ? FontWeight.bold
++                                                : FontWeight.w600,
++                                            color: titleColor,
++                                          ),
+                                         ),
+-                                      ),
+-                                      const SizedBox(height: 2),
+-                                      Text(
+-                                        subtitle,
+-                                        style: TextStyle(
+-                                          fontSize: 12,
+-                                          color: secondaryTextColor,
+-                                          fontWeight: FontWeight.w400,
++                                        const SizedBox(height: 2),
++                                        Text(
++                                          subtitle,
++                                          style: TextStyle(
++                                            fontSize: 12,
++                                            color: secondaryTextColor,
++                                            fontWeight: FontWeight.w400,
++                                          ),
+                                         ),
+-                                      ),
+-                                    ],
++                                      ],
++                                    ),
+                                   ),
+-                                ),
+ 
+-                                const SizedBox(width: 12),
+-
+-                                // Radio Selection Indicator
+-                                AnimatedContainer(
+-                                  duration: const Duration(milliseconds: 200),
+-                                  width: 24,
+-                                  height: 24,
+-                                  decoration: BoxDecoration(
+-                                    shape: BoxShape.circle,
+-                                    color: isSelected
+-                                        ? brandAccent
+-                                        : Colors.transparent,
+-                                    border: Border.all(
++                                  const SizedBox(width: 12),
++
++                                  // Radio Selection Indicator
++                                  AnimatedContainer(
++                                    duration: const Duration(milliseconds: 200),
++                                    width: 24,
++                                    height: 24,
++                                    decoration: BoxDecoration(
++                                      shape: BoxShape.circle,
+                                       color: isSelected
+                                           ? brandAccent
+-                                          : (isDark
+-                                              ? Colors.white38
+-                                              : Colors.grey.shade400),
+-                                      width: 2,
++                                          : Colors.transparent,
++                                      border: Border.all(
++                                        color: isSelected
++                                            ? brandAccent
++                                            : (isDark
++                                                  ? Colors.white38
++                                                  : Colors.grey.shade400),
++                                        width: 2,
++                                      ),
+                                     ),
++                                    child: isSelected
++                                        ? const Icon(
++                                            Icons.check_rounded,
++                                            size: 15,
++                                            color: Colors.white,
++                                          )
++                                        : null,
+                                   ),
+-                                  child: isSelected
+-                                      ? const Icon(
+-                                          Icons.check_rounded,
+-                                          size: 15,
+-                                          color: Colors.white,
+-                                        )
+-                                      : null,
+-                                ),
+-                              ],
++                                ],
++                              ),
+                             ),
+                           ),
+                         );
+@@ -382,8 +383,9 @@ class _LanguageSelectionScreenState
+                     style: ElevatedButton.styleFrom(
+                       backgroundColor: brandAccent,
+                       foregroundColor: Colors.white,
+-                      disabledBackgroundColor:
+-                          brandAccent.withValues(alpha: 0.45),
++                      disabledBackgroundColor: brandAccent.withValues(
++                        alpha: 0.45,
++                      ),
+                       padding: const EdgeInsets.symmetric(vertical: 16),
+                       shape: RoundedRectangleBorder(
+                         borderRadius: BorderRadius.circular(16),
+@@ -431,4 +433,3 @@ class _LanguageSelectionScreenState
+     );
+   }
+ }
+-
+diff --git a/lib/features/profile/edit_mother_profile_screen.dart b/lib/features/profile/edit_mother_profile_screen.dart
+index b42b727..41047cf 100644
+--- a/lib/features/profile/edit_mother_profile_screen.dart
++++ b/lib/features/profile/edit_mother_profile_screen.dart
+@@ -17,7 +17,8 @@ import '../../../shared/widgets/top_ambient_gradient.dart';
+ import 'models/profile_models.dart';
+ import 'providers/profile_providers.dart';
+ 
+-/// Complete list of the 58 Algerian Wilayas with code, French, and Arabic names.
++/// Verified by the album task against JO 40, 3 June 2026, p.5.
++/// https://www.joradp.dz/FTP/jo-francais/2026/F2026040.pdf
+ const List<({int code, String fr, String ar})> _kAlgerianWilayas = [
+   (code: 1, fr: 'Adrar', ar: 'أدرار'),
+   (code: 2, fr: 'Chlef', ar: 'الشلف'),
+@@ -77,9 +78,29 @@ const List<({int code, String fr, String ar})> _kAlgerianWilayas = [
+   (code: 56, fr: 'Djanet', ar: 'جانت'),
+   (code: 57, fr: 'El M\'Ghair', ar: 'المغير'),
+   (code: 58, fr: 'El Menia', ar: 'المنيعة'),
++  (code: 59, fr: 'Aflou', ar: 'أفلو'),
++  (code: 60, fr: 'Barika', ar: 'بريكة'),
++  (code: 61, fr: 'El Kantara', ar: 'القنطرة'),
++  (code: 62, fr: 'Bir El Ater', ar: 'بئر العاتر'),
++  (code: 63, fr: 'El Aricha', ar: 'العريشة'),
++  (code: 64, fr: 'Ksar Chellala', ar: 'قصر الشلالة'),
++  (code: 65, fr: 'Aïn Ouessara', ar: 'عين وسارة'),
++  (code: 66, fr: 'Messaad', ar: 'مسعد'),
++  (code: 67, fr: 'Ksar El Boukhari', ar: 'قصر البخاري'),
++  (code: 68, fr: 'Bou Saâda', ar: 'بوسعادة'),
++  (code: 69, fr: 'El Abiodh Sidi Cheikh', ar: 'الأبيض سيدي الشيخ'),
+ ];
+ 
+-const List<String> _kBloodTypes = ['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-'];
++const List<String> _kBloodTypes = [
++  'A+',
++  'A-',
++  'B+',
++  'B-',
++  'AB+',
++  'AB-',
++  'O+',
++  'O-',
++];
+ 
+ const List<({String ar, String fr, String en})> _kCommonAllergies = [
+   (ar: 'البنسلين', fr: 'Pénicilline', en: 'Penicillin'),
+@@ -101,10 +122,12 @@ class EditMotherProfileScreen extends ConsumerStatefulWidget {
+   final UserProfile? profile;
+ 
+   @override
+-  ConsumerState<EditMotherProfileScreen> createState() => _EditMotherProfileScreenState();
++  ConsumerState<EditMotherProfileScreen> createState() =>
++      _EditMotherProfileScreenState();
+ }
+ 
+-class _EditMotherProfileScreenState extends ConsumerState<EditMotherProfileScreen> {
++class _EditMotherProfileScreenState
++    extends ConsumerState<EditMotherProfileScreen> {
+   late final TextEditingController _nameController;
+   late final TextEditingController _phoneController;
+   late final TextEditingController _allergyInputController;
+@@ -132,12 +155,20 @@ class _EditMotherProfileScreenState extends ConsumerState<EditMotherProfileScree
+       fbName = AuthService().currentUser?.displayName;
+     } catch (_) {}
+ 
+-    _nameController = TextEditingController(text: p?.displayName ?? fbName ?? '');
++    _nameController = TextEditingController(
++      text: p?.displayName ?? fbName ?? '',
++    );
+     _phoneController = TextEditingController(text: p?.phone ?? '');
+     _allergyInputController = TextEditingController();
+-    _conditionsController = TextEditingController(text: p?.medicalInfo.conditions.join(', ') ?? '');
+-    _doctorNameController = TextEditingController(text: p?.medicalInfo.doctorName ?? '');
+-    _doctorPhoneController = TextEditingController(text: p?.medicalInfo.doctorPhone ?? '');
++    _conditionsController = TextEditingController(
++      text: p?.medicalInfo.conditions.join(', ') ?? '',
++    );
++    _doctorNameController = TextEditingController(
++      text: p?.medicalInfo.doctorName ?? '',
++    );
++    _doctorPhoneController = TextEditingController(
++      text: p?.medicalInfo.doctorPhone ?? '',
++    );
+ 
+     _birthDate = p?.birthDate;
+     _wilaya = p?.wilaya;
+@@ -208,6 +239,15 @@ class _EditMotherProfileScreenState extends ConsumerState<EditMotherProfileScree
+         .toList();
+   }
+ 
++  String _motherStatusGuidance() {
++    final lang = Localizations.localeOf(context).languageCode;
++    return lang == 'ar'
++        ? 'لتفعيل حالة الأم، أضيفي طفلاً مولوداً من صفحة الملف الشخصي. تتحدث الحالة تلقائياً بعد إضافته.'
++        : lang == 'en'
++        ? 'To activate Mother status, add a born child from your profile. Your status updates automatically after adding the child.'
++        : 'Pour activer le statut Maman, ajoutez un enfant né depuis votre profil. Le statut se met à jour automatiquement après son ajout.';
++  }
++
+   Future<void> _saveProfile() async {
+     final name = _nameController.text.trim();
+     final childExpectedDefaultName = context.l10n.childExpectedDefaultName;
+@@ -219,7 +259,9 @@ class _EditMotherProfileScreenState extends ConsumerState<EditMotherProfileScree
+           content: Text(
+             lang == 'ar'
+                 ? 'يرجى إدخال اسمكِ الكريم'
+-                : (lang == 'en' ? 'Please enter your name' : 'Veuillez saisir votre nom'),
++                : (lang == 'en'
++                      ? 'Please enter your name'
++                      : 'Veuillez saisir votre nom'),
+           ),
+           backgroundColor: AppColors.error,
+         ),
+@@ -238,8 +280,8 @@ class _EditMotherProfileScreenState extends ConsumerState<EditMotherProfileScree
+             lang == 'ar'
+                 ? 'يرجى تحديد تاريخ آخر دورة شهرية (DDR)'
+                 : (lang == 'en'
+-                    ? 'Please select the date of your last menstrual period'
+-                    : 'Veuillez sélectionner la date des dernières règles (DDR)'),
++                      ? 'Please select the date of your last menstrual period'
++                      : 'Veuillez sélectionner la date des dernières règles (DDR)'),
+           ),
+           backgroundColor: AppColors.error,
+         ),
+@@ -247,6 +289,12 @@ class _EditMotherProfileScreenState extends ConsumerState<EditMotherProfileScree
+       return;
+     }
+ 
++    if (_status == UserStatus.mom && ref.read(bornChildrenProvider).isEmpty) {
++      ScaffoldMessenger.of(
++        context,
++      ).showSnackBar(SnackBar(content: Text(_motherStatusGuidance())));
++      return;
++    }
+     setState(() => _isSaving = true);
+     HapticFeedback.mediumImpact();
+ 
+@@ -263,9 +311,13 @@ class _EditMotherProfileScreenState extends ConsumerState<EditMotherProfileScree
+             : null,
+       );
+ 
+-      await ref.read(profileActionsProvider.notifier).updateFullProfile(
++      await ref
++          .read(profileActionsProvider.notifier)
++          .updateFullProfile(
+             displayName: name,
+-            phone: _phoneController.text.trim().isNotEmpty ? _phoneController.text.trim() : null,
++            phone: _phoneController.text.trim().isNotEmpty
++                ? _phoneController.text.trim()
++                : null,
+             birthDate: _birthDate,
+             wilaya: _wilaya,
+             newPhotoFile: _newImageFile,
+@@ -277,7 +329,8 @@ class _EditMotherProfileScreenState extends ConsumerState<EditMotherProfileScree
+ 
+       final profileService = ref.read(profileServiceProvider);
+       if (_status == UserStatus.pregnant) {
+-        if (ref.read(activePregnancyProvider) == null && _pregnancyDate != null) {
++        if (ref.read(activePregnancyProvider) == null &&
++            _pregnancyDate != null) {
+           await profileService.declarePregnancy(
+             lmpDate: _pregnancyDate!,
+             placeholderName: childExpectedDefaultName,
+@@ -297,10 +350,10 @@ class _EditMotherProfileScreenState extends ConsumerState<EditMotherProfileScree
+           SnackBar(
+             content: Text(
+               lang == 'ar'
+-                  ? 'تم حفظ وتحديث ملفكِ الشخصي بنجاح 💖'
++                  ? 'تم حفظ وتحديث ملفكِ الشخصي بنجاح'
+                   : (lang == 'en'
+-                      ? 'Profile successfully updated 💖'
+-                      : 'Votre profil a été mis à jour avec succès ✨'),
++                        ? 'Profile successfully updated'
++                        : 'Votre profil a été mis à jour avec succès'),
+             ),
+             backgroundColor: const Color(0xFF00C853),
+           ),
+@@ -329,10 +382,14 @@ class _EditMotherProfileScreenState extends ConsumerState<EditMotherProfileScree
+     final lang = locale.languageCode;
+     final isRtl = lang == 'ar';
+ 
+-    final bgColor = isDark ? AppColors.backgroundDark : AppColors.backgroundLight;
++    final bgColor = isDark
++        ? AppColors.backgroundDark
++        : AppColors.backgroundLight;
+     final surfaceColor = isDark ? const Color(0xFF221A24) : Colors.white;
+     final textColor = isDark ? Colors.white : AppColors.onSurfaceLight;
+-    final secondaryText = isDark ? AppColors.textSecondaryDark : AppColors.textSecondaryLight;
++    final secondaryText = isDark
++        ? AppColors.textSecondaryDark
++        : AppColors.textSecondaryLight;
+     final accent = isDark ? AppColors.primaryDark : AppColors.primaryLight;
+ 
+     return Scaffold(
+@@ -371,18 +428,24 @@ class _EditMotherProfileScreenState extends ConsumerState<EditMotherProfileScree
+                                   : Colors.white.withValues(alpha: 0.92),
+                               borderRadius: BorderRadius.circular(14),
+                               border: Border.all(
+-                                color: isDark ? Colors.white12 : const Color(0xFFE8E0E4),
++                                color: isDark
++                                    ? Colors.white12
++                                    : const Color(0xFFE8E0E4),
+                               ),
+                               boxShadow: [
+                                 BoxShadow(
+-                                  color: Colors.black.withValues(alpha: isDark ? 0.25 : 0.04),
++                                  color: Colors.black.withValues(
++                                    alpha: isDark ? 0.25 : 0.04,
++                                  ),
+                                   blurRadius: 8,
+                                   offset: const Offset(0, 2),
+                                 ),
+                               ],
+                             ),
+                             child: Icon(
+-                              isRtl ? Icons.arrow_forward_ios_rounded : Icons.arrow_back_ios_new_rounded,
++                              isRtl
++                                  ? Icons.arrow_forward_ios_rounded
++                                  : Icons.arrow_back_ios_new_rounded,
+                               size: 16,
+                               color: textColor,
+                             ),
+@@ -397,21 +460,23 @@ class _EditMotherProfileScreenState extends ConsumerState<EditMotherProfileScree
+                               Text(
+                                 lang == 'ar'
+                                     ? 'الملف الشخصي للأم'
+-                                    : (lang == 'en' ? 'Mother\'s Profile' : 'Profil de la Maman'),
++                                    : (lang == 'en'
++                                          ? 'Mother\'s Profile'
++                                          : 'Profil de la Maman'),
+                                 style: AppTypography.fromContext(
+-                                   context,
+-                                   fontSize: 18,
+-                                   fontWeight: FontWeight.w900,
+-                                   color: textColor,
+-                                 ),
++                                  context,
++                                  fontSize: 18,
++                                  fontWeight: FontWeight.w900,
++                                  color: textColor,
++                                ),
+                               ),
+                               const SizedBox(height: 2),
+                               Text(
+                                 lang == 'ar'
+                                     ? 'المعلومات الشخصية والطبية'
+                                     : (lang == 'en'
+-                                        ? 'Personal & Medical Information'
+-                                        : 'Informations personnelles & médicales'),
++                                          ? 'Personal & Medical Information'
++                                          : 'Informations personnelles & médicales'),
+                                 style: TextStyle(
+                                   fontSize: 11.5,
+                                   fontWeight: FontWeight.w600,
+@@ -439,22 +504,49 @@ class _EditMotherProfileScreenState extends ConsumerState<EditMotherProfileScree
+                         crossAxisAlignment: CrossAxisAlignment.start,
+                         children: [
+                           // ── 1. Avatar Photo Picker Section ──
+-                          _buildAvatarSection(isDark, textColor, secondaryText, accent, lang),
++                          _buildAvatarSection(
++                            isDark,
++                            textColor,
++                            secondaryText,
++                            accent,
++                            lang,
++                          ),
+ 
+                           const SizedBox(height: 18),
+ 
+                           // ── 2. Personal Information Bento ──
+-                          _buildPersonalInfoSection(isDark, surfaceColor, textColor, secondaryText, accent, lang),
++                          _buildPersonalInfoSection(
++                            isDark,
++                            surfaceColor,
++                            textColor,
++                            secondaryText,
++                            accent,
++                            lang,
++                          ),
+ 
+                           const SizedBox(height: 18),
+ 
+                           // ── 3. Life Stage & Maternal Status Bento ──
+-                          _buildStatusSection(isDark, surfaceColor, textColor, secondaryText, accent, lang),
++                          _buildStatusSection(
++                            isDark,
++                            surfaceColor,
++                            textColor,
++                            secondaryText,
++                            accent,
++                            lang,
++                          ),
+ 
+                           const SizedBox(height: 18),
+ 
+                           // ── 4. Medical & Health Vitals Bento ──
+-                          _buildMedicalSection(isDark, surfaceColor, textColor, secondaryText, accent, lang),
++                          _buildMedicalSection(
++                            isDark,
++                            surfaceColor,
++                            textColor,
++                            secondaryText,
++                            accent,
++                            lang,
++                          ),
+ 
+                           const SizedBox(height: 32),
+                         ],
+@@ -502,15 +594,24 @@ class _EditMotherProfileScreenState extends ConsumerState<EditMotherProfileScree
+                     const SizedBox(
+                       width: 20,
+                       height: 20,
+-                      child: CircularProgressIndicator(strokeWidth: 2.5, color: Colors.white),
++                      child: CircularProgressIndicator(
++                        strokeWidth: 2.5,
++                        color: Colors.white,
++                      ),
+                     )
+                   else ...[
+-                    const Icon(Icons.check_circle_rounded, size: 20, color: Colors.white),
++                    const Icon(
++                      Icons.check_circle_rounded,
++                      size: 20,
++                      color: Colors.white,
++                    ),
+                     const SizedBox(width: 8),
+                     Text(
+                       lang == 'ar'
+                           ? 'حفظ بيانات الملف الشخصي'
+-                          : (lang == 'en' ? 'Save Profile' : 'Enregistrer les modifications'),
++                          : (lang == 'en'
++                                ? 'Save Profile'
++                                : 'Enregistrer les modifications'),
+                       style: const TextStyle(
+                         fontSize: 15,
+                         fontWeight: FontWeight.w800,
+@@ -547,7 +648,9 @@ class _EditMotherProfileScreenState extends ConsumerState<EditMotherProfileScree
+     ImageProvider? imageProvider;
+     if (_newImageFile != null) {
+       imageProvider = FileImage(_newImageFile!);
+-    } else if (!_removePhoto && currentPhotoUrl != null && currentPhotoUrl.isNotEmpty) {
++    } else if (!_removePhoto &&
++        currentPhotoUrl != null &&
++        currentPhotoUrl.isNotEmpty) {
+       imageProvider = CachedNetworkImageProvider(currentPhotoUrl);
+     }
+ 
+@@ -574,10 +677,7 @@ class _EditMotherProfileScreenState extends ConsumerState<EditMotherProfileScree
+                 ),
+                 child: ClipOval(
+                   child: hasPhoto
+-                      ? Image(
+-                          image: imageProvider,
+-                          fit: BoxFit.cover,
+-                        )
++                      ? Image(image: imageProvider, fit: BoxFit.cover)
+                       : Container(
+                           decoration: BoxDecoration(
+                             gradient: LinearGradient(
+@@ -612,7 +712,11 @@ class _EditMotherProfileScreenState extends ConsumerState<EditMotherProfileScree
+                       width: 2.5,
+                     ),
+                   ),
+-                  child: const Icon(Icons.camera_alt_rounded, size: 14, color: Colors.white),
++                  child: const Icon(
++                    Icons.camera_alt_rounded,
++                    size: 14,
++                    color: Colors.white,
++                  ),
+                 ),
+               ),
+             ],
+@@ -626,7 +730,9 @@ class _EditMotherProfileScreenState extends ConsumerState<EditMotherProfileScree
+             children: [
+               _MotherPhotoChip(
+                 icon: Icons.photo_camera_rounded,
+-                label: lang == 'ar' ? 'كاميرا' : (lang == 'en' ? 'Camera' : 'Caméra'),
++                label: lang == 'ar'
++                    ? 'كاميرا'
++                    : (lang == 'en' ? 'Camera' : 'Caméra'),
+                 textColor: textColor,
+                 isDark: isDark,
+                 onTap: () => _pickImage(ImageSource.camera),
+@@ -634,7 +740,9 @@ class _EditMotherProfileScreenState extends ConsumerState<EditMotherProfileScree
+               const SizedBox(width: 10),
+               _MotherPhotoChip(
+                 icon: Icons.photo_library_rounded,
+-                label: lang == 'ar' ? 'المعرض' : (lang == 'en' ? 'Gallery' : 'Galerie'),
++                label: lang == 'ar'
++                    ? 'المعرض'
++                    : (lang == 'en' ? 'Gallery' : 'Galerie'),
+                 textColor: textColor,
+                 isDark: isDark,
+                 onTap: () => _pickImage(ImageSource.gallery),
+@@ -686,7 +794,8 @@ class _EditMotherProfileScreenState extends ConsumerState<EditMotherProfileScree
+     if (_birthDate != null) {
+       final now = DateTime.now();
+       int age = now.year - _birthDate!.year;
+-      if (now.month < _birthDate!.month || (now.month == _birthDate!.month && now.day < _birthDate!.day)) {
++      if (now.month < _birthDate!.month ||
++          (now.month == _birthDate!.month && now.day < _birthDate!.day)) {
+         age--;
+       }
+       ageText = lang == 'ar'
+@@ -699,7 +808,9 @@ class _EditMotherProfileScreenState extends ConsumerState<EditMotherProfileScree
+       isDark: isDark,
+       title: lang == 'ar'
+           ? 'المعلومات الشخصية'
+-          : (lang == 'en' ? 'Personal Information' : 'Informations personnelles'),
++          : (lang == 'en'
++                ? 'Personal Information'
++                : 'Informations personnelles'),
+       icon: Icons.person_rounded,
+       accentColor: accent,
+       textColor: textColor,
+@@ -742,7 +853,9 @@ class _EditMotherProfileScreenState extends ConsumerState<EditMotherProfileScree
+             child: Container(
+               padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 13),
+               decoration: BoxDecoration(
+-                color: isDark ? Colors.white.withValues(alpha: 0.05) : const Color(0xFFF9F7F8),
++                color: isDark
++                    ? Colors.white.withValues(alpha: 0.05)
++                    : const Color(0xFFF9F7F8),
+                 borderRadius: BorderRadius.circular(14),
+                 border: Border.all(
+                   color: isDark ? Colors.white12 : const Color(0xFFECE4E8),
+@@ -755,12 +868,17 @@ class _EditMotherProfileScreenState extends ConsumerState<EditMotherProfileScree
+                   Expanded(
+                     child: Text(
+                       _birthDate != null
+-                          ? DateFormat('dd MMMM yyyy', lang == 'ar' ? 'ar' : (lang == 'en' ? 'en' : 'fr')).format(_birthDate!)
++                          ? DateFormat(
++                              'dd MMMM yyyy',
++                              lang == 'ar'
++                                  ? 'ar'
++                                  : (lang == 'en' ? 'en' : 'fr'),
++                            ).format(_birthDate!)
+                           : (lang == 'ar'
+-                              ? 'حددي تاريخ ميلادكِ'
+-                              : (lang == 'en'
+-                                  ? 'Select your date of birth'
+-                                  : 'Sélectionnez votre date de naissance')),
++                                ? 'حددي تاريخ ميلادكِ'
++                                : (lang == 'en'
++                                      ? 'Select your date of birth'
++                                      : 'Sélectionnez votre date de naissance')),
+                       style: TextStyle(
+                         fontSize: 14,
+                         fontWeight: FontWeight.w600,
+@@ -770,7 +888,10 @@ class _EditMotherProfileScreenState extends ConsumerState<EditMotherProfileScree
+                   ),
+                   if (ageText.isNotEmpty)
+                     Container(
+-                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
++                      padding: const EdgeInsets.symmetric(
++                        horizontal: 8,
++                        vertical: 3,
++                      ),
+                       decoration: BoxDecoration(
+                         color: accent.withValues(alpha: 0.12),
+                         borderRadius: BorderRadius.circular(8),
+@@ -823,11 +944,20 @@ class _EditMotherProfileScreenState extends ConsumerState<EditMotherProfileScree
+           ),
+           const SizedBox(height: 6),
+           GestureDetector(
+-            onTap: () => _showWilayaPicker(isDark, surfaceColor, textColor, secondaryText, accent, lang),
++            onTap: () => _showWilayaPicker(
++              isDark,
++              surfaceColor,
++              textColor,
++              secondaryText,
++              accent,
++              lang,
++            ),
+             child: Container(
+               padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 13),
+               decoration: BoxDecoration(
+-                color: isDark ? Colors.white.withValues(alpha: 0.05) : const Color(0xFFF9F7F8),
++                color: isDark
++                    ? Colors.white.withValues(alpha: 0.05)
++                    : const Color(0xFFF9F7F8),
+                 borderRadius: BorderRadius.circular(14),
+                 border: Border.all(
+                   color: isDark ? Colors.white12 : const Color(0xFFECE4E8),
+@@ -842,16 +972,24 @@ class _EditMotherProfileScreenState extends ConsumerState<EditMotherProfileScree
+                       _wilaya != null && _wilaya!.isNotEmpty
+                           ? _wilaya!
+                           : (lang == 'ar'
+-                              ? 'اختاري ولايتكِ'
+-                              : (lang == 'en' ? 'Select your wilaya' : 'Sélectionnez votre wilaya')),
++                                ? 'اختاري ولايتكِ'
++                                : (lang == 'en'
++                                      ? 'Select your wilaya'
++                                      : 'Sélectionnez votre wilaya')),
+                       style: TextStyle(
+                         fontSize: 14,
+                         fontWeight: FontWeight.w600,
+-                        color: _wilaya != null && _wilaya!.isNotEmpty ? textColor : secondaryText,
++                        color: _wilaya != null && _wilaya!.isNotEmpty
++                            ? textColor
++                            : secondaryText,
+                       ),
+                     ),
+                   ),
+-                  Icon(Icons.keyboard_arrow_down_rounded, size: 20, color: secondaryText),
++                  Icon(
++                    Icons.keyboard_arrow_down_rounded,
++                    size: 20,
++                    color: secondaryText,
++                  ),
+                 ],
+               ),
+             ),
+@@ -920,6 +1058,12 @@ class _EditMotherProfileScreenState extends ConsumerState<EditMotherProfileScree
+             ],
+           ),
+ 
++          if (_status == UserStatus.mom)
++            Padding(
++              padding: const EdgeInsets.only(top: 12),
++              child: Text(_motherStatusGuidance()),
++            ),
++
+           // If Pregnant, show LMP / Due Date Picker
+           if (_status == UserStatus.pregnant) ...[
+             const SizedBox(height: 16),
+@@ -937,15 +1081,19 @@ class _EditMotherProfileScreenState extends ConsumerState<EditMotherProfileScree
+                 children: [
+                   Row(
+                     children: [
+-                      const Icon(Icons.event_note_rounded, size: 18, color: Color(0xFFE91E63)),
++                      const Icon(
++                        Icons.event_note_rounded,
++                        size: 18,
++                        color: Color(0xFFE91E63),
++                      ),
+                       const SizedBox(width: 8),
+                       Expanded(
+                         child: Text(
+                           lang == 'ar'
+                               ? 'تاريخ آخر دورة شهرية (DDR)'
+                               : (lang == 'en'
+-                                  ? 'Last Menstrual Period (LMP)'
+-                                  : 'Date des Dernières Règles (DDR)'),
++                                    ? 'Last Menstrual Period (LMP)'
++                                    : 'Date des Dernières Règles (DDR)'),
+                           style: const TextStyle(
+                             fontSize: 13,
+                             fontWeight: FontWeight.w700,
+@@ -959,7 +1107,10 @@ class _EditMotherProfileScreenState extends ConsumerState<EditMotherProfileScree
+                   GestureDetector(
+                     onTap: _pickPregnancyDate,
+                     child: Container(
+-                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
++                      padding: const EdgeInsets.symmetric(
++                        horizontal: 12,
++                        vertical: 10,
++                      ),
+                       decoration: BoxDecoration(
+                         color: surfaceColor,
+                         borderRadius: BorderRadius.circular(10),
+@@ -972,10 +1123,17 @@ class _EditMotherProfileScreenState extends ConsumerState<EditMotherProfileScree
+                           Expanded(
+                             child: Text(
+                               _pregnancyDate != null
+-                                  ? DateFormat('dd MMMM yyyy', lang == 'ar' ? 'ar' : (lang == 'en' ? 'en' : 'fr')).format(_pregnancyDate!)
++                                  ? DateFormat(
++                                      'dd MMMM yyyy',
++                                      lang == 'ar'
++                                          ? 'ar'
++                                          : (lang == 'en' ? 'en' : 'fr'),
++                                    ).format(_pregnancyDate!)
+                                   : (lang == 'ar'
+-                                      ? 'اضغطي لتحديد التاريخ'
+-                                      : (lang == 'en' ? 'Select Date' : 'Sélectionner la date')),
++                                        ? 'اضغطي لتحديد التاريخ'
++                                        : (lang == 'en'
++                                              ? 'Select Date'
++                                              : 'Sélectionner la date')),
+                               style: TextStyle(
+                                 fontSize: 13.5,
+                                 fontWeight: FontWeight.w600,
+@@ -983,7 +1141,11 @@ class _EditMotherProfileScreenState extends ConsumerState<EditMotherProfileScree
+                               ),
+                             ),
+                           ),
+-                          const Icon(Icons.calendar_month_rounded, size: 18, color: Color(0xFFE91E63)),
++                          const Icon(
++                            Icons.calendar_month_rounded,
++                            size: 18,
++                            color: Color(0xFFE91E63),
++                          ),
+                         ],
+                       ),
+                     ),
+@@ -1029,10 +1191,16 @@ class _EditMotherProfileScreenState extends ConsumerState<EditMotherProfileScree
+           duration: const Duration(milliseconds: 200),
+           padding: const EdgeInsets.symmetric(vertical: 10),
+           decoration: BoxDecoration(
+-            color: isSelected ? color : (isDark ? Colors.white.withValues(alpha: 0.05) : const Color(0xFFF9F7F8)),
++            color: isSelected
++                ? color
++                : (isDark
++                      ? Colors.white.withValues(alpha: 0.05)
++                      : const Color(0xFFF9F7F8)),
+             borderRadius: BorderRadius.circular(12),
+             border: Border.all(
+-              color: isSelected ? color : (isDark ? Colors.white12 : const Color(0xFFECE4E8)),
++              color: isSelected
++                  ? color
++                  : (isDark ? Colors.white12 : const Color(0xFFECE4E8)),
+               width: isSelected ? 1.5 : 1,
+             ),
+             boxShadow: isSelected
+@@ -1050,7 +1218,9 @@ class _EditMotherProfileScreenState extends ConsumerState<EditMotherProfileScree
+               Icon(
+                 icon,
+                 size: 20,
+-                color: isSelected ? Colors.white : (isDark ? Colors.white70 : Colors.black87),
++                color: isSelected
++                    ? Colors.white
++                    : (isDark ? Colors.white70 : Colors.black87),
+               ),
+               const SizedBox(height: 4),
+               Text(
+@@ -1058,7 +1228,9 @@ class _EditMotherProfileScreenState extends ConsumerState<EditMotherProfileScree
+                 style: TextStyle(
+                   fontSize: 12,
+                   fontWeight: FontWeight.w700,
+-                  color: isSelected ? Colors.white : (isDark ? Colors.white70 : Colors.black87),
++                  color: isSelected
++                      ? Colors.white
++                      : (isDark ? Colors.white70 : Colors.black87),
+                 ),
+               ),
+             ],
+@@ -1085,7 +1257,9 @@ class _EditMotherProfileScreenState extends ConsumerState<EditMotherProfileScree
+       isDark: isDark,
+       title: lang == 'ar'
+           ? 'السجل الطبي والصحي'
+-          : (lang == 'en' ? 'Medical & Health Record' : 'Dossier médical & santé'),
++          : (lang == 'en'
++                ? 'Medical & Health Record'
++                : 'Dossier médical & santé'),
+       icon: Icons.medical_services_rounded,
+       accentColor: const Color(0xFF00B0FF),
+       textColor: textColor,
+@@ -1121,11 +1295,16 @@ class _EditMotherProfileScreenState extends ConsumerState<EditMotherProfileScree
+                 },
+                 child: AnimatedContainer(
+                   duration: const Duration(milliseconds: 180),
+-                  padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 7),
++                  padding: const EdgeInsets.symmetric(
++                    horizontal: 14,
++                    vertical: 7,
++                  ),
+                   decoration: BoxDecoration(
+                     color: isSelected
+                         ? const Color(0xFF00B0FF)
+-                        : (isDark ? Colors.white.withValues(alpha: 0.05) : const Color(0xFFF9F7F8)),
++                        : (isDark
++                              ? Colors.white.withValues(alpha: 0.05)
++                              : const Color(0xFFF9F7F8)),
+                     borderRadius: BorderRadius.circular(10),
+                     border: Border.all(
+                       color: isSelected
+@@ -1169,7 +1348,9 @@ class _EditMotherProfileScreenState extends ConsumerState<EditMotherProfileScree
+                 child: Container(
+                   height: 44,
+                   decoration: BoxDecoration(
+-                    color: isDark ? Colors.white.withValues(alpha: 0.05) : const Color(0xFFF9F7F8),
++                    color: isDark
++                        ? Colors.white.withValues(alpha: 0.05)
++                        : const Color(0xFFF9F7F8),
+                     borderRadius: BorderRadius.circular(12),
+                     border: Border.all(
+                       color: isDark ? Colors.white12 : const Color(0xFFECE4E8),
+@@ -1182,10 +1363,18 @@ class _EditMotherProfileScreenState extends ConsumerState<EditMotherProfileScree
+                     decoration: InputDecoration(
+                       hintText: lang == 'ar'
+                           ? 'أضيفي حساسية (مثال: البنسلين)'
+-                          : (lang == 'en' ? 'Add allergy (e.g. Penicillin)' : 'Ex: Pénicilline'),
+-                      hintStyle: TextStyle(fontSize: 12.5, color: secondaryText.withValues(alpha: 0.7)),
++                          : (lang == 'en'
++                                ? 'Add allergy (e.g. Penicillin)'
++                                : 'Ex: Pénicilline'),
++                      hintStyle: TextStyle(
++                        fontSize: 12.5,
++                        color: secondaryText.withValues(alpha: 0.7),
++                      ),
+                       border: InputBorder.none,
+-                      contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
++                      contentPadding: const EdgeInsets.symmetric(
++                        horizontal: 12,
++                        vertical: 10,
++                      ),
+                     ),
+                   ),
+                 ),
+@@ -1200,7 +1389,11 @@ class _EditMotherProfileScreenState extends ConsumerState<EditMotherProfileScree
+                     color: accent,
+                     borderRadius: BorderRadius.circular(12),
+                   ),
+-                  child: const Icon(Icons.add_rounded, size: 22, color: Colors.white),
++                  child: const Icon(
++                    Icons.add_rounded,
++                    size: 22,
++                    color: Colors.white,
++                  ),
+                 ),
+               ),
+             ],
+@@ -1212,15 +1405,22 @@ class _EditMotherProfileScreenState extends ConsumerState<EditMotherProfileScree
+             spacing: 6,
+             runSpacing: 6,
+             children: _kCommonAllergies.map((item) {
+-              final label = lang == 'ar' ? item.ar : (lang == 'en' ? item.en : item.fr);
++              final label = lang == 'ar'
++                  ? item.ar
++                  : (lang == 'en' ? item.en : item.fr);
+               final alreadyAdded = _allergies.contains(label);
+               if (alreadyAdded) return const SizedBox.shrink();
+               return GestureDetector(
+                 onTap: () => _addAllergy(label),
+                 child: Container(
+-                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
++                  padding: const EdgeInsets.symmetric(
++                    horizontal: 10,
++                    vertical: 4,
++                  ),
+                   decoration: BoxDecoration(
+-                    color: isDark ? Colors.white.withValues(alpha: 0.04) : Colors.black.withValues(alpha: 0.03),
++                    color: isDark
++                        ? Colors.white.withValues(alpha: 0.04)
++                        : Colors.black.withValues(alpha: 0.03),
+                     borderRadius: BorderRadius.circular(8),
+                     border: Border.all(
+                       color: isDark ? Colors.white10 : Colors.black12,
+@@ -1248,8 +1448,12 @@ class _EditMotherProfileScreenState extends ConsumerState<EditMotherProfileScree
+               children: _allergies.map((allergy) {
+                 return Chip(
+                   backgroundColor: AppColors.error.withValues(alpha: 0.1),
+-                  side: BorderSide(color: AppColors.error.withValues(alpha: 0.3)),
+-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
++                  side: BorderSide(
++                    color: AppColors.error.withValues(alpha: 0.3),
++                  ),
++                  shape: RoundedRectangleBorder(
++                    borderRadius: BorderRadius.circular(8),
++                  ),
+                   label: Text(
+                     allergy,
+                     style: const TextStyle(
+@@ -1258,7 +1462,11 @@ class _EditMotherProfileScreenState extends ConsumerState<EditMotherProfileScree
+                       color: AppColors.error,
+                     ),
+                   ),
+-                  deleteIcon: const Icon(Icons.close_rounded, size: 14, color: AppColors.error),
++                  deleteIcon: const Icon(
++                    Icons.close_rounded,
++                    size: 14,
++                    color: AppColors.error,
++                  ),
+                   onDeleted: () => _removeAllergy(allergy),
+                 );
+               }).toList(),
+@@ -1272,10 +1480,14 @@ class _EditMotherProfileScreenState extends ConsumerState<EditMotherProfileScree
+             controller: _conditionsController,
+             label: lang == 'ar'
+                 ? 'حالات صحية أو أمراض مزمنة'
+-                : (lang == 'en' ? 'Chronic conditions or medical history' : 'Conditions médicales ou maladies chroniques'),
++                : (lang == 'en'
++                      ? 'Chronic conditions or medical history'
++                      : 'Conditions médicales ou maladies chroniques'),
+             hint: lang == 'ar'
+                 ? 'مثال: السكري، ضغط الدم، فقر الدم'
+-                : (lang == 'en' ? 'e.g. Diabetes, Asthma, Anemia' : 'Ex: Diabète, Asthme, Hypertension'),
++                : (lang == 'en'
++                      ? 'e.g. Diabetes, Asthma, Anemia'
++                      : 'Ex: Diabète, Asthme, Hypertension'),
+             icon: Icons.healing_outlined,
+             isDark: isDark,
+             textColor: textColor,
+@@ -1391,11 +1603,11 @@ class _EditMotherProfileScreenState extends ConsumerState<EditMotherProfileScree
+     final weeks = (days / 7).floor();
+     final remainingDays = days % 7;
+     if (lang == 'ar') {
+-      return 'أنتِ حالياً في الأسبوع $weeks و $remainingDays أيام من الحمل 🌸';
++      return 'أنتِ حالياً في الأسبوع $weeks و $remainingDays أيام من الحمل';
+     } else if (lang == 'en') {
+-      return 'You are currently at week $weeks and $remainingDays days of pregnancy 🌸';
++      return 'You are currently at week $weeks and $remainingDays days of pregnancy';
+     } else {
+-      return 'Vous êtes actuellement à $weeks semaines et $remainingDays jours de grossesse 🌸';
++      return 'Vous êtes actuellement à $weeks semaines et $remainingDays jours de grossesse';
+     }
+   }
+ 
+@@ -1457,7 +1669,9 @@ class _EditMotherProfileScreenState extends ConsumerState<EditMotherProfileScree
+         Container(
+           padding: const EdgeInsets.symmetric(horizontal: 14),
+           decoration: BoxDecoration(
+-            color: isDark ? Colors.white.withValues(alpha: 0.05) : const Color(0xFFF9F7F8),
++            color: isDark
++                ? Colors.white.withValues(alpha: 0.05)
++                : const Color(0xFFF9F7F8),
+             borderRadius: BorderRadius.circular(14),
+             border: Border.all(
+               color: isDark ? Colors.white12 : const Color(0xFFECE4E8),
+@@ -1530,7 +1744,9 @@ class _MotherBentoCard extends StatelessWidget {
+         color: surfaceColor,
+         borderRadius: BorderRadius.circular(20),
+         border: Border.all(
+-          color: isDark ? Colors.white.withValues(alpha: 0.08) : const Color(0xFFECE4E8),
++          color: isDark
++              ? Colors.white.withValues(alpha: 0.08)
++              : const Color(0xFFECE4E8),
+         ),
+         boxShadow: [
+           BoxShadow(
+@@ -1711,8 +1927,8 @@ class _WilayaSelectorSheetState extends State<_WilayaSelectorSheet> {
+                 isAr
+                     ? 'اختيار الولاية (58 ولاية)'
+                     : (widget.lang == 'en'
+-                        ? 'Select Province / Wilaya (58)'
+-                        : 'Sélectionner la wilaya (58)'),
++                          ? 'Select Province / Wilaya (58)'
++                          : 'Sélectionner la wilaya (58)'),
+                 style: TextStyle(
+                   fontSize: 16,
+                   fontWeight: FontWeight.w800,
+@@ -1727,12 +1943,18 @@ class _WilayaSelectorSheetState extends State<_WilayaSelectorSheet> {
+           Container(
+             padding: const EdgeInsets.symmetric(horizontal: 12),
+             decoration: BoxDecoration(
+-              color: widget.isDark ? Colors.white.withValues(alpha: 0.06) : const Color(0xFFF4F0F2),
++              color: widget.isDark
++                  ? Colors.white.withValues(alpha: 0.06)
++                  : const Color(0xFFF4F0F2),
+               borderRadius: BorderRadius.circular(12),
+             ),
+             child: Row(
+               children: [
+-                Icon(Icons.search_rounded, size: 18, color: widget.secondaryText),
++                Icon(
++                  Icons.search_rounded,
++                  size: 18,
++                  color: widget.secondaryText,
++                ),
+                 const SizedBox(width: 8),
+                 Expanded(
+                   child: TextField(
+@@ -1743,9 +1965,12 @@ class _WilayaSelectorSheetState extends State<_WilayaSelectorSheet> {
+                       hintText: isAr
+                           ? 'ابحث باسم الولاية أو رقمها...'
+                           : (widget.lang == 'en'
+-                              ? 'Search by name or code...'
+-                              : 'Rechercher par nom ou code...'),
+-                      hintStyle: TextStyle(fontSize: 12.5, color: widget.secondaryText),
++                                ? 'Search by name or code...'
++                                : 'Rechercher par nom ou code...'),
++                      hintStyle: TextStyle(
++                        fontSize: 12.5,
++                        color: widget.secondaryText,
++                      ),
+                       border: InputBorder.none,
+                       isDense: true,
+                       contentPadding: const EdgeInsets.symmetric(vertical: 12),
+@@ -1763,22 +1988,36 @@ class _WilayaSelectorSheetState extends State<_WilayaSelectorSheet> {
+               itemCount: _filtered.length,
+               separatorBuilder: (_, _) => Divider(
+                 height: 1,
+-                color: widget.isDark ? Colors.white10 : Colors.black.withValues(alpha: 0.05),
++                color: widget.isDark
++                    ? Colors.white10
++                    : Colors.black.withValues(alpha: 0.05),
+               ),
+               itemBuilder: (context, index) {
+                 final item = _filtered[index];
+                 final codeFormatted = item.code.toString().padLeft(2, '0');
+-                final displayText = isAr ? '$codeFormatted - ${item.ar} (${item.fr})' : '$codeFormatted - ${item.fr} (${item.ar})';
+-                final isSelected = widget.selectedWilaya == displayText || widget.selectedWilaya == item.fr || widget.selectedWilaya == item.ar;
++                final displayText = isAr
++                    ? '$codeFormatted - ${item.ar} (${item.fr})'
++                    : '$codeFormatted - ${item.fr} (${item.ar})';
++                final isSelected =
++                    widget.selectedWilaya == displayText ||
++                    widget.selectedWilaya == item.fr ||
++                    widget.selectedWilaya == item.ar;
+ 
+                 return ListTile(
+                   dense: true,
+-                  contentPadding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
++                  contentPadding: const EdgeInsets.symmetric(
++                    horizontal: 8,
++                    vertical: 2,
++                  ),
+                   leading: Container(
+                     width: 32,
+                     height: 32,
+                     decoration: BoxDecoration(
+-                      color: isSelected ? widget.accent : (widget.isDark ? Colors.white10 : Colors.black.withValues(alpha: 0.04)),
++                      color: isSelected
++                          ? widget.accent
++                          : (widget.isDark
++                                ? Colors.white10
++                                : Colors.black.withValues(alpha: 0.04)),
+                       borderRadius: BorderRadius.circular(8),
+                     ),
+                     child: Center(
+@@ -1796,7 +2035,9 @@ class _WilayaSelectorSheetState extends State<_WilayaSelectorSheet> {
+                     isAr ? item.ar : item.fr,
+                     style: TextStyle(
+                       fontSize: 14,
+-                      fontWeight: isSelected ? FontWeight.w800 : FontWeight.w600,
++                      fontWeight: isSelected
++                          ? FontWeight.w800
++                          : FontWeight.w600,
+                       color: isSelected ? widget.accent : widget.textColor,
+                     ),
+                   ),
+@@ -1807,10 +2048,20 @@ class _WilayaSelectorSheetState extends State<_WilayaSelectorSheet> {
+                       color: widget.secondaryText,
+                     ),
+                   ),
+-                  trailing: isSelected ? Icon(Icons.check_circle_rounded, color: widget.accent, size: 20) : null,
++                  trailing: isSelected
++                      ? Icon(
++                          Icons.check_circle_rounded,
++                          color: widget.accent,
++                          size: 20,
++                        )
++                      : null,
+                   onTap: () {
+                     HapticFeedback.selectionClick();
+-                    widget.onSelect(isAr ? '${item.ar} ($codeFormatted)' : '${item.fr} ($codeFormatted)');
++                    widget.onSelect(
++                      isAr
++                          ? '${item.ar} ($codeFormatted)'
++                          : '${item.fr} ($codeFormatted)',
++                    );
+                   },
+                 );
+               },
+diff --git a/lib/features/reels/models/reel_item.dart b/lib/features/reels/models/reel_item.dart
+index abce134..f5eeea6 100644
+--- a/lib/features/reels/models/reel_item.dart
++++ b/lib/features/reels/models/reel_item.dart
+@@ -1,3 +1,4 @@
++import 'legacy_reel_translations.dart';
+ import 'package:flutter/material.dart';
+ 
+ import '../../../l10n/app_localizations.dart';
+@@ -104,6 +105,8 @@ class ReelItem {
+   final String id;
+   final String title;
+   final String description;
++  final Map<String, String> titles;
++  final Map<String, String> descriptions;
+   final String assetPath;
+   final String author;
+   final bool isFavorite;
+@@ -121,12 +124,78 @@ class ReelItem {
+     required this.description,
+     required this.assetPath,
+     required this.category,
++    this.titles = const {},
++    this.descriptions = const {},
+     this.author = 'Luckymam',
+     this.isFavorite = false,
+     this.likeCount = 0,
+     this.vaccineTags = const [],
+   });
+ 
++  String titleFor(String language) =>
++      titles[language] ?? legacyReelText(id, language, 'title') ?? title;
++  String descriptionFor(String language) =>
++      descriptions[language] ??
++      legacyReelText(id, language, 'description') ??
++      description;
++
++  factory ReelItem.fromMap(String id, Map<String, dynamic> data) {
++    String text(dynamic value, [String fallback = '']) =>
++        value is String ? value : fallback;
++    Map<String, String> localized(String field) {
++      final result = <String, String>{};
++      for (final lang in ['fr', 'en', 'ar']) {
++        final suffix = '${lang[0].toUpperCase()}${lang.substring(1)}';
++        final translations = data['translations'];
++        final nested = translations is Map ? translations[lang] : null;
++        final raw = data[field];
++        final value = text(
++          data['$field$suffix'],
++          text(
++            data['${field}_$lang'],
++            text(
++              nested is Map ? nested[field] : null,
++              text(raw is Map ? raw[lang] : null),
++            ),
++          ),
++        );
++        if (value.trim().isNotEmpty) result[lang] = value;
++      }
++      return result;
++    }
++
++    final titles = localized('title');
++    final descriptions = localized('description');
++    final likes = data['likeCount'] ?? data['likes'];
++    final creator = data['creator'];
++    return ReelItem(
++      id: id,
++      title: text(
++        data['title'],
++        titles['fr'] ?? titles.values.firstOrNull ?? '',
++      ),
++      description: text(
++        data['description'],
++        descriptions['fr'] ?? descriptions.values.firstOrNull ?? '',
++      ),
++      titles: titles,
++      descriptions: descriptions,
++      assetPath: text(data['assetPath']),
++      author: text(
++        data['author'],
++        text(creator is Map ? creator['name'] : null, 'Luckymam'),
++      ),
++      category: ReelCategory.values.firstWhere(
++        (c) => c.name == (data['category'] ?? data['topic']),
++        orElse: () => ReelCategory.vaccins,
++      ),
++      likeCount: likes is num ? likes.toInt() : int.tryParse('$likes') ?? 0,
++      vaccineTags: data['vaccineTags'] is List
++          ? (data['vaccineTags'] as List).whereType<String>().toList()
++          : const [],
++    );
++  }
++
+   ReelItem copyWith({
+     String? id,
+     String? title,
+@@ -139,6 +208,8 @@ class ReelItem {
+     List<String>? vaccineTags,
+   }) {
+     return ReelItem(
++      titles: titles,
++      descriptions: descriptions,
+       id: id ?? this.id,
+       title: title ?? this.title,
+       description: description ?? this.description,
+diff --git a/lib/features/reels/providers/reels_provider.dart b/lib/features/reels/providers/reels_provider.dart
+index 66e4f0e..2a30b28 100644
+--- a/lib/features/reels/providers/reels_provider.dart
++++ b/lib/features/reels/providers/reels_provider.dart
+@@ -1,3 +1,4 @@
++import '../../../core/services/safe_log.dart';
+ import 'dart:async';
+ import 'package:cloud_firestore/cloud_firestore.dart';
+ import 'package:flutter_riverpod/flutter_riverpod.dart';
+@@ -17,34 +18,21 @@ class ReelsNotifier extends StateNotifier<List<ReelItem>> {
+     _subscription = FirebaseFirestore.instance
+         .collection('reels')
+         .snapshots()
+-        .listen((snap) {
+-      state = snap.docs.map((doc) => _reelFromFirestore(doc)).toList();
+-    }, onError: (Object error, StackTrace stackTrace) {
+-      debugPrint('Error loading reels from Firestore: $error');
+-    });
++        .listen(
++          (snap) {
++            state = snap.docs.map((doc) => _reelFromFirestore(doc)).toList();
++          },
++          onError: (Object error, StackTrace stackTrace) {
++            safeDebugPrint('Unable to load reels.');
++          },
++        );
+   }
+ 
+   ReelItem _reelFromFirestore(QueryDocumentSnapshot<Map<String, dynamic>> doc) {
+-    final data = doc.data();
+-    final categoryStr = data['category'] as String?;
+-    final category = ReelCategory.values.firstWhere(
+-      (c) => c.name == categoryStr,
+-      orElse: () => ReelCategory.vaccins,
+-    );
+-    final isFav = _localFavorites.contains(doc.id);
+-    final rawLikes = data['likeCount'] ?? data['likes'] ?? 0;
+-
+-    return ReelItem(
+-      id: doc.id,
+-      title: data['title'] as String? ?? '',
+-      description: data['description'] as String? ?? '',
+-      assetPath: data['assetPath'] as String? ?? '',
+-      author: data['author'] as String? ?? 'Luckymam',
+-      likeCount: rawLikes is num ? rawLikes.toInt() : 0,
+-      category: category,
+-      isFavorite: isFav,
+-      vaccineTags: List<String>.from(data['vaccineTags'] ?? []),
+-    );
++    return ReelItem.fromMap(
++      doc.id,
++      doc.data(),
++    ).copyWith(isFavorite: _localFavorites.contains(doc.id));
+   }
+ 
+   Future<void> toggleFavorite(String reelId) async {
+@@ -76,7 +64,7 @@ class ReelsNotifier extends StateNotifier<List<ReelItem>> {
+         });
+       }
+     } catch (e) {
+-      debugPrint('Error updating reel likeCount: $e');
++      safeDebugPrint('Unable to update reel favorite.');
+     }
+   }
+ 
+@@ -101,9 +89,7 @@ final selectedReelCategoryProvider = StateProvider<ReelCategory?>(
+ 
+ /// Vaccine codes to filter by when the reels screen is opened from a
+ /// vaccine's fiche (null = no vaccine filter applied).
+-final selectedVaccineTagsProvider = StateProvider<List<String>?>(
+-  (ref) => null,
+-);
++final selectedVaccineTagsProvider = StateProvider<List<String>?>((ref) => null);
+ 
+ /// Firestore id for the Luckymam app intro reel — pinned first in the feed.
+ const appReelId = 'reel_app';
+@@ -135,8 +121,5 @@ final filteredReelsProvider = Provider<List<ReelItem>>((ref) {
+ List<ReelItem> _withAppReelFirst(List<ReelItem> reels) {
+   final appReel = reels.where((r) => r.id == appReelId);
+   if (appReel.isEmpty) return reels;
+-  return [
+-    ...appReel,
+-    ...reels.where((r) => r.id != appReelId),
+-  ];
++  return [...appReel, ...reels.where((r) => r.id != appReelId)];
+ }
+diff --git a/lib/features/reels/screens/reels_screen.dart b/lib/features/reels/screens/reels_screen.dart
+index 4cc7f41..e65fa87 100644
+--- a/lib/features/reels/screens/reels_screen.dart
++++ b/lib/features/reels/screens/reels_screen.dart
+@@ -136,169 +136,176 @@ class _ReelsScreenState extends ConsumerState<ReelsScreen> {
+           extendBodyBehindAppBar: true,
+           body: Stack(
+             children: [
+-            // ── Vertical page view ────────────────────────────────────
+-            displayItems.isEmpty
+-                ? _buildEmptyState(context)
+-                : PageView.builder(
+-                    controller: _pageController,
+-                    scrollDirection: Axis.vertical,
+-                    itemCount: displayItems.length,
+-                    onPageChanged: (index) {
+-                      ref.read(currentReelIndexProvider.notifier).state = index;
+-                      final item = displayItems[index];
+-                      if (item is ReelItem) _logReelViewFromVax(item);
+-                    },
+-                    itemBuilder: (context, index) {
+-                      final item = displayItems[index];
+-                      if (item is HouseAd) {
+-                        return ReelAdItem(
+-                          ad: item,
+-                          isActive: currentIndex == index,
+-                        );
+-                      }
+-                      final reel = item as ReelItem;
+-                      return Stack(
+-                        fit: StackFit.expand,
+-                        children: [
+-                          ReelPlayer(
+-                            key: ValueKey(reel.id),
+-                            assetPath: reel.assetPath,
++              // ── Vertical page view ────────────────────────────────────
++              displayItems.isEmpty
++                  ? _buildEmptyState(context)
++                  : PageView.builder(
++                      controller: _pageController,
++                      scrollDirection: Axis.vertical,
++                      itemCount: displayItems.length,
++                      onPageChanged: (index) {
++                        ref.read(currentReelIndexProvider.notifier).state =
++                            index;
++                        final item = displayItems[index];
++                        if (item is ReelItem) _logReelViewFromVax(item);
++                      },
++                      itemBuilder: (context, index) {
++                        final item = displayItems[index];
++                        if (item is HouseAd) {
++                          return ReelAdItem(
++                            ad: item,
+                             isActive: currentIndex == index,
+-                          ),
+-                          ReelOverlay(reel: reel),
+-                        ],
+-                      );
+-                    },
+-                  ),
+-
+-            // ── Top bar ───────────────────────────────────────────────
+-            SafeArea(
+-              child: Column(
+-                mainAxisSize: MainAxisSize.min,
+-                children: [
+-                  // Title row
+-                  Padding(
+-                    padding: const EdgeInsets.symmetric(
+-                      horizontal: 8,
+-                      vertical: 8,
++                          );
++                        }
++                        final reel = item as ReelItem;
++                        return Stack(
++                          fit: StackFit.expand,
++                          children: [
++                            ReelPlayer(
++                              key: ValueKey(reel.id),
++                              assetPath: reel.assetPath,
++                              isActive: currentIndex == index,
++                            ),
++                            ReelOverlay(reel: reel),
++                          ],
++                        );
++                      },
+                     ),
+-                    child: Row(
+-                      children: [
+-                        // Back button
+-                        GestureDetector(
+-                          onTap: () => Navigator.of(context).pop(),
+-                          behavior: HitTestBehavior.opaque,
+-                          child: Container(
+-                            width: 44,
+-                            height: 44,
+-                            decoration: BoxDecoration(
+-                              color: Colors.black.withValues(alpha: 0.35),
+-                              shape: BoxShape.circle,
++
++              // ── Top bar ───────────────────────────────────────────────
++              SafeArea(
++                child: Column(
++                  mainAxisSize: MainAxisSize.min,
++                  children: [
++                    // Title row
++                    Padding(
++                      padding: const EdgeInsets.symmetric(
++                        horizontal: 8,
++                        vertical: 8,
++                      ),
++                      child: Row(
++                        children: [
++                          // Back button
++                          GestureDetector(
++                            onTap: () => Navigator.of(context).pop(),
++                            behavior: HitTestBehavior.opaque,
++                            child: Container(
++                              width: 44,
++                              height: 44,
++                              decoration: BoxDecoration(
++                                color: Colors.black.withValues(alpha: 0.35),
++                                shape: BoxShape.circle,
++                              ),
++                              child: const Icon(
++                                Icons.arrow_back_rounded,
++                                color: Colors.white,
++                                size: 22,
++                              ),
+                             ),
+-                            child: const Icon(
+-                              Icons.arrow_back_rounded,
++                          ),
++                          const SizedBox(width: 12),
++                          Text(
++                            l10n.reelsTitle,
++                            style: AppTypography.fromContext(
++                              context,
++                              fontSize: 18,
++                              fontWeight: FontWeight.w600,
+                               color: Colors.white,
+-                              size: 22,
+                             ),
+                           ),
+-                        ),
+-                        const SizedBox(width: 12),
+-                        Text(
+-                          l10n.reelsTitle,
+-                          style: AppTypography.fromContext(context,
+-                            fontSize: 18,
+-                            fontWeight: FontWeight.w600,
+-                            color: Colors.white,
+-                          ),
+-                        ),
+-                        const Spacer(),
+-                        // Reel counter badge
+-                        if (displayItems.isNotEmpty)
+-                          Container(
+-                            padding: const EdgeInsets.symmetric(
+-                              horizontal: 12,
+-                              vertical: 6,
+-                            ),
+-                            decoration: BoxDecoration(
+-                              color: AppColors.magentaPink.withValues(
+-                                alpha: 0.7,
++                          const Spacer(),
++                          // Reel counter badge
++                          if (displayItems.isNotEmpty)
++                            Container(
++                              padding: const EdgeInsets.symmetric(
++                                horizontal: 12,
++                                vertical: 6,
+                               ),
+-                              borderRadius: BorderRadius.circular(16),
+-                            ),
+-                            child: Text(
+-                              '${currentIndex + 1}/${displayItems.length}',
+-                              style: AppTypography.fromContext(context,
+-                                fontSize: 12,
+-                                fontWeight: FontWeight.w600,
+-                                color: Colors.white,
++                              decoration: BoxDecoration(
++                                color: AppColors.magentaPink.withValues(
++                                  alpha: 0.7,
++                                ),
++                                borderRadius: BorderRadius.circular(16),
++                              ),
++                              child: Text(
++                                '${currentIndex + 1}/${displayItems.length}',
++                                style: AppTypography.fromContext(
++                                  context,
++                                  fontSize: 12,
++                                  fontWeight: FontWeight.w600,
++                                  color: Colors.white,
++                                ),
+                               ),
+                             ),
+-                          ),
+-                      ],
++                        ],
++                      ),
+                     ),
+-                  ),
+ 
+-                  // ── Category filter chips ─────────────────────────────
+-                  _CategoryFilterBar(
+-                    selected: selectedCategory,
+-                    onSelected: _onCategoryChanged,
+-                  ),
++                    // ── Category filter chips ─────────────────────────────
++                    _CategoryFilterBar(
++                      selected: selectedCategory,
++                      onSelected: _onCategoryChanged,
++                    ),
+ 
+-                  // ── Vaccine filter badge (deep-link from a vaccine's fiche) ──
+-                  if (vaccineFilterActive && widget.initialVaccineLabel != null)
+-                    Padding(
+-                      padding: const EdgeInsets.fromLTRB(8, 8, 8, 0),
+-                      child: Align(
+-                        alignment: Alignment.centerLeft,
+-                        child: GestureDetector(
+-                          onTap: _clearVaccineFilter,
+-                          child: Container(
+-                            padding: const EdgeInsets.symmetric(
+-                              horizontal: 12,
+-                              vertical: 6,
+-                            ),
+-                            decoration: BoxDecoration(
+-                              color: AppColors.magentaPink.withValues(
+-                                alpha: 0.85,
++                    // ── Vaccine filter badge (deep-link from a vaccine's fiche) ──
++                    if (vaccineFilterActive &&
++                        widget.initialVaccineLabel != null)
++                      Padding(
++                        padding: const EdgeInsets.fromLTRB(8, 8, 8, 0),
++                        child: Align(
++                          alignment: Alignment.centerLeft,
++                          child: GestureDetector(
++                            onTap: _clearVaccineFilter,
++                            child: Container(
++                              padding: const EdgeInsets.symmetric(
++                                horizontal: 12,
++                                vertical: 6,
+                               ),
+-                              borderRadius: BorderRadius.circular(16),
+-                            ),
+-                            child: Row(
+-                              mainAxisSize: MainAxisSize.min,
+-                              children: [
+-                                const Icon(
+-                                  Icons.vaccines_rounded,
+-                                  size: 14,
+-                                  color: Colors.white,
++                              decoration: BoxDecoration(
++                                color: AppColors.magentaPink.withValues(
++                                  alpha: 0.85,
+                                 ),
+-                                const SizedBox(width: 6),
+-                                Text(
+-                                  l10n.reelsFiltered(widget.initialVaccineLabel!),
+-                                  style: AppTypography.fromContext(context,
+-                                    fontSize: 12,
+-                                    fontWeight: FontWeight.w600,
++                                borderRadius: BorderRadius.circular(16),
++                              ),
++                              child: Row(
++                                mainAxisSize: MainAxisSize.min,
++                                children: [
++                                  const Icon(
++                                    Icons.vaccines_rounded,
++                                    size: 14,
+                                     color: Colors.white,
+                                   ),
+-                                ),
+-                                const SizedBox(width: 6),
+-                                const Icon(
+-                                  Icons.close_rounded,
+-                                  size: 14,
+-                                  color: Colors.white,
+-                                ),
+-                              ],
++                                  const SizedBox(width: 6),
++                                  Text(
++                                    l10n.reelsFiltered(
++                                      widget.initialVaccineLabel!,
++                                    ),
++                                    style: AppTypography.fromContext(
++                                      context,
++                                      fontSize: 12,
++                                      fontWeight: FontWeight.w600,
++                                      color: Colors.white,
++                                    ),
++                                  ),
++                                  const SizedBox(width: 6),
++                                  const Icon(
++                                    Icons.close_rounded,
++                                    size: 14,
++                                    color: Colors.white,
++                                  ),
++                                ],
++                              ),
+                             ),
+                           ),
+                         ),
+                       ),
+-                    ),
+-                ],
++                  ],
++                ),
+               ),
+-            ),
+-          ],
++            ],
++          ),
+         ),
+       ),
+-    ),
+     );
+   }
+ 
+@@ -316,7 +323,8 @@ class _ReelsScreenState extends ConsumerState<ReelsScreen> {
+           const SizedBox(height: 16),
+           Text(
+             l10n.reelsEmptyCategory,
+-            style: AppTypography.fromContext(context,
++            style: AppTypography.fromContext(
++              context,
+               color: Colors.white60,
+               fontSize: 16,
+               fontWeight: FontWeight.w500,
+@@ -419,7 +427,8 @@ class _CategoryChip extends StatelessWidget {
+             const SizedBox(width: 5),
+             Text(
+               label,
+-              style: AppTypography.fromContext(context,
++              style: AppTypography.fromContext(
++                context,
+                 fontSize: 12,
+                 fontWeight: isSelected ? FontWeight.w700 : FontWeight.w500,
+                 color: Colors.white,
+diff --git a/lib/features/reels/widgets/reel_overlay.dart b/lib/features/reels/widgets/reel_overlay.dart
+index eff25df..23d5f4d 100644
+--- a/lib/features/reels/widgets/reel_overlay.dart
++++ b/lib/features/reels/widgets/reel_overlay.dart
+@@ -1,4 +1,7 @@
+ import 'package:flutter/material.dart';
++import 'package:flutter_svg/flutter_svg.dart';
++import '../services/reel_actions.dart';
++import '../reel_messages.dart';
+ import 'package:flutter_riverpod/flutter_riverpod.dart';
+ import '../../../core/theme/app_typography.dart';
+ import '../../../core/extensions/l10n_extension.dart';
+@@ -7,14 +10,57 @@ import '../models/reel_item.dart';
+ import '../providers/reels_provider.dart';
+ 
+ /// TikTok-style overlay on top of the video with title, description, and action buttons.
+-class ReelOverlay extends ConsumerWidget {
++class ReelOverlay extends ConsumerStatefulWidget {
+   const ReelOverlay({super.key, required this.reel});
+ 
+   final ReelItem reel;
+ 
+   @override
+-  Widget build(BuildContext context, WidgetRef ref) {
++  ConsumerState<ReelOverlay> createState() => _ReelOverlayState();
++}
++
++class _ReelOverlayState extends ConsumerState<ReelOverlay> {
++  bool _busy = false;
++  bool _saving = false;
++  ReelItem get reel => widget.reel;
++
++  Future<void> _perform(bool save) async {
++    if (_busy) return;
++    setState(() {
++      _busy = true;
++      _saving = save;
++    });
++    final language = Localizations.localeOf(context).languageCode;
++    try {
++      final actions = ReelActions();
++      if (save) {
++        await actions.save(reel.assetPath);
++      } else {
++        await actions.share(
++          reel.assetPath,
++          '${reel.titleFor(language)}\n${reel.descriptionFor(language)}',
++        );
++      }
++      if (mounted && save) {
++        ScaffoldMessenger.of(
++          context,
++        ).showSnackBar(SnackBar(content: Text(reelMessage(language, 'saved'))));
++      }
++    } catch (_) {
++      if (mounted) {
++        ScaffoldMessenger.of(context).showSnackBar(
++          SnackBar(content: Text(reelMessage(language, 'actionError'))),
++        );
++      }
++    } finally {
++      if (mounted) setState(() => _busy = false);
++    }
++  }
++
++  @override
++  Widget build(BuildContext context) {
+     final l10n = context.l10n;
++    final language = Localizations.localeOf(context).languageCode;
+     return Stack(
+       children: [
+         // Bottom gradient scrim
+@@ -34,6 +80,23 @@ class ReelOverlay extends ConsumerWidget {
+           ),
+         ),
+ 
++        // Brand sits above the scrim, physically bottom-left in every locale.
++        Positioned(
++          left: 16,
++          bottom: 196,
++          child: IgnorePointer(
++            child: SvgPicture.asset(
++              'assets/logo/logo svg.svg',
++              width: 76,
++              height: 76,
++              colorFilter: const ColorFilter.mode(
++                Colors.white,
++                BlendMode.srcIn,
++              ),
++            ),
++          ),
++        ),
++
+         // Right-side action buttons (TikTok-style)
+         Positioned(
+           right: 16,
+@@ -52,17 +115,19 @@ class ReelOverlay extends ConsumerWidget {
+               ),
+               const SizedBox(height: 24),
+               _ActionButton(
+-                icon: Icons.bookmark_border_rounded,
++                icon: Icons.download_rounded,
++                busy: _busy && _saving,
+                 label: l10n.reelsSave,
+                 color: Colors.white,
+-                onTap: () {},
++                onTap: () => _perform(true),
+               ),
+               const SizedBox(height: 24),
+               _ActionButton(
+                 icon: Icons.share_rounded,
++                busy: _busy && !_saving,
+                 label: l10n.share,
+                 color: Colors.white,
+-                onTap: () {},
++                onTap: () => _perform(false),
+               ),
+             ],
+           ),
+@@ -100,7 +165,8 @@ class ReelOverlay extends ConsumerWidget {
+                   const SizedBox(width: 10),
+                   Text(
+                     reel.author,
+-                    style: AppTypography.fromContext(context,
++                    style: AppTypography.fromContext(
++                      context,
+                       fontSize: 15,
+                       fontWeight: FontWeight.w600,
+                       color: Colors.white,
+@@ -112,8 +178,9 @@ class ReelOverlay extends ConsumerWidget {
+ 
+               // Title
+               Text(
+-                reel.title,
+-                style: AppTypography.fromContext(context,
++                reel.titleFor(language),
++                style: AppTypography.fromContext(
++                  context,
+                   fontSize: 18,
+                   fontWeight: FontWeight.bold,
+                   color: Colors.white,
+@@ -123,10 +190,11 @@ class ReelOverlay extends ConsumerWidget {
+ 
+               // Description
+               Text(
+-                reel.description,
++                reel.descriptionFor(language),
+                 maxLines: 2,
+                 overflow: TextOverflow.ellipsis,
+-                style: AppTypography.fromContext(context,
++                style: AppTypography.fromContext(
++                  context,
+                   fontSize: 13,
+                   color: Colors.white.withValues(alpha: 0.85),
+                   height: 1.4,
+@@ -147,28 +215,41 @@ class _ActionButton extends StatelessWidget {
+     required this.label,
+     required this.color,
+     required this.onTap,
++    this.busy = false,
+   });
+ 
+   final IconData icon;
+   final String label;
+   final Color color;
+   final VoidCallback onTap;
++  final bool busy;
+ 
+   @override
+   Widget build(BuildContext context) {
+     return GestureDetector(
+-      onTap: onTap,
++      onTap: busy ? null : onTap,
+       behavior: HitTestBehavior.opaque,
+       child: SizedBox(
+         width: 56,
+         child: Column(
+           mainAxisSize: MainAxisSize.min,
+           children: [
+-            Icon(icon, color: color, size: 32),
++            if (busy)
++              const SizedBox(
++                width: 32,
++                height: 32,
++                child: CircularProgressIndicator(
++                  color: Colors.white,
++                  strokeWidth: 2,
++                ),
++              )
++            else
++              Icon(icon, color: color, size: 32),
+             const SizedBox(height: 4),
+             Text(
+               label,
+-              style: AppTypography.fromContext(context,
++              style: AppTypography.fromContext(
++                context,
+                 fontSize: 11,
+                 fontWeight: FontWeight.w500,
+                 color: Colors.white.withValues(alpha: 0.9),
+diff --git a/lib/features/reels/widgets/reel_player.dart b/lib/features/reels/widgets/reel_player.dart
+index c1625d3..096122f 100644
+--- a/lib/features/reels/widgets/reel_player.dart
++++ b/lib/features/reels/widgets/reel_player.dart
+@@ -1,5 +1,6 @@
+ import 'package:flutter/material.dart';
+-import 'package:flutter_svg/flutter_svg.dart';
++import '../../../core/extensions/l10n_extension.dart';
++import '../reel_messages.dart';
+ import 'package:video_player/video_player.dart';
+ 
+ import '../../../core/theme/app_colors.dart';
+@@ -22,11 +23,42 @@ class ReelPlayer extends StatefulWidget {
+ }
+ 
+ class _ReelPlayerState extends State<ReelPlayer>
+-    with SingleTickerProviderStateMixin {
++    with SingleTickerProviderStateMixin, WidgetsBindingObserver {
+   late VideoPlayerController _controller;
+   late AnimationController _pulseAnim;
+   late Animation<double> _scaleAnim;
+   bool _initialized = false;
++  bool _failed = false;
++  bool _foreground = true;
++  bool _routeCurrent = true;
++  int _generation = 0;
++  bool get _canPlay => widget.isActive && _foreground && _routeCurrent;
++
++  @override
++  void didChangeDependencies() {
++    super.didChangeDependencies();
++    _routeCurrent = ModalRoute.isCurrentOf(context) ?? true;
++    if (_initialized) {
++      if (_canPlay) {
++        _controller.play();
++      } else {
++        _controller.pause();
++      }
++    }
++  }
++
++  @override
++  void didChangeAppLifecycleState(AppLifecycleState state) {
++    _foreground = state == AppLifecycleState.resumed;
++    if (_initialized) {
++      if (_canPlay) {
++        _controller.play();
++      } else {
++        _controller.pause();
++      }
++    }
++  }
++
+   bool _showPlayOverlay = false;
+ 
+   @override
+@@ -40,6 +72,7 @@ class _ReelPlayerState extends State<ReelPlayer>
+       begin: 1.0,
+       end: 0.88,
+     ).animate(CurvedAnimation(parent: _pulseAnim, curve: Curves.easeOut));
++    WidgetsBinding.instance.addObserver(this);
+     _initController();
+   }
+ 
+@@ -50,22 +83,58 @@ class _ReelPlayerState extends State<ReelPlayer>
+     } else {
+       _controller = VideoPlayerController.asset(path);
+     }
+-    await _controller.initialize();
+-    _controller.setLooping(true);
+-    _controller.setVolume(1.0);
+-
+-    if (mounted) {
++    final controller = _controller;
++    final generation = ++_generation;
++    try {
++      await controller.initialize().timeout(const Duration(seconds: 15));
++      if (!mounted || generation != _generation) return;
++      await controller.setLooping(true);
++      await controller.setVolume(1.0);
++      if (!mounted || generation != _generation) return;
+       setState(() => _initialized = true);
+-      if (widget.isActive) _controller.play();
++      controller.addListener(_onVideoChanged);
++      if (_canPlay) await controller.play();
++    } catch (_) {
++      if (mounted && generation == _generation) {
++        controller.removeListener(_onVideoChanged);
++        controller.pause();
++        setState(() {
++          _failed = true;
++          _initialized = false;
++        });
++      }
++    }
++  }
++
++  void _onVideoChanged() {
++    if (_controller.value.hasError && mounted && !_failed) {
++      setState(() {
++        _failed = true;
++        _initialized = false;
++      });
++      _controller.pause();
+     }
+   }
+ 
++  Future<void> _retry() async {
++    _generation++;
++    final previous = _controller;
++    previous.removeListener(_onVideoChanged);
++    setState(() {
++      _failed = false;
++      _initialized = false;
++    });
++    // Platform disposal may wait for a stalled native creation. Retry independently.
++    previous.dispose();
++    if (mounted) await _initController();
++  }
++
+   @override
+   void didUpdateWidget(covariant ReelPlayer oldWidget) {
+     super.didUpdateWidget(oldWidget);
+     if (!_initialized) return;
+ 
+-    if (widget.isActive && !oldWidget.isActive) {
++    if (_canPlay && !oldWidget.isActive) {
+       _controller.seekTo(Duration.zero);
+       _controller.play();
+     } else if (!widget.isActive && oldWidget.isActive) {
+@@ -75,13 +144,16 @@ class _ReelPlayerState extends State<ReelPlayer>
+ 
+   @override
+   void dispose() {
++    _generation++;
++    WidgetsBinding.instance.removeObserver(this);
++    _controller.removeListener(_onVideoChanged);
+     _controller.dispose();
+     _pulseAnim.dispose();
+     super.dispose();
+   }
+ 
+   void _togglePlayPause() {
+-    if (!_initialized) return;
++    if (!_initialized || !_canPlay) return;
+ 
+     _pulseAnim.forward().then((_) => _pulseAnim.reverse());
+ 
+@@ -98,7 +170,7 @@ class _ReelPlayerState extends State<ReelPlayer>
+     // Auto-hide after 2s if paused
+     if (!_controller.value.isPlaying) {
+       Future.delayed(const Duration(seconds: 2), () {
+-        if (mounted && !_controller.value.isPlaying) {
++        if (mounted && _initialized && !_controller.value.isPlaying) {
+           setState(() => _showPlayOverlay = false);
+         }
+       });
+@@ -107,6 +179,40 @@ class _ReelPlayerState extends State<ReelPlayer>
+ 
+   @override
+   Widget build(BuildContext context) {
++    if (_failed) {
++      return ColoredBox(
++        color: Colors.black,
++        child: Center(
++          child: Padding(
++            padding: const EdgeInsets.symmetric(horizontal: 32),
++            child: Column(
++              mainAxisSize: MainAxisSize.min,
++              children: [
++                const Icon(
++                  Icons.wifi_off_rounded,
++                  color: Colors.white,
++                  size: 40,
++                ),
++                const SizedBox(height: 12),
++                Text(
++                  reelMessage(
++                    Localizations.localeOf(context).languageCode,
++                    'error',
++                  ),
++                  textAlign: TextAlign.center,
++                  style: const TextStyle(color: Colors.white),
++                ),
++                const SizedBox(height: 12),
++                FilledButton(
++                  onPressed: _retry,
++                  child: Text(context.l10n.retry),
++                ),
++              ],
++            ),
++          ),
++        ),
++      );
++    }
+     if (!_initialized) {
+       return Container(
+         color: Colors.black,
+@@ -139,24 +245,6 @@ class _ReelPlayerState extends State<ReelPlayer>
+             ),
+           ),
+ 
+-          // Luckymam logo watermark (top-right, semi-transparent)
+-          Positioned(
+-            top: 90,
+-            right: 16,
+-            child: Opacity(
+-              opacity: 0.25,
+-              child: SvgPicture.asset(
+-                'assets/logo/logo svg.svg',
+-                width: 36,
+-                height: 36,
+-                colorFilter: const ColorFilter.mode(
+-                  Colors.white,
+-                  BlendMode.srcIn,
+-                ),
+-              ),
+-            ),
+-          ),
+-
+           // ── Rose gradient play/pause overlay ─────────────────────
+           AnimatedOpacity(
+             opacity: _showPlayOverlay ? 1.0 : 0.0,

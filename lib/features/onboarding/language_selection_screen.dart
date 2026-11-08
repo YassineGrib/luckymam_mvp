@@ -1,3 +1,4 @@
+import '../../core/services/safe_log.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -30,10 +31,7 @@ class _LanguageOption {
 /// Allows the user to select between French, Arabic (RTL), and English.
 /// Changes the locale reactively and persistently across the entire app.
 class LanguageSelectionScreen extends ConsumerStatefulWidget {
-  const LanguageSelectionScreen({
-    super.key,
-    this.isModal = false,
-  });
+  const LanguageSelectionScreen({super.key, this.isModal = false});
 
   /// If true, tapping continue pops the screen instead of navigating to /home.
   final bool isModal;
@@ -48,21 +46,9 @@ class _LanguageSelectionScreenState
   bool _isSubmitting = false;
 
   static const List<_LanguageOption> _options = [
-    _LanguageOption(
-      code: 'fr',
-      nativeName: 'Français',
-      badge: 'FR',
-    ),
-    _LanguageOption(
-      code: 'ar',
-      nativeName: 'العربية',
-      badge: 'عربي',
-    ),
-    _LanguageOption(
-      code: 'en',
-      nativeName: 'English',
-      badge: 'EN',
-    ),
+    _LanguageOption(code: 'fr', nativeName: 'Français', badge: 'FR'),
+    _LanguageOption(code: 'ar', nativeName: 'العربية', badge: 'عربي'),
+    _LanguageOption(code: 'en', nativeName: 'English', badge: 'EN'),
   ];
 
   Future<void> _handleContinue(String selectedCode) async {
@@ -79,13 +65,14 @@ class _LanguageSelectionScreenState
       );
 
       // LM-ONB-004: Automatically generate primary "MAM" profile at the end of onboarding
+      if (!mounted) return;
       final l10n = AppLocalizations.of(context)!;
       try {
-        await ref.read(profileServiceProvider).ensureMamProfileCreated(
-              defaultName: l10n.defaultMotherName,
-            );
+        await ref
+            .read(profileServiceProvider)
+            .ensureMamProfileCreated(defaultName: l10n.defaultMotherName);
       } catch (e) {
-        debugPrint('Error ensuring MAM profile: $e');
+        safeDebugPrint('Error ensuring MAM profile: ${e.runtimeType}');
       }
 
       if (!mounted) return;
@@ -111,8 +98,9 @@ class _LanguageSelectionScreenState
     final isRtl = context.isRtl;
 
     final titleColor = isDark ? Colors.white : AppColors.onSurfaceLight;
-    final secondaryTextColor =
-        isDark ? AppColors.textSecondaryDark : AppColors.textSecondaryLight;
+    final secondaryTextColor = isDark
+        ? AppColors.textSecondaryDark
+        : AppColors.textSecondaryLight;
     final brandAccent = isDark ? AppColors.magentaPink : AppColors.coral;
 
     final cardBgColor = isDark
@@ -123,15 +111,13 @@ class _LanguageSelectionScreenState
         : AppColors.dividerLight.withValues(alpha: 0.80);
 
     return Scaffold(
-      backgroundColor:
-          isDark ? AppColors.backgroundDark : AppColors.backgroundLight,
+      backgroundColor: isDark
+          ? AppColors.backgroundDark
+          : AppColors.backgroundLight,
       body: Stack(
         children: [
           // Ambient soft background glow & watermark
-          const AuthLogoBackground(
-            lightOpacity: 0.06,
-            darkOpacity: 0.04,
-          ),
+          const AuthLogoBackground(lightOpacity: 0.06, darkOpacity: 0.04),
 
           SafeArea(
             child: Padding(
@@ -175,7 +161,7 @@ class _LanguageSelectionScreenState
                             ),
                             const SizedBox(height: 3),
                             Text(
-                              'Étape 2 / 2 • Langue',
+                              l10n.profileLanguage,
                               style: TextStyle(
                                 fontSize: 12,
                                 fontWeight: FontWeight.w600,
@@ -201,10 +187,10 @@ class _LanguageSelectionScreenState
                     child: Text(
                       l10n.onboardingLanguageSubtitle,
                       style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                            color: secondaryTextColor,
-                            height: 1.5,
-                            fontSize: 13.5,
-                          ),
+                        color: secondaryTextColor,
+                        height: 1.5,
+                        fontSize: 13.5,
+                      ),
                     ),
                   ),
 
@@ -230,141 +216,151 @@ class _LanguageSelectionScreenState
                           subtitle = l10n.onboardingLanguageFrSubtitle;
                         }
 
-                        return GestureDetector(
-                          onTap: () {
-                            HapticFeedback.selectionClick();
-                            ref
-                                .read(localeProvider.notifier)
-                                .setLocale(Locale(option.code));
-                          },
-                          behavior: HitTestBehavior.opaque,
-                          child: AnimatedContainer(
-                            duration: const Duration(milliseconds: 220),
-                            curve: Curves.easeOutCubic,
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 18,
-                              vertical: 16,
-                            ),
-                            decoration: BoxDecoration(
-                              color: isSelected
-                                  ? brandAccent.withValues(
-                                      alpha: isDark ? 0.16 : 0.08,
-                                    )
-                                  : cardBgColor,
-                              borderRadius: BorderRadius.circular(18),
-                              border: Border.all(
-                                color: isSelected
-                                    ? brandAccent
-                                    : cardBorderColor,
-                                width: isSelected ? 2 : 1,
+                        return Semantics(
+                          selected: isSelected,
+                          button: true,
+                          child: GestureDetector(
+                            onTap: () {
+                              HapticFeedback.selectionClick();
+                              ref
+                                  .read(localeProvider.notifier)
+                                  .setLocale(Locale(option.code));
+                            },
+                            behavior: HitTestBehavior.opaque,
+                            child: AnimatedContainer(
+                              duration: const Duration(milliseconds: 220),
+                              curve: Curves.easeOutCubic,
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 18,
+                                vertical: 16,
                               ),
-                              boxShadow: isSelected
-                                  ? [
-                                      BoxShadow(
-                                        color: brandAccent.withValues(
-                                          alpha: 0.18,
+                              decoration: BoxDecoration(
+                                color: isSelected
+                                    ? brandAccent.withValues(
+                                        alpha: isDark ? 0.16 : 0.08,
+                                      )
+                                    : cardBgColor,
+                                borderRadius: BorderRadius.circular(18),
+                                border: Border.all(
+                                  color: isSelected
+                                      ? brandAccent
+                                      : cardBorderColor,
+                                  width: isSelected ? 2 : 1,
+                                ),
+                                boxShadow: isSelected
+                                    ? [
+                                        BoxShadow(
+                                          color: brandAccent.withValues(
+                                            alpha: 0.18,
+                                          ),
+                                          blurRadius: 14,
+                                          offset: const Offset(0, 4),
                                         ),
-                                        blurRadius: 14,
-                                        offset: const Offset(0, 4),
-                                      ),
-                                    ]
-                                  : [
-                                      BoxShadow(
-                                        color: Colors.black.withValues(
-                                          alpha: isDark ? 0.15 : 0.02,
+                                      ]
+                                    : [
+                                        BoxShadow(
+                                          color: Colors.black.withValues(
+                                            alpha: isDark ? 0.15 : 0.02,
+                                          ),
+                                          blurRadius: 8,
+                                          offset: const Offset(0, 2),
                                         ),
-                                        blurRadius: 8,
-                                        offset: const Offset(0, 2),
+                                      ],
+                              ),
+                              child: Row(
+                                children: [
+                                  // Language Badge / Flag abbreviation
+                                  Container(
+                                    width: 44,
+                                    height: 44,
+                                    alignment: Alignment.center,
+                                    decoration: BoxDecoration(
+                                      color: isSelected
+                                          ? brandAccent.withValues(alpha: 0.20)
+                                          : (isDark
+                                                ? Colors.white.withValues(
+                                                    alpha: 0.08,
+                                                  )
+                                                : Colors.black.withValues(
+                                                    alpha: 0.05,
+                                                  )),
+                                      borderRadius: BorderRadius.circular(12),
+                                    ),
+                                    child: Text(
+                                      option.badge,
+                                      style: TextStyle(
+                                        fontWeight: FontWeight.w800,
+                                        fontSize: 14,
+                                        color: isSelected
+                                            ? brandAccent
+                                            : titleColor,
                                       ),
-                                    ],
-                            ),
-                            child: Row(
-                              children: [
-                                // Language Badge / Flag abbreviation
-                                Container(
-                                  width: 44,
-                                  height: 44,
-                                  alignment: Alignment.center,
-                                  decoration: BoxDecoration(
-                                    color: isSelected
-                                        ? brandAccent.withValues(alpha: 0.20)
-                                        : (isDark
-                                            ? Colors.white.withValues(alpha: 0.08)
-                                            : Colors.black.withValues(alpha: 0.05)),
-                                    borderRadius: BorderRadius.circular(12),
-                                  ),
-                                  child: Text(
-                                    option.badge,
-                                    style: TextStyle(
-                                      fontWeight: FontWeight.w800,
-                                      fontSize: 14,
-                                      color: isSelected ? brandAccent : titleColor,
                                     ),
                                   ),
-                                ),
 
-                                const SizedBox(width: 16),
+                                  const SizedBox(width: 16),
 
-                                // Title & Subtitle
-                                Expanded(
-                                  child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Text(
-                                        option.nativeName,
-                                        style: AppTypography.fromContext(
-                                          context,
-                                          fontSize: 16,
-                                          fontWeight: isSelected
-                                              ? FontWeight.bold
-                                              : FontWeight.w600,
-                                          color: titleColor,
+                                  // Title & Subtitle
+                                  Expanded(
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Text(
+                                          option.nativeName,
+                                          style: AppTypography.fromContext(
+                                            context,
+                                            fontSize: 16,
+                                            fontWeight: isSelected
+                                                ? FontWeight.bold
+                                                : FontWeight.w600,
+                                            color: titleColor,
+                                          ),
                                         ),
-                                      ),
-                                      const SizedBox(height: 2),
-                                      Text(
-                                        subtitle,
-                                        style: TextStyle(
-                                          fontSize: 12,
-                                          color: secondaryTextColor,
-                                          fontWeight: FontWeight.w400,
+                                        const SizedBox(height: 2),
+                                        Text(
+                                          subtitle,
+                                          style: TextStyle(
+                                            fontSize: 12,
+                                            color: secondaryTextColor,
+                                            fontWeight: FontWeight.w400,
+                                          ),
                                         ),
-                                      ),
-                                    ],
+                                      ],
+                                    ),
                                   ),
-                                ),
 
-                                const SizedBox(width: 12),
+                                  const SizedBox(width: 12),
 
-                                // Radio Selection Indicator
-                                AnimatedContainer(
-                                  duration: const Duration(milliseconds: 200),
-                                  width: 24,
-                                  height: 24,
-                                  decoration: BoxDecoration(
-                                    shape: BoxShape.circle,
-                                    color: isSelected
-                                        ? brandAccent
-                                        : Colors.transparent,
-                                    border: Border.all(
+                                  // Radio Selection Indicator
+                                  AnimatedContainer(
+                                    duration: const Duration(milliseconds: 200),
+                                    width: 24,
+                                    height: 24,
+                                    decoration: BoxDecoration(
+                                      shape: BoxShape.circle,
                                       color: isSelected
                                           ? brandAccent
-                                          : (isDark
-                                              ? Colors.white38
-                                              : Colors.grey.shade400),
-                                      width: 2,
+                                          : Colors.transparent,
+                                      border: Border.all(
+                                        color: isSelected
+                                            ? brandAccent
+                                            : (isDark
+                                                  ? Colors.white38
+                                                  : Colors.grey.shade400),
+                                        width: 2,
+                                      ),
                                     ),
+                                    child: isSelected
+                                        ? const Icon(
+                                            Icons.check_rounded,
+                                            size: 15,
+                                            color: Colors.white,
+                                          )
+                                        : null,
                                   ),
-                                  child: isSelected
-                                      ? const Icon(
-                                          Icons.check_rounded,
-                                          size: 15,
-                                          color: Colors.white,
-                                        )
-                                      : null,
-                                ),
-                              ],
+                                ],
+                              ),
                             ),
                           ),
                         );
@@ -382,8 +378,9 @@ class _LanguageSelectionScreenState
                     style: ElevatedButton.styleFrom(
                       backgroundColor: brandAccent,
                       foregroundColor: Colors.white,
-                      disabledBackgroundColor:
-                          brandAccent.withValues(alpha: 0.45),
+                      disabledBackgroundColor: brandAccent.withValues(
+                        alpha: 0.45,
+                      ),
                       padding: const EdgeInsets.symmetric(vertical: 16),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(16),
@@ -431,4 +428,3 @@ class _LanguageSelectionScreenState
     );
   }
 }
-

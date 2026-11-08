@@ -89,9 +89,9 @@
   "dashboardSeeAll": "Voir tout",
   "dashboardSeeAllCapsules": "Voir toutes les capsules",
   "dashboardPartnerShop": "Boutique Partenaires",
-  "dashboardHopeBannerTitle": "Votre parcours commence ici 💜",
+  "dashboardHopeBannerTitle": "Votre parcours commence ici ",
   "dashboardHopeBannerSubtitle": "Suivez votre cycle et prenez soin de vous.\nVos enfants apparaîtront ici dès l'arrivée de bébé.",
-  "dashboardPregnantBannerTitle": "Votre bébé grandit 🩷",
+  "dashboardPregnantBannerTitle": "Votre bébé grandit ",
   "dashboardPregnantBannerSubtitle": "La section Mes Enfants sera disponible\naprès la naissance de votre bébé.",
   "cycleTrackingTitle": "Suivi du Cycle",
   "cycleActivateTracking": "Activer le suivi",
@@ -176,7 +176,7 @@
   "statusHope": "En espoir",
   "statusMom": "Maman",
   "dailyTipSectionTitle": "CONSEIL DU JOUR",
-  "dailyTipFooter": "— Luckymam Team 💕",
+  "dailyTipFooter": "— Luckymam Team ",
   "upgradePremiumTitle": "Passez à Premium",
   "upgradePremiumSubtitle": "Capsules illimitées • Jusqu'à 2 enfants • Partage inclus",
   "upgradePromptBadge": "Privilège LuckyMam",
@@ -251,7 +251,7 @@
       }
     }
   },
-  "printVipFreeNote": "Offert avec votre abonnement VIP 🎁",
+  "printVipFreeNote": "Offert avec votre abonnement VIP ",
   "printPricingNote": "Nos équipes vous contacteront pour confirmer le tarif d'impression.",
   "printOrderSentTitle": "Commande envoyée !",
   "printOrderSentMessage": "« {albumTitle} » sera imprimé et expédié à l'adresse indiquée. Nous vous contacterons par téléphone pour confirmer.",
@@ -384,7 +384,7 @@
   "timeline_mark_milestone": "Marquer un jalon",
   "timeline_mark_milestone_subtitle": "Ouvrez un jalon de la phase actuelle",
   "timeline_upcoming_milestones": "Jalons à venir",
-  "timeline_all_milestones_have_memory": "Tous les jalons de cette phase ont déjà un souvenir ✓",
+  "timeline_all_milestones_have_memory": "Tous les jalons de cette phase ont déjà un souvenir ",
   "timeline_add": "Ajouter",
   "milestone_capture": "Capturer",
   "milestone_memory": "Souvenir",
@@ -407,7 +407,7 @@
     }
   },
   "milestone_schedule_reminder": "Programmer un rappel",
-  "milestone_marked_complete": "Jalon marqué comme terminé ✓",
+  "milestone_marked_complete": "Jalon marqué comme terminé ",
   "milestone_error": "Erreur : {error}",
   "@milestone_error": {
     "placeholders": {
@@ -431,7 +431,7 @@
   "milestone_reminder_cancel_subtitle": "Supprimer le rappel programmé",
   "milestone_reminder_future_date_required": "Choisissez une date dans le futur",
   "milestone_reminder_enable_notifications": "Activez les notifications de jalons dans Paramètres > Notifications",
-  "milestone_reminder_scheduled": "Rappel programmé le {date} ✓",
+  "milestone_reminder_scheduled": "Rappel programmé le {date} ",
   "@milestone_reminder_scheduled": {
     "placeholders": {
       "date": {
@@ -499,7 +499,7 @@
   "capsulesCreateFirst": "Créer mon premier souvenir",
   "capsulesLoadErrorSubtitle": "Impossible de charger les capsules",
   "capsuleSharePreparing": "Préparation du partage…",
-  "capsuleShareText": "✨ Un souvenir précieux via Luckymam\n{emotion}",
+  "capsuleShareText": " Un souvenir précieux via Luckymam\n{emotion}",
   "@capsuleShareText": {
     "placeholders": {
       "emotion": {
@@ -516,7 +516,7 @@
     }
   },
   "capsuleGalleryPermissionDenied": "Permission galerie refusée",
-  "capsuleSavedToGallery": "Enregistré dans l'album Luckymam 📸",
+  "capsuleSavedToGallery": "Enregistré dans l'album Luckymam ",
   "capsuleSaveError": "Erreur d'enregistrement : {error}",
   "@capsuleSaveError": {
     "placeholders": {
@@ -527,7 +527,7 @@
   },
   "capsulePremiumFeatureTitle": "Fonctionnalité Premium",
   "capsulePremiumFeatureDesc": "Le partage et l'enregistrement de capsules\nsont réservés aux abonnés Premium et VIP.",
-  "capsulePremiumUpgradeCta": "🌟 Passer à Premium — 2 490 DA/an",
+  "capsulePremiumUpgradeCta": " Passer à Premium — 2 490 DA/an",
   "capsuleDeleteTitle": "Supprimer la capsule ?",
   "capsuleDeleteMessage": "Cette action est irréversible. Le souvenir sera supprimé définitivement.",
   "capsuleNewTitle": "Nouvelle Capsule",
@@ -551,13 +551,13 @@
   "capsuleChooseSource": "Choisir une source",
   "capsuleCamera": "Appareil photo",
   "capsuleGallery": "Galerie",
-  "capsuleCreatedSuccess": "Capsule créée avec succès ! ✨",
+  "capsuleCreatedSuccess": "Capsule créée avec succès ! ",
   "capsuleEmotion": "Émotion",
   "capsulePrimaryEmotion": "Émotion principale",
   "capsuleSecondaryEmotions": "Émotions secondaires",
   "capsuleSecondaryEmotionsHint": "Facultatif • 3 maximum",
   "capsuleNoPhotoPlaceholder": "Souvenir mémorisé",
-  "capsuleVoiceMessageOptional": "🎤 Message vocal (optionnel)",
+  "capsuleVoiceMessageOptional": " Message vocal (optionnel)",
   "capsuleHoldToRecord": "Maintenir pour enregistrer",
   "capsuleMaxDuration": "Max {seconds}s",
   "@capsuleMaxDuration": {
@@ -607,7 +607,7 @@
   "healthWeightKg": "Poids (kg)",
   "healthHeightCm": "Taille (cm)",
   "healthNotesOptional": "Notes (optionnel)",
-  "healthMeasurementSaved": "Mesure enregistrée ✓",
+  "healthMeasurementSaved": "Mesure enregistrée ",
   "healthSave": "Enregistrer",
   "healthAppointmentFab": "Rendez-vous",
   "healthNoAppointmentsTitle": "Aucun rendez-vous",
@@ -621,7 +621,7 @@
   "healthAttachPdfFile": "PDF / Fichier",
   "healthUploadingFiles": "Téléchargement des fichiers…",
   "healthSaving": "Enregistrement…",
-  "healthAppointmentSaved": "Rendez-vous enregistré ✓",
+  "healthAppointmentSaved": "Rendez-vous enregistré ",
   "healthSaveError": "Erreur lors de l'enregistrement",
   "healthWeightValue": "{value} kg",
   "@healthWeightValue": {
@@ -726,7 +726,7 @@
   },
   "paymentSuccessAlbumPerk": "Votre album imprimé gratuit vous attend ! Rendez-vous dans votre profil.",
   "subscriptionAlbumClaimTitle": "Album Imprimé Gratuit",
-  "subscriptionAlbumClaimSubtitle": "Votre cadeau VIP 🎁",
+  "subscriptionAlbumClaimSubtitle": "Votre cadeau VIP ",
   "subscriptionAlbumClaimInfo": "En tant que membre VIP, vous recevez un album photo imprimé de vos plus beaux souvenirs. Remplissez le formulaire ci-dessous.",
   "subscriptionAlbumClaimSubmit": "Envoyer ma demande",
   "subscriptionAlbumClaimSubmittedTitle": "Demande envoyée !",
@@ -799,7 +799,7 @@
   "homeVaccineMarkComplete": "Marquer comme fait",
   "homeVaccineDateLabel": "Date de vaccination",
   "homeVaccineNotesHint": "Ex: Docteur Martin, clinique...",
-  "homeVaccineMarkedComplete": "Vaccin marqué comme fait ✓",
+  "homeVaccineMarkedComplete": "Vaccin marqué comme fait ",
   "homeVaccineCancelTitle": "Annuler le vaccin ?",
   "homeVaccineCancelMessage": "Voulez-vous marquer \"{ageLabel}\" comme non fait ?",
   "@homeVaccineCancelMessage": {
@@ -851,8 +851,8 @@
   },
   "profileFreePlan": "Forfait gratuit",
   "profileManage": "Gérer",
-  "profileAlbumClaimSent": "Demande d'album envoyée ✓",
-  "profileClaimFreeAlbum": "Réclamer votre album imprimé gratuit 🎁",
+  "profileAlbumClaimSent": "Demande d'album envoyée ",
+  "profileClaimFreeAlbum": "Réclamer votre album imprimé gratuit ",
   "profileDarkTheme": "Thème sombre",
   "profileLanguage": "Langue",
   "profileNotifications": "Notifications",
@@ -979,7 +979,7 @@
   "timelineMilestonesAppear": "Les jalons apparaîtront au bon moment",
   "timelineAddChildTitle": "Ajoutez un enfant",
   "timelineAddChildHint": "Pour voir sa timeline personnalisée",
-  "timelineStatusCompleted": "✓ Réalisé",
+  "timelineStatusCompleted": " Réalisé",
   "timelineStatusOverdue": "À rattraper",
   "timelineStatusNow": "Maintenant",
   "timelineDueToday": "Aujourd'hui",
@@ -1257,7 +1257,7 @@
   "notifMilestoneChannelDesc": "Alertes étapes de développement",
   "notifCycleChannelName": "Cycle Féminin",
   "notifCycleChannelDesc": "Rappels du cycle féminin",
-  "notifVaccineReminderTitle": "💉 Rappel Vaccin – {childName}",
+  "notifVaccineReminderTitle": " Rappel Vaccin – {childName}",
   "@notifVaccineReminderTitle": {
     "placeholders": {
       "childName": {
@@ -1308,9 +1308,9 @@
       }
     }
   },
-  "notifCyclePeriodTitle": "🌸 Règles dans 2 jours",
+  "notifCyclePeriodTitle": " Règles dans 2 jours",
   "notifCyclePeriodBody": "Pensez à vous préparer pour votre prochain cycle.",
-  "notifCycleOvulationTitle": "🌿 Phase Ovulatoire demain",
+  "notifCycleOvulationTitle": " Phase Ovulatoire demain",
   "notifCycleOvulationBody": "Votre période de fertilité maximale commence demain.",
   "profileAgeMonthsOnly": "{count} mois",
   "@profileAgeMonthsOnly": {
@@ -1346,9 +1346,9 @@
   "profileDeleteAccountAction": "Supprimer le compte définitivement",
   "profileDeleteAccountTitle": "Supprimer le compte définitivement",
   "profileDeleteAccountWarning": "Votre compte et l'ensemble de vos données seront supprimés définitivement et de manière irréversible, notamment :",
-  "profileDeleteAccountBulletMemories": "✦ Souvenirs et photos des capsules",
-  "profileDeleteAccountBulletHealth": "✦ Suivi de santé et profils des enfants",
-  "profileDeleteAccountBulletOrders": "✦ Historique des abonnements et commandes",
+  "profileDeleteAccountBulletMemories": " Souvenirs et photos des capsules",
+  "profileDeleteAccountBulletHealth": " Suivi de santé et profils des enfants",
+  "profileDeleteAccountBulletOrders": " Historique des abonnements et commandes",
   "profileDeleteAccountUnderstand": "J'ai compris que cette action est irréversible",
   "profileDeleteAccountCancel": "Annuler",
   "profileDeleteAccountConfirm": "Supprimer le compte",
@@ -1404,7 +1404,7 @@
   "capsuleAudioValidate": "Valider l'audio",
   "capsuleAudioValidatedBadge": "Audio validé",
   "capsuleAudioPendingBadge": "En attente de validation",
-  "capsuleAudioValidatedSuccess": "Audio validé pour la capsule ✓",
+  "capsuleAudioValidatedSuccess": "Audio validé pour la capsule ",
   "capsuleAudioMicPermissionError": "Permission microphone requise pour enregistrer",
   "capsuleAudioTooShortError": "L'enregistrement est trop court ou vide",
   "albumReplacePhotoTitle": "Remplacer la photo",
@@ -1482,7 +1482,7 @@
   "albumLaunchModelsSectionTitle": "Modèles d'albums disponibles",
   "albumComingSoonSectionTitle": "Prochainement disponibles",
   "albumComingSoonBadge": "Bientôt disponible",
-  "albumComingSoonToast": "Ce modèle d'album sera disponible très prochainement ! ✨",
+  "albumComingSoonToast": "Ce modèle d'album sera disponible très prochainement ! ",
   "albumPortrait1PhotoBadge": "1 photo portrait",
   "album6PhotosBadge": "6 photos",
   "albumStartingPriceFrom": "Dès {price} DA",
@@ -1500,7 +1500,7 @@
   "diaporamaReorderHint": "Glissez-déposez pour réorganiser l'ordre d'apparition",
   "diaporamaPlay": "Lancer le diaporama",
   "diaporamaReplay": "Rejouer",
-  "diaporamaShare": "Partager le diaporama",
+  "diaporamaShare": "Partager",
   "diaporamaOpeningTitle": "Les doux souvenirs de {childName}",
   "@diaporamaOpeningTitle": {
     "placeholders": {
@@ -1509,8 +1509,8 @@
       }
     }
   },
-  "diaporamaClosingTitle": "Moments précieux avec LuckyMam 🍀",
-  "diaporamaShareMessage": "Découvrez le diaporama des plus beaux souvenirs de {childName} sur LuckyMam 🍀",
+  "diaporamaClosingTitle": "Moments précieux avec LuckyMam ",
+  "diaporamaShareMessage": "Découvrez le diaporama des plus beaux souvenirs de {childName} sur LuckyMam ",
   "@diaporamaShareMessage": {
     "placeholders": {
       "childName": {

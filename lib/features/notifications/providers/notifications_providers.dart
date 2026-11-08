@@ -1,7 +1,7 @@
+import '../../../core/services/safe_log.dart';
 import 'dart:async';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../core/providers/auth_provider.dart';
 import '../../../core/providers/locale_provider.dart';
@@ -80,8 +80,8 @@ final notificationsStreamProvider =
         }
       },
       onError: (error) {
-        debugPrint(
-          '[Notifications Stream] Firestore error ($error). Gracefully falling back to local notifications.',
+        safeDebugPrint(
+          '[Notifications Stream] Firestore error (${error.runtimeType}). Gracefully falling back to local notifications.',
         );
         if (!mergedController.isClosed) {
           mergedController.add(List<AppNotification>.from(_inMemoryNotifications));
@@ -89,7 +89,7 @@ final notificationsStreamProvider =
       },
     );
   } catch (e) {
-    debugPrint('[Notifications Stream Init Catch] $e');
+    safeDebugPrint('[Notifications Stream Init Catch] ${e.runtimeType}');
     if (!mergedController.isClosed) {
       mergedController.add(List<AppNotification>.from(_inMemoryNotifications));
     }
@@ -150,7 +150,7 @@ class NotificationActions {
     try {
       await _collection?.doc(notificationId).update({'isRead': true});
     } catch (e) {
-      debugPrint('[Notif Action Warning] markAsRead Firestore sync: $e');
+      safeDebugPrint('[Notif Action Warning] markAsRead Firestore sync: ${e.runtimeType}');
     }
   }
 
@@ -172,7 +172,7 @@ class NotificationActions {
       }
       await batch.commit();
     } catch (e) {
-      debugPrint('[Notif Action Warning] markAllAsRead Firestore sync: $e');
+      safeDebugPrint('[Notif Action Warning] markAllAsRead Firestore sync: ${e.runtimeType}');
     }
   }
 
@@ -184,7 +184,7 @@ class NotificationActions {
     try {
       await _collection?.doc(notificationId).delete();
     } catch (e) {
-      debugPrint('[Notif Action Warning] deleteNotification Firestore sync: $e');
+      safeDebugPrint('[Notif Action Warning] deleteNotification Firestore sync: ${e.runtimeType}');
     }
   }
 
@@ -204,7 +204,7 @@ class NotificationActions {
       }
       await batch.commit();
     } catch (e) {
-      debugPrint('[Notif Action Warning] clearAll Firestore sync: $e');
+      safeDebugPrint('[Notif Action Warning] clearAll Firestore sync: ${e.runtimeType}');
     }
   }
 }
@@ -217,7 +217,7 @@ List<AppNotification> _getStarterNotifications(String lang) {
     return [
       AppNotification(
         id: 'starter_ar_1',
-        title: 'تذكير اللقاح: موعد تطعيم الشهر الثاني غداً 🩺',
+        title: 'تذكير اللقاح: موعد تطعيم الشهر الثاني غداً ',
         body: 'حان موعد تطعيم الخماسي وشلل الأطفال لطفلكِ، احرصي على قياس الحرارة وتوفير الراحة التامة.',
         createdAt: now.subtract(const Duration(minutes: 25)),
         type: NotificationType.vaccine,
@@ -226,7 +226,7 @@ List<AppNotification> _getStarterNotifications(String lang) {
       ),
       AppNotification(
         id: 'starter_ar_2',
-        title: 'ألبوم الذكريات السنوي الفاخر بانتظاركِ 👑',
+        title: 'ألبوم الذكريات السنوي الفاخر بانتظاركِ ',
         body: 'اشتراككِ الـ VIP يمنحكِ ألبوماً ورقياً مطبوعاً فاخراً مجاناً! اجمعي لحظات السنة الأولى واطلبيه لمنزلكِ.',
         createdAt: now.subtract(const Duration(hours: 3)),
         type: NotificationType.album,
@@ -235,7 +235,7 @@ List<AppNotification> _getStarterNotifications(String lang) {
       ),
       AppNotification(
         id: 'starter_ar_3',
-        title: 'لحظة جديدة تستحق التوثيق 📸',
+        title: 'لحظة جديدة تستحق التوثيق ',
         body: 'التقطي صورة لابتسامة طفلكِ اليوم وأضيفيها لكبسولة الذكريات لتخليد هذه اللحظة الدافئة.',
         createdAt: now.subtract(const Duration(hours: 18)),
         type: NotificationType.capsule,
@@ -244,7 +244,7 @@ List<AppNotification> _getStarterNotifications(String lang) {
       ),
       AppNotification(
         id: 'starter_ar_4',
-        title: 'نصيحة اليوم لصحة الأم والطفل 🌸',
+        title: 'نصيحة اليوم لصحة الأم والطفل ',
         body: 'شرب كميات كافية من الماء والنوم عند نوم الرضيع يساعدكِ على تجديد طاقتكِ اليومية وراحتكِ.',
         createdAt: now.subtract(const Duration(days: 1, hours: 2)),
         type: NotificationType.system,
@@ -256,7 +256,7 @@ List<AppNotification> _getStarterNotifications(String lang) {
     return [
       AppNotification(
         id: 'starter_fr_1',
-        title: 'Rappel Vaccin : Visite des 2 mois demain 🩺',
+        title: 'Rappel Vaccin : Visite des 2 mois demain ',
         body: 'C\'est le moment pour les vaccins pentavalent et polio. Veillez au repos de bébé et surveillez sa température.',
         createdAt: now.subtract(const Duration(minutes: 25)),
         type: NotificationType.vaccine,
@@ -265,7 +265,7 @@ List<AppNotification> _getStarterNotifications(String lang) {
       ),
       AppNotification(
         id: 'starter_fr_2',
-        title: 'Votre Livre Photo Annuel vous Attend 👑',
+        title: 'Votre Livre Photo Annuel vous Attend ',
         body: 'Votre abonnement VIP vous offre un album imprimé de luxe gratuit ! Immortalisez cette première année.',
         createdAt: now.subtract(const Duration(hours: 3)),
         type: NotificationType.album,
@@ -274,7 +274,7 @@ List<AppNotification> _getStarterNotifications(String lang) {
       ),
       AppNotification(
         id: 'starter_fr_3',
-        title: 'Un moment précieux à capturer 📸',
+        title: 'Un moment précieux à capturer ',
         body: 'Prenez une photo du sourire de votre bébé aujourd\'hui et conservez-la dans votre capsule temporelle.',
         createdAt: now.subtract(const Duration(hours: 18)),
         type: NotificationType.capsule,
@@ -283,7 +283,7 @@ List<AppNotification> _getStarterNotifications(String lang) {
       ),
       AppNotification(
         id: 'starter_fr_4',
-        title: 'Conseil du Jour : Maman & Bébé 🌸',
+        title: 'Conseil du Jour : Maman & Bébé ',
         body: 'Une bonne hydratation et des siestes synchronisées avec bébé aident à préserver votre énergie.',
         createdAt: now.subtract(const Duration(days: 1, hours: 2)),
         type: NotificationType.system,
@@ -296,7 +296,7 @@ List<AppNotification> _getStarterNotifications(String lang) {
     return [
       AppNotification(
         id: 'starter_en_1',
-        title: 'Vaccine Reminder: 2nd Month Vaccines Due Tomorrow 🩺',
+        title: 'Vaccine Reminder: 2nd Month Vaccines Due Tomorrow ',
         body: 'It\'s time for the Pentavalent and Polio vaccination. Remember to monitor baby\'s temperature and provide rest.',
         createdAt: now.subtract(const Duration(minutes: 25)),
         type: NotificationType.vaccine,
@@ -305,7 +305,7 @@ List<AppNotification> _getStarterNotifications(String lang) {
       ),
       AppNotification(
         id: 'starter_en_2',
-        title: 'Your Annual Memory Album is Waiting 👑',
+        title: 'Your Annual Memory Album is Waiting ',
         body: 'Your VIP membership includes a luxury printed photo album for free! Curate year one memories and order it directly to your door.',
         createdAt: now.subtract(const Duration(hours: 3)),
         type: NotificationType.album,
@@ -314,7 +314,7 @@ List<AppNotification> _getStarterNotifications(String lang) {
       ),
       AppNotification(
         id: 'starter_en_3',
-        title: 'A New Precious Moment to Capture 📸',
+        title: 'A New Precious Moment to Capture ',
         body: 'Capture your baby\'s smile today and add it to your Memory Capsule to cherish forever.',
         createdAt: now.subtract(const Duration(hours: 18)),
         type: NotificationType.capsule,
@@ -323,7 +323,7 @@ List<AppNotification> _getStarterNotifications(String lang) {
       ),
       AppNotification(
         id: 'starter_en_4',
-        title: 'Daily Tip for Mom & Baby 🌸',
+        title: 'Daily Tip for Mom & Baby ',
         body: 'Staying hydrated and resting when your baby sleeps will help restore your daily energy and peace.',
         createdAt: now.subtract(const Duration(days: 1, hours: 2)),
         type: NotificationType.system,
@@ -360,7 +360,7 @@ Future<void> _seedDefaultNotifications(String uid, String lang) async {
 
     await batch.commit();
   } catch (e) {
-    debugPrint('[Seed Warning] Could not write seed notifications to Firestore: $e');
+    safeDebugPrint('[Seed Warning] Could not write seed notifications to Firestore: ${e.runtimeType}');
   } finally {
     _seedingInProgress = false;
   }

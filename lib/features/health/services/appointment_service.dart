@@ -1,9 +1,9 @@
+import '../../../core/services/safe_log.dart';
 import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
-import 'package:flutter/foundation.dart';
 import 'package:uuid/uuid.dart';
 
 import '../models/appointment.dart';
@@ -78,7 +78,7 @@ class AppointmentService {
     );
 
     await ref.set(appt.toFirestore());
-    debugPrint('[Appointment] added ${ref.id} for child $childId');
+    safeDebugPrint('[Appointment] added ${ref.id} for child [REDACTED]');
     return appt;
   }
 
@@ -91,11 +91,11 @@ class AppointmentService {
       try {
         await _storage.refFromURL(url).delete();
       } catch (e) {
-        debugPrint('[Appointment] failed to delete file: $e');
+        safeDebugPrint('[Appointment] failed to delete file: ${e.runtimeType}');
       }
     }
     await _collection(childId).doc(appointment.id).delete();
-    debugPrint('[Appointment] deleted ${appointment.id}');
+    safeDebugPrint('[Appointment] deleted ${appointment.id}');
   }
 
   // ─── Private ─────────────────────────────────────────────────────────────

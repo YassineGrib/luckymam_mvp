@@ -1,3 +1,4 @@
+import '../../core/services/safe_log.dart';
 import 'package:flutter/material.dart';
 import 'package:lukymam_mvp/l10n/app_localizations.dart';
 import 'package:go_router/go_router.dart';
@@ -65,7 +66,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
               : null,
         );
       } catch (e) {
-        debugPrint('Error creating initial MAM profile: $e');
+        safeDebugPrint('Error creating initial MAM profile: ${e.runtimeType}');
       }
 
       // Navigate to law consent screen on success
@@ -107,7 +108,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
           destination = '/home';
         }
       } catch (e) {
-        debugPrint('Error checking compliance / MAM profile on Google signup: $e');
+        safeDebugPrint('Error checking compliance / MAM profile on Google signup: ${e.runtimeType}');
       }
 
       if (!mounted) return;

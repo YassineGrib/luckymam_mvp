@@ -20,13 +20,14 @@ class PlanComparisonTable extends StatelessWidget {
   Widget build(BuildContext context) {
     final l10n = context.l10n;
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final surfaceColor =
-        isDark ? AppColors.surfaceDark : AppColors.surfaceLight;
-    final borderColor =
-        isDark ? AppColors.dividerDark : AppColors.dividerLight;
+    final surfaceColor = isDark
+        ? AppColors.surfaceDark
+        : AppColors.surfaceLight;
+    final borderColor = isDark ? AppColors.dividerDark : AppColors.dividerLight;
     final textColor = isDark ? Colors.white : AppColors.onSurfaceLight;
-    final subTextColor =
-        isDark ? AppColors.textSecondaryDark : AppColors.textSecondaryLight;
+    final subTextColor = isDark
+        ? AppColors.textSecondaryDark
+        : AppColors.textSecondaryLight;
 
     // 13 Rows conforming strictly to LM-SUB-002 section 3
     final rows = [
@@ -234,7 +235,9 @@ class PlanComparisonTable extends StatelessWidget {
                       vertical: 5,
                     ),
                     decoration: BoxDecoration(
-                      color: AppColors.coral.withValues(alpha: isDark ? 0.18 : 0.08),
+                      color: AppColors.coral.withValues(
+                        alpha: isDark ? 0.18 : 0.08,
+                      ),
                       borderRadius: BorderRadius.circular(10),
                       border: Border.all(
                         color: AppColors.coral.withValues(alpha: 0.35),
@@ -244,26 +247,6 @@ class PlanComparisonTable extends StatelessWidget {
                     child: Column(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        Container(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 5,
-                            vertical: 1.5,
-                          ),
-                          decoration: BoxDecoration(
-                            color: AppColors.coral,
-                            borderRadius: BorderRadius.circular(6),
-                          ),
-                          child: Text(
-                            l10n.subscriptionPlanRecommendedBadge,
-                            style: AppTypography.fromContext(
-                              context,
-                              fontSize: 8.5,
-                              fontWeight: FontWeight.w900,
-                              color: Colors.white,
-                            ),
-                          ),
-                        ),
-                        const SizedBox(height: 3),
                         Text(
                           l10n.subscriptionPlanPremiumTitle,
                           style: AppTypography.fromContext(
@@ -297,7 +280,9 @@ class PlanComparisonTable extends StatelessWidget {
                       vertical: 5,
                     ),
                     decoration: BoxDecoration(
-                      color: const Color(0xFFFF8F00).withValues(alpha: isDark ? 0.14 : 0.07),
+                      color: const Color(
+                        0xFFFF8F00,
+                      ).withValues(alpha: isDark ? 0.14 : 0.07),
                       borderRadius: BorderRadius.circular(10),
                     ),
                     child: Column(
@@ -330,7 +315,9 @@ class PlanComparisonTable extends StatelessWidget {
                             context,
                             fontSize: 10,
                             fontWeight: FontWeight.bold,
-                            color: isDark ? const Color(0xFFFFB74D) : const Color(0xFFE65100),
+                            color: isDark
+                                ? const Color(0xFFFFB74D)
+                                : const Color(0xFFE65100),
                           ),
                         ),
                       ],
@@ -349,8 +336,8 @@ class PlanComparisonTable extends StatelessWidget {
             return Container(
               color: isEven
                   ? (isDark
-                      ? Colors.white.withValues(alpha: 0.02)
-                      : const Color(0xFFF9FAFB))
+                        ? Colors.white.withValues(alpha: 0.02)
+                        : const Color(0xFFF9FAFB))
                   : Colors.transparent,
               padding: const EdgeInsets.symmetric(
                 horizontal: AppSpacing.md,
@@ -380,12 +367,12 @@ class PlanComparisonTable extends StatelessWidget {
                               fontWeight: row.isHighlightRow
                                   ? FontWeight.w700
                                   : (row.isVipExclusive
-                                      ? FontWeight.w600
-                                      : FontWeight.w500),
+                                        ? FontWeight.w600
+                                        : FontWeight.w500),
                               color: row.isVipExclusive
                                   ? (isDark
-                                      ? const Color(0xFFFFB74D)
-                                      : const Color(0xFFE65100))
+                                        ? const Color(0xFFFFB74D)
+                                        : const Color(0xFFE65100))
                                   : textColor,
                             ),
                           ),
@@ -412,7 +399,9 @@ class PlanComparisonTable extends StatelessWidget {
                     child: Container(
                       padding: const EdgeInsets.symmetric(vertical: 2),
                       decoration: BoxDecoration(
-                        color: AppColors.coral.withValues(alpha: isDark ? 0.08 : 0.04),
+                        color: AppColors.coral.withValues(
+                          alpha: isDark ? 0.08 : 0.04,
+                        ),
                         borderRadius: BorderRadius.circular(6),
                       ),
                       child: Center(
@@ -451,14 +440,15 @@ class PlanComparisonTable extends StatelessWidget {
 
           // Mandatory disclaimer notice as per LM-SUB-002 section 3 & 4
           Padding(
-            padding: const EdgeInsets.fromLTRB(AppSpacing.md, 10, AppSpacing.md, 0),
+            padding: const EdgeInsets.fromLTRB(
+              AppSpacing.md,
+              10,
+              AppSpacing.md,
+              0,
+            ),
             child: Row(
               children: [
-                Icon(
-                  Icons.info_outline_rounded,
-                  size: 13,
-                  color: subTextColor,
-                ),
+                Icon(Icons.info_outline_rounded, size: 13, color: subTextColor),
                 const SizedBox(width: 6),
                 Expanded(
                   child: Text(
@@ -516,8 +506,8 @@ class PlanComparisonTable extends StatelessWidget {
         color: isPremium
             ? AppColors.coral
             : (isVip
-                ? (isDark ? const Color(0xFFFFB74D) : const Color(0xFFE65100))
-                : (isDark ? Colors.white70 : Colors.black87)),
+                  ? (isDark ? const Color(0xFFFFB74D) : const Color(0xFFE65100))
+                  : (isDark ? Colors.white70 : Colors.black87)),
       ),
       textAlign: TextAlign.center,
       maxLines: 2,

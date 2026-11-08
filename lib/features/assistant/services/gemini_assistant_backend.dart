@@ -4,18 +4,24 @@ import 'package:cloud_functions/cloud_functions.dart';
 import '../models/assistant_models.dart';
 import 'assistant_backend.dart';
 
-typedef CallableInvoker = Future<Map<String, dynamic>> Function(Map<String, dynamic> payload);
+typedef CallableInvoker =
+    Future<Map<String, dynamic>> Function(Map<String, dynamic> payload);
 
 /// Implementation of [AssistantBackend] talking to the `aiChat` Cloud Function.
 class GeminiAssistantBackend implements AssistantBackend {
   GeminiAssistantBackend({CallableInvoker? invoke})
-      : _invoke = invoke ?? _defaultInvoker;
+    : _invoke = invoke ?? _defaultInvoker;
 
   final CallableInvoker _invoke;
 
-  static Future<Map<String, dynamic>> _defaultInvoker(Map<String, dynamic> payload) async {
+  static Future<Map<String, dynamic>> _defaultInvoker(
+    Map<String, dynamic> payload,
+  ) async {
     final callable = FirebaseFunctions.instanceFor(region: 'europe-west1')
-        .httpsCallable('aiChat', options: HttpsCallableOptions(timeout: const Duration(seconds: 65)));
+        .httpsCallable(
+          'aiChat',
+          options: HttpsCallableOptions(timeout: const Duration(seconds: 65)),
+        );
     final result = await callable.call<Map<String, dynamic>>(payload);
     return Map<String, dynamic>.from(result.data);
   }
@@ -28,10 +34,12 @@ class GeminiAssistantBackend implements AssistantBackend {
   }) async {
     final mappedHistory = history
         .where((m) => !m.isError)
-        .map((m) => {
-              'role': m.role == AssistantRole.assistant ? 'assistant' : 'user',
-              'text': m.text,
-            })
+        .map(
+          (m) => {
+            'role': m.role == AssistantRole.assistant ? 'assistant' : 'user',
+            'text': m.text,
+          },
+        )
         .toList();
 
     try {
@@ -42,6 +50,9 @@ class GeminiAssistantBackend implements AssistantBackend {
       });
 
       final replyText = res['reply'] as String? ?? '';
+      if (replyText.trim().isEmpty) {
+        throw const AssistantException(kind: AssistantErrorKind.unavailable);
+      }
       final rawCards = res['cards'] as List<dynamic>? ?? const [];
       final cards = <AssistantCard>[];
       for (final raw in rawCards) {
@@ -56,11 +67,7 @@ class GeminiAssistantBackend implements AssistantBackend {
       final moodStr = res['mood'] as String?;
       final mood = _parseMood(moodStr);
 
-      return AssistantReply(
-        text: replyText,
-        cards: cards,
-        mood: mood,
-      );
+      return AssistantReply(text: replyText, cards: cards, mood: mood);
     } on FirebaseFunctionsException catch (e) {
       throw _mapFirebaseFunctionsException(e);
     } catch (e) {
@@ -90,18 +97,26 @@ class GeminiAssistantBackend implements AssistantBackend {
     }
   }
 
-  static AssistantException _mapFirebaseFunctionsException(FirebaseFunctionsException e) {
+  static AssistantException _mapFirebaseFunctionsException(
+    FirebaseFunctionsException e,
+  ) {
     switch (e.code) {
       case 'resource-exhausted':
         return const AssistantException(kind: AssistantErrorKind.quota);
+      case 'not-found':
+      case 'failed-precondition':
       case 'unavailable':
       case 'deadline-exceeded':
         return const AssistantException(kind: AssistantErrorKind.unavailable);
       case 'unauthenticated':
-        return const AssistantException(kind: AssistantErrorKind.unauthenticated);
+        return const AssistantException(
+          kind: AssistantErrorKind.unauthenticated,
+        );
       case 'unknown':
         final msg = e.message?.toLowerCase() ?? '';
-        if (msg.contains('network') || msg.contains('socket') || msg.contains('timeout')) {
+        if (msg.contains('network') ||
+            msg.contains('socket') ||
+            msg.contains('timeout')) {
           return const AssistantException(kind: AssistantErrorKind.network);
         }
         return const AssistantException(kind: AssistantErrorKind.unknown);

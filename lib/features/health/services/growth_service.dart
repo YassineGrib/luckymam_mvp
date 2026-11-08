@@ -1,6 +1,6 @@
+import '../../../core/services/safe_log.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/foundation.dart';
 
 import '../models/growth_entry.dart';
 
@@ -51,7 +51,7 @@ class GrowthService {
       createdAt: DateTime.now(),
     );
     await ref.set(entry.toFirestore());
-    debugPrint('[Growth] added entry ${ref.id} for child $childId');
+    safeDebugPrint('[Growth] added entry ${ref.id} for child [REDACTED]');
     return entry;
   }
 
@@ -60,6 +60,6 @@ class GrowthService {
     required String entryId,
   }) async {
     await _collection(childId).doc(entryId).delete();
-    debugPrint('[Growth] deleted entry $entryId');
+    safeDebugPrint('[Growth] deleted entry $entryId');
   }
 }

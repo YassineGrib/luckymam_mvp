@@ -9,7 +9,7 @@ import '../../../core/theme/app_typography.dart';
 import '../../../shared/widgets/top_ambient_gradient.dart';
 import '../../capsules/models/capsule.dart';
 import '../../capsules/providers/capsule_providers.dart';
-import '../../profile/providers/profile_providers.dart';
+import '../../memory_book/widgets/capsule_picker_sheet.dart';
 import '../models/digital_slideshow_model.dart';
 import 'digital_slideshow_player_screen.dart';
 
@@ -53,9 +53,6 @@ class _DigitalSlideshowCreatorScreenState
   void _onReorder(int oldIndex, int newIndex) {
     HapticFeedback.selectionClick();
     setState(() {
-      if (newIndex > oldIndex) {
-        newIndex -= 1;
-      }
       final item = _selectedSlides.removeAt(oldIndex);
       _selectedSlides.insert(newIndex, item);
     });
@@ -68,10 +65,24 @@ class _DigitalSlideshowCreatorScreenState
     });
   }
 
+  Future<void> _choosePhoto() async {
+    Capsule? selected;
+    await showModalBottomSheet<void>(
+      context: context,
+      isScrollControlled: true,
+      builder: (_) => CapsulePickerSheet(
+        childId: widget.childId,
+        onSelected: (capsule) => selected = capsule,
+      ),
+    );
+    if (mounted && selected != null) {
+      _toggleCapsule(selected!, Localizations.localeOf(context).languageCode);
+    }
+  }
+
   void _toggleCapsule(Capsule capsule, String lang) {
     HapticFeedback.selectionClick();
-    final existingIndex =
-        _selectedSlides.indexWhere((s) => s.id == capsule.id);
+    final existingIndex = _selectedSlides.indexWhere((s) => s.id == capsule.id);
 
     setState(() {
       if (existingIndex >= 0) {
@@ -94,7 +105,10 @@ class _DigitalSlideshowCreatorScreenState
             title: capsule.tags.isNotEmpty
                 ? capsule.tags.first
                 : capsule.emotion.getLabel(lang),
-            date: capsule.createdAt,
+            date: capsule.capturedAt ?? capsule.createdAt,
+            emotions: capsule.allEmotions,
+            category: capsule.category,
+            tags: capsule.tags,
             order: _selectedSlides.length + 1,
           ),
         );
@@ -157,10 +171,11 @@ class _DigitalSlideshowCreatorScreenState
           DigitalSlide(
             id: c.id,
             photoUrl: c.photoUrl,
-            title: c.tags.isNotEmpty
-                ? c.tags.first
-                : c.emotion.getLabel(lang),
-            date: c.createdAt,
+            title: c.tags.isNotEmpty ? c.tags.first : c.emotion.getLabel(lang),
+            date: c.capturedAt ?? c.createdAt,
+            emotions: c.allEmotions,
+            category: c.category,
+            tags: c.tags,
             order: i + 1,
           ),
         );
@@ -168,7 +183,8 @@ class _DigitalSlideshowCreatorScreenState
       _initialized = true;
     }
 
-    final isValidCount = _selectedSlides.length >= DigitalSlideshow.minPhotos &&
+    final isValidCount =
+        _selectedSlides.length >= DigitalSlideshow.minPhotos &&
         _selectedSlides.length <= DigitalSlideshow.maxPhotos;
 
     return Scaffold(
@@ -243,6 +259,14 @@ class _DigitalSlideshowCreatorScreenState
                         ),
                       ),
 
+                      IconButton(
+                        onPressed: _choosePhoto,
+                        tooltip: l10n.albumExistingCapsule,
+                        icon: const Icon(
+                          Icons.add_photo_alternate_outlined,
+                          color: AppColors.coral,
+                        ),
+                      ),
                       // Count Pill
                       Container(
                         padding: const EdgeInsets.symmetric(
@@ -256,8 +280,12 @@ class _DigitalSlideshowCreatorScreenState
                           borderRadius: BorderRadius.circular(12),
                           border: Border.all(
                             color: isValidCount
-                                ? const Color(0xFF2E7D32).withValues(alpha: 0.35)
-                                : const Color(0xFFFF8F00).withValues(alpha: 0.4),
+                                ? const Color(
+                                    0xFF2E7D32,
+                                  ).withValues(alpha: 0.35)
+                                : const Color(
+                                    0xFFFF8F00,
+                                  ).withValues(alpha: 0.4),
                           ),
                         ),
                         child: Row(
@@ -322,7 +350,9 @@ class _DigitalSlideshowCreatorScreenState
                         const SizedBox(width: 8),
                         Expanded(
                           child: Text(
-                            l10n.diaporamaReorderHint,
+                            isValidCount
+                                ? l10n.diaporamaReorderHint
+                                : l10n.diaporamaMinPhotosError,
                             style: AppTypography.fromContext(
                               context,
                               fontSize: 11.5,
@@ -376,7 +406,7 @@ class _DigitalSlideshowCreatorScreenState
                             16,
                           ),
                           itemCount: _selectedSlides.length,
-                          onReorder: _onReorder,
+                          onReorderItem: _onReorder,
                           itemBuilder: (context, index) {
                             final slide = _selectedSlides[index];
                             return _buildReorderableSlideItem(
@@ -420,12 +450,16 @@ class _DigitalSlideshowCreatorScreenState
                                 end: Alignment.centerRight,
                               )
                             : null,
-                        color: isValidCount ? null : Colors.grey.withValues(alpha: 0.25),
+                        color: isValidCount
+                            ? null
+                            : Colors.grey.withValues(alpha: 0.25),
                         borderRadius: BorderRadius.circular(16),
                         boxShadow: isValidCount
                             ? [
                                 BoxShadow(
-                                  color: AppColors.coral.withValues(alpha: 0.35),
+                                  color: AppColors.coral.withValues(
+                                    alpha: 0.35,
+                                  ),
                                   blurRadius: 12,
                                   offset: const Offset(0, 4),
                                 ),
@@ -482,9 +516,7 @@ class _DigitalSlideshowCreatorScreenState
       margin: const EdgeInsets.only(bottom: 10),
       padding: const EdgeInsets.all(10),
       decoration: BoxDecoration(
-        color: isDark
-            ? Colors.white.withValues(alpha: 0.05)
-            : Colors.white,
+        color: isDark ? Colors.white.withValues(alpha: 0.05) : Colors.white,
         borderRadius: BorderRadius.circular(14),
         border: Border.all(
           color: isDark ? Colors.white10 : const Color(0xFFECE7EC),
@@ -540,7 +572,7 @@ class _DigitalSlideshowCreatorScreenState
               child: Image.network(
                 slide.photoUrl,
                 fit: BoxFit.cover,
-                errorBuilder: (_, __, ___) => Container(
+                errorBuilder: (_, _, _) => Container(
                   color: Colors.grey.withValues(alpha: 0.2),
                   child: const Icon(Icons.broken_image_rounded, size: 20),
                 ),
@@ -583,11 +615,7 @@ class _DigitalSlideshowCreatorScreenState
           // Remove Button
           IconButton(
             onPressed: () => _removeSlide(index),
-            icon: const Icon(
-              Icons.close_rounded,
-              size: 18,
-              color: Colors.grey,
-            ),
+            icon: const Icon(Icons.close_rounded, size: 18, color: Colors.grey),
             tooltip: 'Retirer',
             constraints: const BoxConstraints(minWidth: 36, minHeight: 36),
             padding: EdgeInsets.zero,
@@ -597,4 +625,3 @@ class _DigitalSlideshowCreatorScreenState
     );
   }
 }
-

@@ -1,3 +1,4 @@
+import 'safe_log.dart';
 import 'dart:convert';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -11,7 +12,7 @@ import '../../features/notifications/providers/notifications_providers.dart';
 /// Top-level background message handler required by Firebase Messaging.
 @pragma('vm:entry-point')
 Future<void> firebaseMessagingBackgroundHandler(RemoteMessage message) async {
-  debugPrint('[FCM Background] Handling message: ${message.messageId} - ${message.notification?.title}');
+  safeDebugPrint('[FCM Background] Handling message: ${message.messageId} - [REDACTED]');
 }
 
 class FcmService {
@@ -49,7 +50,7 @@ class FcmService {
         sound: true,
       );
 
-      debugPrint('[FCM] Permission status: ${settings.authorizationStatus}');
+      safeDebugPrint('[FCM] Permission status: ${settings.authorizationStatus}');
 
       // 2. Set presentation options for foreground
       await _fcm.setForegroundNotificationPresentationOptions(
@@ -81,32 +82,32 @@ class FcmService {
 
       // 6. Listen for Token refreshes
       _fcm.onTokenRefresh.listen((newToken) {
-        debugPrint('[FCM] Token refreshed: $newToken');
+        safeDebugPrint('[FCM] Token refreshed: [REDACTED]');
         _saveTokenToFirestore(newToken);
       });
 
       // 7. Foreground message handler
       FirebaseMessaging.onMessage.listen((RemoteMessage message) {
-        debugPrint('[FCM Foreground] Received: ${message.notification?.title}');
+        safeDebugPrint('[FCM Foreground] Received: [REDACTED]');
         _handleForegroundMessage(message);
       });
 
       // 8. Notification opened app from background
       FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
-        debugPrint('[FCM Tap] App opened from message: ${message.data}');
+        safeDebugPrint('[FCM Tap] App opened from message: [REDACTED]');
         onPushTapped.value = message.data;
       });
 
       // 9. Notification opened app from terminated
       final initialMessage = await _fcm.getInitialMessage();
       if (initialMessage != null) {
-        debugPrint('[FCM Initial] App launched via message: ${initialMessage.data}');
+        safeDebugPrint('[FCM Initial] App launched via message: [REDACTED]');
         onPushTapped.value = initialMessage.data;
       }
 
       _isInitialized = true;
     } catch (e) {
-      debugPrint('[FCM Init Error] $e');
+      safeDebugPrint('[FCM Init Error] ${e.runtimeType}');
     }
   }
 
@@ -114,13 +115,13 @@ class FcmService {
   Future<String?> syncFcmToken() async {
     try {
       final token = await _fcm.getToken();
-      debugPrint('[FCM] Current Device Token: $token');
+      safeDebugPrint('[FCM] Current Device Token: [REDACTED]');
       if (token != null) {
         await _saveTokenToFirestore(token);
       }
       return token;
     } catch (e) {
-      debugPrint('[FCM Token Sync Error] $e');
+      safeDebugPrint('[FCM Token Sync Error] ${e.runtimeType}');
       return null;
     }
   }
@@ -137,9 +138,9 @@ class FcmService {
         'fcmTokens': FieldValue.arrayUnion([token]),
         'lastFcmUpdate': FieldValue.serverTimestamp(),
       }, SetOptions(merge: true));
-      debugPrint('[FCM] Token successfully bound to user: ${user.uid}');
+      safeDebugPrint('[FCM] Token successfully bound to user: [REDACTED]');
     } catch (e) {
-      debugPrint('[FCM Save Token Error] $e');
+      safeDebugPrint('[FCM Save Token Error] ${e.runtimeType}');
     }
   }
 
@@ -221,9 +222,9 @@ class FcmService {
       NotificationActions.insertLocalNotification(appNotif);
 
       await notifRef.set(appNotif.toFirestore());
-      debugPrint('[FCM Inbox] Notification saved to Firestore: ${notifRef.id}');
+      safeDebugPrint('[FCM Inbox] Notification saved to Firestore: ${notifRef.id}');
     } catch (e) {
-      debugPrint('[FCM Inbox Save Error] $e');
+      safeDebugPrint('[FCM Inbox Save Error] ${e.runtimeType}');
     }
   }
 

@@ -243,10 +243,12 @@ class _CapsuleDetailScreenState extends ConsumerState<CapsuleDetailScreen> {
                                       Text(
                                         lang == 'ar'
                                             ? 'تعديل'
-                                            : (lang == 'en' ? 'Edit' : 'Modifier'),
-                                        style: Theme.of(context)
-                                            .textTheme
-                                            .bodyMedium,
+                                            : (lang == 'en'
+                                                  ? 'Edit'
+                                                  : 'Modifier'),
+                                        style: Theme.of(
+                                          context,
+                                        ).textTheme.bodyMedium,
                                       ),
                                     ],
                                   ),
@@ -292,89 +294,41 @@ class _CapsuleDetailScreenState extends ConsumerState<CapsuleDetailScreen> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           mainAxisSize: MainAxisSize.min,
                           children: [
-                            // Emotion row
-                            Row(
-                              children: [
-                                Icon(
-                                  capsule.emotion.icon,
-                                  size: 32,
-                                  color: AppColors.primaryLight,
-                                ),
-                                const SizedBox(width: AppSpacing.sm),
-                                Expanded(
-                                  child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Text(
-                                        capsule.emotion.getLabel(lang),
-                                        style: Theme.of(context)
-                                            .textTheme
-                                            .titleMedium
-                                            ?.copyWith(
-                                              fontSize: 18,
-                                              fontWeight: FontWeight.bold,
-                                              color: Colors.white,
-                                            ),
-                                      ),
-                                      Text(
-                                        _formatDetails(context, childName),
-                                        style: Theme.of(context)
-                                            .textTheme
-                                            .bodySmall
-                                            ?.copyWith(
-                                              fontSize: 13,
-                                              color: Colors.white70,
-                                            ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ],
-                            ),
-
-                            // Secondary emotions (LM-CAP-003)
-                            if (capsule.secondaryEmotions.isNotEmpty) ...[
-                              const SizedBox(height: AppSpacing.xs),
-                              Wrap(
-                                spacing: 6,
-                                runSpacing: 4,
-                                children: capsule.secondaryEmotions.map((secEmotion) {
-                                  return Container(
-                                    padding: const EdgeInsets.symmetric(
-                                      horizontal: 8,
-                                      vertical: 3.5,
-                                    ),
-                                    decoration: BoxDecoration(
-                                      color: Colors.white.withValues(alpha: 0.18),
-                                      borderRadius: BorderRadius.circular(10),
-                                      border: Border.all(
-                                        color: Colors.white.withValues(alpha: 0.35),
-                                        width: 0.8,
-                                      ),
-                                    ),
-                                    child: Row(
+                            Wrap(
+                              spacing: 12,
+                              runSpacing: 8,
+                              children: capsule.allEmotions
+                                  .map(
+                                    (emotion) => Row(
                                       mainAxisSize: MainAxisSize.min,
                                       children: [
-                                        Text(
-                                          secEmotion.emoji,
-                                          style: const TextStyle(fontSize: 12),
+                                        Icon(
+                                          emotion.icon,
+                                          size: 22,
+                                          color: AppColors.primaryLight,
                                         ),
-                                        const SizedBox(width: 4),
+                                        const SizedBox(width: 6),
                                         Text(
-                                          secEmotion.getLabel(lang),
+                                          emotion.getLabel(lang),
                                           style: const TextStyle(
-                                            fontSize: 11,
-                                            fontWeight: FontWeight.w600,
                                             color: Colors.white,
+                                            fontSize: 16,
+                                            fontWeight: FontWeight.w600,
                                           ),
                                         ),
                                       ],
                                     ),
-                                  );
-                                }).toList(),
+                                  )
+                                  .toList(),
+                            ),
+                            const SizedBox(height: 8),
+                            Text(
+                              _formatDetails(context, childName),
+                              style: const TextStyle(
+                                color: Colors.white70,
+                                fontSize: 13,
                               ),
-                            ],
+                            ),
 
                             // Category & date badges
                             if (capsule.category != null ||
@@ -391,7 +345,10 @@ class _CapsuleDetailScreenState extends ConsumerState<CapsuleDetailScreen> {
                                   if (capsule.capturedAt != null)
                                     _InfoBadge(
                                       icon: Icons.calendar_today_rounded,
-                                      label: DateFormat('d MMM yyyy', lang).format(capsule.capturedAt!),
+                                      label: DateFormat(
+                                        'd MMM yyyy',
+                                        lang,
+                                      ).format(capsule.capturedAt!),
                                     ),
                                 ],
                               ),
@@ -422,7 +379,9 @@ class _CapsuleDetailScreenState extends ConsumerState<CapsuleDetailScreen> {
                                           vertical: 6,
                                         ),
                                         decoration: BoxDecoration(
-                                          color: Colors.white.withValues(alpha: 0.15),
+                                          color: Colors.white.withValues(
+                                            alpha: 0.15,
+                                          ),
                                           borderRadius: BorderRadius.circular(
                                             16,
                                           ),
@@ -485,9 +444,7 @@ class _CapsuleDetailScreenState extends ConsumerState<CapsuleDetailScreen> {
       final updated = await Navigator.push<Capsule?>(
         context,
         MaterialPageRoute(
-          builder: (context) => CreateCapsuleScreen(
-            existingCapsule: _capsule,
-          ),
+          builder: (context) => CreateCapsuleScreen(existingCapsule: _capsule),
         ),
       );
       if (updated != null && mounted) {
@@ -520,9 +477,7 @@ class _CapsuleDetailScreenState extends ConsumerState<CapsuleDetailScreen> {
         mimeType: 'image/jpeg',
       );
 
-      final text = l10n.capsuleShareText(
-        capsule.emotion.getLabel(lang),
-      );
+      final text = l10n.capsuleShareText(capsule.emotion.getLabel(lang));
 
       await SharePlus.instance.share(ShareParams(files: [file], text: text));
     } catch (e) {

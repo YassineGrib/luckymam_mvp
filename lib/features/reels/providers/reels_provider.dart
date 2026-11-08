@@ -1,7 +1,7 @@
+import '../../../core/services/safe_log.dart';
 import 'dart:async';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter/foundation.dart';
 import '../models/reel_item.dart';
 
 /// Manages the list of reels and favorites state.
@@ -17,34 +17,21 @@ class ReelsNotifier extends StateNotifier<List<ReelItem>> {
     _subscription = FirebaseFirestore.instance
         .collection('reels')
         .snapshots()
-        .listen((snap) {
-      state = snap.docs.map((doc) => _reelFromFirestore(doc)).toList();
-    }, onError: (Object error, StackTrace stackTrace) {
-      debugPrint('Error loading reels from Firestore: $error');
-    });
+        .listen(
+          (snap) {
+            state = snap.docs.map((doc) => _reelFromFirestore(doc)).toList();
+          },
+          onError: (Object error, StackTrace stackTrace) {
+            safeDebugPrint('Unable to load reels.');
+          },
+        );
   }
 
   ReelItem _reelFromFirestore(QueryDocumentSnapshot<Map<String, dynamic>> doc) {
-    final data = doc.data();
-    final categoryStr = data['category'] as String?;
-    final category = ReelCategory.values.firstWhere(
-      (c) => c.name == categoryStr,
-      orElse: () => ReelCategory.vaccins,
-    );
-    final isFav = _localFavorites.contains(doc.id);
-    final rawLikes = data['likeCount'] ?? data['likes'] ?? 0;
-
-    return ReelItem(
-      id: doc.id,
-      title: data['title'] as String? ?? '',
-      description: data['description'] as String? ?? '',
-      assetPath: data['assetPath'] as String? ?? '',
-      author: data['author'] as String? ?? 'Luckymam',
-      likeCount: rawLikes is num ? rawLikes.toInt() : 0,
-      category: category,
-      isFavorite: isFav,
-      vaccineTags: List<String>.from(data['vaccineTags'] ?? []),
-    );
+    return ReelItem.fromMap(
+      doc.id,
+      doc.data(),
+    ).copyWith(isFavorite: _localFavorites.contains(doc.id));
   }
 
   Future<void> toggleFavorite(String reelId) async {
@@ -76,7 +63,7 @@ class ReelsNotifier extends StateNotifier<List<ReelItem>> {
         });
       }
     } catch (e) {
-      debugPrint('Error updating reel likeCount: $e');
+      safeDebugPrint('Unable to update reel favorite.');
     }
   }
 
@@ -101,9 +88,7 @@ final selectedReelCategoryProvider = StateProvider<ReelCategory?>(
 
 /// Vaccine codes to filter by when the reels screen is opened from a
 /// vaccine's fiche (null = no vaccine filter applied).
-final selectedVaccineTagsProvider = StateProvider<List<String>?>(
-  (ref) => null,
-);
+final selectedVaccineTagsProvider = StateProvider<List<String>?>((ref) => null);
 
 /// Firestore id for the Luckymam app intro reel — pinned first in the feed.
 const appReelId = 'reel_app';
@@ -135,8 +120,5 @@ final filteredReelsProvider = Provider<List<ReelItem>>((ref) {
 List<ReelItem> _withAppReelFirst(List<ReelItem> reels) {
   final appReel = reels.where((r) => r.id == appReelId);
   if (appReel.isEmpty) return reels;
-  return [
-    ...appReel,
-    ...reels.where((r) => r.id != appReelId),
-  ];
+  return [...appReel, ...reels.where((r) => r.id != appReelId)];
 }

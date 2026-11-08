@@ -27,11 +27,7 @@ import 'edit_child_screen.dart';
 import 'models/profile_models.dart';
 
 /// Available tabs inside the full-page Child Profile experience.
-enum _ChildProfileTab {
-  memories,
-  health,
-  growth,
-}
+enum _ChildProfileTab { memories, health, growth }
 
 /// Redesigned Flagship Full-Page Child Profile Screen for LuckyMam.
 /// Replaces the legacy SliverAppBar layout with a boutique "Baby Digital Passport":
@@ -70,7 +66,9 @@ class _ChildProfileScreenState extends ConsumerState<ChildProfileScreen> {
     final themeColor = currentChild.themeColor;
     final accentSecondary = themeColor.withValues(alpha: 0.85);
 
-    final bgColor = isDark ? AppColors.backgroundDark : AppColors.backgroundLight;
+    final bgColor = isDark
+        ? AppColors.backgroundDark
+        : AppColors.backgroundLight;
     final surfaceColor = isDark ? const Color(0xFF221A24) : Colors.white;
     final textColor = isDark ? Colors.white : AppColors.onSurfaceLight;
     final secondaryText = isDark
@@ -92,10 +90,7 @@ class _ChildProfileScreenState extends ConsumerState<ChildProfileScreen> {
       body: Stack(
         children: [
           // ── 1. Corner Brand Watermark Logo ──
-          const AuthLogoBackground(
-            lightOpacity: 0.07,
-            darkOpacity: 0.12,
-          ),
+          const AuthLogoBackground(lightOpacity: 0.07, darkOpacity: 0.12),
 
           // ── 2. Atmospheric Top Ambient Illumination ──
           Positioned(
@@ -182,8 +177,8 @@ class _ChildProfileScreenState extends ConsumerState<ChildProfileScreen> {
                               lang == 'ar'
                                   ? 'ملف الطفل'
                                   : (lang == 'fr'
-                                      ? 'Profil de Bébé'
-                                      : 'Baby\'s Profile'),
+                                        ? 'Profil de Bébé'
+                                        : 'Baby\'s Profile'),
                               style: AppTypography.fromContext(
                                 context,
                                 fontSize: 18.5,
@@ -196,8 +191,8 @@ class _ChildProfileScreenState extends ConsumerState<ChildProfileScreen> {
                               lang == 'ar'
                                   ? 'السجل الرقمي للصحة والذكريات'
                                   : (lang == 'fr'
-                                      ? 'Carnet de santé & souvenirs'
-                                      : 'Digital Health & Memories'),
+                                        ? 'Carnet de santé & souvenirs'
+                                        : 'Digital Health & Memories'),
                               style: AppTypography.fromContext(
                                 context,
                                 fontSize: 11,
@@ -211,7 +206,8 @@ class _ChildProfileScreenState extends ConsumerState<ChildProfileScreen> {
 
                       // Edit Baby Action Button
                       GestureDetector(
-                        onTap: () => _openEditChildScreen(context, currentChild),
+                        onTap: () =>
+                            _openEditChildScreen(context, currentChild),
                         child: Container(
                           width: 42,
                           height: 42,
@@ -448,9 +444,7 @@ class _ChildProfileScreenState extends ConsumerState<ChildProfileScreen> {
             children: [
               _FilterChip(
                 icon: Icons.grid_view_rounded,
-                label: lang == 'ar'
-                    ? 'الكل'
-                    : (lang == 'fr' ? 'Tous' : 'All'),
+                label: lang == 'ar' ? 'الكل' : (lang == 'fr' ? 'Tous' : 'All'),
                 isSelected: _memoryFilter == 'all',
                 themeColor: themeColor,
                 isDark: isDark,
@@ -524,14 +518,16 @@ class _ChildProfileScreenState extends ConsumerState<ChildProfileScreen> {
                   title: lang == 'ar'
                       ? 'لا توجد كبسولات مسجلة بعد'
                       : (lang == 'fr'
-                          ? 'Aucun souvenir enregistré'
-                          : 'No memory capsules yet'),
+                            ? 'Aucun souvenir enregistré'
+                            : 'No memory capsules yet'),
                   subtitle: lang == 'ar'
                       ? 'خلدي أول ابتسامة، كلمة، أو خطوة لطفلكِ في كبسولة ذكريات دافئة.'
                       : (lang == 'fr'
-                          ? 'Immortalisez son premier sourire ou premier pas.'
-                          : 'Preserve baby\'s first smile, words, or steps forever.'),
-                  actionLabel: lang == 'ar' ? 'تسجيل ذكرى جديدة' : 'Add First Memory',
+                            ? 'Immortalisez son premier sourire ou premier pas.'
+                            : 'Preserve baby\'s first smile, words, or steps forever.'),
+                  actionLabel: lang == 'ar'
+                      ? 'تسجيل ذكرى جديدة'
+                      : 'Add First Memory',
                   themeColor: themeColor,
                   isDark: isDark,
                   onAction: () => _openCreateCapsule(context, child),
@@ -551,22 +547,19 @@ class _ChildProfileScreenState extends ConsumerState<ChildProfileScreen> {
                 crossAxisSpacing: 12,
                 childAspectRatio: 0.85,
               ),
-              delegate: SliverChildBuilderDelegate(
-                (context, index) {
-                  final cap = capsules[index];
-                  return _CapsuleGridCard(
-                    capsule: cap,
-                    isDark: isDark,
-                    themeColor: themeColor,
-                    onTap: () => Navigator.of(context).push(
-                      MaterialPageRoute(
-                        builder: (_) => CapsuleDetailScreen(capsule: cap),
-                      ),
+              delegate: SliverChildBuilderDelegate((context, index) {
+                final cap = capsules[index];
+                return _CapsuleGridCard(
+                  capsule: cap,
+                  isDark: isDark,
+                  themeColor: themeColor,
+                  onTap: () => Navigator.of(context).push(
+                    MaterialPageRoute(
+                      builder: (_) => CapsuleDetailScreen(capsule: cap),
                     ),
-                  );
-                },
-                childCount: capsules.length,
-              ),
+                  ),
+                );
+              }, childCount: capsules.length),
             ),
           );
         },
@@ -772,11 +765,9 @@ class _ChildProfileScreenState extends ConsumerState<ChildProfileScreen> {
               child: child,
               isDark: isDark,
               lang: lang,
-              onOpenTimeline: () => Navigator.of(context).push(
-                MaterialPageRoute(
-                  builder: (_) => const TimelineScreen(),
-                ),
-              ),
+              onOpenTimeline: () => Navigator.of(
+                context,
+              ).push(MaterialPageRoute(builder: (_) => const TimelineScreen())),
             ),
           ]),
         ),
@@ -792,20 +783,16 @@ class _ChildProfileScreenState extends ConsumerState<ChildProfileScreen> {
     HapticFeedback.lightImpact();
     Navigator.of(context).push(
       MaterialPageRoute(
-        builder: (_) => CreateCapsuleScreen(
-          preselectedChildId: child.id,
-        ),
+        builder: (_) => CreateCapsuleScreen(preselectedChildId: child.id),
       ),
     );
   }
 
   void _openEditChildScreen(BuildContext context, Child child) {
     HapticFeedback.lightImpact();
-    Navigator.of(context).push(
-      MaterialPageRoute(
-        builder: (_) => EditChildScreen(child: child),
-      ),
-    );
+    Navigator.of(
+      context,
+    ).push(MaterialPageRoute(builder: (_) => EditChildScreen(child: child)));
   }
 
   Widget _shimmerGrid(bool isDark) {
@@ -898,7 +885,9 @@ class _BabyPassportHeroCard extends StatelessWidget {
                 child: Icon(
                   isUnknown
                       ? Icons.child_care_rounded
-                      : (isBoy ? Icons.stars_rounded : Icons.cruelty_free_rounded),
+                      : (isBoy
+                            ? Icons.stars_rounded
+                            : Icons.cruelty_free_rounded),
                   size: 130,
                   color: themeColor.withValues(alpha: isDark ? 0.07 : 0.05),
                 ),
@@ -930,7 +919,8 @@ class _BabyPassportHeroCard extends StatelessWidget {
                             ],
                           ),
                           child: ClipOval(
-                            child: child.photoUrl != null &&
+                            child:
+                                child.photoUrl != null &&
                                     child.photoUrl!.isNotEmpty
                                 ? CachedNetworkImage(
                                     imageUrl: child.photoUrl!,
@@ -1016,7 +1006,9 @@ class _BabyPassportHeroCard extends StatelessWidget {
                                   Icon(
                                     isUnknown
                                         ? Icons.child_care_rounded
-                                        : (isBoy ? Icons.male_rounded : Icons.female_rounded),
+                                        : (isBoy
+                                              ? Icons.male_rounded
+                                              : Icons.female_rounded),
                                     size: 13,
                                     color: themeColor,
                                   ),
@@ -1025,8 +1017,12 @@ class _BabyPassportHeroCard extends StatelessWidget {
                                     isUnknown
                                         ? child.localizedGenderLabel(l10n)
                                         : (isBoy
-                                            ? (lang == 'ar' ? 'أمير' : 'Garçon')
-                                            : (lang == 'ar' ? 'أميرة' : 'Fille')),
+                                              ? (lang == 'ar'
+                                                    ? 'أمير'
+                                                    : 'Garçon')
+                                              : (lang == 'ar'
+                                                    ? 'أميرة'
+                                                    : 'Fille')),
                                     style: TextStyle(
                                       fontSize: 10.5,
                                       fontWeight: FontWeight.w800,
@@ -1067,8 +1063,10 @@ class _BabyPassportHeroCard extends StatelessWidget {
                         Row(
                           children: [
                             Text(
-                              DateFormat('d MMMM yyyy', lang == 'ar' ? 'ar' : 'fr_FR')
-                                  .format(child.birthDate),
+                              DateFormat(
+                                'd MMMM yyyy',
+                                lang == 'ar' ? 'ar' : 'fr_FR',
+                              ).format(child.birthDate),
                               style: TextStyle(
                                 fontSize: 11.5,
                                 fontWeight: FontWeight.w500,
@@ -1081,7 +1079,11 @@ class _BabyPassportHeroCard extends StatelessWidget {
                             Row(
                               mainAxisSize: MainAxisSize.min,
                               children: [
-                                Icon(Icons.auto_awesome_rounded, size: 11, color: themeColor),
+                                Icon(
+                                  Icons.auto_awesome_rounded,
+                                  size: 11,
+                                  color: themeColor,
+                                ),
                                 const SizedBox(width: 3),
                                 Text(
                                   zodiac,
@@ -1166,11 +1168,7 @@ class _BabyPassportHeroCard extends StatelessWidget {
                   color: themeColor,
                 ),
               )
-            : Icon(
-                Icons.child_care_rounded,
-                size: 38,
-                color: themeColor,
-              ),
+            : Icon(Icons.child_care_rounded, size: 38, color: themeColor),
       ),
     );
   }
@@ -1220,8 +1218,9 @@ class _BentoQuickMetricsGrid extends StatelessWidget {
     final totalVaccines = vaccinesAsync.valueOrNull?.length ?? 11;
     final doneVaccines =
         vaccinesAsync.valueOrNull?.where((v) => v.isCompleted).length ?? 0;
-    final vaccineProgress =
-        totalVaccines > 0 ? (doneVaccines / totalVaccines) : 0.0;
+    final vaccineProgress = totalVaccines > 0
+        ? (doneVaccines / totalVaccines)
+        : 0.0;
 
     // 3. Growth latest
     final growthEntries = growthAsync.valueOrNull ?? [];
@@ -1568,8 +1567,8 @@ class _FilterChip extends StatelessWidget {
           color: isSelected
               ? themeColor
               : (isDark
-                  ? Colors.white.withValues(alpha: 0.06)
-                  : Colors.white.withValues(alpha: 0.85)),
+                    ? Colors.white.withValues(alpha: 0.06)
+                    : Colors.white.withValues(alpha: 0.85)),
           borderRadius: BorderRadius.circular(12),
           border: Border.all(
             color: isSelected
@@ -1655,7 +1654,9 @@ class _CapsuleGridCard extends StatelessWidget {
                 fit: BoxFit.cover,
                 placeholder: (_, _) => Shimmer.fromColors(
                   baseColor: isDark ? Colors.grey[800]! : Colors.grey[300]!,
-                  highlightColor: isDark ? Colors.grey[700]! : Colors.grey[100]!,
+                  highlightColor: isDark
+                      ? Colors.grey[700]!
+                      : Colors.grey[100]!,
                   child: Container(color: Colors.grey),
                 ),
                 errorWidget: (_, _, _) => Container(
@@ -1696,9 +1697,10 @@ class _CapsuleGridCard extends StatelessWidget {
                         color: Colors.black.withValues(alpha: 0.55),
                         borderRadius: BorderRadius.circular(8),
                       ),
-                      child: Text(
-                        capsule.emotion.emoji,
-                        style: const TextStyle(fontSize: 12),
+                      child: Icon(
+                        capsule.emotion.icon,
+                        size: 14,
+                        color: Colors.white,
                       ),
                     ),
 
@@ -1933,9 +1935,7 @@ class _DoctorAppointmentsBanner extends StatelessWidget {
         decoration: BoxDecoration(
           color: isDark ? const Color(0xFF1E1E28) : Colors.white,
           borderRadius: BorderRadius.circular(18),
-          border: Border.all(
-            color: cyan.withValues(alpha: 0.25),
-          ),
+          border: Border.all(color: cyan.withValues(alpha: 0.25)),
           boxShadow: [
             BoxShadow(
               color: Colors.black.withValues(alpha: isDark ? 0.2 : 0.03),
@@ -1965,7 +1965,9 @@ class _DoctorAppointmentsBanner extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    lang == 'ar' ? 'مواعيد وزيارات الطبيب' : 'Rendez-vous médicaux',
+                    lang == 'ar'
+                        ? 'مواعيد وزيارات الطبيب'
+                        : 'Rendez-vous médicaux',
                     style: TextStyle(
                       fontSize: 13.5,
                       fontWeight: FontWeight.w800,
@@ -1988,11 +1990,7 @@ class _DoctorAppointmentsBanner extends StatelessWidget {
                 ],
               ),
             ),
-            const Icon(
-              Icons.arrow_forward_ios_rounded,
-              size: 14,
-              color: cyan,
-            ),
+            const Icon(Icons.arrow_forward_ios_rounded, size: 14, color: cyan),
           ],
         ),
       ),
@@ -2020,8 +2018,9 @@ class _VaccineGroupBentoItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isCompleted = groupWithStatus.isCompleted;
-    final statusColor =
-        isCompleted ? const Color(0xFF00C853) : const Color(0xFF00B0FF);
+    final statusColor = isCompleted
+        ? const Color(0xFF00C853)
+        : const Color(0xFF00B0FF);
 
     return GestureDetector(
       onTap: onTap,
@@ -2103,8 +2102,9 @@ class _VaccineGroupBentoItem extends StatelessWidget {
                   borderRadius: BorderRadius.circular(8),
                 ),
                 child: Text(
-                  DateFormat('dd/MM/yyyy')
-                      .format(groupWithStatus.status!.completedAt!),
+                  DateFormat(
+                    'dd/MM/yyyy',
+                  ).format(groupWithStatus.status!.completedAt!),
                   style: const TextStyle(
                     fontSize: 10.5,
                     fontWeight: FontWeight.w800,
@@ -2376,11 +2376,7 @@ class _MilestoneDevelopmentBanner extends StatelessWidget {
                   color: violet.withValues(alpha: 0.12),
                   borderRadius: BorderRadius.circular(10),
                 ),
-                child: const Icon(
-                  Icons.stars_rounded,
-                  color: violet,
-                  size: 18,
-                ),
+                child: const Icon(Icons.stars_rounded, color: violet, size: 18),
               ),
               const SizedBox(width: 10),
               Expanded(
@@ -2580,14 +2576,14 @@ String _getDetailedAge(DateTime birthDate, String lang) {
       return lang == 'ar'
           ? '$years سنة و $months أشهر'
           : (lang == 'fr'
-              ? '$years an${years > 1 ? "s" : ""} et $months mois'
-              : '$years yr${years > 1 ? "s" : ""} and $months mo');
+                ? '$years an${years > 1 ? "s" : ""} et $months mois'
+                : '$years yr${years > 1 ? "s" : ""} and $months mo');
     }
     return lang == 'ar'
         ? '$years سنة'
         : (lang == 'fr'
-            ? '$years an${years > 1 ? "s" : ""}'
-            : '$years yr${years > 1 ? "s" : ""}');
+              ? '$years an${years > 1 ? "s" : ""}'
+              : '$years yr${years > 1 ? "s" : ""}');
   }
 
   if (months > 0) {
@@ -2595,8 +2591,8 @@ String _getDetailedAge(DateTime birthDate, String lang) {
       return lang == 'ar'
           ? '$months أشهر و $days يوماً'
           : (lang == 'fr'
-              ? '$months mois et $days jours'
-              : '$months mo and $days days');
+                ? '$months mois et $days jours'
+                : '$months mo and $days days');
     }
     return lang == 'ar'
         ? '$months أشهر'

@@ -3,14 +3,12 @@ import 'package:http/http.dart' as http;
 import '../models/assistant_models.dart';
 import 'assistant_backend.dart';
 
-/// Direct Gemini REST backend calling the Google Generative Language API.
+/// Explicitly injected direct client for development/tests; production uses the callable.
 /// Incorporates immediate medical emergency detection (Red Flags) and
 /// maternal safety guardrails.
 class GeminiDirectBackend implements AssistantBackend {
-  GeminiDirectBackend({
-    this.apiKey = 'AQ.Ab8RN6JvumK4zJjp79adjnlYk4KvvjW26e0nlJp31NUKcGAVLg',
-    http.Client? httpClient,
-  }) : _client = httpClient ?? http.Client();
+  GeminiDirectBackend({required this.apiKey, http.Client? httpClient})
+    : _client = httpClient ?? http.Client();
 
   final String apiKey;
   final http.Client _client;
@@ -51,7 +49,7 @@ class GeminiDirectBackend implements AssistantBackend {
       contents.add({
         'role': msg.role == AssistantRole.user ? 'user' : 'model',
         'parts': [
-          {'text': msg.text}
+          {'text': msg.text},
         ],
       });
     }
@@ -60,7 +58,7 @@ class GeminiDirectBackend implements AssistantBackend {
     contents.add({
       'role': 'user',
       'parts': [
-        {'text': trimmed}
+        {'text': trimmed},
       ],
     });
 
@@ -92,13 +90,10 @@ Directives impératives de style (100% naturel et humain) :
       'contents': contents,
       'systemInstruction': {
         'parts': [
-          {'text': systemPrompt}
+          {'text': systemPrompt},
         ],
       },
-      'generationConfig': {
-        'temperature': 0.65,
-        'maxOutputTokens': 600,
-      },
+      'generationConfig': {'temperature': 0.65, 'maxOutputTokens': 600},
     });
 
     Exception? lastError;
@@ -128,11 +123,7 @@ Directives impératives de style (100% naturel et humain) :
               final replyText = _cleanOutputText(rawReply);
               final mood = _deriveMood(replyText);
               final cards = _deriveContextCards(trimmed, replyText, locale);
-              return AssistantReply(
-                text: replyText,
-                cards: cards,
-                mood: mood,
-              );
+              return AssistantReply(text: replyText, cards: cards, mood: mood);
             }
           }
           continue;
@@ -145,7 +136,7 @@ Directives impératives de style (100% naturel et humain) :
         } else {
           lastError = AssistantException(
             kind: AssistantErrorKind.unavailable,
-            details: 'HTTP ${response.statusCode}: ${response.body}',
+            details: 'Provider HTTP ${response.statusCode}',
           );
           continue;
         }
@@ -169,25 +160,33 @@ Directives impératives de style (100% naturel et humain) :
     final lower = text.toLowerCase();
     final isAr = locale.startsWith('ar');
 
-    final hasBleeding = lower.contains('saignement') ||
+    final hasBleeding =
+        lower.contains('saignement') ||
         lower.contains('sang abondant') ||
         lower.contains('نزيف') ||
         lower.contains('دم كثير');
-    final hasNoMovement = lower.contains('ne bouge plus') ||
+    final hasNoMovement =
+        lower.contains('ne bouge plus') ||
         lower.contains('pas de mouvement') ||
         lower.contains('حركة الجنين') ||
         lower.contains('توقف الحركة');
-    final hasNewbornFever = (lower.contains('fièvre') || lower.contains('حرارة') || lower.contains('حمى')) &&
-        (lower.contains('nouveau-né') || lower.contains('bébé') || lower.contains('رضيع'));
-    final hasBreathingIssue = lower.contains('respire pas') ||
+    final hasNewbornFever =
+        (lower.contains('fièvre') ||
+            lower.contains('حرارة') ||
+            lower.contains('حمى')) &&
+        (lower.contains('nouveau-né') ||
+            lower.contains('bébé') ||
+            lower.contains('رضيع'));
+    final hasBreathingIssue =
+        lower.contains('respire pas') ||
         lower.contains('étouffement') ||
         lower.contains('ضيق تنفس') ||
         lower.contains('اختناق');
 
     if (hasBleeding || hasNoMovement || hasNewbornFever || hasBreathingIssue) {
       final msg = isAr
-          ? '⚠️ تنبيه طبي هام: هذه الأعراض تتطلب فحصاً طبياً فورياً من الطبيب أو التوجه إلى قسم الطوارئ (14 أو 15) في أسرع وقت. سلامتكِ وسلامة طفلك هي الأولوية القصوى.'
-          : '⚠️ Alerte médicale : ce symptôme nécessite un avis médical urgent. Contacte immédiatement ton médecin ou rends-toi aux urgences (14 / 15). Prends bien soin de toi et de ton bébé.';
+          ? ' تنبيه طبي هام: هذه الأعراض تتطلب فحصاً طبياً فورياً من الطبيب أو التوجه إلى قسم الطوارئ (14 أو 15) في أسرع وقت. سلامتكِ وسلامة طفلك هي الأولوية القصوى.'
+          : ' Alerte médicale : ce symptôme nécessite un avis médical urgent. Contacte immédiatement ton médecin ou rends-toi aux urgences (14 / 15). Prends bien soin de toi et de ton bébé.';
       return AssistantReply(
         text: msg,
         cards: const [],
@@ -263,7 +262,10 @@ Directives impératives de style (100% naturel et humain) :
     // Strip markdown header syntax (###, ##, #)
     text = text.replaceAll(RegExp(r'^#+\s*', multiLine: true), '');
     // Strip bullet dashes, bullet points or list markers (- , * , • ) at line beginnings
-    text = text.replaceAll(RegExp(r'^[ \t]*[\-\•\–\—]\s+', multiLine: true), '');
+    text = text.replaceAll(
+      RegExp(r'^[ \t]*[\-\•\–\—]\s+', multiLine: true),
+      '',
+    );
     // Replace numbered lists like "1. ", "2. " with natural flow
     text = text.replaceAll(RegExp(r'^[ \t]*\d+[\.\)]\s+', multiLine: true), '');
     // Remove excessive newlines (max 2 consecutive newlines)

@@ -280,14 +280,14 @@ class AppLocalizationsEn extends AppLocalizations {
   String get dashboardPartnerShop => 'Partner Shop';
 
   @override
-  String get dashboardHopeBannerTitle => 'Your journey starts here 💜';
+  String get dashboardHopeBannerTitle => 'Your journey starts here ';
 
   @override
   String get dashboardHopeBannerSubtitle =>
       'Track your cycle and take care of yourself.\nYour children section will appear here once baby arrives.';
 
   @override
-  String get dashboardPregnantBannerTitle => 'Your baby is growing 🩷';
+  String get dashboardPregnantBannerTitle => 'Your baby is growing ';
 
   @override
   String get dashboardPregnantBannerSubtitle =>
@@ -414,7 +414,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get dailyTipSectionTitle => 'DAILY TIP';
 
   @override
-  String get dailyTipFooter => '— Luckymam Team 💕';
+  String get dailyTipFooter => '— Luckymam Team ';
 
   @override
   String get upgradePremiumTitle => 'Upgrade to Premium';
@@ -586,7 +586,7 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String get printVipFreeNote => 'Free with your VIP subscription 🎁';
+  String get printVipFreeNote => 'Free with your VIP subscription ';
 
   @override
   String get printPricingNote =>
@@ -774,7 +774,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get timeline_all_milestones_have_memory =>
-      'All milestones in this phase already have a memory ✓';
+      'All milestones in this phase already have a memory ';
 
   @override
   String get timeline_add => 'Add';
@@ -824,7 +824,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get milestone_schedule_reminder => 'Schedule a reminder';
 
   @override
-  String get milestone_marked_complete => 'Milestone marked as complete ✓';
+  String get milestone_marked_complete => 'Milestone marked as complete ';
 
   @override
   String milestone_error(String error) {
@@ -881,7 +881,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String milestone_reminder_scheduled(String date) {
-    return 'Reminder scheduled for $date ✓';
+    return 'Reminder scheduled for $date ';
   }
 
   @override
@@ -1036,7 +1036,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String capsuleShareText(String emotion) {
-    return '✨ A precious memory via Luckymam\n$emotion';
+    return ' A precious memory via Luckymam\n$emotion';
   }
 
   @override
@@ -1048,7 +1048,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get capsuleGalleryPermissionDenied => 'Gallery permission denied';
 
   @override
-  String get capsuleSavedToGallery => 'Saved to Luckymam album 📸';
+  String get capsuleSavedToGallery => 'Saved to Luckymam album ';
 
   @override
   String capsuleSaveError(String error) {
@@ -1063,7 +1063,7 @@ class AppLocalizationsEn extends AppLocalizations {
       'Sharing and saving capsules\nis reserved for Premium and VIP subscribers.';
 
   @override
-  String get capsulePremiumUpgradeCta => '🌟 Go Premium — 2,490 DA/year';
+  String get capsulePremiumUpgradeCta => ' Go Premium — 2,490 DA/year';
 
   @override
   String get capsuleDeleteTitle => 'Delete capsule?';
@@ -1138,7 +1138,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get capsuleGallery => 'Gallery';
 
   @override
-  String get capsuleCreatedSuccess => 'Capsule created successfully! ✨';
+  String get capsuleCreatedSuccess => 'Capsule created successfully! ';
 
   @override
   String get capsuleEmotion => 'Emotion';
@@ -1156,7 +1156,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get capsuleNoPhotoPlaceholder => 'Saved memory';
 
   @override
-  String get capsuleVoiceMessageOptional => '🎤 Voice message (optional)';
+  String get capsuleVoiceMessageOptional => ' Voice message (optional)';
 
   @override
   String get capsuleHoldToRecord => 'Hold to record';
@@ -1249,7 +1249,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get healthNotesOptional => 'Notes (optional)';
 
   @override
-  String get healthMeasurementSaved => 'Measurement saved ✓';
+  String get healthMeasurementSaved => 'Measurement saved ';
 
   @override
   String get healthSave => 'Save';
@@ -1293,7 +1293,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get healthSaving => 'Saving…';
 
   @override
-  String get healthAppointmentSaved => 'Appointment saved ✓';
+  String get healthAppointmentSaved => 'Appointment saved ';
 
   @override
   String get healthSaveError => 'Error while saving';
@@ -1449,7 +1449,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get subscriptionAlbumClaimTitle => 'Free Printed Album';
 
   @override
-  String get subscriptionAlbumClaimSubtitle => 'Your VIP gift 🎁';
+  String get subscriptionAlbumClaimSubtitle => 'Your VIP gift ';
 
   @override
   String get subscriptionAlbumClaimInfo =>
@@ -1651,7 +1651,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get homeVaccineNotesHint => 'E.g.: Dr. Martin, clinic...';
 
   @override
-  String get homeVaccineMarkedComplete => 'Vaccine marked as done ✓';
+  String get homeVaccineMarkedComplete => 'Vaccine marked as done ';
 
   @override
   String get homeVaccineCancelTitle => 'Cancel the vaccine?';
@@ -1771,10 +1771,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String get profileManage => 'Manage';
 
   @override
-  String get profileAlbumClaimSent => 'Album request sent ✓';
+  String get profileAlbumClaimSent => 'Album request sent ';
 
   @override
-  String get profileClaimFreeAlbum => 'Claim your free printed album 🎁';
+  String get profileClaimFreeAlbum => 'Claim your free printed album ';
 
   @override
   String get profileDarkTheme => 'Dark theme';
@@ -1997,7 +1997,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get timelineAddChildHint => 'To see their personalized timeline';
 
   @override
-  String get timelineStatusCompleted => '✓ Done';
+  String get timelineStatusCompleted => ' Done';
 
   @override
   String get timelineStatusOverdue => 'To catch up';
@@ -2568,7 +2568,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String notifVaccineReminderTitle(String childName) {
-    return '💉 Vaccine Reminder – $childName';
+    return ' Vaccine Reminder – $childName';
   }
 
   @override
@@ -2597,13 +2597,13 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String get notifCyclePeriodTitle => '🌸 Period in 2 days';
+  String get notifCyclePeriodTitle => ' Period in 2 days';
 
   @override
   String get notifCyclePeriodBody => 'Get ready for your next cycle.';
 
   @override
-  String get notifCycleOvulationTitle => '🌿 Ovulation phase tomorrow';
+  String get notifCycleOvulationTitle => ' Ovulation phase tomorrow';
 
   @override
   String get notifCycleOvulationBody =>
@@ -2661,15 +2661,15 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get profileDeleteAccountBulletMemories =>
-      '✦ Memory capsules and photos';
+      ' Memory capsules and photos';
 
   @override
   String get profileDeleteAccountBulletHealth =>
-      '✦ Child profiles and health records';
+      ' Child profiles and health records';
 
   @override
   String get profileDeleteAccountBulletOrders =>
-      '✦ Subscription and order history';
+      ' Subscription and order history';
 
   @override
   String get profileDeleteAccountUnderstand =>
@@ -2829,7 +2829,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get capsuleAudioPendingBadge => 'Pending confirmation';
 
   @override
-  String get capsuleAudioValidatedSuccess => 'Audio confirmed for capsule ✓';
+  String get capsuleAudioValidatedSuccess => 'Audio confirmed for capsule ';
 
   @override
   String get capsuleAudioMicPermissionError =>
@@ -3080,7 +3080,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get albumComingSoonToast =>
-      'This photobook template will be available very soon! ✨';
+      'This photobook template will be available very soon! ';
 
   @override
   String get albumPortrait1PhotoBadge => '1 portrait photo';
@@ -3127,10 +3127,10 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get diaporamaClosingTitle =>
-      'Precious moments made with love on LuckyMam 🍀';
+      'Precious moments made with love on LuckyMam ';
 
   @override
   String diaporamaShareMessage(String childName) {
-    return 'Watch the slideshow of $childName\'s best memories on LuckyMam 🍀';
+    return 'Watch the slideshow of $childName\'s best memories on LuckyMam ';
   }
 }

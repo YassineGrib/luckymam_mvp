@@ -24,7 +24,6 @@ import '../../capsules/widgets/image_crop_screen.dart';
 import '../../print_album/services/album_pricing_service.dart';
 import '../widgets/album_photo_action_sheet.dart';
 
-
 /// Redesigned flagship Standard (Free-form) Album Detail Screen for LuckyMam.
 /// Features a Dual-Mode Experience mirroring the VIP Predefined Album:
 /// 1. Realistic Horizontal Book Reader (Book Flip Mode) with photobook spine,
@@ -82,12 +81,10 @@ class _StandardAlbumDetailScreenState
     return Scaffold(
       backgroundColor: bgColor,
       body: albumAsync.when(
-        loading: () => const Center(
-          child: CircularProgressIndicator(color: _accentColor),
-        ),
-        error: (e, _) => Center(
-          child: Text(l10n.albumErrorWithMessage(e.toString())),
-        ),
+        loading: () =>
+            const Center(child: CircularProgressIndicator(color: _accentColor)),
+        error: (e, _) =>
+            Center(child: Text(l10n.albumErrorWithMessage(e.toString()))),
         data: (album) {
           if (album == null) {
             return Center(child: Text(l10n.albumNotFound));
@@ -250,13 +247,15 @@ class _StandardAlbumDetailScreenState
                             const SizedBox(height: 2),
                             Row(
                               children: [
-                                Text(
-                                  '$filledCount / $totalCount ${lang == 'ar' ? 'صفحات مكتملة' : (lang == 'fr' ? 'pages complétées' : 'pages completed')}',
-                                  style: AppTypography.fromContext(
-                                    context,
-                                    fontSize: 11.5,
-                                    fontWeight: FontWeight.w600,
-                                    color: secondaryText,
+                                Flexible(
+                                  child: Text(
+                                    '$filledCount / $totalCount ${lang == 'ar' ? 'صفحات مكتملة' : (lang == 'fr' ? 'pages complétées' : 'pages completed')}',
+                                    style: AppTypography.fromContext(
+                                      context,
+                                      fontSize: 11.5,
+                                      fontWeight: FontWeight.w600,
+                                      color: secondaryText,
+                                    ),
                                   ),
                                 ),
                                 const SizedBox(width: 6),
@@ -268,11 +267,13 @@ class _StandardAlbumDetailScreenState
                                       minHeight: 4,
                                       backgroundColor: isDark
                                           ? Colors.white12
-                                          : Colors.black.withValues(alpha: 0.06),
+                                          : Colors.black.withValues(
+                                              alpha: 0.06,
+                                            ),
                                       valueColor:
                                           const AlwaysStoppedAnimation<Color>(
-                                        _accentColor,
-                                      ),
+                                            _accentColor,
+                                          ),
                                     ),
                                   ),
                                 ),
@@ -369,24 +370,30 @@ class _StandardAlbumDetailScreenState
                                 lang == 'ar'
                                     ? 'تغيير عدد الصور'
                                     : (lang == 'fr'
-                                        ? 'Nombre de photos'
-                                        : 'Photo quantity'),
+                                          ? 'Nombre de photos'
+                                          : 'Photo quantity'),
                               ),
                             ],
                           ),
                         ),
                         PopupMenuItem(
                           value: 'add_page',
+                          enabled: album.pageCount < StandardAlbum.maxPageCount,
                           child: Row(
                             children: [
-                              const Icon(Icons.add_circle_outline_rounded,
-                                  size: 18, color: _accentColor),
+                              const Icon(
+                                Icons.add_circle_outline_rounded,
+                                size: 18,
+                                color: _accentColor,
+                              ),
                               const SizedBox(width: 10),
-                              Text(lang == 'ar'
-                                  ? 'إضافة صفحة للألبوم'
-                                  : (lang == 'fr'
-                                      ? 'Ajouter une page'
-                                      : 'Add page')),
+                              Text(
+                                lang == 'ar'
+                                    ? 'إضافة صفحة للألبوم'
+                                    : (lang == 'fr'
+                                          ? 'Ajouter une page'
+                                          : 'Add page'),
+                              ),
                             ],
                           ),
                         ),
@@ -395,15 +402,18 @@ class _StandardAlbumDetailScreenState
                           value: 'delete',
                           child: Row(
                             children: [
-                              const Icon(Icons.delete_outline_rounded,
-                                  size: 18, color: AppColors.error),
+                              const Icon(
+                                Icons.delete_outline_rounded,
+                                size: 18,
+                                color: AppColors.error,
+                              ),
                               const SizedBox(width: 10),
                               Text(
                                 lang == 'ar'
                                     ? 'حذف الألبوم'
                                     : (lang == 'fr'
-                                        ? 'Supprimer l\'album'
-                                        : 'Delete album'),
+                                          ? 'Supprimer l\'album'
+                                          : 'Delete album'),
                                 style: const TextStyle(color: AppColors.error),
                               ),
                             ],
@@ -514,7 +524,9 @@ class _StandardAlbumDetailScreenState
     required bool isRtl,
   }) {
     // Total items in pageview = pages + 1 (the final "+ Add page" spread)
-    final totalItemCount = album.pageCount + 1;
+    final totalItemCount =
+        album.pageCount +
+        (album.pageCount < StandardAlbum.maxPageCount ? 1 : 0);
 
     return Column(
       children: [
@@ -562,8 +574,18 @@ class _StandardAlbumDetailScreenState
                 isDark: isDark,
                 lang: lang,
                 isRtl: isRtl,
-                onPickExisting: () => _pickExistingCapsule(context, album, index),
-                onReplace: () => _replacePagePhoto(context, album, index, capsule),
+                onSelectExisting: (capsule) => ref
+                    .read(standardAlbumActionsProvider.notifier)
+                    .addCapsuleToPage(
+                      albumId: album.id,
+                      pageIndex: index,
+                      capsuleId: capsule.id,
+                      method: 'existing',
+                    ),
+                onPickExisting: () =>
+                    _pickExistingCapsule(context, album, index),
+                onReplace: () =>
+                    _replacePagePhoto(context, album, index, capsule),
                 onCrop: capsule != null
                     ? () => _cropPagePhoto(context, album, index, capsule!)
                     : null,
@@ -578,8 +600,9 @@ class _StandardAlbumDetailScreenState
 
         // Thumbnail Navigation Dots / Indicator Strip
         Padding(
-          padding:
-              const EdgeInsets.symmetric(horizontal: AppSpacing.screenPaddingH),
+          padding: const EdgeInsets.symmetric(
+            horizontal: AppSpacing.screenPaddingH,
+          ),
           child: SingleChildScrollView(
             scrollDirection: Axis.horizontal,
             child: Row(
@@ -587,8 +610,7 @@ class _StandardAlbumDetailScreenState
               children: List.generate(totalItemCount, (i) {
                 final isCurrent = i == _currentPageIndex;
                 final isAddPage = i == album.pageCount;
-                final isFilled =
-                    !isAddPage && album.pageCapsules['$i'] != null;
+                final isFilled = !isAddPage && album.pageCapsules['$i'] != null;
 
                 return GestureDetector(
                   onTap: () {
@@ -608,12 +630,12 @@ class _StandardAlbumDetailScreenState
                       color: isCurrent
                           ? _accentColor
                           : isFilled
-                              ? AppColors.success.withValues(alpha: 0.7)
-                              : isAddPage
-                                  ? _accentColor.withValues(alpha: 0.4)
-                                  : isDark
-                                      ? Colors.white24
-                                      : Colors.black12,
+                          ? AppColors.success.withValues(alpha: 0.7)
+                          : isAddPage
+                          ? _accentColor.withValues(alpha: 0.4)
+                          : isDark
+                          ? Colors.white24
+                          : Colors.black12,
                     ),
                   ),
                 );
@@ -705,8 +727,8 @@ class _StandardAlbumDetailScreenState
                       lang == 'ar'
                           ? 'إضافة صفحة جديدة للألبوم'
                           : (lang == 'fr'
-                              ? 'Ajouter une nouvelle page'
-                              : 'Add new album page'),
+                                ? 'Ajouter une nouvelle page'
+                                : 'Add new album page'),
                       style: AppTypography.fromContext(
                         context,
                         fontSize: 17,
@@ -720,8 +742,8 @@ class _StandardAlbumDetailScreenState
                       lang == 'ar'
                           ? 'يمكنك توسيع ألبومك وحفظ المزيد من الذكريات في أي وقت'
                           : (lang == 'fr'
-                              ? 'Agrandissez votre album et gardez plus de souvenirs'
-                              : 'Expand your album and preserve more milestones'),
+                                ? 'Agrandissez votre album et gardez plus de souvenirs'
+                                : 'Expand your album and preserve more milestones'),
                       style: AppTypography.fromContext(
                         context,
                         fontSize: 12.5,
@@ -745,14 +767,16 @@ class _StandardAlbumDetailScreenState
                         ),
                         elevation: 4,
                       ),
-                      icon: const Icon(Icons.add_photo_alternate_rounded,
-                          size: 18),
+                      icon: const Icon(
+                        Icons.add_photo_alternate_rounded,
+                        size: 18,
+                      ),
                       label: Text(
                         lang == 'ar'
                             ? 'إضافة صفحة الآن (صفحة ${album.pageCount + 1})'
                             : (lang == 'fr'
-                                ? 'Ajouter la page ${album.pageCount + 1}'
-                                : 'Add Page ${album.pageCount + 1}'),
+                                  ? 'Ajouter la page ${album.pageCount + 1}'
+                                  : 'Add Page ${album.pageCount + 1}'),
                         style: const TextStyle(
                           fontSize: 14,
                           fontWeight: FontWeight.bold,
@@ -781,7 +805,11 @@ class _StandardAlbumDetailScreenState
     required bool isDark,
     required String lang,
   }) {
-    final totalCards = album.pageCount + 1; // pages + add page card
+    final totalCards =
+        album.pageCount +
+        (album.pageCount < StandardAlbum.maxPageCount
+            ? 1
+            : 0); // pages + add page card
 
     return GridView.builder(
       padding: const EdgeInsets.fromLTRB(
@@ -887,8 +915,8 @@ class _StandardAlbumDetailScreenState
                 color: isFilled
                     ? AppColors.success.withValues(alpha: 0.4)
                     : isDark
-                        ? Colors.white12
-                        : const Color(0xFFEBE6EA),
+                    ? Colors.white12
+                    : const Color(0xFFEBE6EA),
                 width: isFilled ? 1.5 : 1,
               ),
               boxShadow: [
@@ -910,8 +938,10 @@ class _StandardAlbumDetailScreenState
                       fit: BoxFit.cover,
                       errorBuilder: (_, _, _) => Container(
                         color: isDark ? Colors.grey[900] : Colors.grey[200],
-                        child: const Icon(Icons.photo_rounded,
-                            color: Colors.grey),
+                        child: const Icon(
+                          Icons.photo_rounded,
+                          color: Colors.grey,
+                        ),
                       ),
                     )
                   else
@@ -962,8 +992,9 @@ class _StandardAlbumDetailScreenState
                         gradient: LinearGradient(
                           colors: [
                             Colors.transparent,
-                            Colors.black
-                                .withValues(alpha: isFilled ? 0.85 : 0.08),
+                            Colors.black.withValues(
+                              alpha: isFilled ? 0.85 : 0.08,
+                            ),
                           ],
                           begin: Alignment.topCenter,
                           end: Alignment.bottomCenter,
@@ -989,8 +1020,11 @@ class _StandardAlbumDetailScreenState
                           if (isFilled && capsule.audioUrl != null)
                             Row(
                               children: [
-                                const Icon(Icons.graphic_eq_rounded,
-                                    size: 11, color: Colors.white70),
+                                const Icon(
+                                  Icons.graphic_eq_rounded,
+                                  size: 11,
+                                  color: Colors.white70,
+                                ),
                                 const SizedBox(width: 4),
                                 Text(
                                   lang == 'ar' ? 'صوت مسجل' : 'Audio',
@@ -1045,7 +1079,9 @@ class _StandardAlbumDetailScreenState
   ) async {
     final lang = Localizations.localeOf(context).languageCode;
     final isAr = lang == 'ar';
-    final pageTitle = isAr ? 'الصفحة ${pageIndex + 1}' : 'Page ${pageIndex + 1}';
+    final pageTitle = isAr
+        ? 'الصفحة ${pageIndex + 1}'
+        : 'Page ${pageIndex + 1}';
 
     await AlbumPhotoActionSheet.show(
       context: context,
@@ -1115,23 +1151,27 @@ class _StandardAlbumDetailScreenState
         ),
       );
 
-      final newCapsule = await ref.read(capsuleServiceProvider).createCapsule(
-        photoFile: croppedFile,
-        childId: album.childId,
-        emotion: capsule.emotion,
-        category: capsule.category,
-        tags: capsule.tags,
-        albumId: album.id,
-        albumSlotId: '$pageIndex',
-        albumType: 'standard',
-      );
+      final newCapsule = await ref
+          .read(capsuleServiceProvider)
+          .createCapsule(
+            photoFile: croppedFile,
+            childId: album.childId,
+            emotion: capsule.emotion,
+            category: capsule.category,
+            tags: capsule.tags,
+            albumId: album.id,
+            albumSlotId: '$pageIndex',
+            albumType: 'standard',
+          );
 
-      await ref.read(standardAlbumActionsProvider.notifier).addCapsuleToPage(
-        albumId: album.id,
-        pageIndex: pageIndex,
-        capsuleId: newCapsule.id,
-        method: 'cropped',
-      );
+      await ref
+          .read(standardAlbumActionsProvider.notifier)
+          .addCapsuleToPage(
+            albumId: album.id,
+            pageIndex: pageIndex,
+            capsuleId: newCapsule.id,
+            method: 'cropped',
+          );
 
       messenger.hideCurrentSnackBar();
       messenger.showSnackBar(
@@ -1255,23 +1295,27 @@ class _StandardAlbumDetailScreenState
         ),
       );
 
-      final newCapsule = await ref.read(capsuleServiceProvider).createCapsule(
-        photoFile: croppedFile,
-        childId: album.childId,
-        emotion: currentCapsule?.emotion ?? Emotion.happy,
-        category: currentCapsule?.category,
-        tags: currentCapsule?.tags ?? const [],
-        albumId: album.id,
-        albumSlotId: '$pageIndex',
-        albumType: 'standard',
-      );
+      final newCapsule = await ref
+          .read(capsuleServiceProvider)
+          .createCapsule(
+            photoFile: croppedFile,
+            childId: album.childId,
+            emotion: currentCapsule?.emotion ?? Emotion.happy,
+            category: currentCapsule?.category,
+            tags: currentCapsule?.tags ?? const [],
+            albumId: album.id,
+            albumSlotId: '$pageIndex',
+            albumType: 'standard',
+          );
 
-      await ref.read(standardAlbumActionsProvider.notifier).addCapsuleToPage(
-        albumId: album.id,
-        pageIndex: pageIndex,
-        capsuleId: newCapsule.id,
-        method: 'new_image',
-      );
+      await ref
+          .read(standardAlbumActionsProvider.notifier)
+          .addCapsuleToPage(
+            albumId: album.id,
+            pageIndex: pageIndex,
+            capsuleId: newCapsule.id,
+            method: 'new_image',
+          );
 
       messenger.hideCurrentSnackBar();
       messenger.showSnackBar(
@@ -1289,9 +1333,7 @@ class _StandardAlbumDetailScreenState
       if (context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text(
-              lang == 'ar' ? 'حدث خطأ: $e' : 'Erreur : $e',
-            ),
+            content: Text(lang == 'ar' ? 'حدث خطأ: $e' : 'Erreur : $e'),
             backgroundColor: AppColors.error,
           ),
         );
@@ -1300,6 +1342,7 @@ class _StandardAlbumDetailScreenState
   }
 
   void _addNewPage(StandardAlbum album) {
+    if (album.pageCount >= StandardAlbum.maxPageCount) return;
     HapticFeedback.mediumImpact();
     ref.read(standardAlbumActionsProvider.notifier).addPage(album.id);
     // Smoothly jump to the new page
@@ -1356,19 +1399,23 @@ class _StandardAlbumDetailScreenState
     );
   }
 
-  void _clearPage(
-    BuildContext context,
-    StandardAlbum album,
-    int pageIndex,
-  ) {
+  void _clearPage(BuildContext context, StandardAlbum album, int pageIndex) {
     final lang = Localizations.localeOf(context).languageCode;
     showDialog(
       context: context,
       builder: (ctx) => AlertDialog(
-        title: Text(lang == 'ar' ? 'إفراغ الصفحة' : 'Clear Page'),
+        title: Text(
+          lang == 'ar'
+              ? 'إفراغ الصفحة'
+              : lang == 'fr'
+              ? 'Vider la page'
+              : 'Clear Page',
+        ),
         content: Text(
           lang == 'ar'
               ? 'هل أنتِ متأكدة من إزالة هذه الصورة من الصفحة؟ لن يتم حذف الكبسولة الأصلية.'
+              : lang == 'fr'
+              ? 'Retirer ce souvenir de la page ? La capsule originale sera conservée.'
               : 'Are you sure you want to remove this memory from the page? The original capsule will not be deleted.',
         ),
         actions: [
@@ -1384,23 +1431,27 @@ class _StandardAlbumDetailScreenState
                   .clearPage(albumId: album.id, pageIndex: pageIndex);
               Navigator.pop(ctx);
             },
-            child: Text(lang == 'ar' ? 'إزالة' : 'Remove'),
+            child: Text(
+              lang == 'ar'
+                  ? 'إزالة'
+                  : lang == 'fr'
+                  ? 'Retirer'
+                  : 'Remove',
+            ),
           ),
         ],
       ),
     );
   }
 
-  void _showChangePhotoCountDialog(
-    BuildContext context,
-    StandardAlbum album,
-  ) {
+  void _showChangePhotoCountDialog(BuildContext context, StandardAlbum album) {
     final lang = Localizations.localeOf(context).languageCode;
     final isAr = lang == 'ar';
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final textColor = isDark ? Colors.white : AppColors.onSurfaceLight;
-    final secondaryText =
-        isDark ? AppColors.textSecondaryDark : AppColors.textSecondaryLight;
+    final secondaryText = isDark
+        ? AppColors.textSecondaryDark
+        : AppColors.textSecondaryLight;
 
     int selectedCount = album.pageCount;
 
@@ -1419,8 +1470,10 @@ class _StandardAlbumDetailScreenState
               borderRadius: BorderRadius.circular(22),
             ),
             titlePadding: const EdgeInsets.fromLTRB(22, 22, 22, 8),
-            contentPadding:
-                const EdgeInsets.symmetric(horizontal: 22, vertical: 8),
+            contentPadding: const EdgeInsets.symmetric(
+              horizontal: 22,
+              vertical: 8,
+            ),
             actionsPadding: const EdgeInsets.fromLTRB(16, 8, 16, 16),
             title: Row(
               children: [
@@ -1457,8 +1510,8 @@ class _StandardAlbumDetailScreenState
               children: [
                 Text(
                   isAr
-                      ? 'اختاري عدد الصور الإجمالي لألبومك (1، 2، 4، 6، 8، 10 أو 12 صورة) :'
-                      : 'Choisissez la quantité de photos pour cet album libre (1, 2, 4, 6, 8, 10 ou 12 photos) :',
+                      ? 'اختاري عدد الصور الإجمالي لألبومك (1، 2، 4 أو 6 صور) :'
+                      : 'Choisissez la quantité de photos pour cet album libre (1, 2, 4 ou 6 photos) :',
                   style: AppTypography.fromContext(
                     context,
                     fontSize: 12,
@@ -1472,38 +1525,42 @@ class _StandardAlbumDetailScreenState
                 Wrap(
                   spacing: 8,
                   runSpacing: 8,
-                  children: AlbumPricingService.allowedPhotoCounts.map((count) {
-                    final isSelected = selectedCount == count;
-                    return ChoiceChip(
-                      label: Text(
-                        '$count',
-                        style: TextStyle(
-                          fontSize: 13,
-                          fontWeight:
-                              isSelected ? FontWeight.bold : FontWeight.w600,
-                          color: isSelected ? Colors.white : textColor,
-                        ),
-                      ),
-                      selected: isSelected,
-                      selectedColor: _accentColor,
-                      backgroundColor: isDark
-                          ? Colors.white.withValues(alpha: 0.06)
-                          : Colors.black.withValues(alpha: 0.04),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12),
-                        side: BorderSide(
-                          color: isSelected
-                              ? _accentColor
-                              : (isDark ? Colors.white12 : Colors.black12),
-                        ),
-                      ),
-                      onSelected: (val) {
-                        if (val) {
-                          setDialogState(() => selectedCount = count);
-                        }
-                      },
-                    );
-                  }).toList(),
+                  children: AlbumPricingService.allowedPhotoCounts
+                      .where((count) => count <= StandardAlbum.maxPageCount)
+                      .map((count) {
+                        final isSelected = selectedCount == count;
+                        return ChoiceChip(
+                          label: Text(
+                            '$count',
+                            style: TextStyle(
+                              fontSize: 13,
+                              fontWeight: isSelected
+                                  ? FontWeight.bold
+                                  : FontWeight.w600,
+                              color: isSelected ? Colors.white : textColor,
+                            ),
+                          ),
+                          selected: isSelected,
+                          selectedColor: _accentColor,
+                          backgroundColor: isDark
+                              ? Colors.white.withValues(alpha: 0.06)
+                              : Colors.black.withValues(alpha: 0.04),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12),
+                            side: BorderSide(
+                              color: isSelected
+                                  ? _accentColor
+                                  : (isDark ? Colors.white12 : Colors.black12),
+                            ),
+                          ),
+                          onSelected: (val) {
+                            if (val) {
+                              setDialogState(() => selectedCount = count);
+                            }
+                          },
+                        );
+                      })
+                      .toList(),
                 ),
 
                 const SizedBox(height: 16),
@@ -1614,9 +1671,7 @@ class _StandardAlbumDetailScreenState
         content: TextField(
           controller: controller,
           autofocus: true,
-          decoration: InputDecoration(
-            hintText: l10n.albumTitleHint,
-          ),
+          decoration: InputDecoration(hintText: l10n.albumTitleHint),
         ),
         actions: [
           TextButton(
@@ -1646,10 +1701,18 @@ class _StandardAlbumDetailScreenState
     showDialog(
       context: context,
       builder: (ctx) => AlertDialog(
-        title: Text(lang == 'ar' ? 'حذف الألبوم' : 'Delete Album'),
+        title: Text(
+          lang == 'ar'
+              ? 'حذف الألبوم'
+              : lang == 'fr'
+              ? 'Supprimer l’album'
+              : 'Delete Album',
+        ),
         content: Text(
           lang == 'ar'
               ? 'هل أنتِ متأكدة من حذف ألبوم "${album.title}" بالكامل؟'
+              : lang == 'fr'
+              ? 'Supprimer définitivement « ${album.title} » ?'
               : 'Are you sure you want to permanently delete "${album.title}"?',
         ),
         actions: [
@@ -1668,7 +1731,13 @@ class _StandardAlbumDetailScreenState
                 Navigator.pop(context);
               }
             },
-            child: Text(lang == 'ar' ? 'حذف نهائي' : 'Delete'),
+            child: Text(
+              lang == 'ar'
+                  ? 'حذف نهائي'
+                  : lang == 'fr'
+                  ? 'Supprimer'
+                  : 'Delete',
+            ),
           ),
         ],
       ),
@@ -1690,6 +1759,7 @@ class _StandardPhotobookPage extends StatelessWidget {
     required this.lang,
     required this.isRtl,
     required this.onPickExisting,
+    required this.onSelectExisting,
     required this.onReplace,
     this.onCrop,
     required this.onCreateNew,
@@ -1707,6 +1777,7 @@ class _StandardPhotobookPage extends StatelessWidget {
   final String lang;
   final bool isRtl;
   final VoidCallback onPickExisting;
+  final ValueChanged<Capsule> onSelectExisting;
   final VoidCallback onReplace;
   final VoidCallback? onCrop;
   final VoidCallback onCreateNew;
@@ -1843,7 +1914,10 @@ class _StandardPhotobookPage extends StatelessWidget {
                               ),
                               padding: const EdgeInsets.symmetric(vertical: 9),
                             ),
-                            icon: const Icon(Icons.swap_horiz_rounded, size: 16),
+                            icon: const Icon(
+                              Icons.swap_horiz_rounded,
+                              size: 16,
+                            ),
                             label: Text(
                               lang == 'ar'
                                   ? 'استبدال'
@@ -1868,9 +1942,14 @@ class _StandardPhotobookPage extends StatelessWidget {
                                 shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(12),
                                 ),
-                                padding: const EdgeInsets.symmetric(vertical: 9),
+                                padding: const EdgeInsets.symmetric(
+                                  vertical: 9,
+                                ),
                               ),
-                              icon: const Icon(Icons.crop_rotate_rounded, size: 16),
+                              icon: const Icon(
+                                Icons.crop_rotate_rounded,
+                                size: 16,
+                              ),
                               label: Text(
                                 lang == 'ar'
                                     ? 'قص وضبط'
@@ -1886,10 +1965,15 @@ class _StandardPhotobookPage extends StatelessWidget {
                         const SizedBox(width: 8),
                         IconButton(
                           onPressed: onClearPage,
-                          tooltip: lang == 'ar' ? 'إفراغ الصفحة' : 'Clear',
+                          tooltip: lang == 'ar'
+                              ? 'إفراغ الصفحة'
+                              : lang == 'fr'
+                              ? 'Vider'
+                              : 'Clear',
                           style: IconButton.styleFrom(
-                            backgroundColor:
-                                AppColors.error.withValues(alpha: 0.1),
+                            backgroundColor: AppColors.error.withValues(
+                              alpha: 0.1,
+                            ),
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(12),
                             ),
@@ -1943,8 +2027,11 @@ class _StandardPhotobookPage extends StatelessWidget {
                 fit: BoxFit.cover,
                 errorBuilder: (_, _, _) => Container(
                   color: isDark ? Colors.grey[800] : Colors.grey[200],
-                  child: const Icon(Icons.broken_image_rounded,
-                      size: 40, color: Colors.grey),
+                  child: const Icon(
+                    Icons.broken_image_rounded,
+                    size: 40,
+                    color: Colors.grey,
+                  ),
                 ),
               ),
 
@@ -2021,8 +2108,11 @@ class _StandardPhotobookPage extends StatelessWidget {
                         child: Row(
                           mainAxisSize: MainAxisSize.min,
                           children: [
-                            const Icon(Icons.check_rounded,
-                                size: 12, color: Colors.white),
+                            const Icon(
+                              Icons.check_rounded,
+                              size: 12,
+                              color: Colors.white,
+                            ),
                             const SizedBox(width: 4),
                             Text(
                               lang == 'ar'
@@ -2051,12 +2141,16 @@ class _StandardPhotobookPage extends StatelessWidget {
                           child: const Row(
                             mainAxisSize: MainAxisSize.min,
                             children: [
-                              Icon(Icons.mic_rounded,
-                                  size: 12, color: Colors.white),
+                              Icon(
+                                Icons.mic_rounded,
+                                size: 12,
+                                color: Colors.white,
+                              ),
                               SizedBox(width: 3),
-                              Text(
-                                '🎙️',
-                                style: TextStyle(fontSize: 10),
+                              Icon(
+                                Icons.graphic_eq_rounded,
+                                size: 10,
+                                color: Colors.white,
                               ),
                             ],
                           ),
@@ -2078,16 +2172,18 @@ class _StandardPhotobookPage extends StatelessWidget {
                 top: 10,
                 start: 10,
                 child: Container(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 8,
+                    vertical: 4,
+                  ),
                   decoration: BoxDecoration(
                     color: Colors.black.withValues(alpha: 0.55),
                     borderRadius: BorderRadius.circular(8),
                   ),
                   child: Text(
-                    DateFormat('dd MMM yyyy').format(
-                      capsule!.capturedAt ?? capsule!.createdAt,
-                    ),
+                    DateFormat(
+                      'dd MMM yyyy',
+                    ).format(capsule!.capturedAt ?? capsule!.createdAt),
                     style: const TextStyle(
                       fontSize: 11,
                       fontWeight: FontWeight.w600,
@@ -2104,129 +2200,37 @@ class _StandardPhotobookPage extends StatelessWidget {
   }
 
   Widget _buildEmptyPageCanvas(BuildContext context) {
-    return Container(
-      width: double.infinity,
-      decoration: BoxDecoration(
-        color: isDark
-            ? Colors.white.withValues(alpha: 0.03)
-            : const Color(0xFFFBF9FC),
-        borderRadius: BorderRadius.circular(20),
-        border: Border.all(
-          color: accentColor.withValues(alpha: 0.25),
-          width: 1.5,
-          style: BorderStyle.solid,
+    return Column(
+      children: [
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+          child: Row(
+            children: [
+              Expanded(
+                child: Text(
+                  context.l10n.albumChooseCapsule,
+                  style: const TextStyle(fontWeight: FontWeight.w700),
+                ),
+              ),
+              IconButton(
+                onPressed: onCreateNew,
+                tooltip: lang == 'ar'
+                    ? 'التقاط صورة'
+                    : lang == 'fr'
+                    ? 'Capturer'
+                    : 'Capture',
+                icon: const Icon(Icons.add_a_photo_outlined),
+              ),
+            ],
+          ),
         ),
-      ),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Container(
-            width: 62,
-            height: 62,
-            decoration: BoxDecoration(
-              color: accentColor.withValues(alpha: 0.1),
-              shape: BoxShape.circle,
-            ),
-            child: Icon(
-              Icons.add_a_photo_outlined,
-              size: 28,
-              color: accentColor,
-            ),
+        Expanded(
+          child: AlbumExistingPhotoList(
+            childId: album.childId,
+            onSelected: onSelectExisting,
           ),
-          const SizedBox(height: 12),
-          Text(
-            lang == 'ar'
-                ? 'أضيفي صورة لهذه الصفحة'
-                : (lang == 'fr'
-                    ? 'Ajoutez une photo pour cette page'
-                    : 'Add a photo for this page'),
-            style: AppTypography.fromContext(
-              context,
-              fontSize: 14,
-              fontWeight: FontWeight.w700,
-              color: textColor,
-            ),
-          ),
-          const SizedBox(height: 4),
-          Text(
-            lang == 'ar'
-                ? 'لتكتمل صفحة كتاب الذكريات'
-                : (lang == 'fr'
-                    ? 'Pour compléter cette page'
-                    : 'To complete this memory page'),
-            style: AppTypography.fromContext(
-              context,
-              fontSize: 11.5,
-              fontWeight: FontWeight.w500,
-              color: secondaryText,
-            ),
-          ),
-          const SizedBox(height: 20),
-
-          // Two Boutique Action Buttons
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 20),
-            child: Row(
-              children: [
-                Expanded(
-                  child: OutlinedButton.icon(
-                    onPressed: onPickExisting,
-                    icon: Icon(
-                      Icons.photo_library_outlined,
-                      size: 15,
-                      color: accentColor,
-                    ),
-                    label: Text(
-                      context.l10n.albumExistingCapsule,
-                      style: TextStyle(
-                        color: accentColor,
-                        fontSize: 12,
-                        fontWeight: FontWeight.w700,
-                      ),
-                    ),
-                    style: OutlinedButton.styleFrom(
-                      side: BorderSide(
-                        color: accentColor.withValues(alpha: 0.4),
-                      ),
-                      padding: const EdgeInsets.symmetric(vertical: 10),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                    ),
-                  ),
-                ),
-                const SizedBox(width: 10),
-                Expanded(
-                  child: ElevatedButton.icon(
-                    onPressed: onCreateNew,
-                    icon: const Icon(
-                      Icons.add_a_photo_rounded,
-                      size: 15,
-                      color: Colors.white,
-                    ),
-                    label: Text(
-                      context.l10n.albumNewCapsule,
-                      style: const TextStyle(
-                        color: Colors.white,
-                        fontSize: 12,
-                        fontWeight: FontWeight.w700,
-                      ),
-                    ),
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: accentColor,
-                      padding: const EdgeInsets.symmetric(vertical: 10),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      elevation: 0,
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 }

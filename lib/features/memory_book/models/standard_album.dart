@@ -15,6 +15,13 @@ class StandardAlbum {
   final Map<String, String> pageCapsules;
 
   static const int defaultPageCount = 6;
+  static const int maxPageCount = 6;
+
+  static void validatePageCount(int count) {
+    if (count < 1 || count > maxPageCount) {
+      throw ArgumentError.value(count, 'pageCount', 'Must be between 1 and 6');
+    }
+  }
 
   const StandardAlbum({
     required this.id,

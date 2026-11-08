@@ -1,9 +1,9 @@
+import '../../../core/services/safe_log.dart';
 import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
-import 'package:flutter/foundation.dart';
 import 'package:uuid/uuid.dart';
 
 import '../../../core/services/analytics_service.dart';
@@ -266,7 +266,7 @@ class CapsuleService {
           });
         }
       } catch (e) {
-        debugPrint('Error updating vaccine status with capsuleId: $e');
+        safeDebugPrint('Error updating vaccine status with capsuleId: ${e.runtimeType}');
       }
 
       // Log analytical event for vaccine capsule creation
@@ -299,7 +299,7 @@ class CapsuleService {
           },
         );
       } catch (e) {
-        debugPrint('Error attaching capsule to album slot: $e');
+        safeDebugPrint('Error attaching capsule to album slot: ${e.runtimeType}');
       }
     }
 
@@ -325,7 +325,7 @@ class CapsuleService {
           },
         );
       } catch (e) {
-        debugPrint('Error attaching capsule to album page: $e');
+        safeDebugPrint('Error attaching capsule to album page: ${e.runtimeType}');
       }
     }
 
@@ -426,7 +426,7 @@ class CapsuleService {
           milestoneId: prevMilestoneId,
         );
       } catch (e) {
-        debugPrint('[CapsuleService] Error uncompleting milestone $prevMilestoneId: $e');
+        safeDebugPrint('[CapsuleService] Error uncompleting milestone $prevMilestoneId: ${e.runtimeType}');
       }
     }
 
@@ -441,7 +441,7 @@ class CapsuleService {
           completedAt: capturedAt ?? existing.capturedAt ?? now,
         );
       } catch (e) {
-        debugPrint('[CapsuleService] Error linking milestone $milestoneId: $e');
+        safeDebugPrint('[CapsuleService] Error linking milestone $milestoneId: ${e.runtimeType}');
       }
     }
 

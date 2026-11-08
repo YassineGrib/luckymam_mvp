@@ -448,7 +448,7 @@ class AssistantCardView extends StatelessWidget {
         if (c.outingIdea.isNotEmpty) ...[
           const SizedBox(height: 4),
           Text(
-            '💡 ${c.outingIdea}',
+            ' ${c.outingIdea}',
             style: const TextStyle(
               fontSize: 12,
               fontWeight: FontWeight.w600,

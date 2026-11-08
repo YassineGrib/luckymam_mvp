@@ -1,3 +1,4 @@
+import '../../../core/services/safe_log.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart' show rootBundle;
 import 'package:http/http.dart' as http;
@@ -68,7 +69,7 @@ class AlbumPdfService {
 
   /// LM-ALB-003: Calibrated watermark opacity in print safe margins
   static const double watermarkOpacity = 0.38;
-  static const String brandWatermarkText = '🍀 LuckyMam';
+  static const String brandWatermarkText = 'LuckyMam';
 
   Future<Uint8List> generateAlbumPdf({
     required String albumTitle,
@@ -87,7 +88,7 @@ class AlbumPdfService {
       ttfRegular = pw.Font.ttf(regularData);
       ttfBold = pw.Font.ttf(boldData);
     } catch (e) {
-      debugPrint('[AlbumPdfService] Font loading fallback: $e');
+      safeDebugPrint('[AlbumPdfService] Font loading fallback: ${e.runtimeType}');
     }
 
     final doc = pw.Document(
@@ -105,7 +106,7 @@ class AlbumPdfService {
       final logoBytes = await rootBundle.load('assets/logo/vertical_logo.png');
       logo = pw.MemoryImage(logoBytes.buffer.asUint8List());
     } catch (e) {
-      debugPrint('[AlbumPdfService] Logo asset loading fallback: $e');
+      safeDebugPrint('[AlbumPdfService] Logo asset loading fallback: ${e.runtimeType}');
     }
 
     // 3. Fetch photos safely in parallel with timeouts
@@ -167,7 +168,7 @@ class AlbumPdfService {
         return response.bodyBytes;
       }
     } catch (e) {
-      debugPrint('[AlbumPdfService] Failed to load image $url: $e');
+      safeDebugPrint('[AlbumPdfService] Failed to load image $url: ${e.runtimeType}');
     }
     return null;
   }

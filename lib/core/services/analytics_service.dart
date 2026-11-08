@@ -1,27 +1,33 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
+import 'safe_log.dart';
 
 /// Service for logging analytical events to Firestore.
 class AnalyticsService {
   final FirebaseFirestore? _customFirestore;
   final FirebaseAuth? _customAuth;
 
-  AnalyticsService({
-    FirebaseFirestore? firestore,
-    FirebaseAuth? auth,
-  })  : _customFirestore = firestore,
-        _customAuth = auth;
+  AnalyticsService({FirebaseFirestore? firestore, FirebaseAuth? auth})
+    : _customFirestore = firestore,
+      _customAuth = auth;
 
-  FirebaseFirestore get _firestore => _customFirestore ?? FirebaseFirestore.instance;
+  FirebaseFirestore get _firestore =>
+      _customFirestore ?? FirebaseFirestore.instance;
   FirebaseAuth get _auth => _customAuth ?? FirebaseAuth.instance;
 
   /// Log a custom analytics event.
-  Future<void> logEvent(String eventName, {Map<String, dynamic>? parameters}) async {
+  Future<void> logEvent(
+    String eventName, {
+    Map<String, dynamic>? parameters,
+  }) async {
     final user = _auth.currentUser;
     final timestamp = FieldValue.serverTimestamp();
 
-    debugPrint('Analytics Event: $eventName | User: ${user?.uid ?? 'anonymous'} | Params: $parameters');
+    final safeParameters = Map<String, dynamic>.from(
+      SafeLog.sanitize(parameters ?? {}) as Map,
+    );
+    safeDebugPrint('Analytics Event: $eventName | Params: $safeParameters');
 
     // Only write to Firestore when the user is authenticated to avoid permission errors
     if (user == null) return;
@@ -30,11 +36,11 @@ class AnalyticsService {
       await _firestore.collection('analytics_logs').add({
         'userId': user.uid,
         'eventName': eventName,
-        'parameters': parameters ?? {},
+        'parameters': safeParameters,
         'timestamp': timestamp,
       });
     } catch (e) {
-      debugPrint('Error writing analytics event to Firestore: $e');
+      safeDebugPrint('Analytics write failed: ${e.runtimeType}');
     }
   }
 
@@ -64,7 +70,7 @@ class AnalyticsService {
   }
 
   /// LM-CROSS-003: Log technical non-sensitive error events for traceability.
-  /// Complies strictly with Algerian privacy law 18-07:
+  /// Redacts potentially identifying diagnostic data before persistence.
   /// NEVER logs photos, audio bytes, phone numbers, or raw personal data.
   Future<void> logTechnicalError({
     required String errorType,
@@ -76,29 +82,33 @@ class AnalyticsService {
     String? entityId,
     Map<String, dynamic>? extraContext,
   }) async {
-    final sanitizedMessage = _sanitizeErrorMessage(rawMessage);
-    final params = <String, dynamic>{
-      'errorType': errorType,
-      'step': step,
-      'platform': defaultTargetPlatform.name,
-      if (errorCode != null) 'errorCode': errorCode,
-      if (sanitizedMessage != null) 'message': sanitizedMessage,
-      if (profileId != null) 'profileId': profileId,
-      if (childId != null) 'childId': childId,
-      if (entityId != null) 'entityId': entityId,
-      if (extraContext != null) 'context': extraContext,
-    };
+    final params = technicalErrorParameters(
+      errorType: errorType,
+      step: step,
+      errorCode: errorCode,
+      rawMessage: rawMessage,
+      extraContext: extraContext,
+    );
 
-    debugPrint('Technical Error Trace: $errorType at $step | $params');
+    safeDebugPrint('Technical Error Trace: ${SafeLog.sanitize(params)}');
     await logEvent('technical_error', parameters: params);
   }
 
-  /// Strips potential email addresses, phone numbers, and URLs to preserve privacy.
-  String? _sanitizeErrorMessage(String? message) {
-    if (message == null) return null;
-    return message
-        .replaceAll(RegExp(r'[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}'), '[REDACTED_EMAIL]')
-        .replaceAll(RegExp(r'https?://\S+'), '[REDACTED_URL]')
-        .replaceAll(RegExp(r'0[5-7][0-9]{8}'), '[REDACTED_PHONE]');
-  }
+  /// Pure diagnostic boundary, also used by console and Firestore logging.
+  static Map<String, dynamic> technicalErrorParameters({
+    required String errorType,
+    required String step,
+    String? errorCode,
+    String? rawMessage,
+    Map<String, dynamic>? extraContext,
+  }) => Map<String, dynamic>.from(
+    SafeLog.sanitize({
+          'errorType': errorType,
+          'step': step,
+          'platform': defaultTargetPlatform.name,
+          if (errorCode != null) 'errorCode': errorCode,
+          if (extraContext != null) 'context': extraContext,
+        })
+        as Map,
+  );
 }

@@ -1,3 +1,4 @@
+import 'legacy_reel_translations.dart';
 import 'package:flutter/material.dart';
 
 import '../../../l10n/app_localizations.dart';
@@ -104,6 +105,8 @@ class ReelItem {
   final String id;
   final String title;
   final String description;
+  final Map<String, String> titles;
+  final Map<String, String> descriptions;
   final String assetPath;
   final String author;
   final bool isFavorite;
@@ -121,11 +124,77 @@ class ReelItem {
     required this.description,
     required this.assetPath,
     required this.category,
+    this.titles = const {},
+    this.descriptions = const {},
     this.author = 'Luckymam',
     this.isFavorite = false,
     this.likeCount = 0,
     this.vaccineTags = const [],
   });
+
+  String titleFor(String language) =>
+      titles[language] ?? legacyReelText(id, language, 'title') ?? title;
+  String descriptionFor(String language) =>
+      descriptions[language] ??
+      legacyReelText(id, language, 'description') ??
+      description;
+
+  factory ReelItem.fromMap(String id, Map<String, dynamic> data) {
+    String text(dynamic value, [String fallback = '']) =>
+        value is String ? value : fallback;
+    Map<String, String> localized(String field) {
+      final result = <String, String>{};
+      for (final lang in ['fr', 'en', 'ar']) {
+        final suffix = '${lang[0].toUpperCase()}${lang.substring(1)}';
+        final translations = data['translations'];
+        final nested = translations is Map ? translations[lang] : null;
+        final raw = data[field];
+        final value = text(
+          data['$field$suffix'],
+          text(
+            data['${field}_$lang'],
+            text(
+              nested is Map ? nested[field] : null,
+              text(raw is Map ? raw[lang] : null),
+            ),
+          ),
+        );
+        if (value.trim().isNotEmpty) result[lang] = value;
+      }
+      return result;
+    }
+
+    final titles = localized('title');
+    final descriptions = localized('description');
+    final likes = data['likeCount'] ?? data['likes'];
+    final creator = data['creator'];
+    return ReelItem(
+      id: id,
+      title: text(
+        data['title'],
+        titles['fr'] ?? titles.values.firstOrNull ?? '',
+      ),
+      description: text(
+        data['description'],
+        descriptions['fr'] ?? descriptions.values.firstOrNull ?? '',
+      ),
+      titles: titles,
+      descriptions: descriptions,
+      assetPath: text(data['assetPath']),
+      author: text(
+        data['author'],
+        text(creator is Map ? creator['name'] : null, 'Luckymam'),
+      ),
+      category: ReelCategory.values.firstWhere(
+        (c) => c.name == (data['category'] ?? data['topic']),
+        orElse: () => ReelCategory.vaccins,
+      ),
+      likeCount: likes is num ? likes.toInt() : int.tryParse('$likes') ?? 0,
+      vaccineTags: data['vaccineTags'] is List
+          ? (data['vaccineTags'] as List).whereType<String>().toList()
+          : const [],
+    );
+  }
 
   ReelItem copyWith({
     String? id,
@@ -139,6 +208,8 @@ class ReelItem {
     List<String>? vaccineTags,
   }) {
     return ReelItem(
+      titles: titles,
+      descriptions: descriptions,
       id: id ?? this.id,
       title: title ?? this.title,
       description: description ?? this.description,

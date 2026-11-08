@@ -20,7 +20,7 @@ import '../providers/print_order_providers.dart';
 /// Matches the luxury Squircle Bento identity of the new checkout screen:
 /// - Top ambient illumination and integrated boutique navigation
 /// - Automatic profile pre-fill (name, phone, wilaya)
-/// - 58 Algerian Wilayas Dropdown selector with input validation
+/// - Algerian wilayas Dropdown selector with input validation
 /// - Luxury Order Recap Bento with VIP perk detection
 /// - Cash-on-delivery & VIP packaging trust card
 /// - Luxury form fields with matching radii and focus borders
@@ -76,7 +76,8 @@ class _PrintOrderScreenState extends ConsumerState<PrintOrderScreen> {
         if (_phoneCtrl.text.isEmpty && profile.phone != null) {
           _phoneCtrl.text = profile.phone!;
         }
-        if (_selectedWilaya == null && profile.wilaya != null) {
+        if (_selectedWilaya == null &&
+            algerianWilayas.contains(profile.wilaya)) {
           _selectedWilaya = profile.wilaya;
         }
         _profileLoaded = true;
@@ -108,7 +109,13 @@ class _PrintOrderScreenState extends ConsumerState<PrintOrderScreen> {
     final actionsState = ref.watch(printOrderActionsProvider);
 
     if (_submitted) {
-      return _buildSubmittedView(context, textColor, secondaryText, isDark, lang);
+      return _buildSubmittedView(
+        context,
+        textColor,
+        secondaryText,
+        isDark,
+        lang,
+      );
     }
 
     return Scaffold(
@@ -175,7 +182,9 @@ class _PrintOrderScreenState extends ConsumerState<PrintOrderScreen> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              isRtl ? 'تأكيد طلب الطباعة' : 'Commande d\'impression',
+                              isRtl
+                                  ? 'تأكيد طلب الطباعة'
+                                  : 'Commande d\'impression',
                               style: AppTypography.fromContext(
                                 context,
                                 fontSize: 17,
@@ -186,44 +195,13 @@ class _PrintOrderScreenState extends ConsumerState<PrintOrderScreen> {
                             const SizedBox(height: 2),
                             Text(
                               isRtl
-                                  ? 'توصيل مباشر لباب منزلكِ عبر 58 ولاية'
-                                  : 'Livraison à domicile dans 58 wilayas',
+                                  ? 'توصيل إلى المنزل'
+                                  : 'Livraison à domicile',
                               style: AppTypography.fromContext(
                                 context,
                                 fontSize: 11.5,
                                 fontWeight: FontWeight.w500,
                                 color: secondaryText,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-
-                      // 58 Wilayas Badge
-                      Container(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 8,
-                          vertical: 5,
-                        ),
-                        decoration: BoxDecoration(
-                          color: AppColors.success.withValues(alpha: 0.12),
-                          borderRadius: BorderRadius.circular(10),
-                          border: Border.all(
-                            color: AppColors.success.withValues(alpha: 0.25),
-                          ),
-                        ),
-                        child: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            const Text('🇩🇿', style: TextStyle(fontSize: 12)),
-                            const SizedBox(width: 4),
-                            Text(
-                              '58 Wilayas',
-                              style: AppTypography.fromContext(
-                                context,
-                                fontSize: 10.5,
-                                fontWeight: FontWeight.w700,
-                                color: AppColors.success,
                               ),
                             ),
                           ],
@@ -258,7 +236,9 @@ class _PrintOrderScreenState extends ConsumerState<PrintOrderScreen> {
                           // ── Bento 1: Print Order Recap ──
                           _buildSectionTitle(
                             context,
-                            isRtl ? 'ملخص الألبوم الورقي' : 'Détails de l\'album',
+                            isRtl
+                                ? 'ملخص الألبوم الورقي'
+                                : 'Détails de l\'album',
                             Icons.auto_stories_rounded,
                             textColor,
                           ),
@@ -266,12 +246,16 @@ class _PrintOrderScreenState extends ConsumerState<PrintOrderScreen> {
                           Container(
                             padding: const EdgeInsets.all(16),
                             decoration: BoxDecoration(
-                              color: isDark ? const Color(0xFF1E2128) : Colors.white,
+                              color: isDark
+                                  ? const Color(0xFF1E2128)
+                                  : Colors.white,
                               borderRadius: BorderRadius.circular(20),
                               border: Border.all(
                                 color: isDark
                                     ? Colors.white12
-                                    : AppColors.onSurfaceLight.withValues(alpha: 0.07),
+                                    : AppColors.onSurfaceLight.withValues(
+                                        alpha: 0.07,
+                                      ),
                                 width: 1.2,
                               ),
                               boxShadow: [
@@ -296,7 +280,8 @@ class _PrintOrderScreenState extends ConsumerState<PrintOrderScreen> {
                                         borderRadius: BorderRadius.circular(14),
                                         boxShadow: [
                                           BoxShadow(
-                                            color: AppColors.primaryLight.withValues(alpha: 0.3),
+                                            color: AppColors.primaryLight
+                                                .withValues(alpha: 0.3),
                                             blurRadius: 8,
                                             offset: const Offset(0, 3),
                                           ),
@@ -311,7 +296,8 @@ class _PrintOrderScreenState extends ConsumerState<PrintOrderScreen> {
                                     const SizedBox(width: 12),
                                     Expanded(
                                       child: Column(
-                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
                                         children: [
                                           Text(
                                             widget.albumTitle,
@@ -346,7 +332,8 @@ class _PrintOrderScreenState extends ConsumerState<PrintOrderScreen> {
 
                                 // ── Format Selector (A5, A4, A3) ──
                                 Row(
-                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
                                   children: [
                                     Text(
                                       isRtl ? 'المقاس المختار :' : 'Format :',
@@ -359,50 +346,74 @@ class _PrintOrderScreenState extends ConsumerState<PrintOrderScreen> {
                                     ),
                                     Row(
                                       children: ['A5', 'A4', 'A3'].map((fmt) {
-                                        final isAvailable = AlbumPricingService.isOptionAvailable(
-                                          photoCount: widget.pageCount,
-                                          format: fmt,
-                                        );
-                                        final isSelected = _selectedFormat == fmt && isAvailable;
+                                        final isAvailable =
+                                            AlbumPricingService.isOptionAvailable(
+                                              photoCount: widget.pageCount,
+                                              format: fmt,
+                                            );
+                                        final isSelected =
+                                            _selectedFormat == fmt &&
+                                            isAvailable;
 
                                         return Padding(
-                                          padding: const EdgeInsets.symmetric(horizontal: 3),
+                                          padding: const EdgeInsets.symmetric(
+                                            horizontal: 3,
+                                          ),
                                           child: InkWell(
                                             onTap: isAvailable
-                                                ? () => setState(() => _selectedFormat = fmt)
+                                                ? () => setState(
+                                                    () => _selectedFormat = fmt,
+                                                  )
                                                 : null,
-                                            borderRadius: BorderRadius.circular(10),
+                                            borderRadius: BorderRadius.circular(
+                                              10,
+                                            ),
                                             child: AnimatedContainer(
-                                              duration: const Duration(milliseconds: 180),
-                                              padding: const EdgeInsets.symmetric(
-                                                horizontal: 10,
-                                                vertical: 5,
+                                              duration: const Duration(
+                                                milliseconds: 180,
                                               ),
+                                              padding:
+                                                  const EdgeInsets.symmetric(
+                                                    horizontal: 10,
+                                                    vertical: 5,
+                                                  ),
                                               decoration: BoxDecoration(
                                                 color: isSelected
                                                     ? AppColors.primaryLight
                                                     : isDark
-                                                        ? Colors.white.withValues(alpha: 0.05)
-                                                        : Colors.black.withValues(alpha: 0.04),
-                                                borderRadius: BorderRadius.circular(10),
+                                                    ? Colors.white.withValues(
+                                                        alpha: 0.05,
+                                                      )
+                                                    : Colors.black.withValues(
+                                                        alpha: 0.04,
+                                                      ),
+                                                borderRadius:
+                                                    BorderRadius.circular(10),
                                                 border: Border.all(
                                                   color: isSelected
                                                       ? AppColors.primaryLight
                                                       : isAvailable
-                                                          ? (isDark ? Colors.white12 : Colors.black12)
-                                                          : Colors.transparent,
+                                                      ? (isDark
+                                                            ? Colors.white12
+                                                            : Colors.black12)
+                                                      : Colors.transparent,
                                                 ),
                                               ),
                                               child: Text(
                                                 fmt,
                                                 style: TextStyle(
                                                   fontSize: 12,
-                                                  fontWeight: isSelected ? FontWeight.bold : FontWeight.w600,
+                                                  fontWeight: isSelected
+                                                      ? FontWeight.bold
+                                                      : FontWeight.w600,
                                                   color: isSelected
                                                       ? Colors.white
                                                       : isAvailable
-                                                          ? textColor
-                                                          : secondaryText.withValues(alpha: 0.35),
+                                                      ? textColor
+                                                      : secondaryText
+                                                            .withValues(
+                                                              alpha: 0.35,
+                                                            ),
                                                 ),
                                               ),
                                             ),
@@ -415,14 +426,18 @@ class _PrintOrderScreenState extends ConsumerState<PrintOrderScreen> {
                                 if (widget.pageCount > 1) ...[
                                   const SizedBox(height: 4),
                                   Align(
-                                    alignment: isRtl ? Alignment.centerRight : Alignment.centerLeft,
+                                    alignment: isRtl
+                                        ? Alignment.centerRight
+                                        : Alignment.centerLeft,
                                     child: Text(
                                       isRtl
                                           ? '* مقاس A3 مخصص فقط لصور البورتريه الفردية (صورة واحدة).'
                                           : '* Format A3 réservé au portrait 1 photo.',
                                       style: TextStyle(
                                         fontSize: 10,
-                                        color: secondaryText.withValues(alpha: 0.65),
+                                        color: secondaryText.withValues(
+                                          alpha: 0.65,
+                                        ),
                                         fontStyle: FontStyle.italic,
                                       ),
                                     ),
@@ -433,10 +448,13 @@ class _PrintOrderScreenState extends ConsumerState<PrintOrderScreen> {
 
                                 // ── Quantity Stepper (Copies) ──
                                 Row(
-                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
                                   children: [
                                     Text(
-                                      isRtl ? 'عدد النسخ :' : 'Quantité d\'exemplaires :',
+                                      isRtl
+                                          ? 'عدد النسخ :'
+                                          : 'Quantité d\'exemplaires :',
                                       style: AppTypography.fromContext(
                                         context,
                                         fontSize: 12.5,
@@ -446,29 +464,53 @@ class _PrintOrderScreenState extends ConsumerState<PrintOrderScreen> {
                                     ),
                                     Container(
                                       decoration: BoxDecoration(
-                                        color: isDark ? Colors.white.withValues(alpha: 0.06) : Colors.black.withValues(alpha: 0.04),
+                                        color: isDark
+                                            ? Colors.white.withValues(
+                                                alpha: 0.06,
+                                              )
+                                            : Colors.black.withValues(
+                                                alpha: 0.04,
+                                              ),
                                         borderRadius: BorderRadius.circular(10),
-                                        border: Border.all(color: isDark ? Colors.white12 : Colors.black12),
+                                        border: Border.all(
+                                          color: isDark
+                                              ? Colors.white12
+                                              : Colors.black12,
+                                        ),
                                       ),
                                       child: Row(
                                         mainAxisSize: MainAxisSize.min,
                                         children: [
                                           InkWell(
                                             onTap: _albumCopies > 1
-                                                ? () => setState(() => _albumCopies--)
+                                                ? () => setState(
+                                                    () => _albumCopies--,
+                                                  )
                                                 : null,
-                                            borderRadius: BorderRadius.circular(8),
+                                            borderRadius: BorderRadius.circular(
+                                              8,
+                                            ),
                                             child: Padding(
-                                              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                                              padding:
+                                                  const EdgeInsets.symmetric(
+                                                    horizontal: 10,
+                                                    vertical: 4,
+                                                  ),
                                               child: Icon(
                                                 Icons.remove,
                                                 size: 15,
-                                                color: _albumCopies > 1 ? textColor : secondaryText.withValues(alpha: 0.3),
+                                                color: _albumCopies > 1
+                                                    ? textColor
+                                                    : secondaryText.withValues(
+                                                        alpha: 0.3,
+                                                      ),
                                               ),
                                             ),
                                           ),
                                           Padding(
-                                            padding: const EdgeInsets.symmetric(horizontal: 8),
+                                            padding: const EdgeInsets.symmetric(
+                                              horizontal: 8,
+                                            ),
                                             child: Text(
                                               '$_albumCopies',
                                               style: TextStyle(
@@ -479,10 +521,17 @@ class _PrintOrderScreenState extends ConsumerState<PrintOrderScreen> {
                                             ),
                                           ),
                                           InkWell(
-                                            onTap: () => setState(() => _albumCopies++),
-                                            borderRadius: BorderRadius.circular(8),
+                                            onTap: () =>
+                                                setState(() => _albumCopies++),
+                                            borderRadius: BorderRadius.circular(
+                                              8,
+                                            ),
                                             child: Padding(
-                                              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                                              padding:
+                                                  const EdgeInsets.symmetric(
+                                                    horizontal: 10,
+                                                    vertical: 4,
+                                                  ),
                                               child: Icon(
                                                 Icons.add,
                                                 size: 15,
@@ -501,36 +550,70 @@ class _PrintOrderScreenState extends ConsumerState<PrintOrderScreen> {
                                 // ── Transparent Pricing Breakdown (LM-ORD-001) ──
                                 Builder(
                                   builder: (context) {
-                                    final unitPrice = AlbumPricingService.getAlbumPrice(
-                                      photoCount: widget.pageCount,
-                                      format: _selectedFormat,
-                                    );
-                                    final shippingFee = AlbumPricingService.calculateShippingFee(isVip: isVip);
-                                    final subtotal = (unitPrice ?? 0) * _albumCopies;
-                                    final total = unitPrice != null ? (subtotal + shippingFee) : 0;
+                                    final unitPrice =
+                                        AlbumPricingService.getAlbumPrice(
+                                          photoCount: widget.pageCount,
+                                          format: _selectedFormat,
+                                        );
+                                    final shippingFee =
+                                        AlbumPricingService.calculateShippingFee(
+                                          isVip: isVip,
+                                        );
+                                    final subtotal =
+                                        (unitPrice ?? 0) * _albumCopies;
+                                    final total = unitPrice != null
+                                        ? (subtotal + shippingFee)
+                                        : 0;
 
                                     return Container(
                                       padding: const EdgeInsets.all(12),
                                       decoration: BoxDecoration(
-                                        color: isDark ? Colors.white.withValues(alpha: 0.035) : Colors.black.withValues(alpha: 0.025),
+                                        color: isDark
+                                            ? Colors.white.withValues(
+                                                alpha: 0.035,
+                                              )
+                                            : Colors.black.withValues(
+                                                alpha: 0.025,
+                                              ),
                                         borderRadius: BorderRadius.circular(14),
-                                        border: Border.all(color: isDark ? Colors.white10 : Colors.black.withValues(alpha: 0.06)),
+                                        border: Border.all(
+                                          color: isDark
+                                              ? Colors.white10
+                                              : Colors.black.withValues(
+                                                  alpha: 0.06,
+                                                ),
+                                        ),
                                       ),
                                       child: Column(
                                         children: [
                                           // Product & Unit Price
                                           Row(
-                                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.spaceBetween,
                                             children: [
                                               Text(
-                                                isRtl ? 'سعر النسخة :' : 'Prix unitaire :',
-                                                style: TextStyle(fontSize: 12, color: secondaryText),
+                                                isRtl
+                                                    ? 'سعر النسخة :'
+                                                    : 'Prix unitaire :',
+                                                style: TextStyle(
+                                                  fontSize: 12,
+                                                  color: secondaryText,
+                                                ),
                                               ),
                                               Text(
                                                 unitPrice != null
-                                                    ? AlbumPricingService.formatDinar(unitPrice, locale: lang)
-                                                    : (isRtl ? 'غير متوفر' : 'Non défini'),
-                                                style: TextStyle(fontSize: 12, fontWeight: FontWeight.w600, color: textColor),
+                                                    ? AlbumPricingService.formatDinar(
+                                                        unitPrice,
+                                                        locale: lang,
+                                                      )
+                                                    : (isRtl
+                                                          ? 'غير متوفر'
+                                                          : 'Non défini'),
+                                                style: TextStyle(
+                                                  fontSize: 12,
+                                                  fontWeight: FontWeight.w600,
+                                                  color: textColor,
+                                                ),
                                               ),
                                             ],
                                           ),
@@ -538,26 +621,47 @@ class _PrintOrderScreenState extends ConsumerState<PrintOrderScreen> {
 
                                           // Subtotal + Mandatory mention: Prix hors frais de livraison
                                           Row(
-                                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.spaceBetween,
                                             children: [
                                               Column(
-                                                crossAxisAlignment: CrossAxisAlignment.start,
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.start,
                                                 children: [
                                                   Text(
-                                                    isRtl ? 'المجموع الفرعي :' : 'Sous-total :',
-                                                    style: TextStyle(fontSize: 12, fontWeight: FontWeight.w600, color: textColor),
+                                                    isRtl
+                                                        ? 'المجموع الفرعي :'
+                                                        : 'Sous-total :',
+                                                    style: TextStyle(
+                                                      fontSize: 12,
+                                                      fontWeight:
+                                                          FontWeight.w600,
+                                                      color: textColor,
+                                                    ),
                                                   ),
                                                   Text(
-                                                    isRtl ? 'السعر غير شامل مصاريف التوصيل' : 'Prix hors frais de livraison',
-                                                    style: TextStyle(fontSize: 10, color: secondaryText),
+                                                    isRtl
+                                                        ? 'السعر غير شامل مصاريف التوصيل'
+                                                        : 'Prix hors frais de livraison',
+                                                    style: TextStyle(
+                                                      fontSize: 10,
+                                                      color: secondaryText,
+                                                    ),
                                                   ),
                                                 ],
                                               ),
                                               Text(
                                                 unitPrice != null
-                                                    ? AlbumPricingService.formatDinar(subtotal, locale: lang)
+                                                    ? AlbumPricingService.formatDinar(
+                                                        subtotal,
+                                                        locale: lang,
+                                                      )
                                                     : '-',
-                                                style: const TextStyle(fontSize: 13, fontWeight: FontWeight.bold, color: AppColors.primaryLight),
+                                                style: const TextStyle(
+                                                  fontSize: 13,
+                                                  fontWeight: FontWeight.bold,
+                                                  color: AppColors.primaryLight,
+                                                ),
                                               ),
                                             ],
                                           ),
@@ -565,27 +669,53 @@ class _PrintOrderScreenState extends ConsumerState<PrintOrderScreen> {
 
                                           // Shipping Fee
                                           Row(
-                                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.spaceBetween,
                                             children: [
                                               Text(
-                                                isRtl ? 'مصاريف التوصيل :' : 'Frais de livraison :',
-                                                style: TextStyle(fontSize: 12, color: secondaryText),
+                                                isRtl
+                                                    ? 'مصاريف التوصيل :'
+                                                    : 'Frais de livraison :',
+                                                style: TextStyle(
+                                                  fontSize: 12,
+                                                  color: secondaryText,
+                                                ),
                                               ),
                                               if (isVip)
                                                 Row(
                                                   children: [
-                                                    const Text('👑', style: TextStyle(fontSize: 11)),
+                                                    const Icon(
+                                                      Icons
+                                                          .workspace_premium_rounded,
+                                                      size: 14,
+                                                      color: AppColors.success,
+                                                    ),
                                                     const SizedBox(width: 4),
                                                     Text(
-                                                      isRtl ? 'مجاني (باقة VIP)' : '0 DA (Inclus VIP)',
-                                                      style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: AppColors.success),
+                                                      isRtl
+                                                          ? 'مجاني (باقة VIP)'
+                                                          : '0 DA (Inclus VIP)',
+                                                      style: const TextStyle(
+                                                        fontSize: 12,
+                                                        fontWeight:
+                                                            FontWeight.bold,
+                                                        color:
+                                                            AppColors.success,
+                                                      ),
                                                     ),
                                                   ],
                                                 )
                                               else
                                                 Text(
-                                                  AlbumPricingService.formatDinar(shippingFee, locale: lang),
-                                                  style: TextStyle(fontSize: 12, fontWeight: FontWeight.w600, color: textColor),
+                                                  AlbumPricingService.formatDinar(
+                                                    shippingFee,
+                                                    locale: lang,
+                                                  ),
+                                                  style: TextStyle(
+                                                    fontSize: 12,
+                                                    fontWeight: FontWeight.w600,
+                                                    color: textColor,
+                                                  ),
                                                 ),
                                             ],
                                           ),
@@ -593,20 +723,28 @@ class _PrintOrderScreenState extends ConsumerState<PrintOrderScreen> {
 
                                           // Total Order
                                           Row(
-                                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.spaceBetween,
                                             children: [
                                               Text(
-                                                isRtl ? 'المجموع الإجمالي :' : 'Total à régler :',
-                                                style: AppTypography.fromContext(
-                                                  context,
-                                                  fontSize: 13.5,
-                                                  fontWeight: FontWeight.w800,
-                                                  color: textColor,
-                                                ),
+                                                isRtl
+                                                    ? 'المجموع الإجمالي :'
+                                                    : 'Total à régler :',
+                                                style:
+                                                    AppTypography.fromContext(
+                                                      context,
+                                                      fontSize: 13.5,
+                                                      fontWeight:
+                                                          FontWeight.w800,
+                                                      color: textColor,
+                                                    ),
                                               ),
                                               Text(
                                                 unitPrice != null
-                                                    ? AlbumPricingService.formatDinar(total, locale: lang)
+                                                    ? AlbumPricingService.formatDinar(
+                                                        total,
+                                                        locale: lang,
+                                                      )
                                                     : '-',
                                                 style: const TextStyle(
                                                   fontSize: 16,
@@ -646,7 +784,9 @@ class _PrintOrderScreenState extends ConsumerState<PrintOrderScreen> {
                                   width: 44,
                                   height: 44,
                                   decoration: BoxDecoration(
-                                    color: AppColors.success.withValues(alpha: 0.2),
+                                    color: AppColors.success.withValues(
+                                      alpha: 0.2,
+                                    ),
                                     borderRadius: BorderRadius.circular(14),
                                   ),
                                   child: Icon(
@@ -660,22 +800,31 @@ class _PrintOrderScreenState extends ConsumerState<PrintOrderScreen> {
                                 const SizedBox(width: 12),
                                 Expanded(
                                   child: Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
                                     children: [
                                       Text(
                                         isVip
-                                            ? (isRtl ? 'هدية اشتراككِ الملكي VIP' : 'Avantage Membre VIP')
-                                            : (isRtl ? 'توصيل لباب المنزل والدفع عند الاستلام' : 'Paiement à la livraison'),
+                                            ? (isRtl
+                                                  ? 'هدية اشتراككِ الملكي VIP'
+                                                  : 'Avantage Membre VIP')
+                                            : (isRtl
+                                                  ? 'توصيل لباب المنزل والدفع عند الاستلام'
+                                                  : 'Paiement à la livraison'),
                                         style: AppTypography.fromContext(
                                           context,
                                           fontSize: 13,
                                           fontWeight: FontWeight.w800,
-                                          color: isDark ? Colors.white : AppColors.onSurfaceLight,
+                                          color: isDark
+                                              ? Colors.white
+                                              : AppColors.onSurfaceLight,
                                         ),
                                       ),
                                       const SizedBox(height: 2),
                                       Text(
-                                        isVip ? l10n.printVipFreeNote : l10n.printPricingNote,
+                                        isVip
+                                            ? l10n.printVipFreeNote
+                                            : l10n.printPricingNote,
                                         style: AppTypography.fromContext(
                                           context,
                                           fontSize: 11,
@@ -704,12 +853,16 @@ class _PrintOrderScreenState extends ConsumerState<PrintOrderScreen> {
                           Container(
                             padding: const EdgeInsets.all(16),
                             decoration: BoxDecoration(
-                              color: isDark ? const Color(0xFF1E2128) : Colors.white,
+                              color: isDark
+                                  ? const Color(0xFF1E2128)
+                                  : Colors.white,
                               borderRadius: BorderRadius.circular(20),
                               border: Border.all(
                                 color: isDark
                                     ? Colors.white12
-                                    : AppColors.onSurfaceLight.withValues(alpha: 0.07),
+                                    : AppColors.onSurfaceLight.withValues(
+                                        alpha: 0.07,
+                                      ),
                                 width: 1.2,
                               ),
                               boxShadow: [
@@ -735,7 +888,8 @@ class _PrintOrderScreenState extends ConsumerState<PrintOrderScreen> {
                                   textColor: textColor,
                                   secondaryText: secondaryText,
                                   isDark: isDark,
-                                  validator: (v) => v == null || v.trim().isEmpty
+                                  validator: (v) =>
+                                      v == null || v.trim().isEmpty
                                       ? l10n.errorRequired
                                       : null,
                                 ),
@@ -757,7 +911,7 @@ class _PrintOrderScreenState extends ConsumerState<PrintOrderScreen> {
                                 ),
                                 const SizedBox(height: 14),
 
-                                // 58 Algerian Wilayas Dropdown
+                                // Algerian wilayas Dropdown
                                 Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
@@ -779,7 +933,9 @@ class _PrintOrderScreenState extends ConsumerState<PrintOrderScreen> {
                                           context,
                                           fontSize: 13,
                                           fontWeight: FontWeight.w400,
-                                          color: secondaryText.withValues(alpha: 0.5),
+                                          color: secondaryText.withValues(
+                                            alpha: 0.5,
+                                          ),
                                         ),
                                         prefixIcon: Icon(
                                           Icons.location_city_rounded,
@@ -789,28 +945,39 @@ class _PrintOrderScreenState extends ConsumerState<PrintOrderScreen> {
                                         filled: true,
                                         fillColor: inputBg,
                                         border: OutlineInputBorder(
-                                          borderRadius: BorderRadius.circular(14),
+                                          borderRadius: BorderRadius.circular(
+                                            14,
+                                          ),
                                           borderSide: BorderSide(
-                                            color: isDark ? Colors.white12 : Colors.black12,
+                                            color: isDark
+                                                ? Colors.white12
+                                                : Colors.black12,
                                           ),
                                         ),
                                         enabledBorder: OutlineInputBorder(
-                                          borderRadius: BorderRadius.circular(14),
+                                          borderRadius: BorderRadius.circular(
+                                            14,
+                                          ),
                                           borderSide: BorderSide(
-                                            color: isDark ? Colors.white12 : Colors.black12,
+                                            color: isDark
+                                                ? Colors.white12
+                                                : Colors.black12,
                                           ),
                                         ),
                                         focusedBorder: OutlineInputBorder(
-                                          borderRadius: BorderRadius.circular(14),
+                                          borderRadius: BorderRadius.circular(
+                                            14,
+                                          ),
                                           borderSide: const BorderSide(
                                             color: AppColors.coral,
                                             width: 1.5,
                                           ),
                                         ),
-                                        contentPadding: const EdgeInsets.symmetric(
-                                          horizontal: 16,
-                                          vertical: 14,
-                                        ),
+                                        contentPadding:
+                                            const EdgeInsets.symmetric(
+                                              horizontal: 16,
+                                              vertical: 14,
+                                            ),
                                       ),
                                       dropdownColor: isDark
                                           ? const Color(0xFF1E2128)
@@ -820,25 +987,29 @@ class _PrintOrderScreenState extends ConsumerState<PrintOrderScreen> {
                                         color: AppColors.coral,
                                       ),
                                       items: algerianWilayas
-                                          .map((w) => DropdownMenuItem(
-                                                value: w,
-                                                child: Text(
-                                                  w,
-                                                  style: AppTypography.fromContext(
-                                                    context,
-                                                    fontSize: 13,
-                                                    fontWeight: FontWeight.w600,
-                                                    color: textColor,
-                                                  ),
-                                                ),
-                                              ))
+                                          .map(
+                                            (w) => DropdownMenuItem(
+                                              value: w,
+                                              child: Text(
+                                                w,
+                                                style:
+                                                    AppTypography.fromContext(
+                                                      context,
+                                                      fontSize: 13,
+                                                      fontWeight:
+                                                          FontWeight.w600,
+                                                      color: textColor,
+                                                    ),
+                                              ),
+                                            ),
+                                          )
                                           .toList(),
                                       onChanged: (val) =>
                                           setState(() => _selectedWilaya = val),
                                       validator: (val) =>
                                           val == null || val.trim().isEmpty
-                                              ? l10n.errorRequired
-                                              : null,
+                                          ? l10n.errorRequired
+                                          : null,
                                     ),
                                   ],
                                 ),
@@ -856,7 +1027,8 @@ class _PrintOrderScreenState extends ConsumerState<PrintOrderScreen> {
                                   secondaryText: secondaryText,
                                   isDark: isDark,
                                   maxLines: 2,
-                                  validator: (v) => v == null || v.trim().isEmpty
+                                  validator: (v) =>
+                                      v == null || v.trim().isEmpty
                                       ? l10n.errorRequired
                                       : null,
                                 ),
@@ -962,8 +1134,9 @@ class _PrintOrderScreenState extends ConsumerState<PrintOrderScreen> {
                             height: 20,
                             child: CircularProgressIndicator(
                               strokeWidth: 2,
-                              valueColor:
-                                  AlwaysStoppedAnimation<Color>(Colors.white),
+                              valueColor: AlwaysStoppedAnimation<Color>(
+                                Colors.white,
+                              ),
                             ),
                           )
                         : const Icon(
@@ -974,7 +1147,9 @@ class _PrintOrderScreenState extends ConsumerState<PrintOrderScreen> {
                     label: Text(
                       actionsState.isLoading
                           ? (isRtl ? 'جاري تأكيد الطلب...' : 'Confirmation...')
-                          : (isRtl ? 'تأكيد طلب طباعة الألبوم' : l10n.checkoutConfirm),
+                          : (isRtl
+                                ? 'تأكيد طلب طباعة الألبوم'
+                                : l10n.checkoutConfirm),
                       style: AppTypography.fromContext(
                         context,
                         fontSize: 15,
@@ -1085,10 +1260,7 @@ class _PrintOrderScreenState extends ConsumerState<PrintOrderScreen> {
             ),
             focusedBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(14),
-              borderSide: const BorderSide(
-                color: AppColors.coral,
-                width: 1.5,
-              ),
+              borderSide: const BorderSide(color: AppColors.coral, width: 1.5),
             ),
             contentPadding: const EdgeInsets.symmetric(
               horizontal: 16,
@@ -1181,7 +1353,9 @@ class _PrintOrderScreenState extends ConsumerState<PrintOrderScreen> {
           content: Text(error ?? l10n.checkoutErrorGeneric),
           backgroundColor: AppColors.error,
           behavior: SnackBarBehavior.floating,
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
         ),
       );
       ref.read(printOrderActionsProvider.notifier).clearMessages();
@@ -1207,36 +1381,17 @@ class _PrintOrderScreenState extends ConsumerState<PrintOrderScreen> {
           SafeArea(
             child: Center(
               child: SingleChildScrollView(
-                padding: const EdgeInsets.symmetric(horizontal: 28, vertical: 32),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 28,
+                  vertical: 32,
+                ),
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    // Celebration Checkmark Squircle
-                    Container(
-                      width: 104,
-                      height: 104,
-                      decoration: BoxDecoration(
-                        color: AppColors.success.withValues(alpha: 0.15),
-                        borderRadius: BorderRadius.circular(32),
-                        border: Border.all(
-                          color: AppColors.success.withValues(alpha: 0.35),
-                          width: 2,
-                        ),
-                        boxShadow: [
-                          BoxShadow(
-                            color: AppColors.success.withValues(alpha: 0.2),
-                            blurRadius: 24,
-                            offset: const Offset(0, 8),
-                          ),
-                        ],
-                      ),
-                      child: const Center(
-                        child: Icon(
-                          Icons.check_circle_rounded,
-                          size: 60,
-                          color: AppColors.success,
-                        ),
-                      ),
+                    const Icon(
+                      Icons.check_rounded,
+                      size: 88,
+                      color: AppColors.success,
                     ),
                     const SizedBox(height: 24),
 
@@ -1311,7 +1466,9 @@ class _PrintOrderScreenState extends ConsumerState<PrintOrderScreen> {
                           borderRadius: BorderRadius.circular(16),
                           boxShadow: [
                             BoxShadow(
-                              color: AppColors.primaryLight.withValues(alpha: 0.3),
+                              color: AppColors.primaryLight.withValues(
+                                alpha: 0.3,
+                              ),
                               blurRadius: 12,
                               offset: const Offset(0, 4),
                             ),

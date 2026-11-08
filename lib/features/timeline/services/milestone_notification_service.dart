@@ -1,4 +1,4 @@
-import 'package:flutter/foundation.dart';
+import '../../../core/services/safe_log.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -75,7 +75,7 @@ class MilestoneNotificationService {
       );
     }
 
-    debugPrint(
+    safeDebugPrint(
       '[MilestoneNotif] scheduled reminders for ${child.name} '
       '(${milestones.length} milestones checked)',
     );

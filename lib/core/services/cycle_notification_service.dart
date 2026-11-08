@@ -1,4 +1,4 @@
-import 'package:flutter/foundation.dart';
+import 'safe_log.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'notification_l10n.dart';
@@ -44,7 +44,7 @@ class CycleNotificationService {
       channelDesc: l10n.notifCycleChannelDesc,
     );
 
-    debugPrint(
+    safeDebugPrint(
       '[CycleNotif] reminders scheduled — '
       'next period: ${cycleInfo.nextPeriodDate}',
     );

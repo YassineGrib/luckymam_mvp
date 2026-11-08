@@ -16,84 +16,109 @@ Widget _wrap(Widget child, [Locale locale = const Locale('fr')]) {
       GlobalCupertinoLocalizations.delegate,
     ],
     supportedLocales: AppLocalizations.supportedLocales,
-    home: Scaffold(
-      body: SingleChildScrollView(child: child),
-    ),
+    home: Scaffold(body: SingleChildScrollView(child: child)),
   );
 }
 
 void main() {
   group('LM-CAP-004: Audio preview and modification before validation', () {
-    testWidgets('Displays audio preview with pending badge and validation action', (tester) async {
-      bool validated = false;
-      bool reRecorded = false;
-      bool deleted = false;
-
-      await tester.pumpWidget(
-        _wrap(
-          RecordedAudioPreview(
-            duration: 15,
-            isValidated: false,
-            onValidate: () => validated = true,
-            onReRecord: () => reRecorded = true,
-            onDelete: () => deleted = true,
+    testWidgets(
+      'Completed recording is ready without a confirmation and keeps modification controls',
+      (tester) async {
+        await tester.pumpWidget(
+          _wrap(
+            RecordedAudioPreview(
+              duration: 8,
+              onDelete: () {},
+              onReRecord: () {},
+            ),
           ),
-        ),
-      );
-      await tester.pumpAndSettle();
+        );
+        await tester.pumpAndSettle();
+        expect(find.text('Audio validé'), findsOneWidget);
+        expect(find.text("Valider l'audio"), findsNothing);
+        expect(find.text('Recommencer'), findsOneWidget);
+        expect(find.byIcon(Icons.delete_outline_rounded), findsOneWidget);
+        expect(tester.takeException(), isNull);
+      },
+    );
 
-      // Check pending status badge
-      expect(find.text('En attente de validation'), findsOneWidget);
+    testWidgets(
+      'Displays audio preview with pending badge and validation action',
+      (tester) async {
+        bool validated = false;
+        bool reRecorded = false;
+        bool deleted = false;
 
-      // Check duration display (00:00 / 00:15)
-      expect(find.textContaining('00:15'), findsOneWidget);
-
-      // Check action buttons exist
-      expect(find.byIcon(Icons.play_arrow_rounded), findsOneWidget);
-      expect(find.byIcon(Icons.refresh_rounded), findsOneWidget);
-      expect(find.text('Recommencer'), findsOneWidget);
-      expect(find.byIcon(Icons.delete_outline_rounded), findsOneWidget);
-      expect(find.text('Valider l\'audio'), findsOneWidget);
-
-      // Tap Validate
-      await tester.tap(find.text('Valider l\'audio'));
-      await tester.pump();
-      expect(validated, isTrue);
-
-      // Tap Re-record
-      await tester.tap(find.text('Recommencer'));
-      await tester.pump();
-      expect(reRecorded, isTrue);
-
-      // Tap Delete
-      await tester.tap(find.byIcon(Icons.delete_outline_rounded));
-      await tester.pump();
-      expect(deleted, isTrue);
-    });
-
-    testWidgets('Displays validated badge and hides validate button when confirmed', (tester) async {
-      await tester.pumpWidget(
-        _wrap(
-          RecordedAudioPreview(
-            duration: 22,
-            isValidated: true,
-            onDelete: () {},
+        await tester.pumpWidget(
+          _wrap(
+            RecordedAudioPreview(
+              duration: 15,
+              isValidated: false,
+              onValidate: () => validated = true,
+              onReRecord: () => reRecorded = true,
+              onDelete: () => deleted = true,
+            ),
           ),
-        ),
-      );
-      await tester.pumpAndSettle();
+        );
+        await tester.pumpAndSettle();
 
-      // Check validated status badge
-      expect(find.text('Audio validé'), findsOneWidget);
-      expect(find.byIcon(Icons.check_circle_rounded), findsOneWidget);
+        // Check pending status badge
+        expect(find.text('En attente de validation'), findsOneWidget);
 
-      // "Valider l'audio" button should NOT be shown once confirmed
-      expect(find.text('Valider l\'audio'), findsNothing);
+        // Check duration display (00:00 / 00:15)
+        expect(find.textContaining('00:15'), findsOneWidget);
 
-      // Recommencer and Delete remain available for modifications
-      expect(find.text('Recommencer'), findsOneWidget);
-      expect(find.byIcon(Icons.delete_outline_rounded), findsOneWidget);
-    });
+        // Check action buttons exist
+        expect(find.byIcon(Icons.play_arrow_rounded), findsOneWidget);
+        expect(find.byIcon(Icons.refresh_rounded), findsOneWidget);
+        expect(find.text('Recommencer'), findsOneWidget);
+        expect(find.byIcon(Icons.delete_outline_rounded), findsOneWidget);
+        expect(find.text('Valider l\'audio'), findsOneWidget);
+
+        // Tap Validate
+        await tester.tap(find.text('Valider l\'audio'));
+        await tester.pump();
+        expect(validated, isTrue);
+
+        // Tap Re-record
+        await tester.tap(find.text('Recommencer'));
+        await tester.pump();
+        expect(reRecorded, isTrue);
+
+        // Tap Delete
+        await tester.tap(find.byIcon(Icons.delete_outline_rounded));
+        await tester.pump();
+        expect(deleted, isTrue);
+      },
+    );
+
+    testWidgets(
+      'Displays validated badge and hides validate button when confirmed',
+      (tester) async {
+        await tester.pumpWidget(
+          _wrap(
+            RecordedAudioPreview(
+              duration: 22,
+              isValidated: true,
+              onDelete: () {},
+            ),
+          ),
+        );
+        await tester.pumpAndSettle();
+
+        // Check validated status badge
+        expect(find.text('Audio validé'), findsOneWidget);
+        expect(find.byIcon(Icons.check_circle_rounded), findsOneWidget);
+
+        // "Valider l'audio" button should NOT be shown once confirmed
+        expect(find.text('Valider l\'audio'), findsNothing);
+
+        // Recommencer and Delete remain available for modifications
+        expect(find.text('Recommencer'), findsOneWidget);
+        expect(find.byIcon(Icons.delete_outline_rounded), findsOneWidget);
+      },
+    );
 
     testWidgets('RTL Arabic localization renders correctly', (tester) async {
       await tester.pumpWidget(
@@ -123,6 +148,12 @@ void main() {
       final emptyFile = File('${tempDir.path}/empty.m4a');
       emptyFile.writeAsStringSync('');
 
+      expect(isSaveableCapsuleAudio(validFile), isTrue);
+      expect(isSaveableCapsuleAudio(emptyFile), isFalse);
+      expect(
+        isSaveableCapsuleAudio(File('${tempDir.path}/missing.m4a')),
+        isFalse,
+      );
       expect(validFile.existsSync(), isTrue);
       expect(validFile.lengthSync() > 0, isTrue);
 
@@ -140,4 +171,3 @@ void main() {
     });
   });
 }
-

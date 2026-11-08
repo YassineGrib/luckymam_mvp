@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:pdf/pdf.dart';
-import 'package:printing/printing.dart';
 
 import '../../../core/extensions/l10n_extension.dart';
 import '../../../core/services/analytics_service.dart';
@@ -10,13 +8,13 @@ import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_spacing.dart';
 import '../../../core/theme/app_typography.dart';
 import '../../../shared/widgets/top_ambient_gradient.dart';
-import '../providers/print_order_providers.dart';
+import '../../../shared/widgets/app_logo.dart';
 import '../services/album_pdf_service.dart';
 import 'print_order_screen.dart';
 
 /// Flagship VIP Print Preview Screen for LuckyMam.
 /// Provides a realistic, tactile photobook flip simulator with gold foil details,
-/// paper texture, binding spine, page-turning physics, and technical PDF preview mode.
+/// paper texture, binding spine, and page-turning physics.
 class AlbumPrintPreviewScreen extends ConsumerStatefulWidget {
   const AlbumPrintPreviewScreen({
     super.key,
@@ -44,7 +42,6 @@ class AlbumPrintPreviewScreen extends ConsumerStatefulWidget {
 
 class _AlbumPrintPreviewScreenState
     extends ConsumerState<AlbumPrintPreviewScreen> {
-  bool _isPhotobookMode = true;
   late final PageController _pageController;
   int _currentPageIndex = 0;
 
@@ -53,7 +50,7 @@ class _AlbumPrintPreviewScreenState
     super.initState();
     _pageController = PageController(viewportFraction: 0.88);
     AnalyticsService().logEvent(
-      'pdf_preview_opened',
+      'album_preview_opened',
       parameters: {'albumId': widget.albumId, 'albumType': widget.albumType},
     );
   }
@@ -145,13 +142,17 @@ class _AlbumPrintPreviewScreenState
                           children: [
                             Row(
                               children: [
-                                Text(
-                                  l10n.printPreviewTitle,
-                                  style: AppTypography.fromContext(
-                                    context,
-                                    fontSize: 16.5,
-                                    fontWeight: FontWeight.w800,
-                                    color: textColor,
+                                Flexible(
+                                  child: Text(
+                                    l10n.printPreviewTitle,
+                                    maxLines: 2,
+                                    overflow: TextOverflow.ellipsis,
+                                    style: AppTypography.fromContext(
+                                      context,
+                                      fontSize: 16.5,
+                                      fontWeight: FontWeight.w800,
+                                      color: textColor,
+                                    ),
                                   ),
                                 ),
                                 const SizedBox(width: 6),
@@ -195,48 +196,6 @@ class _AlbumPrintPreviewScreenState
                           ],
                         ),
                       ),
-
-                      // View Mode Switcher: 📖 Flip vs 📄 PDF
-                      Container(
-                        padding: const EdgeInsets.all(3),
-                        decoration: BoxDecoration(
-                          color: isDark
-                              ? Colors.white.withValues(alpha: 0.08)
-                              : Colors.white.withValues(alpha: 0.9),
-                          borderRadius: BorderRadius.circular(14),
-                          border: Border.all(
-                            color: isDark ? Colors.white12 : const Color(0xFFE8E0E4),
-                          ),
-                        ),
-                        child: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            _buildPreviewTab(
-                              icon: Icons.auto_stories_rounded,
-                              label: isRtl ? 'الكتاب' : 'Livre',
-                              isSelected: _isPhotobookMode,
-                              onTap: () {
-                                if (!_isPhotobookMode) {
-                                  HapticFeedback.selectionClick();
-                                  setState(() => _isPhotobookMode = true);
-                                }
-                              },
-                            ),
-                            const SizedBox(width: 2),
-                            _buildPreviewTab(
-                              icon: Icons.picture_as_pdf_rounded,
-                              label: 'PDF',
-                              isSelected: !_isPhotobookMode,
-                              onTap: () {
-                                if (_isPhotobookMode) {
-                                  HapticFeedback.selectionClick();
-                                  setState(() => _isPhotobookMode = false);
-                                }
-                              },
-                            ),
-                          ],
-                        ),
-                      ),
                     ],
                   ),
                 ),
@@ -245,16 +204,14 @@ class _AlbumPrintPreviewScreenState
 
                 // ── 2. Active Preview Viewport ──
                 Expanded(
-                  child: _isPhotobookMode
-                      ? _buildPhotobookFlipViewer(
-                          context: context,
-                          totalBookPages: totalBookPages,
-                          textColor: textColor,
-                          secondaryText: secondaryText,
-                          isDark: isDark,
-                          isRtl: isRtl,
-                        )
-                      : _buildPdfViewer(context, textColor, isDark),
+                  child: _buildPhotobookFlipViewer(
+                    context: context,
+                    totalBookPages: totalBookPages,
+                    textColor: textColor,
+                    secondaryText: secondaryText,
+                    isDark: isDark,
+                    isRtl: isRtl,
+                  ),
                 ),
 
                 // ── 3. VIP Quality & Paper Guarantee Strip ──
@@ -284,7 +241,9 @@ class _AlbumPrintPreviewScreenState
                           width: 34,
                           height: 34,
                           decoration: BoxDecoration(
-                            color: const Color(0xFFFFD700).withValues(alpha: 0.15),
+                            color: const Color(
+                              0xFFFFD700,
+                            ).withValues(alpha: 0.15),
                             shape: BoxShape.circle,
                           ),
                           child: const Icon(
@@ -400,57 +359,6 @@ class _AlbumPrintPreviewScreenState
     );
   }
 
-  Widget _buildPreviewTab({
-    required IconData icon,
-    required String label,
-    required bool isSelected,
-    required VoidCallback onTap,
-  }) {
-    return GestureDetector(
-      onTap: onTap,
-      child: AnimatedContainer(
-        duration: const Duration(milliseconds: 180),
-        curve: Curves.easeOut,
-        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-        decoration: BoxDecoration(
-          color: isSelected ? AppColors.coral : Colors.transparent,
-          borderRadius: BorderRadius.circular(10),
-          boxShadow: isSelected
-              ? [
-                  BoxShadow(
-                    color: AppColors.coral.withValues(alpha: 0.3),
-                    blurRadius: 6,
-                    offset: const Offset(0, 2),
-                  ),
-                ]
-              : null,
-        ),
-        child: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Icon(
-              icon,
-              size: 14,
-              color: isSelected ? Colors.white : Colors.grey,
-            ),
-            const SizedBox(width: 4),
-            Text(
-              label,
-              style: TextStyle(
-                fontSize: 11.5,
-                fontWeight: FontWeight.w700,
-                color: isSelected ? Colors.white : Colors.grey,
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  // ───────────────────────────────────────────────────────────────────────────
-  // REALISTIC PHOTOBOOK FLIP SIMULATOR
-  // ───────────────────────────────────────────────────────────────────────────
   Widget _buildPhotobookFlipViewer({
     required BuildContext context,
     required int totalBookPages,
@@ -516,8 +424,8 @@ class _AlbumPrintPreviewScreenState
                   color: isCurrent
                       ? AppColors.coral
                       : isDark
-                          ? Colors.white24
-                          : Colors.black12,
+                      ? Colors.white24
+                      : Colors.black12,
                 ),
               ),
             );
@@ -528,162 +436,82 @@ class _AlbumPrintPreviewScreenState
     );
   }
 
-  /// Front Hardcover with golden embossing and luxury finish.
   Widget _buildBookFrontCover(bool isDark, bool isRtl) {
+    final language = Localizations.localeOf(context).languageCode;
+    final subtitle = language == 'ar'
+        ? 'ذكريات ${widget.childName}'
+        : language == 'fr'
+        ? 'Les souvenirs de ${widget.childName}'
+        : '${widget.childName}’s memories';
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 8, vertical: 10),
+      clipBehavior: Clip.antiAlias,
       decoration: BoxDecoration(
+        color: const Color(0xFF302636),
         borderRadius: BorderRadius.circular(22),
-        gradient: const LinearGradient(
-          colors: [
-            Color(0xFF2C2230),
-            Color(0xFF1A141D),
-          ],
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-        ),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.4),
-            blurRadius: 20,
-            offset: const Offset(0, 10),
+      ),
+      child: Stack(
+        fit: StackFit.expand,
+        children: [
+          if (widget.pages.isNotEmpty)
+            Image.network(
+              widget.pages.first.imageUrl,
+              fit: BoxFit.cover,
+              errorBuilder: (_, _, _) => const SizedBox.shrink(),
+            ),
+          const DecoratedBox(
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
+                colors: [Color(0x33000000), Color(0xDD211B29)],
+              ),
+            ),
+          ),
+          Positioned(
+            top: 24,
+            right: 24,
+            child: Icon(
+              Icons.auto_stories_outlined,
+              size: 92,
+              color: Colors.white.withValues(alpha: 0.12),
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.all(28),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const LuckymamLogo(size: 40, color: Colors.white),
+                const Spacer(),
+                Text(
+                  widget.albumTitle,
+                  maxLines: 3,
+                  overflow: TextOverflow.ellipsis,
+                  style: const TextStyle(
+                    fontSize: 25,
+                    fontWeight: FontWeight.w700,
+                    color: Colors.white,
+                  ),
+                ),
+                const SizedBox(height: 12),
+                Text(
+                  subtitle,
+                  style: const TextStyle(fontSize: 15, color: Colors.white),
+                ),
+                const SizedBox(height: 24),
+                Text(
+                  language == 'ar'
+                      ? 'اسحبي لتصفح الألبوم'
+                      : language == 'fr'
+                      ? 'Faites glisser pour découvrir l’album'
+                      : 'Swipe to explore the album',
+                  style: const TextStyle(fontSize: 11, color: Colors.white70),
+                ),
+              ],
+            ),
           ),
         ],
-        border: Border.all(
-          color: const Color(0xFFFFD700).withValues(alpha: 0.45),
-          width: 1.5,
-        ),
-      ),
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(21),
-        child: Stack(
-          children: [
-            // Gold Embossed Frame Border
-            Positioned.fill(
-              child: Padding(
-                padding: const EdgeInsets.all(16),
-                child: Container(
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(14),
-                    border: Border.all(
-                      color: const Color(0xFFFFD700).withValues(alpha: 0.3),
-                      width: 1,
-                    ),
-                  ),
-                ),
-              ),
-            ),
-
-            // Book Spine Highlight
-            Positioned(
-              top: 0,
-              bottom: 0,
-              left: isRtl ? null : 0,
-              right: isRtl ? 0 : null,
-              width: 18,
-              child: Container(
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    colors: [
-                      Colors.black54,
-                      Colors.black12,
-                      Colors.white.withValues(alpha: 0.2),
-                      Colors.transparent,
-                    ],
-                    begin: isRtl ? Alignment.centerRight : Alignment.centerLeft,
-                    end: isRtl ? Alignment.centerLeft : Alignment.centerRight,
-                  ),
-                ),
-              ),
-            ),
-
-            // Cover Center Text & Gold Emblem
-            Center(
-              child: Padding(
-                padding: const EdgeInsets.all(28),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Container(
-                      width: 58,
-                      height: 58,
-                      decoration: BoxDecoration(
-                        gradient: const LinearGradient(
-                          colors: [Color(0xFFFFD700), Color(0xFFFFA500)],
-                        ),
-                        shape: BoxShape.circle,
-                        boxShadow: [
-                          BoxShadow(
-                            color: const Color(0xFFFFD700).withValues(alpha: 0.4),
-                            blurRadius: 16,
-                            offset: const Offset(0, 4),
-                          ),
-                        ],
-                      ),
-                      child: const Icon(
-                        Icons.auto_stories_rounded,
-                        color: Colors.black87,
-                        size: 30,
-                      ),
-                    ),
-                    const SizedBox(height: 18),
-                    Text(
-                      widget.albumTitle,
-                      style: const TextStyle(
-                        fontFamily: 'serif',
-                        fontSize: 22,
-                        fontWeight: FontWeight.bold,
-                        color: Color(0xFFFFE082),
-                        letterSpacing: 0.5,
-                      ),
-                      textAlign: TextAlign.center,
-                    ),
-                    const SizedBox(height: 8),
-                    Container(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 14,
-                        vertical: 5,
-                      ),
-                      decoration: BoxDecoration(
-                        color: Colors.white.withValues(alpha: 0.08),
-                        borderRadius: BorderRadius.circular(12),
-                        border: Border.all(color: Colors.white24),
-                      ),
-                      child: Text(
-                        'كتاب ذكريات ${widget.childName}',
-                        style: const TextStyle(
-                          fontSize: 13,
-                          fontWeight: FontWeight.w600,
-                          color: Colors.white,
-                        ),
-                      ),
-                    ),
-                    const SizedBox(height: 24),
-                    const Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Text(
-                          'اسحبي للبدء في تصفح الألبوم',
-                          style: TextStyle(
-                            fontSize: 11.5,
-                            color: Color(0xFFD4AF37),
-                            fontWeight: FontWeight.w500,
-                          ),
-                        ),
-                        SizedBox(width: 6),
-                        Icon(
-                          Icons.arrow_forward_rounded,
-                          size: 14,
-                          color: Color(0xFFD4AF37),
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          ],
-        ),
       ),
     );
   }
@@ -753,7 +581,7 @@ class _AlbumPrintPreviewScreenState
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Text(
-                        'صفحة $pageIndex',
+                        isRtl ? 'صفحة $pageIndex' : 'Page $pageIndex',
                         style: AppTypography.fromContext(
                           context,
                           fontSize: 12,
@@ -866,98 +694,6 @@ class _AlbumPrintPreviewScreenState
                     ),
                   ),
                 ],
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  // ───────────────────────────────────────────────────────────────────────────
-  // TECHNICAL PDF PREVIEW MODE
-  // ───────────────────────────────────────────────────────────────────────────
-  Widget _buildPdfViewer(BuildContext context, Color textColor, bool isDark) {
-    return PdfPreview(
-      build: (format) => ref.read(albumPdfServiceProvider).generateAlbumPdf(
-            albumTitle: widget.albumTitle,
-            childName: widget.childName,
-            pages: widget.pages,
-            pageFormat: format,
-          ),
-      allowPrinting: true,
-      allowSharing: true,
-      canChangePageFormat: true,
-      pageFormats: {
-        'A4': PdfPageFormat.a4,
-        'A5': PdfPageFormat.a5,
-        'A3': PdfPageFormat.a3,
-      },
-      canChangeOrientation: false,
-      canDebug: false,
-      onError: (context, error) => Center(
-        child: Padding(
-          padding: const EdgeInsets.all(AppSpacing.lg),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              const Icon(Icons.error_outline_rounded,
-                  size: 48, color: AppColors.error),
-              const SizedBox(height: 12),
-              Text(
-                'Impossible de générer le document PDF',
-                style: TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.bold,
-                  color: textColor,
-                ),
-              ),
-              const SizedBox(height: 6),
-              Text(
-                error.toString(),
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                  fontSize: 12,
-                  color: textColor.withValues(alpha: 0.7),
-                ),
-              ),
-              const SizedBox(height: 16),
-              ElevatedButton.icon(
-                onPressed: () => setState(() {}),
-                icon: const Icon(Icons.refresh_rounded),
-                label: const Text('Réessayer'),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: AppColors.primaryLight,
-                  foregroundColor: Colors.white,
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
-      pdfPreviewPageDecoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(6),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: isDark ? 0.35 : 0.18),
-            blurRadius: 10,
-            offset: const Offset(0, 4),
-          ),
-        ],
-      ),
-      loadingWidget: Center(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            const CircularProgressIndicator(color: AppColors.coral),
-            const SizedBox(height: AppSpacing.md),
-            Text(
-              context.l10n.printPreparingAlbum,
-              style: AppTypography.fromContext(
-                context,
-                fontSize: 14,
-                color: textColor,
               ),
             ),
           ],

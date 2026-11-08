@@ -16,8 +16,10 @@ import '../../../shared/widgets/auth_logo_background.dart';
 import '../../../shared/widgets/top_ambient_gradient.dart';
 import 'models/profile_models.dart';
 import 'providers/profile_providers.dart';
+import 'widgets/mother_status_guidance.dart';
 
-/// Complete list of the 58 Algerian Wilayas with code, French, and Arabic names.
+/// Verified by the album task against JO 40, 3 June 2026, p.5.
+/// https://www.joradp.dz/FTP/jo-francais/2026/F2026040.pdf
 const List<({int code, String fr, String ar})> _kAlgerianWilayas = [
   (code: 1, fr: 'Adrar', ar: 'أدرار'),
   (code: 2, fr: 'Chlef', ar: 'الشلف'),
@@ -77,9 +79,29 @@ const List<({int code, String fr, String ar})> _kAlgerianWilayas = [
   (code: 56, fr: 'Djanet', ar: 'جانت'),
   (code: 57, fr: 'El M\'Ghair', ar: 'المغير'),
   (code: 58, fr: 'El Menia', ar: 'المنيعة'),
+  (code: 59, fr: 'Aflou', ar: 'أفلو'),
+  (code: 60, fr: 'Barika', ar: 'بريكة'),
+  (code: 61, fr: 'El Kantara', ar: 'القنطرة'),
+  (code: 62, fr: 'Bir El Ater', ar: 'بئر العاتر'),
+  (code: 63, fr: 'El Aricha', ar: 'العريشة'),
+  (code: 64, fr: 'Ksar Chellala', ar: 'قصر الشلالة'),
+  (code: 65, fr: 'Aïn Ouessara', ar: 'عين وسارة'),
+  (code: 66, fr: 'Messaad', ar: 'مسعد'),
+  (code: 67, fr: 'Ksar El Boukhari', ar: 'قصر البخاري'),
+  (code: 68, fr: 'Bou Saâda', ar: 'بوسعادة'),
+  (code: 69, fr: 'El Abiodh Sidi Cheikh', ar: 'الأبيض سيدي الشيخ'),
 ];
 
-const List<String> _kBloodTypes = ['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-'];
+const List<String> _kBloodTypes = [
+  'A+',
+  'A-',
+  'B+',
+  'B-',
+  'AB+',
+  'AB-',
+  'O+',
+  'O-',
+];
 
 const List<({String ar, String fr, String en})> _kCommonAllergies = [
   (ar: 'البنسلين', fr: 'Pénicilline', en: 'Penicillin'),
@@ -101,10 +123,12 @@ class EditMotherProfileScreen extends ConsumerStatefulWidget {
   final UserProfile? profile;
 
   @override
-  ConsumerState<EditMotherProfileScreen> createState() => _EditMotherProfileScreenState();
+  ConsumerState<EditMotherProfileScreen> createState() =>
+      _EditMotherProfileScreenState();
 }
 
-class _EditMotherProfileScreenState extends ConsumerState<EditMotherProfileScreen> {
+class _EditMotherProfileScreenState
+    extends ConsumerState<EditMotherProfileScreen> {
   late final TextEditingController _nameController;
   late final TextEditingController _phoneController;
   late final TextEditingController _allergyInputController;
@@ -132,12 +156,20 @@ class _EditMotherProfileScreenState extends ConsumerState<EditMotherProfileScree
       fbName = AuthService().currentUser?.displayName;
     } catch (_) {}
 
-    _nameController = TextEditingController(text: p?.displayName ?? fbName ?? '');
+    _nameController = TextEditingController(
+      text: p?.displayName ?? fbName ?? '',
+    );
     _phoneController = TextEditingController(text: p?.phone ?? '');
     _allergyInputController = TextEditingController();
-    _conditionsController = TextEditingController(text: p?.medicalInfo.conditions.join(', ') ?? '');
-    _doctorNameController = TextEditingController(text: p?.medicalInfo.doctorName ?? '');
-    _doctorPhoneController = TextEditingController(text: p?.medicalInfo.doctorPhone ?? '');
+    _conditionsController = TextEditingController(
+      text: p?.medicalInfo.conditions.join(', ') ?? '',
+    );
+    _doctorNameController = TextEditingController(
+      text: p?.medicalInfo.doctorName ?? '',
+    );
+    _doctorPhoneController = TextEditingController(
+      text: p?.medicalInfo.doctorPhone ?? '',
+    );
 
     _birthDate = p?.birthDate;
     _wilaya = p?.wilaya;
@@ -208,6 +240,10 @@ class _EditMotherProfileScreenState extends ConsumerState<EditMotherProfileScree
         .toList();
   }
 
+  String _motherStatusGuidance() {
+    return motherStatusGuidance(context);
+  }
+
   Future<void> _saveProfile() async {
     final name = _nameController.text.trim();
     final childExpectedDefaultName = context.l10n.childExpectedDefaultName;
@@ -219,7 +255,9 @@ class _EditMotherProfileScreenState extends ConsumerState<EditMotherProfileScree
           content: Text(
             lang == 'ar'
                 ? 'يرجى إدخال اسمكِ الكريم'
-                : (lang == 'en' ? 'Please enter your name' : 'Veuillez saisir votre nom'),
+                : (lang == 'en'
+                      ? 'Please enter your name'
+                      : 'Veuillez saisir votre nom'),
           ),
           backgroundColor: AppColors.error,
         ),
@@ -238,8 +276,8 @@ class _EditMotherProfileScreenState extends ConsumerState<EditMotherProfileScree
             lang == 'ar'
                 ? 'يرجى تحديد تاريخ آخر دورة شهرية (DDR)'
                 : (lang == 'en'
-                    ? 'Please select the date of your last menstrual period'
-                    : 'Veuillez sélectionner la date des dernières règles (DDR)'),
+                      ? 'Please select the date of your last menstrual period'
+                      : 'Veuillez sélectionner la date des dernières règles (DDR)'),
           ),
           backgroundColor: AppColors.error,
         ),
@@ -247,6 +285,12 @@ class _EditMotherProfileScreenState extends ConsumerState<EditMotherProfileScree
       return;
     }
 
+    if (_status == UserStatus.mom && ref.read(bornChildrenProvider).isEmpty) {
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(_motherStatusGuidance())));
+      return;
+    }
     setState(() => _isSaving = true);
     HapticFeedback.mediumImpact();
 
@@ -263,9 +307,13 @@ class _EditMotherProfileScreenState extends ConsumerState<EditMotherProfileScree
             : null,
       );
 
-      await ref.read(profileActionsProvider.notifier).updateFullProfile(
+      await ref
+          .read(profileActionsProvider.notifier)
+          .updateFullProfile(
             displayName: name,
-            phone: _phoneController.text.trim().isNotEmpty ? _phoneController.text.trim() : null,
+            phone: _phoneController.text.trim().isNotEmpty
+                ? _phoneController.text.trim()
+                : null,
             birthDate: _birthDate,
             wilaya: _wilaya,
             newPhotoFile: _newImageFile,
@@ -277,7 +325,8 @@ class _EditMotherProfileScreenState extends ConsumerState<EditMotherProfileScree
 
       final profileService = ref.read(profileServiceProvider);
       if (_status == UserStatus.pregnant) {
-        if (ref.read(activePregnancyProvider) == null && _pregnancyDate != null) {
+        if (ref.read(activePregnancyProvider) == null &&
+            _pregnancyDate != null) {
           await profileService.declarePregnancy(
             lmpDate: _pregnancyDate!,
             placeholderName: childExpectedDefaultName,
@@ -297,10 +346,10 @@ class _EditMotherProfileScreenState extends ConsumerState<EditMotherProfileScree
           SnackBar(
             content: Text(
               lang == 'ar'
-                  ? 'تم حفظ وتحديث ملفكِ الشخصي بنجاح 💖'
+                  ? 'تم حفظ وتحديث ملفكِ الشخصي بنجاح'
                   : (lang == 'en'
-                      ? 'Profile successfully updated 💖'
-                      : 'Votre profil a été mis à jour avec succès ✨'),
+                        ? 'Profile successfully updated'
+                        : 'Votre profil a été mis à jour avec succès'),
             ),
             backgroundColor: const Color(0xFF00C853),
           ),
@@ -329,10 +378,14 @@ class _EditMotherProfileScreenState extends ConsumerState<EditMotherProfileScree
     final lang = locale.languageCode;
     final isRtl = lang == 'ar';
 
-    final bgColor = isDark ? AppColors.backgroundDark : AppColors.backgroundLight;
+    final bgColor = isDark
+        ? AppColors.backgroundDark
+        : AppColors.backgroundLight;
     final surfaceColor = isDark ? const Color(0xFF221A24) : Colors.white;
     final textColor = isDark ? Colors.white : AppColors.onSurfaceLight;
-    final secondaryText = isDark ? AppColors.textSecondaryDark : AppColors.textSecondaryLight;
+    final secondaryText = isDark
+        ? AppColors.textSecondaryDark
+        : AppColors.textSecondaryLight;
     final accent = isDark ? AppColors.primaryDark : AppColors.primaryLight;
 
     return Scaffold(
@@ -371,18 +424,24 @@ class _EditMotherProfileScreenState extends ConsumerState<EditMotherProfileScree
                                   : Colors.white.withValues(alpha: 0.92),
                               borderRadius: BorderRadius.circular(14),
                               border: Border.all(
-                                color: isDark ? Colors.white12 : const Color(0xFFE8E0E4),
+                                color: isDark
+                                    ? Colors.white12
+                                    : const Color(0xFFE8E0E4),
                               ),
                               boxShadow: [
                                 BoxShadow(
-                                  color: Colors.black.withValues(alpha: isDark ? 0.25 : 0.04),
+                                  color: Colors.black.withValues(
+                                    alpha: isDark ? 0.25 : 0.04,
+                                  ),
                                   blurRadius: 8,
                                   offset: const Offset(0, 2),
                                 ),
                               ],
                             ),
                             child: Icon(
-                              isRtl ? Icons.arrow_forward_ios_rounded : Icons.arrow_back_ios_new_rounded,
+                              isRtl
+                                  ? Icons.arrow_forward_ios_rounded
+                                  : Icons.arrow_back_ios_new_rounded,
                               size: 16,
                               color: textColor,
                             ),
@@ -397,21 +456,23 @@ class _EditMotherProfileScreenState extends ConsumerState<EditMotherProfileScree
                               Text(
                                 lang == 'ar'
                                     ? 'الملف الشخصي للأم'
-                                    : (lang == 'en' ? 'Mother\'s Profile' : 'Profil de la Maman'),
+                                    : (lang == 'en'
+                                          ? 'Mother\'s Profile'
+                                          : 'Profil de la Maman'),
                                 style: AppTypography.fromContext(
-                                   context,
-                                   fontSize: 18,
-                                   fontWeight: FontWeight.w900,
-                                   color: textColor,
-                                 ),
+                                  context,
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.w900,
+                                  color: textColor,
+                                ),
                               ),
                               const SizedBox(height: 2),
                               Text(
                                 lang == 'ar'
                                     ? 'المعلومات الشخصية والطبية'
                                     : (lang == 'en'
-                                        ? 'Personal & Medical Information'
-                                        : 'Informations personnelles & médicales'),
+                                          ? 'Personal & Medical Information'
+                                          : 'Informations personnelles & médicales'),
                                 style: TextStyle(
                                   fontSize: 11.5,
                                   fontWeight: FontWeight.w600,
@@ -439,22 +500,49 @@ class _EditMotherProfileScreenState extends ConsumerState<EditMotherProfileScree
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           // ── 1. Avatar Photo Picker Section ──
-                          _buildAvatarSection(isDark, textColor, secondaryText, accent, lang),
+                          _buildAvatarSection(
+                            isDark,
+                            textColor,
+                            secondaryText,
+                            accent,
+                            lang,
+                          ),
 
                           const SizedBox(height: 18),
 
                           // ── 2. Personal Information Bento ──
-                          _buildPersonalInfoSection(isDark, surfaceColor, textColor, secondaryText, accent, lang),
+                          _buildPersonalInfoSection(
+                            isDark,
+                            surfaceColor,
+                            textColor,
+                            secondaryText,
+                            accent,
+                            lang,
+                          ),
 
                           const SizedBox(height: 18),
 
                           // ── 3. Life Stage & Maternal Status Bento ──
-                          _buildStatusSection(isDark, surfaceColor, textColor, secondaryText, accent, lang),
+                          _buildStatusSection(
+                            isDark,
+                            surfaceColor,
+                            textColor,
+                            secondaryText,
+                            accent,
+                            lang,
+                          ),
 
                           const SizedBox(height: 18),
 
                           // ── 4. Medical & Health Vitals Bento ──
-                          _buildMedicalSection(isDark, surfaceColor, textColor, secondaryText, accent, lang),
+                          _buildMedicalSection(
+                            isDark,
+                            surfaceColor,
+                            textColor,
+                            secondaryText,
+                            accent,
+                            lang,
+                          ),
 
                           const SizedBox(height: 32),
                         ],
@@ -502,15 +590,24 @@ class _EditMotherProfileScreenState extends ConsumerState<EditMotherProfileScree
                     const SizedBox(
                       width: 20,
                       height: 20,
-                      child: CircularProgressIndicator(strokeWidth: 2.5, color: Colors.white),
+                      child: CircularProgressIndicator(
+                        strokeWidth: 2.5,
+                        color: Colors.white,
+                      ),
                     )
                   else ...[
-                    const Icon(Icons.check_circle_rounded, size: 20, color: Colors.white),
+                    const Icon(
+                      Icons.check_circle_rounded,
+                      size: 20,
+                      color: Colors.white,
+                    ),
                     const SizedBox(width: 8),
                     Text(
                       lang == 'ar'
                           ? 'حفظ بيانات الملف الشخصي'
-                          : (lang == 'en' ? 'Save Profile' : 'Enregistrer les modifications'),
+                          : (lang == 'en'
+                                ? 'Save Profile'
+                                : 'Enregistrer les modifications'),
                       style: const TextStyle(
                         fontSize: 15,
                         fontWeight: FontWeight.w800,
@@ -547,7 +644,9 @@ class _EditMotherProfileScreenState extends ConsumerState<EditMotherProfileScree
     ImageProvider? imageProvider;
     if (_newImageFile != null) {
       imageProvider = FileImage(_newImageFile!);
-    } else if (!_removePhoto && currentPhotoUrl != null && currentPhotoUrl.isNotEmpty) {
+    } else if (!_removePhoto &&
+        currentPhotoUrl != null &&
+        currentPhotoUrl.isNotEmpty) {
       imageProvider = CachedNetworkImageProvider(currentPhotoUrl);
     }
 
@@ -574,10 +673,7 @@ class _EditMotherProfileScreenState extends ConsumerState<EditMotherProfileScree
                 ),
                 child: ClipOval(
                   child: hasPhoto
-                      ? Image(
-                          image: imageProvider,
-                          fit: BoxFit.cover,
-                        )
+                      ? Image(image: imageProvider, fit: BoxFit.cover)
                       : Container(
                           decoration: BoxDecoration(
                             gradient: LinearGradient(
@@ -612,7 +708,11 @@ class _EditMotherProfileScreenState extends ConsumerState<EditMotherProfileScree
                       width: 2.5,
                     ),
                   ),
-                  child: const Icon(Icons.camera_alt_rounded, size: 14, color: Colors.white),
+                  child: const Icon(
+                    Icons.camera_alt_rounded,
+                    size: 14,
+                    color: Colors.white,
+                  ),
                 ),
               ),
             ],
@@ -626,7 +726,9 @@ class _EditMotherProfileScreenState extends ConsumerState<EditMotherProfileScree
             children: [
               _MotherPhotoChip(
                 icon: Icons.photo_camera_rounded,
-                label: lang == 'ar' ? 'كاميرا' : (lang == 'en' ? 'Camera' : 'Caméra'),
+                label: lang == 'ar'
+                    ? 'كاميرا'
+                    : (lang == 'en' ? 'Camera' : 'Caméra'),
                 textColor: textColor,
                 isDark: isDark,
                 onTap: () => _pickImage(ImageSource.camera),
@@ -634,7 +736,9 @@ class _EditMotherProfileScreenState extends ConsumerState<EditMotherProfileScree
               const SizedBox(width: 10),
               _MotherPhotoChip(
                 icon: Icons.photo_library_rounded,
-                label: lang == 'ar' ? 'المعرض' : (lang == 'en' ? 'Gallery' : 'Galerie'),
+                label: lang == 'ar'
+                    ? 'المعرض'
+                    : (lang == 'en' ? 'Gallery' : 'Galerie'),
                 textColor: textColor,
                 isDark: isDark,
                 onTap: () => _pickImage(ImageSource.gallery),
@@ -686,7 +790,8 @@ class _EditMotherProfileScreenState extends ConsumerState<EditMotherProfileScree
     if (_birthDate != null) {
       final now = DateTime.now();
       int age = now.year - _birthDate!.year;
-      if (now.month < _birthDate!.month || (now.month == _birthDate!.month && now.day < _birthDate!.day)) {
+      if (now.month < _birthDate!.month ||
+          (now.month == _birthDate!.month && now.day < _birthDate!.day)) {
         age--;
       }
       ageText = lang == 'ar'
@@ -699,7 +804,9 @@ class _EditMotherProfileScreenState extends ConsumerState<EditMotherProfileScree
       isDark: isDark,
       title: lang == 'ar'
           ? 'المعلومات الشخصية'
-          : (lang == 'en' ? 'Personal Information' : 'Informations personnelles'),
+          : (lang == 'en'
+                ? 'Personal Information'
+                : 'Informations personnelles'),
       icon: Icons.person_rounded,
       accentColor: accent,
       textColor: textColor,
@@ -742,7 +849,9 @@ class _EditMotherProfileScreenState extends ConsumerState<EditMotherProfileScree
             child: Container(
               padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 13),
               decoration: BoxDecoration(
-                color: isDark ? Colors.white.withValues(alpha: 0.05) : const Color(0xFFF9F7F8),
+                color: isDark
+                    ? Colors.white.withValues(alpha: 0.05)
+                    : const Color(0xFFF9F7F8),
                 borderRadius: BorderRadius.circular(14),
                 border: Border.all(
                   color: isDark ? Colors.white12 : const Color(0xFFECE4E8),
@@ -755,12 +864,17 @@ class _EditMotherProfileScreenState extends ConsumerState<EditMotherProfileScree
                   Expanded(
                     child: Text(
                       _birthDate != null
-                          ? DateFormat('dd MMMM yyyy', lang == 'ar' ? 'ar' : (lang == 'en' ? 'en' : 'fr')).format(_birthDate!)
+                          ? DateFormat(
+                              'dd MMMM yyyy',
+                              lang == 'ar'
+                                  ? 'ar'
+                                  : (lang == 'en' ? 'en' : 'fr'),
+                            ).format(_birthDate!)
                           : (lang == 'ar'
-                              ? 'حددي تاريخ ميلادكِ'
-                              : (lang == 'en'
-                                  ? 'Select your date of birth'
-                                  : 'Sélectionnez votre date de naissance')),
+                                ? 'حددي تاريخ ميلادكِ'
+                                : (lang == 'en'
+                                      ? 'Select your date of birth'
+                                      : 'Sélectionnez votre date de naissance')),
                       style: TextStyle(
                         fontSize: 14,
                         fontWeight: FontWeight.w600,
@@ -770,7 +884,10 @@ class _EditMotherProfileScreenState extends ConsumerState<EditMotherProfileScree
                   ),
                   if (ageText.isNotEmpty)
                     Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 8,
+                        vertical: 3,
+                      ),
                       decoration: BoxDecoration(
                         color: accent.withValues(alpha: 0.12),
                         borderRadius: BorderRadius.circular(8),
@@ -823,11 +940,20 @@ class _EditMotherProfileScreenState extends ConsumerState<EditMotherProfileScree
           ),
           const SizedBox(height: 6),
           GestureDetector(
-            onTap: () => _showWilayaPicker(isDark, surfaceColor, textColor, secondaryText, accent, lang),
+            onTap: () => _showWilayaPicker(
+              isDark,
+              surfaceColor,
+              textColor,
+              secondaryText,
+              accent,
+              lang,
+            ),
             child: Container(
               padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 13),
               decoration: BoxDecoration(
-                color: isDark ? Colors.white.withValues(alpha: 0.05) : const Color(0xFFF9F7F8),
+                color: isDark
+                    ? Colors.white.withValues(alpha: 0.05)
+                    : const Color(0xFFF9F7F8),
                 borderRadius: BorderRadius.circular(14),
                 border: Border.all(
                   color: isDark ? Colors.white12 : const Color(0xFFECE4E8),
@@ -842,16 +968,24 @@ class _EditMotherProfileScreenState extends ConsumerState<EditMotherProfileScree
                       _wilaya != null && _wilaya!.isNotEmpty
                           ? _wilaya!
                           : (lang == 'ar'
-                              ? 'اختاري ولايتكِ'
-                              : (lang == 'en' ? 'Select your wilaya' : 'Sélectionnez votre wilaya')),
+                                ? 'اختاري ولايتكِ'
+                                : (lang == 'en'
+                                      ? 'Select your wilaya'
+                                      : 'Sélectionnez votre wilaya')),
                       style: TextStyle(
                         fontSize: 14,
                         fontWeight: FontWeight.w600,
-                        color: _wilaya != null && _wilaya!.isNotEmpty ? textColor : secondaryText,
+                        color: _wilaya != null && _wilaya!.isNotEmpty
+                            ? textColor
+                            : secondaryText,
                       ),
                     ),
                   ),
-                  Icon(Icons.keyboard_arrow_down_rounded, size: 20, color: secondaryText),
+                  Icon(
+                    Icons.keyboard_arrow_down_rounded,
+                    size: 20,
+                    color: secondaryText,
+                  ),
                 ],
               ),
             ),
@@ -920,6 +1054,12 @@ class _EditMotherProfileScreenState extends ConsumerState<EditMotherProfileScree
             ],
           ),
 
+          if (_status == UserStatus.mom)
+            Padding(
+              padding: const EdgeInsets.only(top: 12),
+              child: Text(_motherStatusGuidance()),
+            ),
+
           // If Pregnant, show LMP / Due Date Picker
           if (_status == UserStatus.pregnant) ...[
             const SizedBox(height: 16),
@@ -937,15 +1077,19 @@ class _EditMotherProfileScreenState extends ConsumerState<EditMotherProfileScree
                 children: [
                   Row(
                     children: [
-                      const Icon(Icons.event_note_rounded, size: 18, color: Color(0xFFE91E63)),
+                      const Icon(
+                        Icons.event_note_rounded,
+                        size: 18,
+                        color: Color(0xFFE91E63),
+                      ),
                       const SizedBox(width: 8),
                       Expanded(
                         child: Text(
                           lang == 'ar'
                               ? 'تاريخ آخر دورة شهرية (DDR)'
                               : (lang == 'en'
-                                  ? 'Last Menstrual Period (LMP)'
-                                  : 'Date des Dernières Règles (DDR)'),
+                                    ? 'Last Menstrual Period (LMP)'
+                                    : 'Date des Dernières Règles (DDR)'),
                           style: const TextStyle(
                             fontSize: 13,
                             fontWeight: FontWeight.w700,
@@ -959,7 +1103,10 @@ class _EditMotherProfileScreenState extends ConsumerState<EditMotherProfileScree
                   GestureDetector(
                     onTap: _pickPregnancyDate,
                     child: Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 12,
+                        vertical: 10,
+                      ),
                       decoration: BoxDecoration(
                         color: surfaceColor,
                         borderRadius: BorderRadius.circular(10),
@@ -972,10 +1119,17 @@ class _EditMotherProfileScreenState extends ConsumerState<EditMotherProfileScree
                           Expanded(
                             child: Text(
                               _pregnancyDate != null
-                                  ? DateFormat('dd MMMM yyyy', lang == 'ar' ? 'ar' : (lang == 'en' ? 'en' : 'fr')).format(_pregnancyDate!)
+                                  ? DateFormat(
+                                      'dd MMMM yyyy',
+                                      lang == 'ar'
+                                          ? 'ar'
+                                          : (lang == 'en' ? 'en' : 'fr'),
+                                    ).format(_pregnancyDate!)
                                   : (lang == 'ar'
-                                      ? 'اضغطي لتحديد التاريخ'
-                                      : (lang == 'en' ? 'Select Date' : 'Sélectionner la date')),
+                                        ? 'اضغطي لتحديد التاريخ'
+                                        : (lang == 'en'
+                                              ? 'Select Date'
+                                              : 'Sélectionner la date')),
                               style: TextStyle(
                                 fontSize: 13.5,
                                 fontWeight: FontWeight.w600,
@@ -983,7 +1137,11 @@ class _EditMotherProfileScreenState extends ConsumerState<EditMotherProfileScree
                               ),
                             ),
                           ),
-                          const Icon(Icons.calendar_month_rounded, size: 18, color: Color(0xFFE91E63)),
+                          const Icon(
+                            Icons.calendar_month_rounded,
+                            size: 18,
+                            color: Color(0xFFE91E63),
+                          ),
                         ],
                       ),
                     ),
@@ -1029,10 +1187,16 @@ class _EditMotherProfileScreenState extends ConsumerState<EditMotherProfileScree
           duration: const Duration(milliseconds: 200),
           padding: const EdgeInsets.symmetric(vertical: 10),
           decoration: BoxDecoration(
-            color: isSelected ? color : (isDark ? Colors.white.withValues(alpha: 0.05) : const Color(0xFFF9F7F8)),
+            color: isSelected
+                ? color
+                : (isDark
+                      ? Colors.white.withValues(alpha: 0.05)
+                      : const Color(0xFFF9F7F8)),
             borderRadius: BorderRadius.circular(12),
             border: Border.all(
-              color: isSelected ? color : (isDark ? Colors.white12 : const Color(0xFFECE4E8)),
+              color: isSelected
+                  ? color
+                  : (isDark ? Colors.white12 : const Color(0xFFECE4E8)),
               width: isSelected ? 1.5 : 1,
             ),
             boxShadow: isSelected
@@ -1050,7 +1214,9 @@ class _EditMotherProfileScreenState extends ConsumerState<EditMotherProfileScree
               Icon(
                 icon,
                 size: 20,
-                color: isSelected ? Colors.white : (isDark ? Colors.white70 : Colors.black87),
+                color: isSelected
+                    ? Colors.white
+                    : (isDark ? Colors.white70 : Colors.black87),
               ),
               const SizedBox(height: 4),
               Text(
@@ -1058,7 +1224,9 @@ class _EditMotherProfileScreenState extends ConsumerState<EditMotherProfileScree
                 style: TextStyle(
                   fontSize: 12,
                   fontWeight: FontWeight.w700,
-                  color: isSelected ? Colors.white : (isDark ? Colors.white70 : Colors.black87),
+                  color: isSelected
+                      ? Colors.white
+                      : (isDark ? Colors.white70 : Colors.black87),
                 ),
               ),
             ],
@@ -1085,7 +1253,9 @@ class _EditMotherProfileScreenState extends ConsumerState<EditMotherProfileScree
       isDark: isDark,
       title: lang == 'ar'
           ? 'السجل الطبي والصحي'
-          : (lang == 'en' ? 'Medical & Health Record' : 'Dossier médical & santé'),
+          : (lang == 'en'
+                ? 'Medical & Health Record'
+                : 'Dossier médical & santé'),
       icon: Icons.medical_services_rounded,
       accentColor: const Color(0xFF00B0FF),
       textColor: textColor,
@@ -1121,11 +1291,16 @@ class _EditMotherProfileScreenState extends ConsumerState<EditMotherProfileScree
                 },
                 child: AnimatedContainer(
                   duration: const Duration(milliseconds: 180),
-                  padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 7),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 14,
+                    vertical: 7,
+                  ),
                   decoration: BoxDecoration(
                     color: isSelected
                         ? const Color(0xFF00B0FF)
-                        : (isDark ? Colors.white.withValues(alpha: 0.05) : const Color(0xFFF9F7F8)),
+                        : (isDark
+                              ? Colors.white.withValues(alpha: 0.05)
+                              : const Color(0xFFF9F7F8)),
                     borderRadius: BorderRadius.circular(10),
                     border: Border.all(
                       color: isSelected
@@ -1169,7 +1344,9 @@ class _EditMotherProfileScreenState extends ConsumerState<EditMotherProfileScree
                 child: Container(
                   height: 44,
                   decoration: BoxDecoration(
-                    color: isDark ? Colors.white.withValues(alpha: 0.05) : const Color(0xFFF9F7F8),
+                    color: isDark
+                        ? Colors.white.withValues(alpha: 0.05)
+                        : const Color(0xFFF9F7F8),
                     borderRadius: BorderRadius.circular(12),
                     border: Border.all(
                       color: isDark ? Colors.white12 : const Color(0xFFECE4E8),
@@ -1182,10 +1359,18 @@ class _EditMotherProfileScreenState extends ConsumerState<EditMotherProfileScree
                     decoration: InputDecoration(
                       hintText: lang == 'ar'
                           ? 'أضيفي حساسية (مثال: البنسلين)'
-                          : (lang == 'en' ? 'Add allergy (e.g. Penicillin)' : 'Ex: Pénicilline'),
-                      hintStyle: TextStyle(fontSize: 12.5, color: secondaryText.withValues(alpha: 0.7)),
+                          : (lang == 'en'
+                                ? 'Add allergy (e.g. Penicillin)'
+                                : 'Ex: Pénicilline'),
+                      hintStyle: TextStyle(
+                        fontSize: 12.5,
+                        color: secondaryText.withValues(alpha: 0.7),
+                      ),
                       border: InputBorder.none,
-                      contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+                      contentPadding: const EdgeInsets.symmetric(
+                        horizontal: 12,
+                        vertical: 10,
+                      ),
                     ),
                   ),
                 ),
@@ -1200,7 +1385,11 @@ class _EditMotherProfileScreenState extends ConsumerState<EditMotherProfileScree
                     color: accent,
                     borderRadius: BorderRadius.circular(12),
                   ),
-                  child: const Icon(Icons.add_rounded, size: 22, color: Colors.white),
+                  child: const Icon(
+                    Icons.add_rounded,
+                    size: 22,
+                    color: Colors.white,
+                  ),
                 ),
               ),
             ],
@@ -1212,15 +1401,22 @@ class _EditMotherProfileScreenState extends ConsumerState<EditMotherProfileScree
             spacing: 6,
             runSpacing: 6,
             children: _kCommonAllergies.map((item) {
-              final label = lang == 'ar' ? item.ar : (lang == 'en' ? item.en : item.fr);
+              final label = lang == 'ar'
+                  ? item.ar
+                  : (lang == 'en' ? item.en : item.fr);
               final alreadyAdded = _allergies.contains(label);
               if (alreadyAdded) return const SizedBox.shrink();
               return GestureDetector(
                 onTap: () => _addAllergy(label),
                 child: Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 10,
+                    vertical: 4,
+                  ),
                   decoration: BoxDecoration(
-                    color: isDark ? Colors.white.withValues(alpha: 0.04) : Colors.black.withValues(alpha: 0.03),
+                    color: isDark
+                        ? Colors.white.withValues(alpha: 0.04)
+                        : Colors.black.withValues(alpha: 0.03),
                     borderRadius: BorderRadius.circular(8),
                     border: Border.all(
                       color: isDark ? Colors.white10 : Colors.black12,
@@ -1248,8 +1444,12 @@ class _EditMotherProfileScreenState extends ConsumerState<EditMotherProfileScree
               children: _allergies.map((allergy) {
                 return Chip(
                   backgroundColor: AppColors.error.withValues(alpha: 0.1),
-                  side: BorderSide(color: AppColors.error.withValues(alpha: 0.3)),
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                  side: BorderSide(
+                    color: AppColors.error.withValues(alpha: 0.3),
+                  ),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(8),
+                  ),
                   label: Text(
                     allergy,
                     style: const TextStyle(
@@ -1258,7 +1458,11 @@ class _EditMotherProfileScreenState extends ConsumerState<EditMotherProfileScree
                       color: AppColors.error,
                     ),
                   ),
-                  deleteIcon: const Icon(Icons.close_rounded, size: 14, color: AppColors.error),
+                  deleteIcon: const Icon(
+                    Icons.close_rounded,
+                    size: 14,
+                    color: AppColors.error,
+                  ),
                   onDeleted: () => _removeAllergy(allergy),
                 );
               }).toList(),
@@ -1272,10 +1476,14 @@ class _EditMotherProfileScreenState extends ConsumerState<EditMotherProfileScree
             controller: _conditionsController,
             label: lang == 'ar'
                 ? 'حالات صحية أو أمراض مزمنة'
-                : (lang == 'en' ? 'Chronic conditions or medical history' : 'Conditions médicales ou maladies chroniques'),
+                : (lang == 'en'
+                      ? 'Chronic conditions or medical history'
+                      : 'Conditions médicales ou maladies chroniques'),
             hint: lang == 'ar'
                 ? 'مثال: السكري، ضغط الدم، فقر الدم'
-                : (lang == 'en' ? 'e.g. Diabetes, Asthma, Anemia' : 'Ex: Diabète, Asthme, Hypertension'),
+                : (lang == 'en'
+                      ? 'e.g. Diabetes, Asthma, Anemia'
+                      : 'Ex: Diabète, Asthme, Hypertension'),
             icon: Icons.healing_outlined,
             isDark: isDark,
             textColor: textColor,
@@ -1391,11 +1599,11 @@ class _EditMotherProfileScreenState extends ConsumerState<EditMotherProfileScree
     final weeks = (days / 7).floor();
     final remainingDays = days % 7;
     if (lang == 'ar') {
-      return 'أنتِ حالياً في الأسبوع $weeks و $remainingDays أيام من الحمل 🌸';
+      return 'أنتِ حالياً في الأسبوع $weeks و $remainingDays أيام من الحمل';
     } else if (lang == 'en') {
-      return 'You are currently at week $weeks and $remainingDays days of pregnancy 🌸';
+      return 'You are currently at week $weeks and $remainingDays days of pregnancy';
     } else {
-      return 'Vous êtes actuellement à $weeks semaines et $remainingDays jours de grossesse 🌸';
+      return 'Vous êtes actuellement à $weeks semaines et $remainingDays jours de grossesse';
     }
   }
 
@@ -1457,7 +1665,9 @@ class _EditMotherProfileScreenState extends ConsumerState<EditMotherProfileScree
         Container(
           padding: const EdgeInsets.symmetric(horizontal: 14),
           decoration: BoxDecoration(
-            color: isDark ? Colors.white.withValues(alpha: 0.05) : const Color(0xFFF9F7F8),
+            color: isDark
+                ? Colors.white.withValues(alpha: 0.05)
+                : const Color(0xFFF9F7F8),
             borderRadius: BorderRadius.circular(14),
             border: Border.all(
               color: isDark ? Colors.white12 : const Color(0xFFECE4E8),
@@ -1530,7 +1740,9 @@ class _MotherBentoCard extends StatelessWidget {
         color: surfaceColor,
         borderRadius: BorderRadius.circular(20),
         border: Border.all(
-          color: isDark ? Colors.white.withValues(alpha: 0.08) : const Color(0xFFECE4E8),
+          color: isDark
+              ? Colors.white.withValues(alpha: 0.08)
+              : const Color(0xFFECE4E8),
         ),
         boxShadow: [
           BoxShadow(
@@ -1711,8 +1923,8 @@ class _WilayaSelectorSheetState extends State<_WilayaSelectorSheet> {
                 isAr
                     ? 'اختيار الولاية (58 ولاية)'
                     : (widget.lang == 'en'
-                        ? 'Select Province / Wilaya (58)'
-                        : 'Sélectionner la wilaya (58)'),
+                          ? 'Select Province / Wilaya (58)'
+                          : 'Sélectionner la wilaya (58)'),
                 style: TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.w800,
@@ -1727,12 +1939,18 @@ class _WilayaSelectorSheetState extends State<_WilayaSelectorSheet> {
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 12),
             decoration: BoxDecoration(
-              color: widget.isDark ? Colors.white.withValues(alpha: 0.06) : const Color(0xFFF4F0F2),
+              color: widget.isDark
+                  ? Colors.white.withValues(alpha: 0.06)
+                  : const Color(0xFFF4F0F2),
               borderRadius: BorderRadius.circular(12),
             ),
             child: Row(
               children: [
-                Icon(Icons.search_rounded, size: 18, color: widget.secondaryText),
+                Icon(
+                  Icons.search_rounded,
+                  size: 18,
+                  color: widget.secondaryText,
+                ),
                 const SizedBox(width: 8),
                 Expanded(
                   child: TextField(
@@ -1743,9 +1961,12 @@ class _WilayaSelectorSheetState extends State<_WilayaSelectorSheet> {
                       hintText: isAr
                           ? 'ابحث باسم الولاية أو رقمها...'
                           : (widget.lang == 'en'
-                              ? 'Search by name or code...'
-                              : 'Rechercher par nom ou code...'),
-                      hintStyle: TextStyle(fontSize: 12.5, color: widget.secondaryText),
+                                ? 'Search by name or code...'
+                                : 'Rechercher par nom ou code...'),
+                      hintStyle: TextStyle(
+                        fontSize: 12.5,
+                        color: widget.secondaryText,
+                      ),
                       border: InputBorder.none,
                       isDense: true,
                       contentPadding: const EdgeInsets.symmetric(vertical: 12),
@@ -1763,22 +1984,36 @@ class _WilayaSelectorSheetState extends State<_WilayaSelectorSheet> {
               itemCount: _filtered.length,
               separatorBuilder: (_, _) => Divider(
                 height: 1,
-                color: widget.isDark ? Colors.white10 : Colors.black.withValues(alpha: 0.05),
+                color: widget.isDark
+                    ? Colors.white10
+                    : Colors.black.withValues(alpha: 0.05),
               ),
               itemBuilder: (context, index) {
                 final item = _filtered[index];
                 final codeFormatted = item.code.toString().padLeft(2, '0');
-                final displayText = isAr ? '$codeFormatted - ${item.ar} (${item.fr})' : '$codeFormatted - ${item.fr} (${item.ar})';
-                final isSelected = widget.selectedWilaya == displayText || widget.selectedWilaya == item.fr || widget.selectedWilaya == item.ar;
+                final displayText = isAr
+                    ? '$codeFormatted - ${item.ar} (${item.fr})'
+                    : '$codeFormatted - ${item.fr} (${item.ar})';
+                final isSelected =
+                    widget.selectedWilaya == displayText ||
+                    widget.selectedWilaya == item.fr ||
+                    widget.selectedWilaya == item.ar;
 
                 return ListTile(
                   dense: true,
-                  contentPadding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                  contentPadding: const EdgeInsets.symmetric(
+                    horizontal: 8,
+                    vertical: 2,
+                  ),
                   leading: Container(
                     width: 32,
                     height: 32,
                     decoration: BoxDecoration(
-                      color: isSelected ? widget.accent : (widget.isDark ? Colors.white10 : Colors.black.withValues(alpha: 0.04)),
+                      color: isSelected
+                          ? widget.accent
+                          : (widget.isDark
+                                ? Colors.white10
+                                : Colors.black.withValues(alpha: 0.04)),
                       borderRadius: BorderRadius.circular(8),
                     ),
                     child: Center(
@@ -1796,7 +2031,9 @@ class _WilayaSelectorSheetState extends State<_WilayaSelectorSheet> {
                     isAr ? item.ar : item.fr,
                     style: TextStyle(
                       fontSize: 14,
-                      fontWeight: isSelected ? FontWeight.w800 : FontWeight.w600,
+                      fontWeight: isSelected
+                          ? FontWeight.w800
+                          : FontWeight.w600,
                       color: isSelected ? widget.accent : widget.textColor,
                     ),
                   ),
@@ -1807,10 +2044,20 @@ class _WilayaSelectorSheetState extends State<_WilayaSelectorSheet> {
                       color: widget.secondaryText,
                     ),
                   ),
-                  trailing: isSelected ? Icon(Icons.check_circle_rounded, color: widget.accent, size: 20) : null,
+                  trailing: isSelected
+                      ? Icon(
+                          Icons.check_circle_rounded,
+                          color: widget.accent,
+                          size: 20,
+                        )
+                      : null,
                   onTap: () {
                     HapticFeedback.selectionClick();
-                    widget.onSelect(isAr ? '${item.ar} ($codeFormatted)' : '${item.fr} ($codeFormatted)');
+                    widget.onSelect(
+                      isAr
+                          ? '${item.ar} ($codeFormatted)'
+                          : '${item.fr} ($codeFormatted)',
+                    );
                   },
                 );
               },

@@ -2,7 +2,6 @@ import 'dart:io';
 
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
@@ -73,6 +72,8 @@ class _CreateCapsuleScreenState extends ConsumerState<CreateCapsuleScreen> {
   String? _selectedMilestoneId;
 
   bool _isLoading = false;
+  bool _allowLeave = false;
+  bool _askingToLeave = false;
 
   @override
   void initState() {
@@ -114,7 +115,7 @@ class _CreateCapsuleScreenState extends ConsumerState<CreateCapsuleScreen> {
   @override
   void dispose() {
     _tagController.dispose();
-    if (_recordedAudio != null && !_isAudioValidated) {
+    if (_recordedAudio != null && !_isLoading) {
       try {
         if (_recordedAudio!.existsSync()) {
           _recordedAudio!.deleteSync();
@@ -122,6 +123,52 @@ class _CreateCapsuleScreenState extends ConsumerState<CreateCapsuleScreen> {
       } catch (_) {}
     }
     super.dispose();
+  }
+
+  Future<void> _requestLeave() async {
+    if (_isLoading || _askingToLeave) return;
+    if (_recordedAudio == null) {
+      Navigator.of(context).pop();
+      return;
+    }
+    _askingToLeave = true;
+    final lang = Localizations.localeOf(context).languageCode;
+    final discard = await showDialog<bool>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: Text(
+          lang == 'ar'
+              ? 'مغادرة دون حفظ؟'
+              : lang == 'en'
+              ? 'Leave without saving?'
+              : 'Quitter sans enregistrer ?',
+        ),
+        content: Text(
+          lang == 'ar'
+              ? 'سيتم حذف التسجيل غير المحفوظ.'
+              : lang == 'en'
+              ? 'Your unsaved recording will be discarded.'
+              : 'Votre enregistrement non sauvegardé sera supprimé.',
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(ctx, false),
+            child: Text(context.l10n.albumCancel),
+          ),
+          TextButton(
+            onPressed: () => Navigator.pop(ctx, true),
+            child: Text(context.l10n.delete),
+          ),
+        ],
+      ),
+    );
+    _askingToLeave = false;
+    if (discard == true && mounted) {
+      setState(() => _allowLeave = true);
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted) Navigator.of(context).pop();
+      });
+    }
   }
 
   @override
@@ -141,291 +188,302 @@ class _CreateCapsuleScreenState extends ConsumerState<CreateCapsuleScreen> {
     final childrenAsync = ref.watch(childrenProvider);
     ref.watch(capsuleActionsProvider);
 
-    return Scaffold(
-      backgroundColor: bgColor,
-      body: Stack(
-        children: [
-          const TopAmbientGradient(height: 420),
-          SafeArea(
-            child: SingleChildScrollView(
-              physics: const BouncingScrollPhysics(),
-              padding: const EdgeInsets.fromLTRB(
-                AppSpacing.screenPaddingH,
-                14,
-                AppSpacing.screenPaddingH,
-                32,
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  // ─── Integrated Top Header ───────────────────
-                  _buildHeader(
-                    context,
-                    isDark,
-                    primary,
-                    textColor,
-                    secondaryText,
-                  ),
-                  const SizedBox(height: 18),
+    return PopScope(
+      canPop: !_isLoading && (_allowLeave || _recordedAudio == null),
+      onPopInvokedWithResult: (didPop, result) {
+        if (!didPop) _requestLeave();
+      },
+      child: Scaffold(
+        backgroundColor: bgColor,
+        body: Stack(
+          children: [
+            const TopAmbientGradient(height: 420),
+            SafeArea(
+              child: SingleChildScrollView(
+                physics: const BouncingScrollPhysics(),
+                padding: const EdgeInsets.fromLTRB(
+                  AppSpacing.screenPaddingH,
+                  14,
+                  AppSpacing.screenPaddingH,
+                  32,
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    // ─── Integrated Top Header ───────────────────
+                    _buildHeader(
+                      context,
+                      isDark,
+                      primary,
+                      textColor,
+                      secondaryText,
+                    ),
+                    const SizedBox(height: 18),
 
-                  // 📸 Section 1: Photo Hero Card
-                  _buildPhotoSection(context, isDark, primary, textColor, secondaryText),
-                  const SizedBox(height: AppSpacing.md),
+                    // 📸 Section 1: Photo Hero Card
+                    _buildPhotoSection(
+                      context,
+                      isDark,
+                      primary,
+                      textColor,
+                      secondaryText,
+                    ),
+                    const SizedBox(height: AppSpacing.md),
 
-                  // 📂 Section 2: Essential Info (Category & Capture Date)
-                  _buildSectionCard(
-                    context: context,
-                    isDark: isDark,
-                    watermarkIcon: Icons.auto_stories_rounded,
-                    backgroundColor: isDark
-                        ? const Color(0xFF261D24)
-                        : const Color(0xFFFFF9FA),
-                    borderColor: isDark
-                        ? AppColors.primaryLight.withValues(alpha: 0.25)
-                        : AppColors.primaryLight.withValues(alpha: 0.16),
-                    children: [
-                      _buildCategorySection(
-                        context,
-                        lang,
-                        isDark,
-                        primary,
-                        textColor,
-                        secondaryText,
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 12),
-                        child: Divider(
-                          height: 1,
-                          color: isDark ? Colors.white10 : const Color(0xFFF0EBF4),
-                        ),
-                      ),
-                      _buildDateSection(
-                        context,
-                        lang,
-                        isDark,
-                        primary,
-                        textColor,
-                        secondaryText,
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: AppSpacing.md),
-
-                  // 👶 Section 3: Child & Emotion
-                  _buildSectionCard(
-                    context: context,
-                    isDark: isDark,
-                    watermarkIcon: Icons.mood_rounded,
-                    backgroundColor: isDark
-                        ? const Color(0xFF221E2C)
-                        : const Color(0xFFFAF7FF),
-                    borderColor: isDark
-                        ? const Color(0xFF8B5CF6).withValues(alpha: 0.25)
-                        : const Color(0xFF8B5CF6).withValues(alpha: 0.16),
-                    children: [
-                      childrenAsync.when(
-                        loading: () => const SizedBox.shrink(),
-                        error: (_, _) => const SizedBox.shrink(),
-                        data: (children) => _buildChildSelector(
+                    // 📂 Section 2: Essential Info (Category & Capture Date)
+                    _buildSectionCard(
+                      context: context,
+                      isDark: isDark,
+                      watermarkIcon: Icons.auto_stories_rounded,
+                      backgroundColor: isDark
+                          ? const Color(0xFF261D24)
+                          : const Color(0xFFFFF9FA),
+                      borderColor: isDark
+                          ? AppColors.primaryLight.withValues(alpha: 0.25)
+                          : AppColors.primaryLight.withValues(alpha: 0.16),
+                      children: [
+                        _buildCategorySection(
                           context,
-                          children,
+                          lang,
                           isDark,
                           primary,
                           textColor,
                           secondaryText,
                         ),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 12),
-                        child: Divider(
-                          height: 1,
-                          color: isDark ? Colors.white10 : const Color(0xFFEFEAF6),
-                        ),
-                      ),
-                      EmotionPicker(
-                        selectedEmotion: _selectedEmotion,
-                        secondaryEmotions: _secondaryEmotions,
-                        onEmotionSelected: (emotion) {
-                          setState(() {
-                            _selectedEmotion = emotion;
-                            _secondaryEmotions.remove(emotion);
-                          });
-                        },
-                        onSecondaryEmotionsChanged: (emotions) {
-                          setState(() => _secondaryEmotions = emotions);
-                        },
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: AppSpacing.md),
-
-                  // 🎯 Section 3.5: Linked Milestone (Timeline)
-                  _buildMilestoneSection(
-                    context,
-                    lang,
-                    isDark,
-                    primary,
-                    textColor,
-                    secondaryText,
-                  ),
-                  const SizedBox(height: AppSpacing.md),
-
-                  // 🎙️ Section 4: Voice Note & Tags (Optional)
-                  _buildSectionCard(
-                    context: context,
-                    isDark: isDark,
-                    watermarkIcon: Icons.graphic_eq_rounded,
-                    backgroundColor: isDark
-                        ? const Color(0xFF1D2326)
-                        : const Color(0xFFF7FBFA),
-                    borderColor: isDark
-                        ? const Color(0xFF14B8A6).withValues(alpha: 0.25)
-                        : const Color(0xFF14B8A6).withValues(alpha: 0.18),
-                    children: [
-                      Row(
-                        children: [
-                          Container(
-                            width: 28,
-                            height: 28,
-                            decoration: BoxDecoration(
-                              color: primary.withValues(alpha: 0.12),
-                              borderRadius: BorderRadius.circular(8),
-                            ),
-                            child: Icon(Icons.mic_rounded, size: 16, color: primary),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(vertical: 12),
+                          child: Divider(
+                            height: 1,
+                            color: isDark
+                                ? Colors.white10
+                                : const Color(0xFFF0EBF4),
                           ),
-                          const SizedBox(width: 8),
-                          Text(
-                            l10n.capsuleVoiceMessageOptional.replaceAll('🎤', '').trim(),
-                            style: AppTypography.fromContext(
-                              context,
-                              fontSize: 14,
-                              fontWeight: FontWeight.w700,
-                              color: textColor,
-                            ),
+                        ),
+                        _buildDateSection(
+                          context,
+                          lang,
+                          isDark,
+                          primary,
+                          textColor,
+                          secondaryText,
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: AppSpacing.md),
+
+                    // 👶 Section 3: Child & Emotion
+                    _buildSectionCard(
+                      context: context,
+                      isDark: isDark,
+                      watermarkIcon: Icons.mood_rounded,
+                      backgroundColor: isDark
+                          ? const Color(0xFF221E2C)
+                          : const Color(0xFFFAF7FF),
+                      borderColor: isDark
+                          ? const Color(0xFF8B5CF6).withValues(alpha: 0.25)
+                          : const Color(0xFF8B5CF6).withValues(alpha: 0.16),
+                      children: [
+                        childrenAsync.when(
+                          loading: () => const SizedBox.shrink(),
+                          error: (_, _) => const SizedBox.shrink(),
+                          data: (children) => _buildChildSelector(
+                            context,
+                            children,
+                            isDark,
+                            primary,
+                            textColor,
+                            secondaryText,
                           ),
-                        ],
-                      ),
-                      const SizedBox(height: AppSpacing.sm),
-                      if (_recordedAudio == null &&
-                          (_existingAudioUrl == null || _removeAudio))
-                        AudioRecorderWidget(
-                          onRecordingComplete: (file, duration) async {
-                            if (_recordedAudio != null && _recordedAudio!.path != file.path) {
-                              try {
-                                if (await _recordedAudio!.exists()) {
-                                  await _recordedAudio!.delete();
-                                }
-                              } catch (_) {}
-                            }
-                            setState(() {
-                              _recordedAudio = file;
-                              _audioDuration = duration;
-                              _removeAudio = false;
-                              _isAudioValidated = false;
-                            });
-                          },
-                          onError: (error) {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(
-                                content: Text(error),
-                                backgroundColor: AppColors.error,
-                              ),
-                            );
-                          },
-                        )
-                      else if (_recordedAudio != null ||
-                          (_existingAudioUrl != null && !_removeAudio))
-                        RecordedAudioPreview(
-                          audioFile: _recordedAudio,
-                          audioUrl: _existingAudioUrl,
-                          duration: _audioDuration ?? 0,
-                          isValidated: _isAudioValidated,
-                          onValidate: () {
-                            setState(() {
-                              _isAudioValidated = true;
-                            });
-                            HapticFeedback.lightImpact();
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(
-                                content: Text(context.l10n.capsuleAudioValidatedSuccess),
-                                backgroundColor: AppColors.success,
-                                duration: const Duration(seconds: 1),
-                              ),
-                            );
-                          },
-                          onReRecord: () async {
-                            if (_recordedAudio != null) {
-                              try {
-                                if (await _recordedAudio!.exists()) {
-                                  await _recordedAudio!.delete();
-                                }
-                              } catch (_) {}
-                            }
-                            setState(() {
-                              _recordedAudio = null;
-                              _audioDuration = null;
-                              _isAudioValidated = false;
-                              if (_existingAudioUrl != null) {
-                                _removeAudio = true;
-                              }
-                            });
-                          },
-                          onDelete: () async {
-                            if (_recordedAudio != null) {
-                              try {
-                                if (await _recordedAudio!.exists()) {
-                                  await _recordedAudio!.delete();
-                                }
-                              } catch (_) {}
-                            }
-                            setState(() {
-                              _recordedAudio = null;
-                              _audioDuration = null;
-                              _isAudioValidated = false;
-                              if (_existingAudioUrl != null) {
-                                _removeAudio = true;
-                              }
-                            });
-                          },
                         ),
-                      Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 12),
-                        child: Divider(
-                          height: 1,
-                          color: isDark ? Colors.white10 : const Color(0xFFEBF2F0),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(vertical: 12),
+                          child: Divider(
+                            height: 1,
+                            color: isDark
+                                ? Colors.white10
+                                : const Color(0xFFEFEAF6),
+                          ),
                         ),
-                      ),
-                      _buildTagsSection(
-                        context,
-                        isDark,
-                        primary,
-                        textColor,
-                        secondaryText,
-                      ),
-                    ],
-                  ),
-                ],
+                        EmotionPicker(
+                          selectedEmotions: [
+                            ?_selectedEmotion,
+                            ..._secondaryEmotions,
+                          ],
+                          onChanged: (emotions) => setState(() {
+                            _selectedEmotion = emotions.firstOrNull;
+                            _secondaryEmotions = emotions.skip(1).toList();
+                          }),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: AppSpacing.md),
+
+                    // 🎯 Section 3.5: Linked Milestone (Timeline)
+                    _buildMilestoneSection(
+                      context,
+                      lang,
+                      isDark,
+                      primary,
+                      textColor,
+                      secondaryText,
+                    ),
+                    const SizedBox(height: AppSpacing.md),
+
+                    // 🎙️ Section 4: Voice Note & Tags (Optional)
+                    _buildSectionCard(
+                      context: context,
+                      isDark: isDark,
+                      watermarkIcon: Icons.graphic_eq_rounded,
+                      backgroundColor: isDark
+                          ? const Color(0xFF1D2326)
+                          : const Color(0xFFF7FBFA),
+                      borderColor: isDark
+                          ? const Color(0xFF14B8A6).withValues(alpha: 0.25)
+                          : const Color(0xFF14B8A6).withValues(alpha: 0.18),
+                      children: [
+                        Row(
+                          children: [
+                            Container(
+                              width: 28,
+                              height: 28,
+                              decoration: BoxDecoration(
+                                color: primary.withValues(alpha: 0.12),
+                                borderRadius: BorderRadius.circular(8),
+                              ),
+                              child: Icon(
+                                Icons.mic_rounded,
+                                size: 16,
+                                color: primary,
+                              ),
+                            ),
+                            const SizedBox(width: 8),
+                            Text(
+                              l10n.capsuleVoiceMessageOptional
+                                  .replaceAll('🎤', '')
+                                  .trim(),
+                              style: AppTypography.fromContext(
+                                context,
+                                fontSize: 14,
+                                fontWeight: FontWeight.w700,
+                                color: textColor,
+                              ),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: AppSpacing.sm),
+                        if (_recordedAudio == null &&
+                            (_existingAudioUrl == null || _removeAudio))
+                          AudioRecorderWidget(
+                            onRecordingComplete: (file, duration) async {
+                              if (_recordedAudio != null &&
+                                  _recordedAudio!.path != file.path) {
+                                try {
+                                  if (await _recordedAudio!.exists()) {
+                                    await _recordedAudio!.delete();
+                                  }
+                                } catch (_) {}
+                              }
+                              setState(() {
+                                _recordedAudio = file;
+                                _audioDuration = duration;
+                                _removeAudio = false;
+                                _isAudioValidated = true;
+                              });
+                            },
+                            onError: (error) {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(
+                                  content: Text(error),
+                                  backgroundColor: AppColors.error,
+                                ),
+                              );
+                            },
+                          )
+                        else if (_recordedAudio != null ||
+                            (_existingAudioUrl != null && !_removeAudio))
+                          RecordedAudioPreview(
+                            audioFile: _recordedAudio,
+                            audioUrl: _existingAudioUrl,
+                            duration: _audioDuration ?? 0,
+                            isValidated: _isAudioValidated,
+                            onReRecord: () async {
+                              if (_recordedAudio != null) {
+                                try {
+                                  if (await _recordedAudio!.exists()) {
+                                    await _recordedAudio!.delete();
+                                  }
+                                } catch (_) {}
+                              }
+                              setState(() {
+                                _recordedAudio = null;
+                                _audioDuration = null;
+                                _isAudioValidated = false;
+                                if (_existingAudioUrl != null) {
+                                  _removeAudio = true;
+                                }
+                              });
+                            },
+                            onDelete: () async {
+                              if (_recordedAudio != null) {
+                                try {
+                                  if (await _recordedAudio!.exists()) {
+                                    await _recordedAudio!.delete();
+                                  }
+                                } catch (_) {}
+                              }
+                              setState(() {
+                                _recordedAudio = null;
+                                _audioDuration = null;
+                                _isAudioValidated = false;
+                                if (_existingAudioUrl != null) {
+                                  _removeAudio = true;
+                                }
+                              });
+                            },
+                          ),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(vertical: 12),
+                          child: Divider(
+                            height: 1,
+                            color: isDark
+                                ? Colors.white10
+                                : const Color(0xFFEBF2F0),
+                          ),
+                        ),
+                        _buildTagsSection(
+                          context,
+                          isDark,
+                          primary,
+                          textColor,
+                          secondaryText,
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
               ),
             ),
-          ),
-        ],
-      ),
-      bottomNavigationBar: _buildStickyBottomBar(
-        context,
-        isDark,
-        primary,
-        textColor,
-        secondaryText,
+          ],
+        ),
+        bottomNavigationBar: _buildStickyBottomBar(
+          context,
+          isDark,
+          primary,
+          textColor,
+          secondaryText,
+        ),
       ),
     );
   }
 
   bool get _canSave {
-    final hasPhoto = _selectedPhoto != null ||
+    final hasPhoto =
+        _selectedPhoto != null ||
         (_existingPhotoUrl != null && _existingPhotoUrl!.isNotEmpty);
     return hasPhoto &&
         (_selectedChild != null || _withMother) &&
-        _selectedEmotion != null &&
+        {?_selectedEmotion, ..._secondaryEmotions}.isNotEmpty &&
+        {?_selectedEmotion, ..._secondaryEmotions}.length <= 3 &&
         _selectedCategory != null &&
         !_isLoading;
   }
@@ -444,7 +502,7 @@ class _CreateCapsuleScreenState extends ConsumerState<CreateCapsuleScreen> {
       children: [
         // Close Button with Soft Squircle Backdrop
         GestureDetector(
-          onTap: () => Navigator.pop(context),
+          onTap: _requestLeave,
           child: Container(
             width: 42,
             height: 42,
@@ -496,8 +554,10 @@ class _CreateCapsuleScreenState extends ConsumerState<CreateCapsuleScreen> {
               Text(
                 widget.existingCapsule != null
                     ? (lang == 'ar'
-                        ? 'تعديل الذكرى'
-                        : (lang == 'en' ? 'Edit Memory' : 'Modifier le souvenir'))
+                          ? 'تعديل الذكرى'
+                          : (lang == 'en'
+                                ? 'Edit Memory'
+                                : 'Modifier le souvenir'))
                     : l10n.capsuleNewTitle,
                 style: AppTypography.fromContext(
                   context,
@@ -511,10 +571,10 @@ class _CreateCapsuleScreenState extends ConsumerState<CreateCapsuleScreen> {
               Text(
                 widget.existingCapsule != null
                     ? (lang == 'ar'
-                        ? 'تحديث بيانات ومحتوى الكبسولة'
-                        : (lang == 'en'
-                            ? 'Update capsule media and information'
-                            : 'Mettre à jour les informations et médias'))
+                          ? 'تحديث بيانات ومحتوى الكبسولة'
+                          : (lang == 'en'
+                                ? 'Update capsule media and information'
+                                : 'Mettre à jour les informations et médias'))
                     : l10n.milestone_capture_this_moment,
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
@@ -541,9 +601,10 @@ class _CreateCapsuleScreenState extends ConsumerState<CreateCapsuleScreen> {
     Color? borderColor,
     IconData? watermarkIcon,
   }) {
-    final bg = backgroundColor ??
-        (isDark ? const Color(0xFF221F28) : Colors.white);
-    final border = borderColor ??
+    final bg =
+        backgroundColor ?? (isDark ? const Color(0xFF221F28) : Colors.white);
+    final border =
+        borderColor ??
         (isDark ? AppColors.dividerDark : const Color(0xFFECEBF0));
 
     return Container(
@@ -608,13 +669,13 @@ class _CreateCapsuleScreenState extends ConsumerState<CreateCapsuleScreen> {
     final sectionTitle = isArabic
         ? 'المعلم المرتبط في خط الحياة (Timeline)'
         : (lang == 'en'
-            ? 'Linked Timeline Milestone'
-            : 'Jalon associé (Timeline)');
+              ? 'Linked Timeline Milestone'
+              : 'Jalon associé (Timeline)');
     final sectionSubtitle = isArabic
         ? 'لتوثيق الكبسولة فوراً ضمن محطات مسار نمو الطفل'
         : (lang == 'en'
-            ? 'To display this capsule directly on child life timeline'
-            : 'Pour afficher ce souvenir directement sur la Timeline');
+              ? 'To display this capsule directly on child life timeline'
+              : 'Pour afficher ce souvenir directement sur la Timeline');
 
     return _buildSectionCard(
       context: context,
@@ -676,9 +737,7 @@ class _CreateCapsuleScreenState extends ConsumerState<CreateCapsuleScreen> {
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
             decoration: BoxDecoration(
-              color: isDark
-                  ? const Color(0xFF131D24)
-                  : const Color(0xFFEBF6FA),
+              color: isDark ? const Color(0xFF131D24) : const Color(0xFFEBF6FA),
               borderRadius: BorderRadius.circular(14),
               border: Border.all(
                 color: const Color(0xFF0EA5E9).withValues(alpha: 0.4),
@@ -725,8 +784,9 @@ class _CreateCapsuleScreenState extends ConsumerState<CreateCapsuleScreen> {
                               vertical: 2,
                             ),
                             decoration: BoxDecoration(
-                              color: currentMilestone.phase.color
-                                  .withValues(alpha: 0.15),
+                              color: currentMilestone.phase.color.withValues(
+                                alpha: 0.15,
+                              ),
                               borderRadius: BorderRadius.circular(6),
                             ),
                             child: Text(
@@ -811,8 +871,8 @@ class _CreateCapsuleScreenState extends ConsumerState<CreateCapsuleScreen> {
                       isArabic
                           ? 'اختيار معلم زمني (Timeline) لهذا التوثيق'
                           : (lang == 'en'
-                              ? 'Choose a timeline milestone for this capsule'
-                              : 'Choisir un jalon de la Timeline pour ce souvenir'),
+                                ? 'Choose a timeline milestone for this capsule'
+                                : 'Choisir un jalon de la Timeline pour ce souvenir'),
                       style: AppTypography.fromContext(
                         context,
                         fontSize: 13,
@@ -855,7 +915,9 @@ class _CreateCapsuleScreenState extends ConsumerState<CreateCapsuleScreen> {
       ),
       builder: (bottomSheetContext) {
         // Filter milestones: keep those with actionType capsule/mixed
-        final milestones = allMilestones.where((m) => m.canHaveCapsule).toList();
+        final milestones = allMilestones
+            .where((m) => m.canHaveCapsule)
+            .toList();
 
         return DraggableScrollableSheet(
           initialChildSize: 0.65,
@@ -905,7 +967,10 @@ class _CreateCapsuleScreenState extends ConsumerState<CreateCapsuleScreen> {
                 Expanded(
                   child: ListView.separated(
                     controller: scrollController,
-                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 16,
+                      vertical: 12,
+                    ),
                     itemCount: milestones.length + 1,
                     separatorBuilder: (_, _) => const SizedBox(height: 8),
                     itemBuilder: (context, index) {
@@ -918,20 +983,31 @@ class _CreateCapsuleScreenState extends ConsumerState<CreateCapsuleScreen> {
                           },
                           borderRadius: BorderRadius.circular(14),
                           child: Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 14,
+                              vertical: 12,
+                            ),
                             decoration: BoxDecoration(
                               color: isNoneSelected
                                   ? primary.withValues(alpha: 0.12)
-                                  : (isDark ? const Color(0xFF221F28) : const Color(0xFFF7F5FA)),
+                                  : (isDark
+                                        ? const Color(0xFF221F28)
+                                        : const Color(0xFFF7F5FA)),
                               borderRadius: BorderRadius.circular(14),
                               border: Border.all(
-                                color: isNoneSelected ? primary : Colors.transparent,
+                                color: isNoneSelected
+                                    ? primary
+                                    : Colors.transparent,
                                 width: 1.2,
                               ),
                             ),
                             child: Row(
                               children: [
-                                Icon(Icons.bookmark_border_rounded, size: 20, color: secondaryText),
+                                Icon(
+                                  Icons.bookmark_border_rounded,
+                                  size: 20,
+                                  color: secondaryText,
+                                ),
                                 const SizedBox(width: 10),
                                 Expanded(
                                   child: Text(
@@ -939,14 +1015,22 @@ class _CreateCapsuleScreenState extends ConsumerState<CreateCapsuleScreen> {
                                         ? 'بدون معلم محدد (ذكرى حرة)'
                                         : 'Sans jalon spécifique (Souvenir libre)',
                                     style: TextStyle(
-                                      fontWeight: isNoneSelected ? FontWeight.w700 : FontWeight.w500,
-                                      color: isNoneSelected ? primary : textColor,
+                                      fontWeight: isNoneSelected
+                                          ? FontWeight.w700
+                                          : FontWeight.w500,
+                                      color: isNoneSelected
+                                          ? primary
+                                          : textColor,
                                       fontSize: 13.5,
                                     ),
                                   ),
                                 ),
                                 if (isNoneSelected)
-                                  Icon(Icons.check_circle_rounded, size: 18, color: primary),
+                                  Icon(
+                                    Icons.check_circle_rounded,
+                                    size: 18,
+                                    color: primary,
+                                  ),
                               ],
                             ),
                           ),
@@ -972,14 +1056,23 @@ class _CreateCapsuleScreenState extends ConsumerState<CreateCapsuleScreen> {
                         },
                         borderRadius: BorderRadius.circular(14),
                         child: Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 14,
+                            vertical: 12,
+                          ),
                           decoration: BoxDecoration(
                             color: isSelected
-                                ? const Color(0xFF0EA5E9).withValues(alpha: 0.14)
-                                : (isDark ? const Color(0xFF221F28) : const Color(0xFFF7F5FA)),
+                                ? const Color(
+                                    0xFF0EA5E9,
+                                  ).withValues(alpha: 0.14)
+                                : (isDark
+                                      ? const Color(0xFF221F28)
+                                      : const Color(0xFFF7F5FA)),
                             borderRadius: BorderRadius.circular(14),
                             border: Border.all(
-                              color: isSelected ? const Color(0xFF0EA5E9) : Colors.transparent,
+                              color: isSelected
+                                  ? const Color(0xFF0EA5E9)
+                                  : Colors.transparent,
                               width: 1.2,
                             ),
                           ),
@@ -989,10 +1082,16 @@ class _CreateCapsuleScreenState extends ConsumerState<CreateCapsuleScreen> {
                                 width: 34,
                                 height: 34,
                                 decoration: BoxDecoration(
-                                  color: m.category.color.withValues(alpha: 0.15),
+                                  color: m.category.color.withValues(
+                                    alpha: 0.15,
+                                  ),
                                   borderRadius: BorderRadius.circular(10),
                                 ),
-                                child: Icon(m.category.icon, size: 18, color: m.category.color),
+                                child: Icon(
+                                  m.category.icon,
+                                  size: 18,
+                                  color: m.category.color,
+                                ),
                               ),
                               const SizedBox(width: 10),
                               Expanded(
@@ -1002,8 +1101,12 @@ class _CreateCapsuleScreenState extends ConsumerState<CreateCapsuleScreen> {
                                     Text(
                                       m.getTitle(lang),
                                       style: TextStyle(
-                                        fontWeight: isSelected ? FontWeight.w700 : FontWeight.w600,
-                                        color: isSelected ? const Color(0xFF0EA5E9) : textColor,
+                                        fontWeight: isSelected
+                                            ? FontWeight.w700
+                                            : FontWeight.w600,
+                                        color: isSelected
+                                            ? const Color(0xFF0EA5E9)
+                                            : textColor,
                                         fontSize: 13.5,
                                       ),
                                     ),
@@ -1019,7 +1122,11 @@ class _CreateCapsuleScreenState extends ConsumerState<CreateCapsuleScreen> {
                                 ),
                               ),
                               if (isSelected)
-                                const Icon(Icons.check_circle_rounded, size: 18, color: Color(0xFF0EA5E9)),
+                                const Icon(
+                                  Icons.check_circle_rounded,
+                                  size: 18,
+                                  color: Color(0xFF0EA5E9),
+                                ),
                             ],
                           ),
                         ),
@@ -1063,10 +1170,7 @@ class _CreateCapsuleScreenState extends ConsumerState<CreateCapsuleScreen> {
           child: Stack(
             fit: StackFit.expand,
             children: [
-              Image.file(
-                _selectedPhoto!,
-                fit: BoxFit.cover,
-              ),
+              Image.file(_selectedPhoto!, fit: BoxFit.cover),
               // Top Action Overlay Pill Buttons
               PositionedDirectional(
                 top: 10,
@@ -1136,9 +1240,7 @@ class _CreateCapsuleScreenState extends ConsumerState<CreateCapsuleScreen> {
                 fit: BoxFit.cover,
                 placeholder: (context, url) => Container(
                   color: isDark ? Colors.white10 : Colors.black12,
-                  child: const Center(
-                    child: CircularProgressIndicator(),
-                  ),
+                  child: const Center(child: CircularProgressIndicator()),
                 ),
                 errorWidget: (context, url, error) => Container(
                   color: isDark ? Colors.white10 : Colors.black12,
@@ -1370,7 +1472,9 @@ class _CreateCapsuleScreenState extends ConsumerState<CreateCapsuleScreen> {
                             : const Color(0xFFF7F5FA)),
                   borderRadius: BorderRadius.circular(14),
                   border: Border.all(
-                    color: isSelected ? catColor : (isDark ? Colors.white10 : const Color(0xFFECEAEF)),
+                    color: isSelected
+                        ? catColor
+                        : (isDark ? Colors.white10 : const Color(0xFFECEAEF)),
                     width: isSelected ? 1.8 : 0.8,
                   ),
                   boxShadow: isSelected
@@ -1478,7 +1582,9 @@ class _CreateCapsuleScreenState extends ConsumerState<CreateCapsuleScreen> {
                     style: AppTypography.fromContext(
                       context,
                       fontSize: 13.5,
-                      fontWeight: _capturedAt != null ? FontWeight.w600 : FontWeight.w400,
+                      fontWeight: _capturedAt != null
+                          ? FontWeight.w600
+                          : FontWeight.w400,
                       color: _capturedAt != null ? textColor : secondaryText,
                     ),
                   ),
@@ -1523,7 +1629,8 @@ class _CreateCapsuleScreenState extends ConsumerState<CreateCapsuleScreen> {
       if (children.isEmpty) {
         _withMother = true;
       } else {
-        final preferredChildId = widget.existingCapsule?.childId ??
+        final preferredChildId =
+            widget.existingCapsule?.childId ??
             (widget.existingCapsule?.childIds.isNotEmpty == true
                 ? widget.existingCapsule!.childIds.first
                 : widget.preselectedChildId);
@@ -1577,7 +1684,9 @@ class _CreateCapsuleScreenState extends ConsumerState<CreateCapsuleScreen> {
                 child: GestureDetector(
                   onTap: () => setState(() {
                     _withMother = !_withMother;
-                    if (!_withMother && _selectedChild == null && children.isNotEmpty) {
+                    if (!_withMother &&
+                        _selectedChild == null &&
+                        children.isNotEmpty) {
                       _selectedChild = children.first;
                     }
                   }),
@@ -1594,7 +1703,9 @@ class _CreateCapsuleScreenState extends ConsumerState<CreateCapsuleScreen> {
                       border: Border.all(
                         color: _withMother
                             ? primary
-                            : (isDark ? Colors.white12 : const Color(0xFFE6E2EC)),
+                            : (isDark
+                                  ? Colors.white12
+                                  : const Color(0xFFE6E2EC)),
                         width: _withMother ? 1.8 : 1.0,
                       ),
                       boxShadow: _withMother
@@ -1615,7 +1726,9 @@ class _CreateCapsuleScreenState extends ConsumerState<CreateCapsuleScreen> {
                           height: 36,
                           decoration: BoxDecoration(
                             shape: BoxShape.circle,
-                            color: _withMother ? primary : AppColors.magentaPink.withValues(alpha: 0.2),
+                            color: _withMother
+                                ? primary
+                                : AppColors.magentaPink.withValues(alpha: 0.2),
                             border: Border.all(
                               color: _withMother ? primary : Colors.white,
                               width: 1.5,
@@ -1625,7 +1738,9 @@ class _CreateCapsuleScreenState extends ConsumerState<CreateCapsuleScreen> {
                             child: Icon(
                               Icons.favorite_rounded,
                               size: 18,
-                              color: _withMother ? Colors.white : AppColors.magentaPink,
+                              color: _withMother
+                                  ? Colors.white
+                                  : AppColors.magentaPink,
                             ),
                           ),
                         ),
@@ -1658,7 +1773,8 @@ class _CreateCapsuleScreenState extends ConsumerState<CreateCapsuleScreen> {
               // 2. Children Chips
               ...children.map((child) {
                 final isSelected = _selectedChild?.id == child.id;
-                final hasPhoto = child.photoUrl != null && child.photoUrl!.isNotEmpty;
+                final hasPhoto =
+                    child.photoUrl != null && child.photoUrl!.isNotEmpty;
 
                 return Padding(
                   padding: const EdgeInsetsDirectional.only(end: 10),
@@ -1674,7 +1790,12 @@ class _CreateCapsuleScreenState extends ConsumerState<CreateCapsuleScreen> {
                     }),
                     child: AnimatedContainer(
                       duration: const Duration(milliseconds: 200),
-                      padding: const EdgeInsetsDirectional.fromSTEB(6, 5, 14, 5),
+                      padding: const EdgeInsetsDirectional.fromSTEB(
+                        6,
+                        5,
+                        14,
+                        5,
+                      ),
                       decoration: BoxDecoration(
                         color: isSelected
                             ? primary.withValues(alpha: isDark ? 0.22 : 0.12)
@@ -1685,7 +1806,9 @@ class _CreateCapsuleScreenState extends ConsumerState<CreateCapsuleScreen> {
                         border: Border.all(
                           color: isSelected
                               ? primary
-                              : (isDark ? Colors.white12 : const Color(0xFFE6E2EC)),
+                              : (isDark
+                                    ? Colors.white12
+                                    : const Color(0xFFE6E2EC)),
                           width: isSelected ? 1.8 : 1.0,
                         ),
                         boxShadow: isSelected
@@ -1723,12 +1846,13 @@ class _CreateCapsuleScreenState extends ConsumerState<CreateCapsuleScreen> {
                                   ? Image.network(
                                       child.photoUrl!,
                                       fit: BoxFit.cover,
-                                      errorBuilder: (_, _, _) => _buildChildInitials(
-                                        child,
-                                        isSelected,
-                                        primary,
-                                        secondaryText,
-                                      ),
+                                      errorBuilder: (_, _, _) =>
+                                          _buildChildInitials(
+                                            child,
+                                            isSelected,
+                                            primary,
+                                            secondaryText,
+                                          ),
                                     )
                                   : _buildChildInitials(
                                       child,
@@ -1779,7 +1903,9 @@ class _CreateCapsuleScreenState extends ConsumerState<CreateCapsuleScreen> {
                   child: Container(
                     padding: const EdgeInsetsDirectional.fromSTEB(8, 6, 12, 6),
                     decoration: BoxDecoration(
-                      color: isDark ? Colors.white.withValues(alpha: 0.05) : Colors.black.withValues(alpha: 0.04),
+                      color: isDark
+                          ? Colors.white.withValues(alpha: 0.05)
+                          : Colors.black.withValues(alpha: 0.04),
                       borderRadius: BorderRadius.circular(18),
                       border: Border.all(
                         color: isDark ? Colors.white12 : Colors.black12,
@@ -1796,7 +1922,11 @@ class _CreateCapsuleScreenState extends ConsumerState<CreateCapsuleScreen> {
                             shape: BoxShape.circle,
                             color: primary.withValues(alpha: 0.15),
                           ),
-                          child: Icon(Icons.add_rounded, size: 18, color: primary),
+                          child: Icon(
+                            Icons.add_rounded,
+                            size: 18,
+                            color: primary,
+                          ),
                         ),
                         const SizedBox(width: 6),
                         Text(
@@ -1869,7 +1999,11 @@ class _CreateCapsuleScreenState extends ConsumerState<CreateCapsuleScreen> {
         const SizedBox(height: AppSpacing.sm),
         TextField(
           controller: _tagController,
-          style: AppTypography.fromContext(context, fontSize: 13.5, color: textColor),
+          style: AppTypography.fromContext(
+            context,
+            fontSize: 13.5,
+            color: textColor,
+          ),
           decoration: InputDecoration(
             hintText: l10n.capsuleAddTagHint,
             hintStyle: TextStyle(color: secondaryText, fontSize: 13),
@@ -1877,7 +2011,10 @@ class _CreateCapsuleScreenState extends ConsumerState<CreateCapsuleScreen> {
             fillColor: isDark
                 ? AppColors.inputBackgroundDark
                 : AppColors.inputBackgroundLight,
-            contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+            contentPadding: const EdgeInsets.symmetric(
+              horizontal: 14,
+              vertical: 12,
+            ),
             prefixIcon: Icon(Icons.tag_rounded, size: 18, color: secondaryText),
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(14),
@@ -1897,14 +2034,19 @@ class _CreateCapsuleScreenState extends ConsumerState<CreateCapsuleScreen> {
             runSpacing: AppSpacing.xs,
             children: _tags.map((tag) {
               return Container(
-                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 10,
+                  vertical: 5,
+                ),
                 decoration: BoxDecoration(
                   color: isDark
                       ? AppColors.surfaceContainerDark
                       : AppColors.surfaceContainerLight,
                   borderRadius: BorderRadius.circular(12),
                   border: Border.all(
-                    color: isDark ? AppColors.dividerDark : AppColors.dividerLight,
+                    color: isDark
+                        ? AppColors.dividerDark
+                        : AppColors.dividerLight,
                   ),
                 ),
                 child: Row(
@@ -1976,7 +2118,9 @@ class _CreateCapsuleScreenState extends ConsumerState<CreateCapsuleScreen> {
         child: ElevatedButton(
           onPressed: (!_canSave || _isLoading) ? null : _saveCapsule,
           style: ElevatedButton.styleFrom(
-            backgroundColor: _canSave ? primary : (isDark ? Colors.white12 : Colors.black12),
+            backgroundColor: _canSave
+                ? primary
+                : (isDark ? Colors.white12 : Colors.black12),
             foregroundColor: Colors.white,
             elevation: _canSave ? 4 : 0,
             shadowColor: primary.withValues(alpha: 0.4),
@@ -2007,10 +2151,10 @@ class _CreateCapsuleScreenState extends ConsumerState<CreateCapsuleScreen> {
                     Text(
                       widget.existingCapsule != null
                           ? (lang == 'ar'
-                              ? 'حفظ التعديلات'
-                              : (lang == 'en'
-                                  ? 'Save Changes'
-                                  : 'Enregistrer les modifications'))
+                                ? 'حفظ التعديلات'
+                                : (lang == 'en'
+                                      ? 'Save Changes'
+                                      : 'Enregistrer les modifications'))
                           : l10n.capsuleCreateCTA,
                       style: TextStyle(
                         fontSize: 16,
@@ -2170,9 +2314,7 @@ class _CreateCapsuleScreenState extends ConsumerState<CreateCapsuleScreen> {
 
   Future<void> _openCropScreen(File file) async {
     final cropped = await Navigator.of(context).push<File>(
-      MaterialPageRoute(
-        builder: (_) => ImageCropScreen(imageFile: file),
-      ),
+      MaterialPageRoute(builder: (_) => ImageCropScreen(imageFile: file)),
     );
     if (cropped != null && mounted) {
       setState(() {
@@ -2183,8 +2325,9 @@ class _CreateCapsuleScreenState extends ConsumerState<CreateCapsuleScreen> {
 
   Future<void> _processPickedPhoto(File originalFile) async {
     // Check if the image is already vertical and close to the 9:16 Story ratio (0.5625)
-    final isCloseToStory =
-        await ImageCropScreen.isCloseToStoryRatio(originalFile);
+    final isCloseToStory = await ImageCropScreen.isCloseToStoryRatio(
+      originalFile,
+    );
 
     if (isCloseToStory) {
       // Image is already vertical portrait! Auto-crop center to exact 9:16 (zero black bars)
@@ -2199,8 +2342,8 @@ class _CreateCapsuleScreenState extends ConsumerState<CreateCapsuleScreen> {
         final message = lang == 'ar'
             ? 'تم ضبط الصورة تلقائياً كـ ستوري ملء الشاشة'
             : (lang == 'fr'
-                ? 'Photo ajustée au format Story plein écran'
-                : 'Photo auto-fitted to full-screen story');
+                  ? 'Photo ajustée au format Story plein écran'
+                  : 'Photo auto-fitted to full-screen story');
 
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
@@ -2268,28 +2411,36 @@ class _CreateCapsuleScreenState extends ConsumerState<CreateCapsuleScreen> {
     try {
       Capsule? result;
       final effectiveChildId = _selectedChild?.id ?? '';
-      final effectiveChildIds = _selectedChild != null ? [_selectedChild!.id] : const <String>[];
+      final effectiveChildIds = _selectedChild != null
+          ? [_selectedChild!.id]
+          : const <String>[];
 
-      // Spec LM-CAP-004: Only associate audio if validated, non-empty and non-corrupted
+      // Associate every valid recording without a separate confirmation.
       File? effectiveAudio;
       int? effectiveAudioDuration;
-      if (_recordedAudio != null && _isAudioValidated) {
-        if (_recordedAudio!.existsSync() && _recordedAudio!.lengthSync() > 0) {
+      if (_recordedAudio != null) {
+        if (isSaveableCapsuleAudio(_recordedAudio!)) {
           effectiveAudio = _recordedAudio;
           effectiveAudioDuration = _audioDuration;
+        } else {
+          throw StateError(context.l10n.capsuleAudioTooShortError);
         }
       }
 
       if (widget.existingCapsule != null) {
-        result = await ref.read(capsuleActionsProvider.notifier).updateCapsule(
+        result = await ref
+            .read(capsuleActionsProvider.notifier)
+            .updateCapsule(
               capsuleId: widget.existingCapsule!.id,
               childId: effectiveChildId,
               childIds: effectiveChildIds,
               withMother: _withMother,
               newPhotoFile: _selectedPhoto,
               newAudioFile: effectiveAudio,
-              removeAudio: _removeAudio || (_recordedAudio != null && !_isAudioValidated),
-              audioDuration: effectiveAudio != null ? effectiveAudioDuration : (_removeAudio ? null : _audioDuration),
+              removeAudio: _removeAudio,
+              audioDuration: effectiveAudio != null
+                  ? effectiveAudioDuration
+                  : (_removeAudio ? null : _audioDuration),
               emotion: _selectedEmotion!,
               secondaryEmotions: _secondaryEmotions,
               milestoneId: _selectedMilestoneId,
@@ -2299,7 +2450,9 @@ class _CreateCapsuleScreenState extends ConsumerState<CreateCapsuleScreen> {
               category: _selectedCategory,
             );
       } else {
-        result = await ref.read(capsuleActionsProvider.notifier).createCapsule(
+        result = await ref
+            .read(capsuleActionsProvider.notifier)
+            .createCapsule(
               childId: effectiveChildId,
               childIds: effectiveChildIds,
               withMother: _withMother,
@@ -2322,6 +2475,9 @@ class _CreateCapsuleScreenState extends ConsumerState<CreateCapsuleScreen> {
       setState(() => _isLoading = false);
 
       if (result != null && mounted) {
+        setState(() => _allowLeave = true);
+        await WidgetsBinding.instance.endOfFrame;
+        if (!mounted) return;
         if (_selectedChild != null) {
           ref.invalidate(childMilestonesProvider(_selectedChild!.id));
           ref.invalidate(milestoneProgressStreamProvider(_selectedChild!.id));
@@ -2332,10 +2488,10 @@ class _CreateCapsuleScreenState extends ConsumerState<CreateCapsuleScreen> {
         final lang = Localizations.localeOf(context).languageCode;
         final successMsg = widget.existingCapsule != null
             ? (lang == 'ar'
-                ? 'تم تحديث الذكرى بنجاح'
-                : (lang == 'en'
-                    ? 'Memory updated successfully'
-                    : 'Souvenir mis à jour avec succès'))
+                  ? 'تم تحديث الذكرى بنجاح'
+                  : (lang == 'en'
+                        ? 'Memory updated successfully'
+                        : 'Souvenir mis à jour avec succès'))
             : context.l10n.capsuleCreatedSuccess;
 
         ScaffoldMessenger.of(context).showSnackBar(

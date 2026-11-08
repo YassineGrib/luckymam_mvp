@@ -85,10 +85,14 @@ void main() {
 
   group('Task 7a: HomeTipsData stage mapping', () {
     test('tipForStage maps pregnant stages to pregnant tips pool', () {
-      final tipFirst =
-          HomeTipsData.tipForStage('fr', MotherStage.pregnantFirst);
-      final tipWithChildren =
-          HomeTipsData.tipForStage('fr', MotherStage.pregnantWithChildren);
+      final tipFirst = HomeTipsData.tipForStage(
+        'fr',
+        MotherStage.pregnantFirst,
+      );
+      final tipWithChildren = HomeTipsData.tipForStage(
+        'fr',
+        MotherStage.pregnantWithChildren,
+      );
       final legacyPregnant = HomeTipsData.tipFor('fr', UserStatus.pregnant);
 
       expect(tipFirst, legacyPregnant);
@@ -96,7 +100,10 @@ void main() {
     });
 
     test('tipForStage maps exploring and hope to hope tips pool', () {
-      final tipExploring = HomeTipsData.tipForStage('fr', MotherStage.exploring);
+      final tipExploring = HomeTipsData.tipForStage(
+        'fr',
+        MotherStage.exploring,
+      );
       final tipHope = HomeTipsData.tipForStage('fr', MotherStage.hope);
       final legacyHope = HomeTipsData.tipFor('fr', UserStatus.hope);
 
@@ -114,44 +121,52 @@ void main() {
     });
   });
 
-  group('Task 7a: dailyTipProvider feeds from motherStageProvider.legacyStatus', () {
-    test(
+  group(
+    'Task 7a: dailyTipProvider feeds from motherStageProvider.legacyStatus',
+    () {
+      test(
         'dailyTipProvider uses pregnant pool when motherStage is pregnantWithChildren, even if profile.status was mom',
         () async {
-      final container = ProviderContainer(
-        overrides: [
-          motherStageProvider
-              .overrideWithValue(MotherStage.pregnantWithChildren),
-          profileProvider.overrideWith(
-            (ref) => Stream.value(_profile(status: UserStatus.mom)),
-          ),
-        ],
+          final container = ProviderContainer(
+            overrides: [
+              motherStageProvider.overrideWithValue(
+                MotherStage.pregnantWithChildren,
+              ),
+              profileProvider.overrideWith(
+                (ref) => Stream.value(_profile(status: UserStatus.mom)),
+              ),
+            ],
+          );
+          addTearDown(container.dispose);
+
+          final tip = container.read(dailyTipProvider);
+          final pregnantTip = HomeTipsData.tipFor('fr', UserStatus.pregnant);
+
+          expect(tip, pregnantTip);
+        },
       );
-      addTearDown(container.dispose);
 
-      final tip = container.read(dailyTipProvider);
-      final pregnantTip = HomeTipsData.tipFor('fr', UserStatus.pregnant);
+      test(
+        'dailyTipProvider uses hope pool when motherStage is exploring',
+        () async {
+          final container = ProviderContainer(
+            overrides: [
+              motherStageProvider.overrideWithValue(MotherStage.exploring),
+              profileProvider.overrideWith(
+                (ref) => Stream.value(_profile(status: UserStatus.mom)),
+              ),
+            ],
+          );
+          addTearDown(container.dispose);
 
-      expect(tip, pregnantTip);
-    });
+          final tip = container.read(dailyTipProvider);
+          final hopeTip = HomeTipsData.tipFor('fr', UserStatus.hope);
 
-    test('dailyTipProvider uses hope pool when motherStage is exploring', () async {
-      final container = ProviderContainer(
-        overrides: [
-          motherStageProvider.overrideWithValue(MotherStage.exploring),
-          profileProvider.overrideWith(
-            (ref) => Stream.value(_profile(status: UserStatus.mom)),
-          ),
-        ],
+          expect(tip, hopeTip);
+        },
       );
-      addTearDown(container.dispose);
-
-      final tip = container.read(dailyTipProvider);
-      final hopeTip = HomeTipsData.tipFor('fr', UserStatus.hope);
-
-      expect(tip, hopeTip);
-    });
-  });
+    },
+  );
 
   group('Task 7a: DashboardTab Mes Enfants visibility', () {
     Widget createDashboardTestApp({
@@ -160,13 +175,14 @@ void main() {
     }) {
       return ProviderScope(
         overrides: [
-          notificationServiceProvider
-              .overrideWithValue(_FakeNotificationService()),
+          notificationServiceProvider.overrideWithValue(
+            _FakeNotificationService(),
+          ),
           motherStageProvider.overrideWithValue(stage),
           hasBornChildrenProvider.overrideWithValue(hasBornChildren),
-          bornChildrenProvider.overrideWithValue(hasBornChildren
-              ? [_child(id: 'c1', name: 'Karim')]
-              : []),
+          bornChildrenProvider.overrideWithValue(
+            hasBornChildren ? [_child(id: 'c1', name: 'Karim')] : [],
+          ),
           profileProvider.overrideWith(
             (ref) => Stream.value(_profile(status: UserStatus.pregnant)),
           ),
@@ -195,49 +211,64 @@ void main() {
     }
 
     testWidgets(
-        'shows ChildrenOverview when hasBornChildren is true even if stage is pregnantWithChildren',
-        (tester) async {
-      tester.view.physicalSize = const Size(800, 2400);
-      tester.view.devicePixelRatio = 1.0;
-      addTearDown(() {
-        tester.view.resetPhysicalSize();
-        tester.view.resetDevicePixelRatio();
-      });
+      'shows ChildrenOverview when hasBornChildren is true even if stage is pregnantWithChildren',
+      (tester) async {
+        tester.view.physicalSize = const Size(800, 2400);
+        tester.view.devicePixelRatio = 1.0;
+        addTearDown(() {
+          tester.view.resetPhysicalSize();
+          tester.view.resetDevicePixelRatio();
+        });
 
-      await tester.pumpWidget(createDashboardTestApp(
-        hasBornChildren: true,
-        stage: MotherStage.pregnantWithChildren,
-      ));
-      await tester.pumpAndSettle();
+        await tester.pumpWidget(
+          createDashboardTestApp(
+            hasBornChildren: true,
+            stage: MotherStage.pregnantWithChildren,
+          ),
+        );
+        await tester.pumpAndSettle();
 
-      expect(find.byType(ChildrenOverview), findsOneWidget);
-    });
+        expect(find.byType(ChildrenOverview), findsOneWidget);
+      },
+    );
 
-    testWidgets('hides ChildrenOverview when hasBornChildren is false',
-        (tester) async {
-      tester.view.physicalSize = const Size(800, 2400);
-      tester.view.devicePixelRatio = 1.0;
-      addTearDown(() {
-        tester.view.resetPhysicalSize();
-        tester.view.resetDevicePixelRatio();
-      });
+    testWidgets(
+      'keeps child addition accessible when hasBornChildren is false',
+      (tester) async {
+        tester.view.physicalSize = const Size(800, 2400);
+        tester.view.devicePixelRatio = 1.0;
+        addTearDown(() {
+          tester.view.resetPhysicalSize();
+          tester.view.resetDevicePixelRatio();
+        });
 
-      await tester.pumpWidget(createDashboardTestApp(
-        hasBornChildren: false,
-        stage: MotherStage.pregnantFirst,
-      ));
-      await tester.pumpAndSettle();
+        await tester.pumpWidget(
+          createDashboardTestApp(
+            hasBornChildren: false,
+            stage: MotherStage.pregnantFirst,
+          ),
+        );
+        await tester.pumpAndSettle();
 
-      expect(find.byType(ChildrenOverview), findsNothing);
-    });
+        expect(find.byType(ChildrenOverview), findsOneWidget);
+        final labels = AppLocalizations.of(
+          tester.element(find.byType(ChildrenOverview)),
+        )!;
+        expect(find.text(labels.addChild), findsWidgets);
+      },
+    );
   });
 
   group('Task 7a: WeeklyDayStrip coexisting events', () {
-    testWidgets('renders day strip and handles multiple event kinds',
-        (tester) async {
+    testWidgets('renders day strip and handles multiple event kinds', (
+      tester,
+    ) async {
       final now = DateTime.now();
-      final monday = DateTime(now.year, now.month, now.day)
-          .subtract(Duration(days: now.weekday - 1));
+      final monday = DateTime(
+        now.year,
+        now.month,
+        now.day,
+      ).subtract(Duration(days: now.weekday - 1));
       final bornChild = _child(
         id: 'child_1',
         name: 'Amina',
@@ -281,17 +312,19 @@ void main() {
       await tester.pumpWidget(
         ProviderScope(
           overrides: [
-            notificationServiceProvider
-                .overrideWithValue(_FakeNotificationService()),
-            motherStageProvider
-                .overrideWithValue(MotherStage.pregnantWithChildren),
+            notificationServiceProvider.overrideWithValue(
+              _FakeNotificationService(),
+            ),
+            motherStageProvider.overrideWithValue(
+              MotherStage.pregnantWithChildren,
+            ),
             hasBornChildrenProvider.overrideWithValue(true),
             isPregnantProvider.overrideWithValue(true),
             activePregnancyProvider.overrideWithValue(pregnancy),
-            bornChildrenProvider
-                .overrideWithValue([bornChild, expectedChild]),
-            childrenProvider
-                .overrideWith((ref) => Stream.value([bornChild, expectedChild])),
+            bornChildrenProvider.overrideWithValue([bornChild, expectedChild]),
+            childrenProvider.overrideWith(
+              (ref) => Stream.value([bornChild, expectedChild]),
+            ),
             vaccineCalendarProvider.overrideWith((ref) async => calendar),
             profileProvider.overrideWith((ref) => Stream.value(_profile())),
           ],
@@ -299,9 +332,7 @@ void main() {
             localizationsDelegates: AppLocalizations.localizationsDelegates,
             supportedLocales: AppLocalizations.supportedLocales,
             locale: Locale('fr'),
-            home: Scaffold(
-              body: WeeklyDayStrip(),
-            ),
+            home: Scaffold(body: WeeklyDayStrip()),
           ),
         ),
       );
@@ -320,88 +351,93 @@ void main() {
   });
 
   group('Task 7a: MotherHealthCard and CycleTrackingSection capabilities', () {
-    testWidgets('MotherHealthCard shows pregnancy tracking when isPregnantProvider is true',
-        (tester) async {
-      await tester.pumpWidget(
-        ProviderScope(
-          overrides: [
-            isPregnantProvider.overrideWithValue(true),
-            profileProvider.overrideWith(
-              (ref) => Stream.value(_profile(status: UserStatus.mom)),
+    testWidgets(
+      'MotherHealthCard shows pregnancy tracking when isPregnantProvider is true',
+      (tester) async {
+        await tester.pumpWidget(
+          ProviderScope(
+            overrides: [
+              isPregnantProvider.overrideWithValue(true),
+              profileProvider.overrideWith(
+                (ref) => Stream.value(_profile(status: UserStatus.mom)),
+              ),
+            ],
+            child: const MaterialApp(
+              localizationsDelegates: AppLocalizations.localizationsDelegates,
+              supportedLocales: AppLocalizations.supportedLocales,
+              locale: Locale('fr'),
+              home: Scaffold(body: MotherHealthCard()),
             ),
-          ],
-          child: const MaterialApp(
-            localizationsDelegates: AppLocalizations.localizationsDelegates,
-            supportedLocales: AppLocalizations.supportedLocales,
-            locale: Locale('fr'),
-            home: Scaffold(body: MotherHealthCard()),
           ),
-        ),
-      );
-      await tester.pumpAndSettle();
+        );
+        await tester.pumpAndSettle();
 
-      expect(find.text('Suivi de grossesse'), findsOneWidget);
-    });
+        expect(find.text('Suivi de grossesse'), findsOneWidget);
+      },
+    );
 
-    testWidgets('CycleTrackingSection uses active pregnancy dates when active pregnancy exists',
-        (tester) async {
-      final now = DateTime.now();
-      final lmp = DateTime(now.year, now.month, now.day - 70); // 10 weeks
-      final pregnancy = _pregnancy(id: 'p1', lmpDate: lmp);
+    testWidgets(
+      'CycleTrackingSection uses active pregnancy dates when active pregnancy exists',
+      (tester) async {
+        final now = DateTime.now();
+        final lmp = DateTime(now.year, now.month, now.day - 70); // 10 weeks
+        final pregnancy = _pregnancy(id: 'p1', lmpDate: lmp);
 
-      await tester.pumpWidget(
-        ProviderScope(
-          overrides: [
-            isPregnantProvider.overrideWithValue(true),
-            activePregnancyProvider.overrideWithValue(pregnancy),
-            profileProvider.overrideWith(
-              (ref) => Stream.value(_profile(status: UserStatus.mom)),
+        await tester.pumpWidget(
+          ProviderScope(
+            overrides: [
+              isPregnantProvider.overrideWithValue(true),
+              activePregnancyProvider.overrideWithValue(pregnancy),
+              profileProvider.overrideWith(
+                (ref) => Stream.value(_profile(status: UserStatus.mom)),
+              ),
+            ],
+            child: const MaterialApp(
+              localizationsDelegates: AppLocalizations.localizationsDelegates,
+              supportedLocales: AppLocalizations.supportedLocales,
+              locale: Locale('fr'),
+              home: Scaffold(body: CycleTrackingSection()),
             ),
-          ],
-          child: const MaterialApp(
-            localizationsDelegates: AppLocalizations.localizationsDelegates,
-            supportedLocales: AppLocalizations.supportedLocales,
-            locale: Locale('fr'),
-            home: Scaffold(body: CycleTrackingSection()),
           ),
-        ),
-      );
-      await tester.pumpAndSettle();
+        );
+        await tester.pumpAndSettle();
 
-      expect(find.text('Ma Grossesse'), findsOneWidget);
-      // Week 10 is gestationalWeek for 70 days
-      expect(find.textContaining('Semaine 10'), findsOneWidget);
-    });
+        expect(find.text('Ma Grossesse'), findsOneWidget);
+        // Week 10 is gestationalWeek for 70 days
+        expect(find.textContaining('Semaine 10'), findsOneWidget);
+      },
+    );
 
-    testWidgets('CycleTrackingSection falls back to profile.lastPregnancyDate when active pregnancy is null',
-        (tester) async {
-      final now = DateTime.now();
-      final lmp = DateTime(now.year, now.month, now.day - 42); // 6 weeks
+    testWidgets(
+      'CycleTrackingSection falls back to profile.lastPregnancyDate when active pregnancy is null',
+      (tester) async {
+        final now = DateTime.now();
+        final lmp = DateTime(now.year, now.month, now.day - 42); // 6 weeks
 
-      await tester.pumpWidget(
-        ProviderScope(
-          overrides: [
-            isPregnantProvider.overrideWithValue(true),
-            activePregnancyProvider.overrideWithValue(null),
-            profileProvider.overrideWith(
-              (ref) => Stream.value(_profile(
-                status: UserStatus.pregnant,
-                lastPregnancyDate: lmp,
-              )),
+        await tester.pumpWidget(
+          ProviderScope(
+            overrides: [
+              isPregnantProvider.overrideWithValue(true),
+              activePregnancyProvider.overrideWithValue(null),
+              profileProvider.overrideWith(
+                (ref) => Stream.value(
+                  _profile(status: UserStatus.pregnant, lastPregnancyDate: lmp),
+                ),
+              ),
+            ],
+            child: const MaterialApp(
+              localizationsDelegates: AppLocalizations.localizationsDelegates,
+              supportedLocales: AppLocalizations.supportedLocales,
+              locale: Locale('fr'),
+              home: Scaffold(body: CycleTrackingSection()),
             ),
-          ],
-          child: const MaterialApp(
-            localizationsDelegates: AppLocalizations.localizationsDelegates,
-            supportedLocales: AppLocalizations.supportedLocales,
-            locale: Locale('fr'),
-            home: Scaffold(body: CycleTrackingSection()),
           ),
-        ),
-      );
-      await tester.pumpAndSettle();
+        );
+        await tester.pumpAndSettle();
 
-      expect(find.text('Ma Grossesse'), findsOneWidget);
-      expect(find.textContaining('Semaine 6'), findsOneWidget);
-    });
+        expect(find.text('Ma Grossesse'), findsOneWidget);
+        expect(find.textContaining('Semaine 6'), findsOneWidget);
+      },
+    );
   });
 }

@@ -1,6 +1,6 @@
+import 'safe_log.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/foundation.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 
 /// Authentication service handling Firebase Auth operations.
@@ -47,7 +47,7 @@ class AuthService {
     } on FirebaseAuthException catch (e) {
       return AuthResult.failure(_mapFirebaseAuthError(e.code));
     } catch (e) {
-      debugPrint('SignUp Error: $e');
+      safeDebugPrint('SignUp Error: ${e.runtimeType}');
       return AuthResult.failure('Une erreur est survenue');
     }
   }
@@ -72,7 +72,7 @@ class AuthService {
     } on FirebaseAuthException catch (e) {
       return AuthResult.failure(_mapFirebaseAuthError(e.code));
     } catch (e) {
-      debugPrint('SignIn Error: $e');
+      safeDebugPrint('SignIn Error: ${e.runtimeType}');
       return AuthResult.failure('Une erreur est survenue');
     }
   }
@@ -118,7 +118,7 @@ class AuthService {
 
       return AuthResult.success(user);
     } catch (e) {
-      debugPrint('Google SignIn Error: $e');
+      safeDebugPrint('Google SignIn Error: ${e.runtimeType}');
       final msg = e.toString();
       if (msg.contains('network_error') || msg.contains('NetworkException')) {
         return AuthResult.failure('Pas de connexion réseau');
@@ -188,7 +188,7 @@ class AuthService {
         'حدث خطأ أثناء حذف الحساب: ${e.message}',
       );
     } catch (e) {
-      debugPrint('DeleteAccount Error: $e');
+      safeDebugPrint('DeleteAccount Error: ${e.runtimeType}');
       return DeleteAccountResult.failure('حدث خطأ غير متوقع أثناء حذف الحساب');
     }
   }
@@ -216,7 +216,7 @@ class AuthService {
         await _deleteSubCollection(uid, collection);
       }
     } catch (e) {
-      debugPrint('DeleteSubCollection($collection) Error: $e');
+      safeDebugPrint('DeleteSubCollection($collection) Error: ${e.runtimeType}');
     }
   }
 
@@ -242,7 +242,7 @@ class AuthService {
     } on FirebaseAuthException catch (e) {
       return AuthResult.failure(_mapFirebaseAuthError(e.code));
     } catch (e) {
-      debugPrint('ResetPassword Error: $e');
+      safeDebugPrint('ResetPassword Error: ${e.runtimeType}');
       return AuthResult.failure('Une erreur est survenue lors de l\'envoi du lien');
     }
   }

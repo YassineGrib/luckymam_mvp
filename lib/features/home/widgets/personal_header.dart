@@ -167,7 +167,7 @@ class PersonalHeader extends ConsumerWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                '$greeting, $name 👋',
+                '$greeting, $name ',
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
                 style: TextStyle(

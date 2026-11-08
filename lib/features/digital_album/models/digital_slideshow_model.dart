@@ -1,3 +1,6 @@
+import '../../capsules/models/capsule.dart';
+import '../../capsules/models/emotion.dart';
+
 /// A single slide in a digital album slideshow.
 class DigitalSlide {
   const DigitalSlide({
@@ -6,6 +9,9 @@ class DigitalSlide {
     required this.title,
     this.date,
     this.order = 0,
+    this.emotions = const [],
+    this.category,
+    this.tags = const [],
   });
 
   final String id;
@@ -13,6 +19,9 @@ class DigitalSlide {
   final String title;
   final DateTime? date;
   final int order;
+  final List<Emotion> emotions;
+  final CapsuleCategory? category;
+  final List<String> tags;
 
   DigitalSlide copyWith({
     String? id,
@@ -27,6 +36,9 @@ class DigitalSlide {
       title: title ?? this.title,
       date: date ?? this.date,
       order: order ?? this.order,
+      emotions: emotions,
+      category: category,
+      tags: tags,
     );
   }
 }
@@ -50,9 +62,9 @@ class DigitalSlideshow {
   final List<DigitalSlide> slides;
   final Duration durationPerSlide;
 
-  bool get isValidCount => slides.length >= minPhotos && slides.length <= maxPhotos;
+  bool get isValidCount =>
+      slides.length >= minPhotos && slides.length <= maxPhotos;
 
   static const int minPhotos = 3;
   static const int maxPhotos = 12;
 }
-

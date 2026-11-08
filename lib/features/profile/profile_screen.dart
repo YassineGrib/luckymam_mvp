@@ -23,6 +23,7 @@ import '../subscription/providers/subscription_providers.dart';
 import '../subscription/screens/subscription_plans_screen.dart';
 import '../subscription/screens/album_claim_screen.dart';
 import 'widgets/profile_widgets.dart';
+import 'widgets/mother_status_guidance.dart';
 import '../notifications/notifications_screen.dart';
 import '../../core/providers/locale_provider.dart';
 import '../../core/extensions/l10n_extension.dart';
@@ -58,8 +59,9 @@ class ProfileScreen extends ConsumerWidget {
     // Watch profile from Firestore
     final profileAsync = ref.watch(profileProvider);
     final childrenAsync = ref.watch(childrenProvider);
-    final isLoading =
-        ref.watch(profileActionsProvider.select((s) => s.isLoading));
+    final isLoading = ref.watch(
+      profileActionsProvider.select((s) => s.isLoading),
+    );
 
     // Show snackbar on success/error
     ref.listen<ProfileActionsState>(profileActionsProvider, (previous, next) {
@@ -93,179 +95,185 @@ class ProfileScreen extends ConsumerWidget {
     final l10n = context.l10n;
 
     return Scaffold(
-      backgroundColor: isDark ? AppColors.backgroundDark : AppColors.backgroundLight,
+      backgroundColor: isDark
+          ? AppColors.backgroundDark
+          : AppColors.backgroundLight,
       body: Stack(
         children: [
           const TopAmbientGradient(height: 380),
           CustomScrollView(
             slivers: [
-          // Custom App Bar with profile header
-          SliverToBoxAdapter(
-            child: profileAsync.when(
-              data: (profile) => _ProfileHeader(
-                name:
-                    profile?.displayName ?? user?.displayName ?? l10n.profileDefaultUser,
-                email: profile?.email ?? user?.email ?? '',
-                photoUrl: profile?.photoUrl ?? user?.photoURL,
-                status: _effectiveUserStatus(ref.watch(motherStageProvider)),
-                primaryColor: primaryColor,
-                textColor: textColor,
-                secondaryColor: secondaryColor,
-                onEditTap: () => _openMotherProfileScreen(context, profile),
-                onCameraTap: () => _openMotherProfileScreen(context, profile),
-              ),
-              loading: () => _ProfileHeader(
-                name: user?.displayName ?? l10n.profileLoading,
-                email: user?.email ?? '',
-                photoUrl: user?.photoURL,
-                status: UserStatus.mom,
-                primaryColor: primaryColor,
-                textColor: textColor,
-                secondaryColor: secondaryColor,
-              ),
-              error: (_, _) => _ProfileHeader(
-                name: user?.displayName ?? l10n.profileError,
-                email: user?.email ?? '',
-                photoUrl: user?.photoURL,
-                status: UserStatus.mom,
-                primaryColor: primaryColor,
-                textColor: textColor,
-                secondaryColor: secondaryColor,
-              ),
-            ),
-          ),
-
-          // Loading indicator
-          if (isLoading)
-            const SliverToBoxAdapter(child: LinearProgressIndicator()),
-
-          // Profile sections
-          SliverPadding(
-            padding: const EdgeInsetsDirectional.fromSTEB(
-              AppSpacing.screenPaddingH,
-              AppSpacing.md,
-              AppSpacing.screenPaddingH,
-              100,
-            ),
-            sliver: SliverList(
-              delegate: SliverChildListDelegate([
-                // 1. Personal Information
-                profileAsync.when(
-                  data: (profile) => _PersonalInfoSection(
-                    profile: profile,
-                    fallbackUser: user,
-                    onEdit: () => _openMotherProfileScreen(context, profile),
-                  ),
-                  loading: () => _LoadingSectionCard(
-                    title: l10n.profilePersonalInfo,
-                  ),
-                  error: (_, _) => _ErrorSectionCard(
-                    title: l10n.profilePersonalInfo,
-                  ),
-                ),
-
-                // 2. Current Status
-                profileAsync.when(
-                  data: (profile) => _StatusSection(
-                    profile: profile,
-                    currentStatus:
-                        _effectiveUserStatus(ref.watch(motherStageProvider)),
-                    primaryColor: primaryColor,
-                    onStatusChange: (status) =>
-                        _handleStatusChange(context, ref, profile, status),
-                  ),
-                  loading: () =>
-                      _LoadingSectionCard(title: l10n.profileCurrentStatus),
-                  error: (_, _) =>
-                      _ErrorSectionCard(title: l10n.profileCurrentStatus),
-                ),
-
-                // 3. Children (toujours visible pour gérer les enfants nés et attendus)
-                childrenAsync.when(
-                  data: (children) => _ChildrenSection(
-                    children: children,
-                    primaryColor: primaryColor,
-                    onAddChild: () => _handleAddChild(context, ref, children),
-                    onEditChild: (child) =>
-                        _openChildScreen(context, child),
-                  ),
-                  loading: () =>
-                      _LoadingSectionCard(title: l10n.myChildren),
-                  error: (_, _) => _EmptyChildrenSection(
-                    primaryColor: primaryColor,
-                    onAddChild: () => _handleAddChild(context, ref, const []),
-                  ),
-                ),
-
-                // 4. Subscription (Mon Abonnement)
-                _SubscriptionSection(primaryColor: primaryColor),
-
-                // 5. Medical Information
-                profileAsync.when(
-                  data: (profile) => _MedicalInfoSection(
-                    medicalInfo: profile?.medicalInfo ?? const MedicalInfo(),
-                    onEdit: () => _openMotherProfileScreen(
-                      context,
-                      profile,
+              // Custom App Bar with profile header
+              SliverToBoxAdapter(
+                child: profileAsync.when(
+                  data: (profile) => _ProfileHeader(
+                    name:
+                        profile?.displayName ??
+                        user?.displayName ??
+                        l10n.profileDefaultUser,
+                    email: profile?.email ?? user?.email ?? '',
+                    photoUrl: profile?.photoUrl ?? user?.photoURL,
+                    status: _effectiveUserStatus(
+                      ref.watch(motherStageProvider),
                     ),
+                    primaryColor: primaryColor,
+                    textColor: textColor,
+                    secondaryColor: secondaryColor,
+                    onEditTap: () => _openMotherProfileScreen(context, profile),
+                    onCameraTap: () =>
+                        _openMotherProfileScreen(context, profile),
                   ),
-                  loading: () => _LoadingSectionCard(
-                    title: context.l10n.profileMedicalInfo,
+                  loading: () => _ProfileHeader(
+                    name: user?.displayName ?? l10n.profileLoading,
+                    email: user?.email ?? '',
+                    photoUrl: user?.photoURL,
+                    status: UserStatus.mom,
+                    primaryColor: primaryColor,
+                    textColor: textColor,
+                    secondaryColor: secondaryColor,
                   ),
-                  error: (_, _) => _ErrorSectionCard(
-                    title: context.l10n.profileMedicalInfo,
+                  error: (_, _) => _ProfileHeader(
+                    name: user?.displayName ?? l10n.profileError,
+                    email: user?.email ?? '',
+                    photoUrl: user?.photoURL,
+                    status: UserStatus.mom,
+                    primaryColor: primaryColor,
+                    textColor: textColor,
+                    secondaryColor: secondaryColor,
                   ),
                 ),
+              ),
 
-                // 5. Cycle / Grossesse
-                profileAsync.when(
-                  data: (profile) {
-                    if (profile?.status == UserStatus.pregnant) {
-                      return _PregnancySection(
-                        cycleInfo: profile?.cycleInfo ?? const CycleInfo(),
-                        onEnterLmp: () => _showEnterLmpDialog(context, ref),
-                      );
-                    }
-                    return _CycleSection(
-                      cycleInfo: profile?.cycleInfo ?? const CycleInfo(),
-                      onLogPeriod: () => _showLogPeriodDialog(context, ref),
-                      onEditSettings: () => _showEditCycleSettings(
-                        context,
-                        ref,
-                        profile?.cycleInfo ?? const CycleInfo(),
+              // Loading indicator
+              if (isLoading)
+                const SliverToBoxAdapter(child: LinearProgressIndicator()),
+
+              // Profile sections
+              SliverPadding(
+                padding: const EdgeInsetsDirectional.fromSTEB(
+                  AppSpacing.screenPaddingH,
+                  AppSpacing.md,
+                  AppSpacing.screenPaddingH,
+                  100,
+                ),
+                sliver: SliverList(
+                  delegate: SliverChildListDelegate([
+                    // 1. Personal Information
+                    profileAsync.when(
+                      data: (profile) => _PersonalInfoSection(
+                        profile: profile,
+                        fallbackUser: user,
+                        onEdit: () =>
+                            _openMotherProfileScreen(context, profile),
                       ),
-                    );
-                  },
-                  loading: () => _LoadingSectionCard(
-                    title: context.l10n.profileMenstrualCycle,
-                  ),
-                  error: (_, _) => _ErrorSectionCard(
-                    title: context.l10n.profileMenstrualCycle,
-                  ),
-                ),
+                      loading: () =>
+                          _LoadingSectionCard(title: l10n.profilePersonalInfo),
+                      error: (_, _) =>
+                          _ErrorSectionCard(title: l10n.profilePersonalInfo),
+                    ),
 
-                // 6. App Settings
-                _SettingsSection(
-                  isDark: isDark,
-                  primaryColor: primaryColor,
-                  onLogout: () async {
-                    await authService?.signOut();
-                    if (context.mounted) {
-                      context.go('/login');
-                    }
-                  },
+                    // 2. Current Status
+                    profileAsync.when(
+                      data: (profile) => _StatusSection(
+                        profile: profile,
+                        currentStatus: _effectiveUserStatus(
+                          ref.watch(motherStageProvider),
+                        ),
+                        primaryColor: primaryColor,
+                        onStatusChange: (status) =>
+                            _handleStatusChange(context, ref, profile, status),
+                      ),
+                      loading: () =>
+                          _LoadingSectionCard(title: l10n.profileCurrentStatus),
+                      error: (_, _) =>
+                          _ErrorSectionCard(title: l10n.profileCurrentStatus),
+                    ),
+
+                    // 3. Children (toujours visible pour gérer les enfants nés et attendus)
+                    childrenAsync.when(
+                      data: (children) => _ChildrenSection(
+                        children: children,
+                        primaryColor: primaryColor,
+                        onAddChild: () =>
+                            _handleAddChild(context, ref, children),
+                        onEditChild: (child) =>
+                            _openChildScreen(context, child),
+                      ),
+                      loading: () =>
+                          _LoadingSectionCard(title: l10n.myChildren),
+                      error: (_, _) => _EmptyChildrenSection(
+                        primaryColor: primaryColor,
+                        onAddChild: () =>
+                            _handleAddChild(context, ref, const []),
+                      ),
+                    ),
+
+                    // 4. Subscription (Mon Abonnement)
+                    _SubscriptionSection(primaryColor: primaryColor),
+
+                    // 5. Medical Information
+                    profileAsync.when(
+                      data: (profile) => _MedicalInfoSection(
+                        medicalInfo:
+                            profile?.medicalInfo ?? const MedicalInfo(),
+                        onEdit: () =>
+                            _openMotherProfileScreen(context, profile),
+                      ),
+                      loading: () => _LoadingSectionCard(
+                        title: context.l10n.profileMedicalInfo,
+                      ),
+                      error: (_, _) => _ErrorSectionCard(
+                        title: context.l10n.profileMedicalInfo,
+                      ),
+                    ),
+
+                    // 5. Cycle / Grossesse
+                    profileAsync.when(
+                      data: (profile) {
+                        if (profile?.status == UserStatus.pregnant) {
+                          return _PregnancySection(
+                            cycleInfo: profile?.cycleInfo ?? const CycleInfo(),
+                            onEnterLmp: () => _showEnterLmpDialog(context, ref),
+                          );
+                        }
+                        return _CycleSection(
+                          cycleInfo: profile?.cycleInfo ?? const CycleInfo(),
+                          onLogPeriod: () => _showLogPeriodDialog(context, ref),
+                          onEditSettings: () => _showEditCycleSettings(
+                            context,
+                            ref,
+                            profile?.cycleInfo ?? const CycleInfo(),
+                          ),
+                        );
+                      },
+                      loading: () => _LoadingSectionCard(
+                        title: context.l10n.profileMenstrualCycle,
+                      ),
+                      error: (_, _) => _ErrorSectionCard(
+                        title: context.l10n.profileMenstrualCycle,
+                      ),
+                    ),
+
+                    // 6. App Settings
+                    _SettingsSection(
+                      isDark: isDark,
+                      primaryColor: primaryColor,
+                      onLogout: () async {
+                        await authService?.signOut();
+                        if (context.mounted) {
+                          context.go('/login');
+                        }
+                      },
+                    ),
+                  ]),
                 ),
-              ]),
-            ),
+              ),
+            ],
           ),
         ],
       ),
-    ],
-  ),
-);
+    );
   }
-
-
 
   void _handleAddChild(
     BuildContext context,
@@ -276,7 +284,9 @@ class ProfileScreen extends ConsumerWidget {
     final limit = ref.read(tierChildLimitProvider);
 
     // Filter out MAM system profile if any
-    final realChildren = currentChildren.where((c) => c.id != 'profile_mam').toList();
+    final realChildren = currentChildren
+        .where((c) => c.id != 'profile_mam')
+        .toList();
 
     if (limit != -1 && realChildren.length >= limit) {
       _showChildLimitDialog(context, currentTier);
@@ -286,7 +296,10 @@ class ProfileScreen extends ConsumerWidget {
     _openChildScreen(context);
   }
 
-  void _showChildLimitDialog(BuildContext context, SubscriptionTier currentTier) {
+  void _showChildLimitDialog(
+    BuildContext context,
+    SubscriptionTier currentTier,
+  ) {
     final l10n = context.l10n;
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final isFree = currentTier == SubscriptionTier.free;
@@ -294,7 +307,9 @@ class ProfileScreen extends ConsumerWidget {
     showDialog(
       context: context,
       builder: (ctx) => AlertDialog(
-        backgroundColor: isDark ? AppColors.surfaceDark : AppColors.surfaceLight,
+        backgroundColor: isDark
+            ? AppColors.surfaceDark
+            : AppColors.surfaceLight,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
         title: Row(
           children: [
@@ -316,7 +331,9 @@ class ProfileScreen extends ConsumerWidget {
               ? l10n.subscriptionChildLimitReachedMessageFree
               : l10n.subscriptionChildLimitReachedMessagePremium,
           style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-            color: isDark ? AppColors.textSecondaryDark : AppColors.textSecondaryLight,
+            color: isDark
+                ? AppColors.textSecondaryDark
+                : AppColors.textSecondaryLight,
             height: 1.4,
           ),
         ),
@@ -353,7 +370,9 @@ class ProfileScreen extends ConsumerWidget {
               Navigator.of(context).push(
                 MaterialPageRoute(
                   builder: (_) => SubscriptionPlansScreen(
-                    initialSelectedTier: isFree ? SubscriptionTier.premium : SubscriptionTier.vip,
+                    initialSelectedTier: isFree
+                        ? SubscriptionTier.premium
+                        : SubscriptionTier.vip,
                   ),
                 ),
               );
@@ -361,11 +380,15 @@ class ProfileScreen extends ConsumerWidget {
             style: ElevatedButton.styleFrom(
               backgroundColor: AppColors.coral,
               foregroundColor: Colors.white,
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12),
+              ),
               padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
             ),
             child: Text(
-              isFree ? l10n.subscriptionUpgradeToPremium : l10n.subscriptionUpgradeToVip,
+              isFree
+                  ? l10n.subscriptionUpgradeToPremium
+                  : l10n.subscriptionUpgradeToVip,
               style: const TextStyle(fontWeight: FontWeight.bold),
             ),
           ),
@@ -374,21 +397,13 @@ class ProfileScreen extends ConsumerWidget {
     );
   }
 
-  void _openChildScreen(
-    BuildContext context, [
-    Child? existingChild,
-  ]) {
+  void _openChildScreen(BuildContext context, [Child? existingChild]) {
     Navigator.of(context).push(
-      MaterialPageRoute(
-        builder: (_) => EditChildScreen(child: existingChild),
-      ),
+      MaterialPageRoute(builder: (_) => EditChildScreen(child: existingChild)),
     );
   }
 
-  void _openMotherProfileScreen(
-    BuildContext context, [
-    UserProfile? profile,
-  ]) {
+  void _openMotherProfileScreen(BuildContext context, [UserProfile? profile]) {
     Navigator.of(context).push(
       MaterialPageRoute(
         builder: (_) => EditMotherProfileScreen(profile: profile),
@@ -420,6 +435,35 @@ class ProfileScreen extends ConsumerWidget {
     UserProfile? profile,
     UserStatus status,
   ) async {
+    // A status toggle cannot create a born child. Explain the required action
+    // before writing anything or ending an active pregnancy.
+    if (status == UserStatus.mom && ref.read(bornChildrenProvider).isEmpty) {
+      final addChild = await showDialog<bool>(
+        context: context,
+        builder: (dialogContext) => AlertDialog(
+          title: Text(context.l10n.statusMom),
+          content: Text(motherStatusGuidance(context)),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(dialogContext, false),
+              child: Text(MaterialLocalizations.of(context).cancelButtonLabel),
+            ),
+            FilledButton(
+              onPressed: () => Navigator.pop(dialogContext, true),
+              child: Text(context.l10n.addChild),
+            ),
+          ],
+        ),
+      );
+      if (addChild == true && context.mounted) {
+        _handleAddChild(
+          context,
+          ref,
+          ref.read(childrenProvider).valueOrNull ?? [],
+        );
+      }
+      return;
+    }
     if (status == UserStatus.pregnant) {
       final active = ref.read(activePregnancyProvider);
       if (active != null) {
@@ -430,7 +474,9 @@ class ProfileScreen extends ConsumerWidget {
       final now = DateTime.now();
       final date = await showDatePicker(
         context: context,
-        initialDate: profile?.lastPregnancyDate ?? now.subtract(const Duration(days: 70)),
+        initialDate:
+            profile?.lastPregnancyDate ??
+            now.subtract(const Duration(days: 70)),
         firstDate: now.subtract(const Duration(days: 280)),
         lastDate: now,
         helpText: helpText,
@@ -448,10 +494,9 @@ class ProfileScreen extends ConsumerWidget {
       );
 
       if (date != null) {
-        await ref.read(profileServiceProvider).declarePregnancy(
-          lmpDate: date,
-          placeholderName: defaultName,
-        );
+        await ref
+            .read(profileServiceProvider)
+            .declarePregnancy(lmpDate: date, placeholderName: defaultName);
         AnalyticsService().logStatusSelected(status.name);
       }
     } else if (status == UserStatus.hope || status == UserStatus.mom) {
@@ -467,8 +512,8 @@ class ProfileScreen extends ConsumerWidget {
         final content = isAr
             ? 'لديك متابعة حمل نشطة حالياً. ماذا ترغبين في فعله بشأن متابعة الحمل الحالية؟'
             : (isFr
-                ? 'Vous avez un suivi de grossesse en cours. Que souhaitez-vous faire de ce suivi ?'
-                : 'You have an active pregnancy tracking. What would you like to do?');
+                  ? 'Vous avez un suivi de grossesse en cours. Que souhaitez-vous faire de ce suivi ?'
+                  : 'You have an active pregnancy tracking. What would you like to do?');
         final cancelLabel = isAr ? 'تراجع' : (isFr ? 'Annuler' : 'Cancel');
         final deleteLabel = isAr
             ? 'إلغاء وحذف المتابعة'
@@ -505,10 +550,9 @@ class ProfileScreen extends ConsumerWidget {
         }
 
         final keepMemories = choice == 'archive';
-        await ref.read(profileServiceProvider).endPregnancy(
-              active.id,
-              keepMemories: keepMemories,
-            );
+        await ref
+            .read(profileServiceProvider)
+            .endPregnancy(active.id, keepMemories: keepMemories);
       }
 
       if (status == UserStatus.hope) {
@@ -557,10 +601,9 @@ class ProfileScreen extends ConsumerWidget {
 
     if (date != null) {
       if (ref.read(activePregnancyProvider) == null) {
-        await ref.read(profileServiceProvider).declarePregnancy(
-          lmpDate: date,
-          placeholderName: defaultName,
-        );
+        await ref
+            .read(profileServiceProvider)
+            .declarePregnancy(lmpDate: date, placeholderName: defaultName);
       }
       ref.read(profileActionsProvider.notifier).savePregnancyLmp(date);
       AnalyticsService().logEvent('lmp_saved');
@@ -613,13 +656,13 @@ class _ProfileHeader extends StatelessWidget {
     final statusLabel = status == UserStatus.pregnant
         ? l10n.statusPregnant
         : status == UserStatus.hope
-            ? l10n.statusHope
-            : l10n.statusMom;
+        ? l10n.statusHope
+        : l10n.statusMom;
     final statusColor = status == UserStatus.pregnant
         ? Colors.pink
         : status == UserStatus.hope
-            ? Colors.purple
-            : Colors.green;
+        ? Colors.purple
+        : Colors.green;
 
     return Container(
       padding: EdgeInsetsDirectional.fromSTEB(
@@ -663,7 +706,11 @@ class _ProfileHeader extends StatelessWidget {
                       : Center(
                           child: Text(
                             name.isNotEmpty ? name[0].toUpperCase() : 'U',
-                            style: Theme.of(context).textTheme.headlineLarge?.copyWith(fontWeight: FontWeight.bold, color: Colors.white),
+                            style: Theme.of(context).textTheme.headlineLarge
+                                ?.copyWith(
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.white,
+                                ),
                           ),
                         ),
                 ),
@@ -701,12 +748,17 @@ class _ProfileHeader extends StatelessWidget {
               children: [
                 Text(
                   name,
-                  style: Theme.of(context).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold, color: textColor),
+                  style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                    fontWeight: FontWeight.bold,
+                    color: textColor,
+                  ),
                 ),
                 const SizedBox(height: 4),
                 Text(
                   email,
-                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: secondaryColor),
+                  style: Theme.of(
+                    context,
+                  ).textTheme.bodyMedium?.copyWith(color: secondaryColor),
                 ),
                 const SizedBox(height: 8),
                 Container(
@@ -732,7 +784,10 @@ class _ProfileHeader extends StatelessWidget {
                       const SizedBox(width: 6),
                       Text(
                         statusLabel,
-                        style: Theme.of(context).textTheme.bodySmall?.copyWith(fontWeight: FontWeight.w600, color: statusColor),
+                        style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                          fontWeight: FontWeight.w600,
+                          color: statusColor,
+                        ),
                       ),
                     ],
                   ),
@@ -757,17 +812,15 @@ class _ProfileHeader extends StatelessWidget {
                   ),
                   boxShadow: [
                     BoxShadow(
-                      color: Colors.black.withValues(alpha: isDark ? 0.25 : 0.04),
+                      color: Colors.black.withValues(
+                        alpha: isDark ? 0.25 : 0.04,
+                      ),
                       blurRadius: 6,
                       offset: const Offset(0, 2),
                     ),
                   ],
                 ),
-                child: Icon(
-                  Icons.edit_outlined,
-                  size: 18,
-                  color: textColor,
-                ),
+                child: Icon(Icons.edit_outlined, size: 18, color: textColor),
               ),
             ),
           ],
@@ -810,7 +863,8 @@ class _PersonalInfoSection extends StatelessWidget {
         ),
         ProfileInfoRow(
           label: l10n.email,
-          value: profile?.email ?? fallbackUser?.email ?? l10n.profileNotProvided,
+          value:
+              profile?.email ?? fallbackUser?.email ?? l10n.profileNotProvided,
           icon: Icons.email_outlined,
         ),
         ProfileInfoRow(
@@ -866,6 +920,11 @@ class _StatusSection extends StatelessWidget {
           currentStatus: effectiveStatus,
           primaryColor: primaryColor,
           onStatusChange: onStatusChange,
+        ),
+        const SizedBox(height: AppSpacing.sm),
+        Text(
+          motherStatusGuidance(context),
+          style: Theme.of(context).textTheme.bodySmall,
         ),
         const SizedBox(height: AppSpacing.sm),
         ProfileInfoRow(
@@ -962,11 +1021,19 @@ class _StatusSelector extends StatelessWidget {
                     : (isDark ? Colors.white60 : Colors.grey),
               ),
               const SizedBox(width: 8),
-              Text(
-                label,
-                style: AppTypography.fromContext(context, fontSize: 13, fontWeight: FontWeight.w600, color: isSelected
-                      ? Colors.white
-                      : (isDark ? Colors.white60 : Colors.grey)),
+              Flexible(
+                child: Text(
+                  label,
+                  maxLines: 2,
+                  style: AppTypography.fromContext(
+                    context,
+                    fontSize: 13,
+                    fontWeight: FontWeight.w600,
+                    color: isSelected
+                        ? Colors.white
+                        : (isDark ? Colors.white60 : Colors.grey),
+                  ),
+                ),
               ),
             ],
           ),
@@ -1004,7 +1071,10 @@ class _ChildrenSection extends StatelessWidget {
         ),
         child: Text(
           '${children.length}',
-          style: Theme.of(context).textTheme.bodySmall?.copyWith(fontWeight: FontWeight.bold, color: Colors.orange),
+          style: Theme.of(context).textTheme.bodySmall?.copyWith(
+            fontWeight: FontWeight.bold,
+            color: Colors.orange,
+          ),
         ),
       ),
       children: [
@@ -1025,7 +1095,9 @@ class _ChildrenSection extends StatelessWidget {
             padding: const EdgeInsets.symmetric(vertical: AppSpacing.sm),
             child: Text(
               l10n.noChildrenTitle,
-              style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: Colors.grey),
+              style: Theme.of(
+                context,
+              ).textTheme.bodyMedium?.copyWith(color: Colors.grey),
             ),
           ),
         const SizedBox(height: AppSpacing.xs),
@@ -1063,7 +1135,10 @@ class _AddChildButton extends StatelessWidget {
             const SizedBox(width: 8),
             Text(
               l10n.addChild,
-              style: Theme.of(context).textTheme.titleSmall?.copyWith(fontWeight: FontWeight.w600, color: primaryColor),
+              style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                fontWeight: FontWeight.w600,
+                color: primaryColor,
+              ),
             ),
           ],
         ),
@@ -1121,10 +1196,7 @@ class _MedicalInfoSection extends StatelessWidget {
 }
 
 class _PregnancySection extends StatelessWidget {
-  const _PregnancySection({
-    required this.cycleInfo,
-    required this.onEnterLmp,
-  });
+  const _PregnancySection({required this.cycleInfo, required this.onEnterLmp});
 
   final CycleInfo cycleInfo;
   final VoidCallback onEnterLmp;
@@ -1149,7 +1221,9 @@ class _PregnancySection extends StatelessWidget {
             padding: const EdgeInsets.symmetric(vertical: AppSpacing.sm),
             child: Text(
               l10n.profilePregnancyLmpPrompt,
-              style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: Colors.grey),
+              style: Theme.of(
+                context,
+              ).textTheme.bodyMedium?.copyWith(color: Colors.grey),
             ),
           ),
         ] else ...[
@@ -1181,9 +1255,7 @@ class _PregnancySection extends StatelessWidget {
         ElevatedButton.icon(
           onPressed: onEnterLmp,
           icon: const Icon(Icons.calendar_today_rounded),
-          label: Text(
-            lmp == null ? l10n.cycleEnterLmp : l10n.cycleModifyLmp,
-          ),
+          label: Text(lmp == null ? l10n.cycleEnterLmp : l10n.cycleModifyLmp),
           style: ElevatedButton.styleFrom(
             backgroundColor: Colors.pink,
             foregroundColor: Colors.white,
@@ -1271,7 +1343,9 @@ class _CycleSection extends StatelessWidget {
             padding: const EdgeInsets.symmetric(vertical: AppSpacing.sm),
             child: Text(
               l10n.profileCycleNotActive,
-              style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: Colors.grey),
+              style: Theme.of(
+                context,
+              ).textTheme.bodyMedium?.copyWith(color: Colors.grey),
             ),
           ),
         const SizedBox(height: AppSpacing.sm),
@@ -1338,13 +1412,20 @@ class _SubscriptionSection extends ConsumerWidget {
                 children: [
                   Text(
                     plan.localizedTitle(l10n),
-                    style: Theme.of(context).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold, color: textColor),
+                    style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                      fontWeight: FontWeight.bold,
+                      color: textColor,
+                    ),
                   ),
                   Text(
                     plan.priceDZD == 0
                         ? l10n.profileFreePlan
                         : '${plan.localizedPriceLabel(l10n)} ${plan.localizedBillingCycle(l10n)}',
-                    style: AppTypography.fromContext(context, fontSize: 13, color: subTextColor),
+                    style: AppTypography.fromContext(
+                      context,
+                      fontSize: 13,
+                      color: subTextColor,
+                    ),
                   ),
                 ],
               ),
@@ -1359,7 +1440,12 @@ class _SubscriptionSection extends ConsumerWidget {
               ),
               child: Text(
                 l10n.profileManage,
-                style: AppTypography.fromContext(context, fontSize: 13, fontWeight: FontWeight.w600, color: primaryColor),
+                style: AppTypography.fromContext(
+                  context,
+                  fontSize: 13,
+                  fontWeight: FontWeight.w600,
+                  color: primaryColor,
+                ),
               ),
             ),
           ],
@@ -1395,7 +1481,12 @@ class _SubscriptionSection extends ConsumerWidget {
                       albumClaimed
                           ? l10n.profileAlbumClaimSent
                           : l10n.profileClaimFreeAlbum,
-                      style: AppTypography.fromContext(context, fontSize: 13, fontWeight: FontWeight.w600, color: const Color(0xFFFF6F00)),
+                      style: AppTypography.fromContext(
+                        context,
+                        fontSize: 13,
+                        fontWeight: FontWeight.w600,
+                        color: const Color(0xFFFF6F00),
+                      ),
                     ),
                   ),
                   if (!albumClaimed)
@@ -1434,14 +1525,33 @@ class _SettingsSection extends ConsumerWidget {
         return AlertDialog(
           title: Text(
             l10n.profileSelectLanguage,
-            style: AppTypography.fromContext(context, fontSize: 14, fontWeight: FontWeight.bold),
+            style: AppTypography.fromContext(
+              context,
+              fontSize: 14,
+              fontWeight: FontWeight.bold,
+            ),
           ),
           content: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              _buildLanguageOption(context, ref, const Locale('fr'), l10n.profileLanguageFr),
-              _buildLanguageOption(context, ref, const Locale('ar'), l10n.profileLanguageAr),
-              _buildLanguageOption(context, ref, const Locale('en'), l10n.profileLanguageEn),
+              _buildLanguageOption(
+                context,
+                ref,
+                const Locale('fr'),
+                l10n.profileLanguageFr,
+              ),
+              _buildLanguageOption(
+                context,
+                ref,
+                const Locale('ar'),
+                l10n.profileLanguageAr,
+              ),
+              _buildLanguageOption(
+                context,
+                ref,
+                const Locale('en'),
+                l10n.profileLanguageEn,
+              ),
             ],
           ),
         );
@@ -1460,7 +1570,11 @@ class _SettingsSection extends ConsumerWidget {
     return ListTile(
       title: Text(
         label,
-        style: AppTypography.fromContext(context, fontSize: 14, fontWeight: isSelected ? FontWeight.bold : FontWeight.normal),
+        style: AppTypography.fromContext(
+          context,
+          fontSize: 14,
+          fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+        ),
       ),
       trailing: isSelected
           ? const Icon(Icons.check, color: AppColors.magentaPink)
@@ -1520,7 +1634,9 @@ class _SettingsSection extends ConsumerWidget {
                           : 'Trois pistes au même moteur réactif pour accompagner vos journées.',
                       style: TextStyle(
                         fontSize: 12,
-                        color: isDark ? Colors.white60 : const Color(0xFF6B6575),
+                        color: isDark
+                            ? Colors.white60
+                            : const Color(0xFF6B6575),
                       ),
                     ),
                     const SizedBox(height: 18),
@@ -1538,21 +1654,26 @@ class _SettingsSection extends ConsumerWidget {
                           borderRadius: BorderRadius.circular(16),
                           child: Container(
                             padding: const EdgeInsets.symmetric(
-                                horizontal: 14, vertical: 12),
+                              horizontal: 14,
+                              vertical: 12,
+                            ),
                             decoration: BoxDecoration(
                               color: isSelected
-                                  ? AppColors.primaryLight
-                                      .withValues(alpha: isDark ? 0.20 : 0.10)
+                                  ? AppColors.primaryLight.withValues(
+                                      alpha: isDark ? 0.20 : 0.10,
+                                    )
                                   : (isDark
-                                      ? const Color(0xFF282B30)
-                                      : const Color(0xFFF6F7F9)),
+                                        ? const Color(0xFF282B30)
+                                        : const Color(0xFFF6F7F9)),
                               borderRadius: BorderRadius.circular(16),
                               border: Border.all(
                                 color: isSelected
                                     ? AppColors.primaryLight
                                     : (isDark
-                                        ? Colors.white12
-                                        : Colors.black.withValues(alpha: 0.05)),
+                                          ? Colors.white12
+                                          : Colors.black.withValues(
+                                              alpha: 0.05,
+                                            )),
                                 width: isSelected ? 1.5 : 1,
                               ),
                             ),
@@ -1567,7 +1688,8 @@ class _SettingsSection extends ConsumerWidget {
                                 const SizedBox(width: 14),
                                 Expanded(
                                   child: Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
                                     children: [
                                       Row(
                                         children: [
@@ -1583,11 +1705,15 @@ class _SettingsSection extends ConsumerWidget {
                                                   : const Color(0xFF1D1B20),
                                             ),
                                           ),
-                                          if (char == AssistantCharacter.lueur) ...[
+                                          if (char ==
+                                              AssistantCharacter.lueur) ...[
                                             const SizedBox(width: 6),
                                             Container(
-                                              padding: const EdgeInsets.symmetric(
-                                                  horizontal: 6, vertical: 2),
+                                              padding:
+                                                  const EdgeInsets.symmetric(
+                                                    horizontal: 6,
+                                                    vertical: 2,
+                                                  ),
                                               decoration: BoxDecoration(
                                                 color: AppColors.primaryLight
                                                     .withValues(alpha: 0.18),
@@ -1654,8 +1780,8 @@ class _SettingsSection extends ConsumerWidget {
     final langLabel = activeLocale.languageCode == 'ar'
         ? l10n.profileLanguageAr
         : activeLocale.languageCode == 'en'
-            ? l10n.profileLanguageEn
-            : l10n.profileLanguageFr;
+        ? l10n.profileLanguageEn
+        : l10n.profileLanguageFr;
 
     return ProfileSectionCard(
       title: l10n.profileSettings,
@@ -1715,9 +1841,9 @@ class _SettingsSection extends ConsumerWidget {
           secondaryColor: secondaryColor,
           title: l10n.privacy,
           onTap: () {
-            Navigator.of(context).push(
-              MaterialPageRoute(builder: (_) => const PrivacyScreen()),
-            );
+            Navigator.of(
+              context,
+            ).push(MaterialPageRoute(builder: (_) => const PrivacyScreen()));
           },
         ),
         _SettingsTile(
@@ -1726,9 +1852,9 @@ class _SettingsSection extends ConsumerWidget {
           secondaryColor: secondaryColor,
           title: l10n.helpAndSupport,
           onTap: () {
-            Navigator.of(context).push(
-              MaterialPageRoute(builder: (_) => const HelpScreen()),
-            );
+            Navigator.of(
+              context,
+            ).push(MaterialPageRoute(builder: (_) => const HelpScreen()));
           },
         ),
         const SizedBox(height: AppSpacing.sm),
@@ -1812,9 +1938,7 @@ class _DisplaySettingsTile extends ConsumerWidget {
                   isHorizontal
                       ? l10n.profileTimelineHorizontal
                       : l10n.profileTimelineVertical,
-                  style: textTheme.bodySmall?.copyWith(
-                    color: secondaryColor,
-                  ),
+                  style: textTheme.bodySmall?.copyWith(color: secondaryColor),
                 ),
               ],
             ),
@@ -1926,12 +2050,19 @@ class _SettingsTile extends StatelessWidget {
                 children: [
                   Text(
                     title,
-                    style: AppTypography.fromContext(context, fontSize: 14, fontWeight: FontWeight.w500, color: textColor),
+                    style: AppTypography.fromContext(
+                      context,
+                      fontSize: 14,
+                      fontWeight: FontWeight.w500,
+                      color: textColor,
+                    ),
                   ),
                   if (subtitle != null)
                     Text(
                       subtitle!,
-                      style: Theme.of(context).textTheme.bodySmall?.copyWith(color: secondaryColor),
+                      style: Theme.of(
+                        context,
+                      ).textTheme.bodySmall?.copyWith(color: secondaryColor),
                     ),
                 ],
               ),
@@ -1976,7 +2107,10 @@ class _EmptyChildrenSection extends StatelessWidget {
         ),
         child: Text(
           '0',
-          style: Theme.of(context).textTheme.bodySmall?.copyWith(fontWeight: FontWeight.bold, color: Colors.orange),
+          style: Theme.of(context).textTheme.bodySmall?.copyWith(
+            fontWeight: FontWeight.bold,
+            color: Colors.orange,
+          ),
         ),
       ),
       initiallyExpanded: true,
@@ -1985,7 +2119,9 @@ class _EmptyChildrenSection extends StatelessWidget {
           padding: const EdgeInsets.symmetric(vertical: AppSpacing.sm),
           child: Text(
             l10n.noChildrenTitle,
-            style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: Colors.grey),
+            style: Theme.of(
+              context,
+            ).textTheme.bodyMedium?.copyWith(color: Colors.grey),
           ),
         ),
         const SizedBox(height: AppSpacing.xs),
@@ -2026,7 +2162,9 @@ class _ErrorSectionCard extends StatelessWidget {
       children: [
         Text(
           context.l10n.healthLoadingError,
-          style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: Colors.red),
+          style: Theme.of(
+            context,
+          ).textTheme.bodyMedium?.copyWith(color: Colors.red),
         ),
         const SizedBox(height: AppSpacing.md),
       ],
@@ -2088,7 +2226,11 @@ class _DeleteAccountDialogState extends State<_DeleteAccountDialog> {
               color: Colors.red.shade50,
               shape: BoxShape.circle,
             ),
-            child: Icon(Icons.warning_rounded, color: Colors.red.shade600, size: 22),
+            child: Icon(
+              Icons.warning_rounded,
+              color: Colors.red.shade600,
+              size: 22,
+            ),
           ),
           const SizedBox(width: 12),
           Expanded(
@@ -2154,7 +2296,10 @@ class _DeleteAccountDialogState extends State<_DeleteAccountDialog> {
   Widget _bulletPoint(String text) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 2),
-      child: Text(text, style: const TextStyle(fontSize: 13, color: Colors.red)),
+      child: Text(
+        text,
+        style: const TextStyle(fontSize: 13, color: Colors.red),
+      ),
     );
   }
 }

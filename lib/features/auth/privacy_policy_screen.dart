@@ -686,10 +686,10 @@ class _LegalHeroBanner extends StatelessWidget {
                         const SizedBox(width: 6),
                         Text(
                           lang == 'ar'
-                              ? 'مشفر بالكامل ومحمي قانونياً 🔒'
+                              ? 'مشفر بالكامل ومحمي قانونياً '
                               : (lang == 'fr'
-                                  ? 'Chiffré & 100% Conforme 🔒'
-                                  : '100% Encrypted & Compliant 🔒'),
+                                  ? 'Chiffré & 100% Conforme '
+                                  : '100% Encrypted & Compliant '),
                           style: const TextStyle(
                             fontSize: 11,
                             fontWeight: FontWeight.w800,

@@ -8,7 +8,8 @@ import '../../../core/theme/app_spacing.dart';
 import '../models/profile_models.dart';
 import '../../../core/theme/app_typography.dart';
 
-/// Wilayas d'Algérie pour le dropdown.
+/// Verified 2026-11-06: JO 40, 3 June 2026, p.5.
+/// https://www.joradp.dz/FTP/jo-francais/2026/F2026040.pdf
 const List<String> algerianWilayas = [
   'Adrar',
   'Chlef',
@@ -58,6 +59,27 @@ const List<String> algerianWilayas = [
   'Aïn Témouchent',
   'Ghardaïa',
   'Relizane',
+  'Timimoun',
+  'Bordj Badji Mokhtar',
+  'Ouled Djellal',
+  'Béni Abbès',
+  'In Salah',
+  'In Guezzam',
+  'Touggourt',
+  'Djanet',
+  'El M’Ghair',
+  'El Menia',
+  'Aflou',
+  'Barika',
+  'El Kantara',
+  'Bir El Ater',
+  'El Aricha',
+  'Ksar Chellala',
+  'Aïn Ouessara',
+  'Messaad',
+  'Ksar El Boukhari',
+  'Bou Saâda',
+  'El Abiodh Sidi Cheikh',
 ];
 
 /// Blood types for dropdown.
@@ -145,7 +167,10 @@ class _EditPersonalInfoDialogState extends State<EditPersonalInfoDialog> {
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(context.l10n.errorWithMessage('$e')), backgroundColor: Colors.red),
+          SnackBar(
+            content: Text(context.l10n.errorWithMessage('$e')),
+            backgroundColor: Colors.red,
+          ),
         );
       }
     } finally {
@@ -173,7 +198,11 @@ class _EditPersonalInfoDialogState extends State<EditPersonalInfoDialog> {
             children: [
               Text(
                 l10n.profileEditPersonalInfo,
-                style: AppTypography.fromContext(context, fontSize: 20, fontWeight: FontWeight.bold),
+                style: AppTypography.fromContext(
+                  context,
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                ),
               ),
               const SizedBox(height: AppSpacing.lg),
 
@@ -215,9 +244,12 @@ class _EditPersonalInfoDialogState extends State<EditPersonalInfoDialog> {
                           _birthDate != null
                               ? dateFormat.format(_birthDate!)
                               : l10n.profileBirthDate,
-                          style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: _birthDate != null
-                                ? null
-                                : Colors.grey.shade600),
+                          style: Theme.of(context).textTheme.bodyMedium
+                              ?.copyWith(
+                                color: _birthDate != null
+                                    ? null
+                                    : Colors.grey.shade600,
+                              ),
                         ),
                       ),
                       Icon(Icons.calendar_today, size: 18, color: primaryColor),
@@ -379,7 +411,10 @@ class _EditMedicalInfoDialogState extends State<EditMedicalInfoDialog> {
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(context.l10n.errorWithMessage('$e')), backgroundColor: Colors.red),
+          SnackBar(
+            content: Text(context.l10n.errorWithMessage('$e')),
+            backgroundColor: Colors.red,
+          ),
         );
       }
     } finally {
@@ -406,7 +441,11 @@ class _EditMedicalInfoDialogState extends State<EditMedicalInfoDialog> {
             children: [
               Text(
                 l10n.profileEditMedicalInfoTitle,
-                style: AppTypography.fromContext(context, fontSize: 20, fontWeight: FontWeight.bold),
+                style: AppTypography.fromContext(
+                  context,
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                ),
               ),
               const SizedBox(height: AppSpacing.lg),
 
@@ -614,7 +653,10 @@ class _AddEditChildDialogState extends State<AddEditChildDialog> {
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(context.l10n.errorWithMessage('$e')), backgroundColor: Colors.red),
+          SnackBar(
+            content: Text(context.l10n.errorWithMessage('$e')),
+            backgroundColor: Colors.red,
+          ),
         );
       }
     } finally {
@@ -650,7 +692,10 @@ class _AddEditChildDialogState extends State<AddEditChildDialog> {
       } catch (e) {
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text(context.l10n.errorWithMessage('$e')), backgroundColor: Colors.red),
+            SnackBar(
+              content: Text(context.l10n.errorWithMessage('$e')),
+              backgroundColor: Colors.red,
+            ),
           );
         }
       } finally {
@@ -679,7 +724,11 @@ class _AddEditChildDialogState extends State<AddEditChildDialog> {
             children: [
               Text(
                 isEditing ? l10n.profileEditChild : l10n.addChild,
-                style: AppTypography.fromContext(context, fontSize: 20, fontWeight: FontWeight.bold),
+                style: AppTypography.fromContext(
+                  context,
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                ),
               ),
               const SizedBox(height: AppSpacing.lg),
 
@@ -807,9 +856,12 @@ class _AddEditChildDialogState extends State<AddEditChildDialog> {
                           _birthDate != null
                               ? dateFormat.format(_birthDate!)
                               : '${l10n.profileBirthDate} *',
-                          style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: _birthDate != null
-                                ? null
-                                : Colors.grey.shade600),
+                          style: Theme.of(context).textTheme.bodyMedium
+                              ?.copyWith(
+                                color: _birthDate != null
+                                    ? null
+                                    : Colors.grey.shade600,
+                              ),
                         ),
                       ),
                       Icon(Icons.calendar_today, size: 18, color: primaryColor),
@@ -854,7 +906,9 @@ class _AddEditChildDialogState extends State<AddEditChildDialog> {
                                 color: Colors.white,
                               ),
                             )
-                          : Text(isEditing ? l10n.profileEditChild : l10n.addChild),
+                          : Text(
+                              isEditing ? l10n.profileEditChild : l10n.addChild,
+                            ),
                     ),
                   ),
                 ],
@@ -907,7 +961,12 @@ class _GenderOption extends StatelessWidget {
             const SizedBox(height: 4),
             Text(
               label,
-              style: AppTypography.fromContext(context, fontSize: 14, fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal, color: isSelected ? color : Colors.grey),
+              style: AppTypography.fromContext(
+                context,
+                fontSize: 14,
+                fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
+                color: isSelected ? color : Colors.grey,
+              ),
             ),
           ],
         ),
@@ -959,7 +1018,10 @@ class _EditCycleSettingsDialogState extends State<EditCycleSettingsDialog> {
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(context.l10n.errorWithMessage('$e')), backgroundColor: Colors.red),
+          SnackBar(
+            content: Text(context.l10n.errorWithMessage('$e')),
+            backgroundColor: Colors.red,
+          ),
         );
       }
     } finally {
@@ -985,7 +1047,11 @@ class _EditCycleSettingsDialogState extends State<EditCycleSettingsDialog> {
           children: [
             Text(
               l10n.profileCycleSettings,
-              style: AppTypography.fromContext(context, fontSize: 20, fontWeight: FontWeight.bold),
+              style: AppTypography.fromContext(
+                context,
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
+              ),
             ),
             const SizedBox(height: AppSpacing.lg),
 
@@ -1013,7 +1079,11 @@ class _EditCycleSettingsDialogState extends State<EditCycleSettingsDialog> {
                   ),
                   Text(
                     '$_cycleLength',
-                    style: AppTypography.fromContext(context, fontSize: 14, fontWeight: FontWeight.bold),
+                    style: AppTypography.fromContext(
+                      context,
+                      fontSize: 14,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                   IconButton(
                     onPressed: _cycleLength < 40
@@ -1040,7 +1110,11 @@ class _EditCycleSettingsDialogState extends State<EditCycleSettingsDialog> {
                   ),
                   Text(
                     '$_periodDuration',
-                    style: AppTypography.fromContext(context, fontSize: 14, fontWeight: FontWeight.bold),
+                    style: AppTypography.fromContext(
+                      context,
+                      fontSize: 14,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                   IconButton(
                     onPressed: _periodDuration < 10

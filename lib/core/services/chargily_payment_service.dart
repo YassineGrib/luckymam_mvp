@@ -1,5 +1,5 @@
+import 'safe_log.dart';
 import 'dart:convert';
-import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 
 class ChargilyCheckoutResult {
@@ -70,14 +70,14 @@ class ChargilyPaymentService {
         );
       } else {
         final data = jsonDecode(response.body);
-        debugPrint('[Chargily] Server error ${response.statusCode}: ${response.body}');
+        safeDebugPrint('[Chargily] Server error ${response.statusCode}: [REDACTED]');
         return ChargilyCheckoutResult(
           success: false,
           errorMessage: data['message'] ?? 'فشل إنشاء جلسة الدفع',
         );
       }
     } catch (e) {
-      debugPrint('[Chargily] Request failed: $e');
+      safeDebugPrint('[Chargily] Request failed: ${e.runtimeType}');
       return ChargilyCheckoutResult(
         success: false,
         errorMessage: 'خطأ في الاتصال بخادم الدفع. تحقق من الاتصال بالإنترنت.',

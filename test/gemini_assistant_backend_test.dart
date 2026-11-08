@@ -1,13 +1,64 @@
 import 'dart:io';
 import 'package:cloud_functions/cloud_functions.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:lukymam_mvp/features/assistant/avatar/mochi_state.dart';
 import 'package:lukymam_mvp/features/assistant/models/assistant_models.dart';
 import 'package:lukymam_mvp/features/assistant/providers/assistant_providers.dart';
 import 'package:lukymam_mvp/features/assistant/services/gemini_assistant_backend.dart';
 
 void main() {
+  test(
+    'production assistant uses the authenticated server, without a bundled provider key',
+    () {
+      final container = ProviderContainer();
+      addTearDown(container.dispose);
+      expect(
+        container.read(assistantBackendProvider),
+        isA<GeminiAssistantBackend>(),
+      );
+    },
+  );
   group('GeminiAssistantBackend', () {
+    test(
+      'missing deployment maps to service unavailable, not a generic server error',
+      () async {
+        final backend = GeminiAssistantBackend(
+          invoke: (_) async {
+            throw FirebaseFunctionsException(code: 'not-found', message: 'Function is not deployed');
+          },
+        );
+        await expectLater(
+          backend.send(history: [], message: 'Hello', locale: 'en'),
+          throwsA(
+            isA<AssistantException>().having(
+              (e) => e.kind,
+              'kind',
+              AssistantErrorKind.unavailable,
+            ),
+          ),
+        );
+      },
+    );
+
+    test(
+      'empty server response is a failure rather than an empty assistant bubble',
+      () async {
+        final backend = GeminiAssistantBackend(
+          invoke: (_) async => {'reply': '  '},
+        );
+        await expectLater(
+          backend.send(history: [], message: 'Hello', locale: 'en'),
+          throwsA(
+            isA<AssistantException>().having(
+              (e) => e.kind,
+              'kind',
+              AssistantErrorKind.unavailable,
+            ),
+          ),
+        );
+      },
+    );
     test('parses reply and every card type', () async {
       final backend = GeminiAssistantBackend(
         invoke: (payload) async {
@@ -102,10 +153,7 @@ void main() {
     test('unknown mood becomes neutral', () async {
       final backend = GeminiAssistantBackend(
         invoke: (payload) async {
-          return {
-            'reply': 'Normal text',
-            'mood': 'surprised_alien',
-          };
+          return {'reply': 'Normal text', 'mood': 'surprised_alien'};
         },
       );
 
@@ -150,11 +198,7 @@ void main() {
         ),
       ];
 
-      await backend.send(
-        history: history,
-        message: 'Msg 2',
-        locale: 'ar',
-      );
+      await backend.send(history: history, message: 'Msg 2', locale: 'ar');
 
       expect(receivedPayload, isNotNull);
       expect(receivedPayload!['locale'], 'ar');
@@ -174,11 +218,13 @@ void main() {
 
       expect(
         () => backend.send(history: [], message: 'Hi', locale: 'fr'),
-        throwsA(isA<AssistantException>().having(
-          (e) => e.kind,
-          'kind',
-          AssistantErrorKind.network,
-        )),
+        throwsA(
+          isA<AssistantException>().having(
+            (e) => e.kind,
+            'kind',
+            AssistantErrorKind.network,
+          ),
+        ),
       );
     });
 
@@ -207,29 +253,32 @@ void main() {
       expect(controller.state.mochi, MochiState.error);
     });
 
-    test('resource-exhausted maps to quota error and ratelimit mochi', () async {
-      final backend = GeminiAssistantBackend(
-        invoke: (payload) async {
-          throw FirebaseFunctionsException(
-            code: 'resource-exhausted',
-            message: 'Daily quota exceeded',
-          );
-        },
-      );
+    test(
+      'resource-exhausted maps to quota error and ratelimit mochi',
+      () async {
+        final backend = GeminiAssistantBackend(
+          invoke: (payload) async {
+            throw FirebaseFunctionsException(
+              code: 'resource-exhausted',
+              message: 'Daily quota exceeded',
+            );
+          },
+        );
 
-      final controller = AssistantController(
-        backend,
-        locale: 'fr',
-        speakingDuration: (_) => Duration.zero,
-      );
+        final controller = AssistantController(
+          backend,
+          locale: 'fr',
+          speakingDuration: (_) => Duration.zero,
+        );
 
-      await controller.send('Hello');
+        await controller.send('Hello');
 
-      expect(controller.state.messages.length, 2);
-      final errMsg = controller.state.messages[1];
-      expect(errMsg.isError, true);
-      expect(errMsg.text, 'assistantErrorQuota');
-      expect(controller.state.mochi, MochiState.ratelimit);
-    });
+        expect(controller.state.messages.length, 2);
+        final errMsg = controller.state.messages[1];
+        expect(errMsg.isError, true);
+        expect(errMsg.text, 'assistantErrorQuota');
+        expect(controller.state.mochi, MochiState.ratelimit);
+      },
+    );
   });
 }

@@ -1,0 +1,1605 @@
+{
+  "status": "success",
+  "result": [
+    {
+      "insertId": "6aef1620000335137fd070a8",
+      "jsonPayload": {
+        "message": "Callable request verification passed",
+        "verifications": {
+          "auth": "VALID",
+          "app": "MISSING"
+        }
+      },
+      "resource": {
+        "type": "cloud_run_revision",
+        "labels": {
+          "revision_name": "aichat-00001-sox",
+          "project_id": "luckymam-app-dv",
+          "service_name": "aichat",
+          "location": "europe-west1",
+          "configuration_name": "aichat"
+        }
+      },
+      "timestamp": "2026-11-07T12:14:24.210195Z",
+      "severity": "DEBUG",
+      "labels": {
+        "firebase-log-type": "callable-request-verification",
+        "instanceId": "00e8a408bd551404aba76d379c01596ac113f833d0f434dd48764bf9aedc9853688599af7a1598aae5730fefc01a2fe4ce36d8dbc8f1791ac7315eb8db36b1d6e907e9c06255325d0d8ab90ce3a28364037af10db0ccdf1c",
+        "run.googleapis.com/base_image_versions": "us-docker.pkg.dev/serverless-runtimes/google-22-full/runtimes/nodejs22:nodejs22_20261022_22_23_4_RC01",
+        "firebase-functions-codebase": "admin",
+        "execution_id": "6d8attnu5e5a",
+        "deployment-callable": "true",
+        "goog-managed-by": "cloudfunctions",
+        "firebase-functions-hash": "411d86c914d8ba1d230f0d591106f53c7da8f20e"
+      },
+      "logName": "projects/luckymam-app-dv/logs/run.googleapis.com%2Fstdout",
+      "writerEmailAddress": "[REDACTED_EMAIL]",
+      "internalId": {
+        "projectNumber": "834179717761"
+      },
+      "trace": "projects/luckymam-app-dv/traces/158ed217a94454558cf9a0493e15fb67",
+      "receiveTimestamp": "2026-11-07T12:14:24.401608210Z",
+      "spanId": "8486193011634216504",
+      "internalMetadata": {
+        "queryAnnotations": {
+          "residentBucketUuid": "834179717761_d",
+          "residentBucketEntityId": {
+            "projectNumber": "834179717761"
+          }
+        },
+        "bucketUuid": [
+          {
+            "tcubeShardNames": [
+              "global01-us-central1"
+            ],
+            "uid": "834179717761_d"
+          }
+        ],
+        "billingSize": "1075",
+        "logBucketWithSinkInfo": [
+          {
+            "uid": "834179717761_d",
+            "tcubeShardNames": [
+              "global01-us-central1"
+            ],
+            "sinkInfo": [
+              {
+                "status": "OK",
+                "unmodifiedDefaultSinkInternalId": {
+                  "projectNumber": "834179717761"
+                }
+              }
+            ],
+            "bucketOwner": {
+              "projectNumber": "834179717761"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "insertId": "6aef1623000ab1b6c5238f02",
+      "httpRequest": {
+        "requestMethod": "POST",
+        "requestUrl": "https://europe-west1-luckymam-app-dv.cloudfunctions.net/aiChat",
+        "requestSize": "1573",
+        "status": 200,
+        "responseSize": "342",
+        "userAgent": "node",
+        "remoteIp": "[REDACTED_IP]",
+        "serverIp": "[REDACTED_IP]",
+        "latency": "3.495753931s",
+        "protocol": "HTTP/1.1"
+      },
+      "resource": {
+        "type": "cloud_run_revision",
+        "labels": {
+          "location": "europe-west1",
+          "configuration_name": "aichat",
+          "revision_name": "aichat-00001-sox",
+          "project_id": "luckymam-app-dv",
+          "service_name": "aichat"
+        }
+      },
+      "timestamp": "2026-11-07T12:14:24.202063Z",
+      "severity": "INFO",
+      "labels": {
+        "instanceId": "00e8a408bd551404aba76d379c01596ac113f833d0f434dd48764bf9aedc9853688599af7a1598aae5730fefc01a2fe4ce36d8dbc8f1791ac7315eb8db36b1d6e907e9c06255325d0d8ab90ce3a28364037af10db0ccdf1c",
+        "firebase-functions-hash": "411d86c914d8ba1d230f0d591106f53c7da8f20e",
+        "firebase-functions-codebase": "admin",
+        "goog-managed-by": "cloudfunctions",
+        "deployment-callable": "true"
+      },
+      "logName": "projects/luckymam-app-dv/logs/run.googleapis.com%2Frequests",
+      "writerEmailAddress": "[REDACTED_EMAIL]",
+      "internalId": {
+        "projectNumber": "834179717761"
+      },
+      "trace": "projects/luckymam-app-dv/traces/158ed217a94454558cf9a0493e15fb67",
+      "receiveTimestamp": "2026-11-07T12:14:27.732004974Z",
+      "spanId": "75c5039511dc1e38",
+      "internalMetadata": {
+        "queryAnnotations": {
+          "residentBucketUuid": "834179717761_d",
+          "residentBucketEntityId": {
+            "projectNumber": "834179717761"
+          }
+        },
+        "bucketUuid": [
+          {
+            "tcubeShardNames": [
+              "global01-us-central1"
+            ],
+            "uid": "834179717761_d"
+          }
+        ],
+        "billingSize": "877",
+        "logBucketWithSinkInfo": [
+          {
+            "uid": "834179717761_d",
+            "tcubeShardNames": [
+              "global01-us-central1"
+            ],
+            "sinkInfo": [
+              {
+                "status": "OK",
+                "unmodifiedDefaultSinkInternalId": {
+                  "projectNumber": "834179717761"
+                }
+              }
+            ],
+            "bucketOwner": {
+              "projectNumber": "834179717761"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "insertId": "6aef161f000606f755da8870",
+      "jsonPayload": {
+        "message": "Callable request verification passed",
+        "verifications": {
+          "app": "MISSING",
+          "auth": "MISSING"
+        }
+      },
+      "resource": {
+        "type": "cloud_run_revision",
+        "labels": {
+          "location": "europe-west1",
+          "configuration_name": "aichat",
+          "service_name": "aichat",
+          "project_id": "luckymam-app-dv",
+          "revision_name": "aichat-00001-sox"
+        }
+      },
+      "timestamp": "2026-11-07T12:14:23.394999Z",
+      "severity": "DEBUG",
+      "labels": {
+        "execution_id": "6d8a76nb16ik",
+        "deployment-callable": "true",
+        "goog-managed-by": "cloudfunctions",
+        "firebase-functions-codebase": "admin",
+        "firebase-functions-hash": "411d86c914d8ba1d230f0d591106f53c7da8f20e",
+        "run.googleapis.com/base_image_versions": "us-docker.pkg.dev/serverless-runtimes/google-22-full/runtimes/nodejs22:nodejs22_20261022_22_23_4_RC01",
+        "firebase-log-type": "callable-request-verification",
+        "instanceId": "00e8a408bd551404aba76d379c01596ac113f833d0f434dd48764bf9aedc9853688599af7a1598aae5730fefc01a2fe4ce36d8dbc8f1791ac7315eb8db36b1d6e907e9c06255325d0d8ab90ce3a28364037af10db0ccdf1c"
+      },
+      "logName": "projects/luckymam-app-dv/logs/run.googleapis.com%2Fstdout",
+      "writerEmailAddress": "[REDACTED_EMAIL]",
+      "internalId": {
+        "projectNumber": "834179717761"
+      },
+      "trace": "projects/luckymam-app-dv/traces/8123bbd909bbc6278cf9a0493e15f4bf",
+      "receiveTimestamp": "2026-11-07T12:14:23.409074137Z",
+      "spanId": "8470912782962367297",
+      "internalMetadata": {
+        "queryAnnotations": {
+          "residentBucketUuid": "834179717761_d",
+          "residentBucketEntityId": {
+            "projectNumber": "834179717761"
+          }
+        },
+        "bucketUuid": [
+          {
+            "tcubeShardNames": [
+              "global01-us-central1"
+            ],
+            "uid": "834179717761_d"
+          }
+        ],
+        "billingSize": "1078",
+        "logBucketWithSinkInfo": [
+          {
+            "uid": "834179717761_d",
+            "tcubeShardNames": [
+              "global01-us-central1"
+            ],
+            "sinkInfo": [
+              {
+                "status": "OK",
+                "unmodifiedDefaultSinkInternalId": {
+                  "projectNumber": "834179717761"
+                }
+              }
+            ],
+            "bucketOwner": {
+              "projectNumber": "834179717761"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "insertId": "6aef161f00060dfb0ac18aaf",
+      "httpRequest": {
+        "requestMethod": "POST",
+        "requestUrl": "https://europe-west1-luckymam-app-dv.cloudfunctions.net/aiChat",
+        "requestSize": "546",
+        "status": 401,
+        "responseSize": "228",
+        "userAgent": "node",
+        "remoteIp": "[REDACTED_IP]",
+        "serverIp": "[REDACTED_IP]",
+        "latency": "0.006319412s",
+        "protocol": "HTTP/1.1"
+      },
+      "resource": {
+        "type": "cloud_run_revision",
+        "labels": {
+          "configuration_name": "aichat",
+          "revision_name": "aichat-00001-sox",
+          "project_id": "luckymam-app-dv",
+          "service_name": "aichat",
+          "location": "europe-west1"
+        }
+      },
+      "timestamp": "2026-11-07T12:14:23.383020Z",
+      "severity": "WARNING",
+      "labels": {
+        "firebase-functions-codebase": "admin",
+        "firebase-functions-hash": "411d86c914d8ba1d230f0d591106f53c7da8f20e",
+        "instanceId": "00e8a408bd551404aba76d379c01596ac113f833d0f434dd48764bf9aedc9853688599af7a1598aae5730fefc01a2fe4ce36d8dbc8f1791ac7315eb8db36b1d6e907e9c06255325d0d8ab90ce3a28364037af10db0ccdf1c",
+        "deployment-callable": "true",
+        "goog-managed-by": "cloudfunctions"
+      },
+      "logName": "projects/luckymam-app-dv/logs/run.googleapis.com%2Frequests",
+      "writerEmailAddress": "[REDACTED_EMAIL]",
+      "internalId": {
+        "projectNumber": "834179717761"
+      },
+      "trace": "projects/luckymam-app-dv/traces/8123bbd909bbc6278cf9a0493e15f4bf",
+      "receiveTimestamp": "2026-11-07T12:14:23.406261794Z",
+      "spanId": "758eba4b97c99b41",
+      "traceSampled": true,
+      "internalMetadata": {
+        "queryAnnotations": {
+          "residentBucketUuid": "834179717761_d",
+          "residentBucketEntityId": {
+            "projectNumber": "834179717761"
+          }
+        },
+        "bucketUuid": [
+          {
+            "tcubeShardNames": [
+              "global01-us-central1"
+            ],
+            "uid": "834179717761_d"
+          }
+        ],
+        "billingSize": "878",
+        "logBucketWithSinkInfo": [
+          {
+            "uid": "834179717761_d",
+            "tcubeShardNames": [
+              "global01-us-central1"
+            ],
+            "sinkInfo": [
+              {
+                "status": "OK",
+                "unmodifiedDefaultSinkInternalId": {
+                  "projectNumber": "834179717761"
+                }
+              }
+            ],
+            "bucketOwner": {
+              "projectNumber": "834179717761"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "textPayload": "Allowing request with invalid AppCheck token because enforcement is disabled",
+      "insertId": "6aef158d0001376d15253322",
+      "resource": {
+        "type": "cloud_run_revision",
+        "labels": {
+          "project_id": "luckymam-app-dv",
+          "configuration_name": "aichat",
+          "revision_name": "aichat-00001-sox",
+          "service_name": "aichat",
+          "location": "europe-west1"
+        }
+      },
+      "timestamp": "2026-11-07T12:11:57.079725Z",
+      "severity": "WARNING",
+      "labels": {
+        "firebase-functions-hash": "411d86c914d8ba1d230f0d591106f53c7da8f20e",
+        "run.googleapis.com/base_image_versions": "us-docker.pkg.dev/serverless-runtimes/google-22-full/runtimes/nodejs22:nodejs22_20261022_22_23_4_RC01",
+        "firebase-functions-codebase": "admin",
+        "execution_id": "6d55atjdp0d9",
+        "goog-managed-by": "cloudfunctions",
+        "instanceId": "00e8a408bd551404aba76d379c01596ac113f833d0f434dd48764bf9aedc9853688599af7a1598aae5730fefc01a2fe4ce36d8dbc8f1791ac7315eb8db36b1d6e907e9c06255325d0d8ab90ce3a28364037af10db0ccdf1c",
+        "deployment-callable": "true"
+      },
+      "logName": "projects/luckymam-app-dv/logs/run.googleapis.com%2Fstderr",
+      "writerEmailAddress": "[REDACTED_EMAIL]",
+      "internalId": {
+        "projectNumber": "834179717761"
+      },
+      "trace": "projects/luckymam-app-dv/traces/6608446287e8bd6deb91f7f04830a8af",
+      "receiveTimestamp": "2026-11-07T12:11:57.125928997Z",
+      "spanId": "6491543187682173360",
+      "internalMetadata": {
+        "queryAnnotations": {
+          "residentBucketUuid": "834179717761_d",
+          "residentBucketEntityId": {
+            "projectNumber": "834179717761"
+          }
+        },
+        "bucketUuid": [
+          {
+            "tcubeShardNames": [
+              "global01-us-central1"
+            ],
+            "uid": "834179717761_d"
+          }
+        ],
+        "billingSize": "992",
+        "logBucketWithSinkInfo": [
+          {
+            "uid": "834179717761_d",
+            "tcubeShardNames": [
+              "global01-us-central1"
+            ],
+            "sinkInfo": [
+              {
+                "status": "OK",
+                "unmodifiedDefaultSinkInternalId": {
+                  "projectNumber": "834179717761"
+                }
+              }
+            ],
+            "bucketOwner": {
+              "projectNumber": "834179717761"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "insertId": "6aef158d000136d47d19c8f2",
+      "jsonPayload": {
+        "verifications": {
+          "app": "INVALID",
+          "auth": "VALID"
+        },
+        "message": "Callable request verification failed: AppCheck token was rejected."
+      },
+      "resource": {
+        "type": "cloud_run_revision",
+        "labels": {
+          "revision_name": "aichat-00001-sox",
+          "configuration_name": "aichat",
+          "service_name": "aichat",
+          "location": "europe-west1",
+          "project_id": "luckymam-app-dv"
+        }
+      },
+      "timestamp": "2026-11-07T12:11:57.079572Z",
+      "severity": "WARNING",
+      "labels": {
+        "deployment-callable": "true",
+        "instanceId": "00e8a408bd551404aba76d379c01596ac113f833d0f434dd48764bf9aedc9853688599af7a1598aae5730fefc01a2fe4ce36d8dbc8f1791ac7315eb8db36b1d6e907e9c06255325d0d8ab90ce3a28364037af10db0ccdf1c",
+        "firebase-functions-codebase": "admin",
+        "firebase-log-type": "callable-request-verification",
+        "goog-managed-by": "cloudfunctions",
+        "firebase-functions-hash": "411d86c914d8ba1d230f0d591106f53c7da8f20e",
+        "execution_id": "6d55atjdp0d9",
+        "run.googleapis.com/base_image_versions": "us-docker.pkg.dev/serverless-runtimes/google-22-full/runtimes/nodejs22:nodejs22_20261022_22_23_4_RC01"
+      },
+      "logName": "projects/luckymam-app-dv/logs/run.googleapis.com%2Fstderr",
+      "writerEmailAddress": "[REDACTED_EMAIL]",
+      "internalId": {
+        "projectNumber": "834179717761"
+      },
+      "trace": "projects/luckymam-app-dv/traces/6608446287e8bd6deb91f7f04830a8af",
+      "receiveTimestamp": "2026-11-07T12:11:57.125928997Z",
+      "spanId": "6491543187682173360",
+      "internalMetadata": {
+        "queryAnnotations": {
+          "residentBucketUuid": "834179717761_d",
+          "residentBucketEntityId": {
+            "projectNumber": "834179717761"
+          }
+        },
+        "bucketUuid": [
+          {
+            "tcubeShardNames": [
+              "global01-us-central1"
+            ],
+            "uid": "834179717761_d"
+          }
+        ],
+        "billingSize": "1106",
+        "logBucketWithSinkInfo": [
+          {
+            "uid": "834179717761_d",
+            "tcubeShardNames": [
+              "global01-us-central1"
+            ],
+            "sinkInfo": [
+              {
+                "status": "OK",
+                "unmodifiedDefaultSinkInternalId": {
+                  "projectNumber": "834179717761"
+                }
+              }
+            ],
+            "bucketOwner": {
+              "projectNumber": "834179717761"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "textPayload": "Failed to validate AppCheck token. FirebaseAppCheckError: Decoding App Check token failed. Make sure you passed the entire string JWT which represents the Firebase App Check token.\n    at /workspace/node_modules/firebase-admin/lib/app-check/token-verifier.js:79:19\n    at process.processTicksAndRejections (node:internal/process/task_queues:103:5) {\n  errorInfo: {\n    code: 'app-check/invalid-argument',\n    message: 'Decoding App Check token failed. Make sure you passed the entire string JWT which represents the Firebase App Check token.'\n  },\n  codePrefix: 'app-check'\n}",
+      "insertId": "6aef158d000134c5e103d4fc",
+      "resource": {
+        "type": "cloud_run_revision",
+        "labels": {
+          "location": "europe-west1",
+          "service_name": "aichat",
+          "project_id": "luckymam-app-dv",
+          "revision_name": "aichat-00001-sox",
+          "configuration_name": "aichat"
+        }
+      },
+      "timestamp": "2026-11-07T12:11:57.079045Z",
+      "severity": "WARNING",
+      "labels": {
+        "firebase-functions-codebase": "admin",
+        "execution_id": "6d55atjdp0d9",
+        "firebase-functions-hash": "411d86c914d8ba1d230f0d591106f53c7da8f20e",
+        "goog-managed-by": "cloudfunctions",
+        "run.googleapis.com/base_image_versions": "us-docker.pkg.dev/serverless-runtimes/google-22-full/runtimes/nodejs22:nodejs22_20261022_22_23_4_RC01",
+        "deployment-callable": "true",
+        "instanceId": "00e8a408bd551404aba76d379c01596ac113f833d0f434dd48764bf9aedc9853688599af7a1598aae5730fefc01a2fe4ce36d8dbc8f1791ac7315eb8db36b1d6e907e9c06255325d0d8ab90ce3a28364037af10db0ccdf1c"
+      },
+      "logName": "projects/luckymam-app-dv/logs/run.googleapis.com%2Fstderr",
+      "writerEmailAddress": "[REDACTED_EMAIL]",
+      "internalId": {
+        "projectNumber": "834179717761"
+      },
+      "trace": "projects/luckymam-app-dv/traces/6608446287e8bd6deb91f7f04830a8af",
+      "receiveTimestamp": "2026-11-07T12:11:57.125928997Z",
+      "spanId": "6491543187682173360",
+      "internalMetadata": {
+        "queryAnnotations": {
+          "residentBucketUuid": "834179717761_d",
+          "residentBucketEntityId": {
+            "projectNumber": "834179717761"
+          }
+        },
+        "bucketUuid": [
+          {
+            "tcubeShardNames": [
+              "global01-us-central1"
+            ],
+            "uid": "834179717761_d"
+          }
+        ],
+        "billingSize": "1492",
+        "logBucketWithSinkInfo": [
+          {
+            "uid": "834179717761_d",
+            "tcubeShardNames": [
+              "global01-us-central1"
+            ],
+            "sinkInfo": [
+              {
+                "status": "OK",
+                "unmodifiedDefaultSinkInternalId": {
+                  "projectNumber": "834179717761"
+                }
+              }
+            ],
+            "bucketOwner": {
+              "projectNumber": "834179717761"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "insertId": "6aef158e0005fe15ad8a30b9",
+      "httpRequest": {
+        "requestMethod": "POST",
+        "requestUrl": "https://europe-west1-luckymam-app-dv.cloudfunctions.net/aiChat",
+        "requestSize": "1685",
+        "status": 503,
+        "responseSize": "219",
+        "userAgent": "okhttp/3.12.13",
+        "remoteIp": "[REDACTED_IP]",
+        "serverIp": "[REDACTED_IP]",
+        "latency": "1.321111835s",
+        "protocol": "HTTP/1.1"
+      },
+      "resource": {
+        "type": "cloud_run_revision",
+        "labels": {
+          "location": "europe-west1",
+          "project_id": "luckymam-app-dv",
+          "revision_name": "aichat-00001-sox",
+          "service_name": "aichat",
+          "configuration_name": "aichat"
+        }
+      },
+      "timestamp": "2026-11-07T12:11:57.069025Z",
+      "severity": "ERROR",
+      "labels": {
+        "firebase-functions-hash": "411d86c914d8ba1d230f0d591106f53c7da8f20e",
+        "goog-managed-by": "cloudfunctions",
+        "deployment-callable": "true",
+        "instanceId": "00e8a408bd551404aba76d379c01596ac113f833d0f434dd48764bf9aedc9853688599af7a1598aae5730fefc01a2fe4ce36d8dbc8f1791ac7315eb8db36b1d6e907e9c06255325d0d8ab90ce3a28364037af10db0ccdf1c",
+        "firebase-functions-codebase": "admin"
+      },
+      "logName": "projects/luckymam-app-dv/logs/run.googleapis.com%2Frequests",
+      "writerEmailAddress": "[REDACTED_EMAIL]",
+      "internalId": {
+        "projectNumber": "834179717761"
+      },
+      "trace": "projects/luckymam-app-dv/traces/6608446287e8bd6deb91f7f04830a8af",
+      "receiveTimestamp": "2026-11-07T12:11:58.549670681Z",
+      "spanId": "5a169822b1e721b0",
+      "internalMetadata": {
+        "queryAnnotations": {
+          "residentBucketUuid": "834179717761_d",
+          "residentBucketEntityId": {
+            "projectNumber": "834179717761"
+          }
+        },
+        "bucketUuid": [
+          {
+            "tcubeShardNames": [
+              "global01-us-central1"
+            ],
+            "uid": "834179717761_d"
+          }
+        ],
+        "billingSize": "887",
+        "logBucketWithSinkInfo": [
+          {
+            "uid": "834179717761_d",
+            "tcubeShardNames": [
+              "global01-us-central1"
+            ],
+            "sinkInfo": [
+              {
+                "status": "OK",
+                "unmodifiedDefaultSinkInternalId": {
+                  "projectNumber": "834179717761"
+                }
+              }
+            ],
+            "bucketOwner": {
+              "projectNumber": "834179717761"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "textPayload": "Allowing request with invalid AppCheck token because enforcement is disabled",
+      "insertId": "6aef1585000c2084b5394e5f",
+      "resource": {
+        "type": "cloud_run_revision",
+        "labels": {
+          "location": "europe-west1",
+          "configuration_name": "aichat",
+          "service_name": "aichat",
+          "project_id": "luckymam-app-dv",
+          "revision_name": "aichat-00001-sox"
+        }
+      },
+      "timestamp": "2026-11-07T12:11:49.794756Z",
+      "severity": "WARNING",
+      "labels": {
+        "instanceId": "00e8a408bd551404aba76d379c01596ac113f833d0f434dd48764bf9aedc9853688599af7a1598aae5730fefc01a2fe4ce36d8dbc8f1791ac7315eb8db36b1d6e907e9c06255325d0d8ab90ce3a28364037af10db0ccdf1c",
+        "run.googleapis.com/base_image_versions": "us-docker.pkg.dev/serverless-runtimes/google-22-full/runtimes/nodejs22:nodejs22_20261022_22_23_4_RC01",
+        "execution_id": "6d4zodsyd2u9",
+        "deployment-callable": "true",
+        "firebase-functions-hash": "411d86c914d8ba1d230f0d591106f53c7da8f20e",
+        "firebase-functions-codebase": "admin",
+        "goog-managed-by": "cloudfunctions"
+      },
+      "logName": "projects/luckymam-app-dv/logs/run.googleapis.com%2Fstderr",
+      "writerEmailAddress": "[REDACTED_EMAIL]",
+      "internalId": {
+        "projectNumber": "834179717761"
+      },
+      "trace": "projects/luckymam-app-dv/traces/6d29ecfacc59f74d699fad9ed4241a16",
+      "receiveTimestamp": "2026-11-07T12:11:50.133998763Z",
+      "spanId": "5923128016254919754",
+      "internalMetadata": {
+        "queryAnnotations": {
+          "residentBucketUuid": "834179717761_d",
+          "residentBucketEntityId": {
+            "projectNumber": "834179717761"
+          }
+        },
+        "bucketUuid": [
+          {
+            "tcubeShardNames": [
+              "global01-us-central1"
+            ],
+            "uid": "834179717761_d"
+          }
+        ],
+        "billingSize": "993",
+        "logBucketWithSinkInfo": [
+          {
+            "uid": "834179717761_d",
+            "tcubeShardNames": [
+              "global01-us-central1"
+            ],
+            "sinkInfo": [
+              {
+                "status": "OK",
+                "unmodifiedDefaultSinkInternalId": {
+                  "projectNumber": "834179717761"
+                }
+              }
+            ],
+            "bucketOwner": {
+              "projectNumber": "834179717761"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "insertId": "6aef1585000c1fefbe013b39",
+      "jsonPayload": {
+        "verifications": {
+          "auth": "VALID",
+          "app": "INVALID"
+        },
+        "message": "Callable request verification failed: AppCheck token was rejected."
+      },
+      "resource": {
+        "type": "cloud_run_revision",
+        "labels": {
+          "configuration_name": "aichat",
+          "location": "europe-west1",
+          "revision_name": "aichat-00001-sox",
+          "project_id": "luckymam-app-dv",
+          "service_name": "aichat"
+        }
+      },
+      "timestamp": "2026-11-07T12:11:49.794607Z",
+      "severity": "WARNING",
+      "labels": {
+        "firebase-functions-hash": "411d86c914d8ba1d230f0d591106f53c7da8f20e",
+        "run.googleapis.com/base_image_versions": "us-docker.pkg.dev/serverless-runtimes/google-22-full/runtimes/nodejs22:nodejs22_20261022_22_23_4_RC01",
+        "execution_id": "6d4zodsyd2u9",
+        "firebase-functions-codebase": "admin",
+        "firebase-log-type": "callable-request-verification",
+        "goog-managed-by": "cloudfunctions",
+        "instanceId": "00e8a408bd551404aba76d379c01596ac113f833d0f434dd48764bf9aedc9853688599af7a1598aae5730fefc01a2fe4ce36d8dbc8f1791ac7315eb8db36b1d6e907e9c06255325d0d8ab90ce3a28364037af10db0ccdf1c",
+        "deployment-callable": "true"
+      },
+      "logName": "projects/luckymam-app-dv/logs/run.googleapis.com%2Fstderr",
+      "writerEmailAddress": "[REDACTED_EMAIL]",
+      "internalId": {
+        "projectNumber": "834179717761"
+      },
+      "trace": "projects/luckymam-app-dv/traces/6d29ecfacc59f74d699fad9ed4241a16",
+      "receiveTimestamp": "2026-11-07T12:11:50.133998763Z",
+      "spanId": "5923128016254919754",
+      "internalMetadata": {
+        "queryAnnotations": {
+          "residentBucketUuid": "834179717761_d",
+          "residentBucketEntityId": {
+            "projectNumber": "834179717761"
+          }
+        },
+        "bucketUuid": [
+          {
+            "tcubeShardNames": [
+              "global01-us-central1"
+            ],
+            "uid": "834179717761_d"
+          }
+        ],
+        "billingSize": "1107",
+        "logBucketWithSinkInfo": [
+          {
+            "uid": "834179717761_d",
+            "tcubeShardNames": [
+              "global01-us-central1"
+            ],
+            "sinkInfo": [
+              {
+                "status": "OK",
+                "unmodifiedDefaultSinkInternalId": {
+                  "projectNumber": "834179717761"
+                }
+              }
+            ],
+            "bucketOwner": {
+              "projectNumber": "834179717761"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "textPayload": "Failed to validate AppCheck token. FirebaseAppCheckError: Decoding App Check token failed. Make sure you passed the entire string JWT which represents the Firebase App Check token.\n    at /workspace/node_modules/firebase-admin/lib/app-check/token-verifier.js:79:19\n    at process.processTicksAndRejections (node:internal/process/task_queues:103:5) {\n  errorInfo: {\n    code: 'app-check/invalid-argument',\n    message: 'Decoding App Check token failed. Make sure you passed the entire string JWT which represents the Firebase App Check token.'\n  },\n  codePrefix: 'app-check'\n}",
+      "insertId": "6aef1585000c1e87283b106a",
+      "resource": {
+        "type": "cloud_run_revision",
+        "labels": {
+          "service_name": "aichat",
+          "location": "europe-west1",
+          "configuration_name": "aichat",
+          "revision_name": "aichat-00001-sox",
+          "project_id": "luckymam-app-dv"
+        }
+      },
+      "timestamp": "2026-11-07T12:11:49.794247Z",
+      "severity": "WARNING",
+      "labels": {
+        "execution_id": "6d4zodsyd2u9",
+        "goog-managed-by": "cloudfunctions",
+        "run.googleapis.com/base_image_versions": "us-docker.pkg.dev/serverless-runtimes/google-22-full/runtimes/nodejs22:nodejs22_20261022_22_23_4_RC01",
+        "firebase-functions-codebase": "admin",
+        "firebase-functions-hash": "411d86c914d8ba1d230f0d591106f53c7da8f20e",
+        "deployment-callable": "true",
+        "instanceId": "00e8a408bd551404aba76d379c01596ac113f833d0f434dd48764bf9aedc9853688599af7a1598aae5730fefc01a2fe4ce36d8dbc8f1791ac7315eb8db36b1d6e907e9c06255325d0d8ab90ce3a28364037af10db0ccdf1c"
+      },
+      "logName": "projects/luckymam-app-dv/logs/run.googleapis.com%2Fstderr",
+      "writerEmailAddress": "[REDACTED_EMAIL]",
+      "internalId": {
+        "projectNumber": "834179717761"
+      },
+      "trace": "projects/luckymam-app-dv/traces/6d29ecfacc59f74d699fad9ed4241a16",
+      "receiveTimestamp": "2026-11-07T12:11:49.800717542Z",
+      "spanId": "5923128016254919754",
+      "internalMetadata": {
+        "queryAnnotations": {
+          "residentBucketUuid": "834179717761_d",
+          "residentBucketEntityId": {
+            "projectNumber": "834179717761"
+          }
+        },
+        "bucketUuid": [
+          {
+            "tcubeShardNames": [
+              "global01-us-central1"
+            ],
+            "uid": "834179717761_d"
+          }
+        ],
+        "billingSize": "1494",
+        "logBucketWithSinkInfo": [
+          {
+            "uid": "834179717761_d",
+            "tcubeShardNames": [
+              "global01-us-central1"
+            ],
+            "sinkInfo": [
+              {
+                "status": "OK",
+                "unmodifiedDefaultSinkInternalId": {
+                  "projectNumber": "834179717761"
+                }
+              }
+            ],
+            "bucketOwner": {
+              "projectNumber": "834179717761"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "insertId": "6aef158800034d77c3c6b5d8",
+      "httpRequest": {
+        "requestMethod": "POST",
+        "requestUrl": "https://europe-west1-luckymam-app-dv.cloudfunctions.net/aiChat",
+        "requestSize": "1685",
+        "status": 503,
+        "responseSize": "219",
+        "userAgent": "okhttp/3.12.13",
+        "remoteIp": "[REDACTED_IP]",
+        "serverIp": "[REDACTED_IP]",
+        "latency": "2.431411594s",
+        "protocol": "HTTP/1.1"
+      },
+      "resource": {
+        "type": "cloud_run_revision",
+        "labels": {
+          "revision_name": "aichat-00001-sox",
+          "service_name": "aichat",
+          "configuration_name": "aichat",
+          "project_id": "luckymam-app-dv",
+          "location": "europe-west1"
+        }
+      },
+      "timestamp": "2026-11-07T12:11:49.775981Z",
+      "severity": "ERROR",
+      "labels": {
+        "firebase-functions-hash": "411d86c914d8ba1d230f0d591106f53c7da8f20e",
+        "deployment-callable": "true",
+        "firebase-functions-codebase": "admin",
+        "instanceId": "00e8a408bd551404aba76d379c01596ac113f833d0f434dd48764bf9aedc9853688599af7a1598aae5730fefc01a2fe4ce36d8dbc8f1791ac7315eb8db36b1d6e907e9c06255325d0d8ab90ce3a28364037af10db0ccdf1c",
+        "goog-managed-by": "cloudfunctions"
+      },
+      "logName": "projects/luckymam-app-dv/logs/run.googleapis.com%2Frequests",
+      "writerEmailAddress": "[REDACTED_EMAIL]",
+      "internalId": {
+        "projectNumber": "834179717761"
+      },
+      "trace": "projects/luckymam-app-dv/traces/6d29ecfacc59f74d699fad9ed4241a16",
+      "receiveTimestamp": "2026-11-07T12:11:53.234839219Z",
+      "spanId": "52332d8c7809e44a",
+      "traceSampled": true,
+      "internalMetadata": {
+        "queryAnnotations": {
+          "residentBucketUuid": "834179717761_d",
+          "residentBucketEntityId": {
+            "projectNumber": "834179717761"
+          }
+        },
+        "bucketUuid": [
+          {
+            "tcubeShardNames": [
+              "global01-us-central1"
+            ],
+            "uid": "834179717761_d"
+          }
+        ],
+        "billingSize": "890",
+        "logBucketWithSinkInfo": [
+          {
+            "uid": "834179717761_d",
+            "tcubeShardNames": [
+              "global01-us-central1"
+            ],
+            "sinkInfo": [
+              {
+                "status": "OK",
+                "unmodifiedDefaultSinkInternalId": {
+                  "projectNumber": "834179717761"
+                }
+              }
+            ],
+            "bucketOwner": {
+              "projectNumber": "834179717761"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "insertId": "6aef13300004002a6517da73",
+      "jsonPayload": {
+        "verifications": {
+          "auth": "VALID",
+          "app": "MISSING"
+        },
+        "message": "Callable request verification passed"
+      },
+      "resource": {
+        "type": "cloud_run_revision",
+        "labels": {
+          "revision_name": "aichat-00001-sox",
+          "project_id": "luckymam-app-dv",
+          "location": "europe-west1",
+          "configuration_name": "aichat",
+          "service_name": "aichat"
+        }
+      },
+      "timestamp": "2026-11-07T12:01:52.262186Z",
+      "severity": "DEBUG",
+      "labels": {
+        "instanceId": "00e8a408bd551404aba76d379c01596ac113f833d0f434dd48764bf9aedc9853688599af7a1598aae5730fefc01a2fe4ce36d8dbc8f1791ac7315eb8db36b1d6e907e9c06255325d0d8ab90ce3a28364037af10db0ccdf1c",
+        "firebase-functions-hash": "411d86c914d8ba1d230f0d591106f53c7da8f20e",
+        "execution_id": "6cs6kaeltpvf",
+        "run.googleapis.com/base_image_versions": "us-docker.pkg.dev/serverless-runtimes/google-22-full/runtimes/nodejs22:nodejs22_20261022_22_23_4_RC01",
+        "deployment-callable": "true",
+        "goog-managed-by": "cloudfunctions",
+        "firebase-functions-codebase": "admin",
+        "firebase-log-type": "callable-request-verification"
+      },
+      "logName": "projects/luckymam-app-dv/logs/run.googleapis.com%2Fstdout",
+      "writerEmailAddress": "[REDACTED_EMAIL]",
+      "internalId": {
+        "projectNumber": "834179717761"
+      },
+      "trace": "projects/luckymam-app-dv/traces/f8bb46039ed1fe31356fe7a61cd6973b",
+      "receiveTimestamp": "2026-11-07T12:01:52.466981442Z",
+      "spanId": "8642524764987674446",
+      "internalMetadata": {
+        "queryAnnotations": {
+          "residentBucketUuid": "834179717761_d",
+          "residentBucketEntityId": {
+            "projectNumber": "834179717761"
+          }
+        },
+        "bucketUuid": [
+          {
+            "tcubeShardNames": [
+              "global01-us-central1"
+            ],
+            "uid": "834179717761_d"
+          }
+        ],
+        "billingSize": "1075",
+        "logBucketWithSinkInfo": [
+          {
+            "uid": "834179717761_d",
+            "tcubeShardNames": [
+              "global01-us-central1"
+            ],
+            "sinkInfo": [
+              {
+                "status": "OK",
+                "unmodifiedDefaultSinkInternalId": {
+                  "projectNumber": "834179717761"
+                }
+              }
+            ],
+            "bucketOwner": {
+              "projectNumber": "834179717761"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "insertId": "6aef1331000afde01b89c4d0",
+      "httpRequest": {
+        "requestMethod": "POST",
+        "requestUrl": "https://europe-west1-luckymam-app-dv.cloudfunctions.net/aiChat",
+        "requestSize": "1525",
+        "status": 200,
+        "responseSize": "330",
+        "userAgent": "node",
+        "remoteIp": "[REDACTED_IP]",
+        "serverIp": "[REDACTED_IP]",
+        "latency": "1.537614081s",
+        "protocol": "HTTP/1.1"
+      },
+      "resource": {
+        "type": "cloud_run_revision",
+        "labels": {
+          "revision_name": "aichat-00001-sox",
+          "configuration_name": "aichat",
+          "location": "europe-west1",
+          "service_name": "aichat",
+          "project_id": "luckymam-app-dv"
+        }
+      },
+      "timestamp": "2026-11-07T12:01:52.180716Z",
+      "severity": "INFO",
+      "labels": {
+        "instanceId": "00e8a408bd551404aba76d379c01596ac113f833d0f434dd48764bf9aedc9853688599af7a1598aae5730fefc01a2fe4ce36d8dbc8f1791ac7315eb8db36b1d6e907e9c06255325d0d8ab90ce3a28364037af10db0ccdf1c",
+        "deployment-callable": "true",
+        "firebase-functions-hash": "411d86c914d8ba1d230f0d591106f53c7da8f20e",
+        "goog-managed-by": "cloudfunctions",
+        "firebase-functions-codebase": "admin"
+      },
+      "logName": "projects/luckymam-app-dv/logs/run.googleapis.com%2Frequests",
+      "writerEmailAddress": "[REDACTED_EMAIL]",
+      "internalId": {
+        "projectNumber": "834179717761"
+      },
+      "trace": "projects/luckymam-app-dv/traces/f8bb46039ed1fe31356fe7a61cd6973b",
+      "receiveTimestamp": "2026-11-07T12:01:53.803824298Z",
+      "spanId": "77f06a7bd39b4f4e",
+      "internalMetadata": {
+        "queryAnnotations": {
+          "residentBucketUuid": "834179717761_d",
+          "residentBucketEntityId": {
+            "projectNumber": "834179717761"
+          }
+        },
+        "bucketUuid": [
+          {
+            "tcubeShardNames": [
+              "global01-us-central1"
+            ],
+            "uid": "834179717761_d"
+          }
+        ],
+        "billingSize": "877",
+        "logBucketWithSinkInfo": [
+          {
+            "uid": "834179717761_d",
+            "tcubeShardNames": [
+              "global01-us-central1"
+            ],
+            "sinkInfo": [
+              {
+                "status": "OK",
+                "unmodifiedDefaultSinkInternalId": {
+                  "projectNumber": "834179717761"
+                }
+              }
+            ],
+            "bucketOwner": {
+              "projectNumber": "834179717761"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "insertId": "6aef132f0006be48342cd5fa",
+      "jsonPayload": {
+        "verifications": {
+          "app": "MISSING",
+          "auth": "MISSING"
+        },
+        "message": "Callable request verification passed"
+      },
+      "resource": {
+        "type": "cloud_run_revision",
+        "labels": {
+          "revision_name": "aichat-00001-sox",
+          "service_name": "aichat",
+          "project_id": "luckymam-app-dv",
+          "configuration_name": "aichat",
+          "location": "europe-west1"
+        }
+      },
+      "timestamp": "2026-11-07T12:01:51.441928Z",
+      "severity": "DEBUG",
+      "labels": {
+        "execution_id": "6cs5z8vbhs7v",
+        "run.googleapis.com/base_image_versions": "us-docker.pkg.dev/serverless-runtimes/google-22-full/runtimes/nodejs22:nodejs22_20261022_22_23_4_RC01",
+        "goog-managed-by": "cloudfunctions",
+        "firebase-functions-codebase": "admin",
+        "firebase-log-type": "callable-request-verification",
+        "instanceId": "00e8a408bd551404aba76d379c01596ac113f833d0f434dd48764bf9aedc9853688599af7a1598aae5730fefc01a2fe4ce36d8dbc8f1791ac7315eb8db36b1d6e907e9c06255325d0d8ab90ce3a28364037af10db0ccdf1c",
+        "deployment-callable": "true",
+        "firebase-functions-hash": "411d86c914d8ba1d230f0d591106f53c7da8f20e"
+      },
+      "logName": "projects/luckymam-app-dv/logs/run.googleapis.com%2Fstdout",
+      "writerEmailAddress": "[REDACTED_EMAIL]",
+      "internalId": {
+        "projectNumber": "834179717761"
+      },
+      "trace": "projects/luckymam-app-dv/traces/fb77a25d8e5d669c356fe7a61cd696cb",
+      "receiveTimestamp": "2026-11-07T12:01:51.447335870Z",
+      "spanId": "13523508398235161600",
+      "internalMetadata": {
+        "queryAnnotations": {
+          "residentBucketUuid": "834179717761_d",
+          "residentBucketEntityId": {
+            "projectNumber": "834179717761"
+          }
+        },
+        "bucketUuid": [
+          {
+            "tcubeShardNames": [
+              "global01-us-central1"
+            ],
+            "uid": "834179717761_d"
+          }
+        ],
+        "billingSize": "1079",
+        "logBucketWithSinkInfo": [
+          {
+            "uid": "834179717761_d",
+            "tcubeShardNames": [
+              "global01-us-central1"
+            ],
+            "sinkInfo": [
+              {
+                "status": "OK",
+                "unmodifiedDefaultSinkInternalId": {
+                  "projectNumber": "834179717761"
+                }
+              }
+            ],
+            "bucketOwner": {
+              "projectNumber": "834179717761"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "insertId": "6aef132f0007257e8a77346c",
+      "httpRequest": {
+        "requestMethod": "POST",
+        "requestUrl": "https://europe-west1-luckymam-app-dv.cloudfunctions.net/aiChat",
+        "requestSize": "497",
+        "status": 401,
+        "responseSize": "228",
+        "userAgent": "node",
+        "remoteIp": "[REDACTED_IP]",
+        "serverIp": "[REDACTED_IP]",
+        "latency": "0.079975606s",
+        "protocol": "HTTP/1.1"
+      },
+      "resource": {
+        "type": "cloud_run_revision",
+        "labels": {
+          "location": "europe-west1",
+          "project_id": "luckymam-app-dv",
+          "service_name": "aichat",
+          "configuration_name": "aichat",
+          "revision_name": "aichat-00001-sox"
+        }
+      },
+      "timestamp": "2026-11-07T12:01:51.201286Z",
+      "severity": "WARNING",
+      "labels": {
+        "deployment-callable": "true",
+        "instanceId": "00e8a408bd551404aba76d379c01596ac113f833d0f434dd48764bf9aedc9853688599af7a1598aae5730fefc01a2fe4ce36d8dbc8f1791ac7315eb8db36b1d6e907e9c06255325d0d8ab90ce3a28364037af10db0ccdf1c",
+        "firebase-functions-codebase": "admin",
+        "firebase-functions-hash": "411d86c914d8ba1d230f0d591106f53c7da8f20e",
+        "goog-managed-by": "cloudfunctions"
+      },
+      "logName": "projects/luckymam-app-dv/logs/run.googleapis.com%2Frequests",
+      "writerEmailAddress": "[REDACTED_EMAIL]",
+      "internalId": {
+        "projectNumber": "834179717761"
+      },
+      "trace": "projects/luckymam-app-dv/traces/fb77a25d8e5d669c356fe7a61cd696cb",
+      "receiveTimestamp": "2026-11-07T12:01:51.474592962Z",
+      "spanId": "bbad273cd1d19400",
+      "traceSampled": true,
+      "internalMetadata": {
+        "queryAnnotations": {
+          "residentBucketUuid": "834179717761_d",
+          "residentBucketEntityId": {
+            "projectNumber": "834179717761"
+          }
+        },
+        "bucketUuid": [
+          {
+            "tcubeShardNames": [
+              "global01-us-central1"
+            ],
+            "uid": "834179717761_d"
+          }
+        ],
+        "billingSize": "877",
+        "logBucketWithSinkInfo": [
+          {
+            "uid": "834179717761_d",
+            "tcubeShardNames": [
+              "global01-us-central1"
+            ],
+            "sinkInfo": [
+              {
+                "status": "OK",
+                "unmodifiedDefaultSinkInternalId": {
+                  "projectNumber": "834179717761"
+                }
+              }
+            ],
+            "bucketOwner": {
+              "projectNumber": "834179717761"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "protoPayload": {
+        "@type": "type.googleapis.com/google.cloud.audit.AuditLog",
+        "status": {},
+        "authenticationInfo": {
+          "principalEmail": "[REDACTED_EMAIL]",
+          "principalSubject": "user:[REDACTED_EMAIL]",
+          "oauthInfo": {
+            "oauthClientId": "563584335869-fgrhgmd47bqnekij5i8b5pr03ho849e6.apps.googleusercontent.com"
+          }
+        },
+        "requestMetadata": {
+          "requestAttributes": {},
+          "destinationAttributes": {}
+        },
+        "serviceName": "cloudfunctions.googleapis.com",
+        "methodName": "google.cloud.functions.v2.FunctionService.CreateFunction",
+        "resourceName": "projects/luckymam-app-dv/locations/europe-west1/functions/aiChat",
+        "response": {
+          "buildConfig": {
+            "dockerRepository": "projects/luckymam-app-dv/locations/europe-west1/repositories/gcf-artifacts",
+            "automaticUpdatePolicy": {},
+            "serviceAccount": "projects/luckymam-app-dv/serviceAccounts/[REDACTED_EMAIL]",
+            "runtime": "nodejs22",
+            "entryPoint": "aiChat",
+            "dockerRegistry": "ARTIFACT_REGISTRY",
+            "source": {}
+          },
+          "labels": {
+            "deployment-tool": "cli-firebase",
+            "deployment-callable": "true",
+            "firebase-functions-codebase": "admin",
+            "firebase-functions-hash": "411d86c914d8ba1d230f0d591106f53c7da8f20e"
+          },
+          "@type": "type.googleapis.com/google.cloud.functions.v2.Function",
+          "updateTime": "2026-11-07T11:59:22.169556126Z",
+          "name": "projects/luckymam-app-dv/locations/europe-west1/functions/aiChat",
+          "serviceConfig": {
+            "availableCpu": "1",
+            "serviceAccountEmail": "[REDACTED_EMAIL]",
+            "allTrafficOnLatestRevision": true,
+            "secretEnvironmentVariables": [
+              {
+                "projectId": "luckymam-app-dv",
+                "version": "1",
+                "secret": "GEMINI_API_KEY",
+                "key": "GEMINI_API_KEY"
+              }
+            ],
+            "ingressSettings": "ALLOW_ALL",
+            "availableMemory": "256Mi",
+            "uri": "https://aichat-q7yxvgjn4a-ew.a.run.app",
+            "revision": "aichat-00001-sox",
+            "maxInstanceRequestConcurrency": 80,
+            "timeoutSeconds": 60
+          },
+          "createTime": "2026-11-07T11:59:22.169556126Z",
+          "url": "https://europe-west1-luckymam-app-dv.cloudfunctions.net/aiChat",
+          "state": "ACTIVE",
+          "satisfiesPzi": true,
+          "environment": "GEN_2"
+        },
+        "resourceLocation": {
+          "currentLocations": [
+            "europe-west1"
+          ]
+        }
+      },
+      "insertId": "uiljsd5hzm",
+      "resource": {
+        "type": "cloud_function",
+        "labels": {
+          "function_name": "aiChat",
+          "region": "europe-west1",
+          "project_id": "luckymam-app-dv"
+        }
+      },
+      "timestamp": "2026-11-07T12:00:30.047672403Z",
+      "severity": "NOTICE",
+      "logName": "projects/luckymam-app-dv/logs/cloudaudit.googleapis.com%2Factivity",
+      "operation": {
+        "id": "projects/luckymam-app-dv/locations/europe-west1/operations/operation-1794052756223-65fae753e37f9-893dd956-76373d22",
+        "producer": "cloudfunctions.googleapis.com",
+        "last": true
+      },
+      "writerEmailAddress": "[REDACTED_EMAIL]",
+      "internalId": {
+        "projectNumber": "834179717761"
+      },
+      "receiveTimestamp": "2026-11-07T12:00:30.254837111Z",
+      "internalMetadata": {
+        "queryAnnotations": {
+          "residentBucketUuid": "834179717761_a",
+          "residentBucketEntityId": {
+            "projectNumber": "834179717761"
+          }
+        },
+        "bucketUuid": [
+          {
+            "tcubeShardNames": [
+              "global01-us-central1"
+            ],
+            "uid": "834179717761_a"
+          }
+        ],
+        "billingSize": "2174",
+        "logBucketWithSinkInfo": [
+          {
+            "uid": "834179717761_a",
+            "tcubeShardNames": [
+              "global01-us-central1"
+            ],
+            "sinkInfo": [
+              {
+                "status": "OK",
+                "unmodifiedRequiredSinkInternalId": {
+                  "projectNumber": "834179717761"
+                }
+              }
+            ],
+            "bucketOwner": {
+              "projectNumber": "834179717761"
+            }
+          }
+        ],
+        "matchesRequiredSink": true
+      }
+    },
+    {
+      "textPayload": "Default STARTUP TCP probe succeeded after 1 attempt for container \"worker\" on port 8080.",
+      "insertId": "6aef12dc0003fbc68c2b484f",
+      "resource": {
+        "type": "cloud_run_revision",
+        "labels": {
+          "revision_name": "aichat-00001-sox",
+          "project_id": "luckymam-app-dv",
+          "service_name": "aichat",
+          "configuration_name": "aichat",
+          "location": "europe-west1"
+        }
+      },
+      "timestamp": "2026-11-07T12:00:28.261062Z",
+      "severity": "INFO",
+      "labels": {
+        "firebase-functions-codebase": "admin",
+        "deployment-callable": "true",
+        "goog-managed-by": "cloudfunctions",
+        "firebase-functions-hash": "411d86c914d8ba1d230f0d591106f53c7da8f20e",
+        "run.googleapis.com/base_image_versions": "us-docker.pkg.dev/serverless-runtimes/google-22-full/runtimes/nodejs22:nodejs22_20261022_22_23_4_RC01",
+        "instanceId": "00e8a408bd551404aba76d379c01596ac113f833d0f434dd48764bf9aedc9853688599af7a1598aae5730fefc01a2fe4ce36d8dbc8f1791ac7315eb8db36b1d6e907e9c06255325d0d8ab90ce3a28364037af10db0ccdf1c"
+      },
+      "logName": "projects/luckymam-app-dv/logs/run.googleapis.com%2Fvarlog%2Fsystem",
+      "writerEmailAddress": "[REDACTED_EMAIL]",
+      "internalId": {
+        "projectNumber": "834179717761"
+      },
+      "receiveTimestamp": "2026-11-07T12:00:28.308175764Z",
+      "internalMetadata": {
+        "queryAnnotations": {
+          "residentBucketUuid": "834179717761_d",
+          "residentBucketEntityId": {
+            "projectNumber": "834179717761"
+          }
+        },
+        "bucketUuid": [
+          {
+            "tcubeShardNames": [
+              "global01-us-central1"
+            ],
+            "uid": "834179717761_d"
+          }
+        ],
+        "billingSize": "895",
+        "logBucketWithSinkInfo": [
+          {
+            "uid": "834179717761_d",
+            "tcubeShardNames": [
+              "global01-us-central1"
+            ],
+            "sinkInfo": [
+              {
+                "status": "OK",
+                "unmodifiedDefaultSinkInternalId": {
+                  "projectNumber": "834179717761"
+                }
+              }
+            ],
+            "bucketOwner": {
+              "projectNumber": "834179717761"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "textPayload": "Starting new instance. Reason: DEPLOYMENT_ROLLOUT - Instance started due to traffic shifting between revisions due to deployment, traffic split adjustment, or deployment health check.",
+      "insertId": "6aef12d8000ed860c6783355",
+      "resource": {
+        "type": "cloud_run_revision",
+        "labels": {
+          "service_name": "aichat",
+          "location": "europe-west1",
+          "project_id": "luckymam-app-dv",
+          "revision_name": "aichat-00001-sox",
+          "configuration_name": "aichat"
+        }
+      },
+      "timestamp": "2026-11-07T12:00:24.972896Z",
+      "severity": "INFO",
+      "labels": {
+        "scaling_reason": "DEPLOYMENT_ROLLOUT",
+        "instanceId": "00e8a408bd551404aba76d379c01596ac113f833d0f434dd48764bf9aedc9853688599af7a1598aae5730fefc01a2fe4ce36d8dbc8f1791ac7315eb8db36b1d6e907e9c06255325d0d8ab90ce3a28364037af10db0ccdf1c",
+        "firebase-functions-codebase": "admin",
+        "firebase-functions-hash": "411d86c914d8ba1d230f0d591106f53c7da8f20e",
+        "deployment-callable": "true",
+        "goog-managed-by": "cloudfunctions"
+      },
+      "logName": "projects/luckymam-app-dv/logs/run.googleapis.com%2Fvarlog%2Fsystem",
+      "writerEmailAddress": "[REDACTED_EMAIL]",
+      "internalId": {
+        "projectNumber": "834179717761"
+      },
+      "receiveTimestamp": "2026-11-07T12:00:24.986496553Z",
+      "internalMetadata": {
+        "queryAnnotations": {
+          "residentBucketUuid": "834179717761_d",
+          "residentBucketEntityId": {
+            "projectNumber": "834179717761"
+          }
+        },
+        "bucketUuid": [
+          {
+            "tcubeShardNames": [
+              "global01-us-central1"
+            ],
+            "uid": "834179717761_d"
+          }
+        ],
+        "billingSize": "884",
+        "logBucketWithSinkInfo": [
+          {
+            "uid": "834179717761_d",
+            "tcubeShardNames": [
+              "global01-us-central1"
+            ],
+            "sinkInfo": [
+              {
+                "status": "OK",
+                "unmodifiedDefaultSinkInternalId": {
+                  "projectNumber": "834179717761"
+                }
+              }
+            ],
+            "bucketOwner": {
+              "projectNumber": "834179717761"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "protoPayload": {
+        "@type": "type.googleapis.com/google.cloud.audit.AuditLog",
+        "status": {},
+        "authenticationInfo": {
+          "principalEmail": "[REDACTED_EMAIL]",
+          "principalSubject": "user:[REDACTED_EMAIL]",
+          "oauthInfo": {
+            "oauthClientId": "563584335869-fgrhgmd47bqnekij5i8b5pr03ho849e6.apps.googleusercontent.com"
+          }
+        },
+        "requestMetadata": {
+          "callerIp": "[REDACTED_IP]",
+          "callerSuppliedUserAgent": "FirebaseCLI/15.30.2 agent-name/codex_cli,gzip(gfe),gzip(gfe)",
+          "requestAttributes": {
+            "time": "2026-11-07T11:59:16.218569397Z",
+            "auth": {}
+          },
+          "destinationAttributes": {}
+        },
+        "serviceName": "cloudfunctions.googleapis.com",
+        "methodName": "google.cloud.functions.v2.FunctionService.CreateFunction",
+        "authorizationInfo": [
+          {
+            "resource": "projects/luckymam-app-dv/locations/europe-west1/functions/aiChat",
+            "permission": "cloudfunctions.functions.create",
+            "granted": true,
+            "resourceAttributes": {
+              "service": "cloudfunctions.googleapis.com",
+              "name": "projects/luckymam-app-dv/locations/europe-west1/functions/aiChat",
+              "type": "cloudfunctions.googleapis.com/Function"
+            },
+            "permissionType": "ADMIN_WRITE"
+          }
+        ],
+        "resourceName": "projects/luckymam-app-dv/locations/europe-west1/functions/aiChat",
+        "request": {
+          "function": {
+            "name": "projects/luckymam-app-dv/locations/europe-west1/functions/aiChat",
+            "build_config": {
+              "runtime": "nodejs22",
+              "source": {},
+              "entry_point": "aiChat"
+            },
+            "labels": {
+              "firebase-functions-hash": "411d86c914d8ba1d230f0d591106f53c7da8f20e",
+              "firebase-functions-codebase": "admin",
+              "deployment-callable": "true",
+              "deployment-tool": "cli-firebase"
+            },
+            "service_config": {
+              "secret_environment_variables": [
+                {
+                  "key": "GEMINI_API_KEY",
+                  "project_id": "luckymam-app-dv",
+                  "version": "1",
+                  "secret": "GEMINI_API_KEY"
+                }
+              ],
+              "available_memory": "256Mi",
+              "available_cpu": "1",
+              "max_instance_request_concurrency": 80,
+              "timeout_seconds": 60
+            }
+          },
+          "@type": "type.googleapis.com/google.cloud.functions.v2.CreateFunctionRequest",
+          "parent": "projects/luckymam-app-dv/locations/europe-west1"
+        },
+        "response": {
+          "@type": "type.googleapis.com/google.longrunning.Operation"
+        },
+        "resourceLocation": {
+          "currentLocations": [
+            "europe-west1"
+          ]
+        }
+      },
+      "insertId": "uiljsd5hwj",
+      "resource": {
+        "type": "cloud_function",
+        "labels": {
+          "project_id": "luckymam-app-dv",
+          "function_name": "aiChat",
+          "region": "europe-west1"
+        }
+      },
+      "timestamp": "2026-11-07T11:59:22.186623564Z",
+      "severity": "NOTICE",
+      "logName": "projects/luckymam-app-dv/logs/cloudaudit.googleapis.com%2Factivity",
+      "operation": {
+        "id": "projects/luckymam-app-dv/locations/europe-west1/operations/operation-1794052756223-65fae753e37f9-893dd956-76373d22",
+        "producer": "cloudfunctions.googleapis.com",
+        "first": true
+      },
+      "writerEmailAddress": "[REDACTED_EMAIL]",
+      "internalId": {
+        "projectNumber": "834179717761"
+      },
+      "receiveTimestamp": "2026-11-07T11:59:22.247131142Z",
+      "internalMetadata": {
+        "queryAnnotations": {
+          "residentBucketUuid": "834179717761_a",
+          "residentBucketEntityId": {
+            "projectNumber": "834179717761"
+          }
+        },
+        "bucketUuid": [
+          {
+            "tcubeShardNames": [
+              "global01-us-central1"
+            ],
+            "uid": "834179717761_a"
+          }
+        ],
+        "billingSize": "1944",
+        "logBucketWithSinkInfo": [
+          {
+            "uid": "834179717761_a",
+            "tcubeShardNames": [
+              "global01-us-central1"
+            ],
+            "sinkInfo": [
+              {
+                "status": "OK",
+                "unmodifiedRequiredSinkInternalId": {
+                  "projectNumber": "834179717761"
+                }
+              }
+            ],
+            "bucketOwner": {
+              "projectNumber": "834179717761"
+            }
+          }
+        ],
+        "matchesRequiredSink": true
+      }
+    }
+  ]
+}

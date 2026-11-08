@@ -299,10 +299,10 @@ class _VaccineHeroSummaryCardState extends State<VaccineHeroSummaryCard>
     if (nextGroup == null) {
       // All vaccines completed celebration
       final doneText = lang == 'ar'
-          ? '🎉 اكتملت جميع تطعيمات هذه المرحلة!'
+          ? ' اكتملت جميع تطعيمات هذه المرحلة!'
           : (lang == 'en'
-              ? '🎉 All scheduled vaccinations up to date!'
-              : '🎉 Toutes les vaccinations sont à jour !');
+              ? ' All scheduled vaccinations up to date!'
+              : ' Toutes les vaccinations sont à jour !');
 
       return Container(
         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
